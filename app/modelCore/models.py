@@ -36,24 +36,21 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
+    line_id = models.CharField(max_length= 100, blank = True, null=True)
     objects = UserManager()
 
     USERNAME_FIELD = 'phone'
 
-class MarkupItems(models.Model):
+class MarkupItem(models.Model):
     name = models.CharField(max_length= 100, unique=True)
-    price = models.IntegerField(default=0, blank = True, null=True)
     def __str__(self):
             return self.name
 
 class Category(models.Model):
-    care_type = models.CharField(max_length= 100, unique=True)
-    time_type =models.CharField(max_length= 100, unique=True)
-    
+    care_type = models.CharField(max_length= 100, blank = True, null=True)
+    time_type =models.CharField(max_length= 100, blank = True, null=True)   
 
-
-class LanguageSkills(models.Model):
+class LanguageSkill(models.Model):
     name = models.CharField(max_length= 100, unique=True)
 
     def __str__(self):
@@ -65,20 +62,39 @@ class License(models.Model):
         return self.name
 
 class Servant(models.Model):
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     name = models.CharField(max_length= 100, unique=True)
     hourly_wage = models.IntegerField(default=0, blank = True, null=True)
     halfday_wage = models.IntegerField(default=0, blank = True, null=True)
     oneday_wage = models.IntegerField(default=0, blank = True, null=True)
-    
     info = models.CharField(max_length= 255, blank = True, null=True)
-    markup_items = models.ForeignKey(
-        MarkupItems,
+
+
+class ServantMarkupItemPrice(models.Model):
+    servant = models.ForeignKey(
+        Servant,
         on_delete=models.RESTRICT
     )
-    skills = models.ForeignKey(
-        LanguageSkills,
+    markup_item = models.ForeignKey(
+        MarkupItem,
         on_delete=models.RESTRICT
     )
+    price = models.IntegerField(default=0, blank = True, null=True)
+
+class ServantSkillShip(models.Model):
+    servant = models.ForeignKey(
+        Servant,
+        on_delete=models.RESTRICT
+    )
+    skill = models.ForeignKey(
+        LanguageSkill,
+        on_delete=models.RESTRICT
+    )
+
 def image_upload_handler(instance,filename):
     fpath = pathlib.Path(filename)
     new_fname = str(uuid.uuid1()) #uuid1 -> uuid + timestamp
@@ -105,35 +121,26 @@ class ServantCategoryShip(models.Model):
         Category,
         on_delete=models.CASCADE
     )
-class Disease(models.Model):
-    name = models.CharField(max_length = 255, blank = True, null=True)
 
-    def __str__(self):
-            return self.name
-
-class BodyConditions(models.Model):
-    name = models.CharField(max_length = 255, blank = True, null=True)
-
-    def __str__(self):
-            return self.name
 
 class Recipient(models.Model):
-    name = models.CharField(max_length= 100, unique=True)
+    name = models.CharField(max_length= 100, blank=True, null=True)
     customer =models.ForeignKey(User,on_delete=models.RESTRICT)
-
-    gender = models.CharField(max_length= 100, blank = True, null=True)
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     age = models.IntegerField(default=0, blank = True, null=True)
     weight = models.IntegerField(default=0, blank = True, null=True)
-    disease = models.ForeignKey(Disease,on_delete=models.RESTRICT)
-
+    disease = models.CharField(max_length= 100, blank = True, null=True)
     disease_info = models.CharField(max_length= 255, blank = True, null=True)
-    conditions = models.ForeignKey(BodyConditions,on_delete=models.RESTRICT)
-
+    conditions = models.CharField(max_length= 255, blank = True, null=True)
     conditions_info = models.CharField(max_length= 255, blank = True, null=True)
 
-class ServiceItems(models.Model):
+class ServiceItem(models.Model):
     name = models.CharField(max_length = 100, blank = True, null=True)
-    info = models.CharField(max_length = 255, blank = True, null=True)
+    info = models.CharField(max_length = 100, blank = True, null=True)
     def __str__(self):
             return self.name
 
@@ -156,40 +163,124 @@ class Transportation(models.Model):
         CityArea,
         on_delete=models.CASCADE
     )
+    price = models.IntegerField(default=0, null=True)
     
 class Case(models.Model):
-    user = models.ForeignKey(
-        User,
+    recipient = models.ForeignKey(
+        Recipient,
+        on_delete=models.RESTRICT,
+        default=''
+    )
+    
+    cityarea = models.ForeignKey(
+        CityArea,
         on_delete=models.RESTRICT
     )
-    service_items = models.ForeignKey(
-        ServiceItems,
+    start_date = models.DateField(auto_now=False, blank = True,null=True)
+    end_date = models.DateField(auto_now=False, blank = True,null=True) 
+    start_time = models.TimeField(auto_now=False, auto_now_add=False )
+    end_time = models.TimeField(auto_now=False, auto_now_add=False )
+
+class CaseServiceItemShip(models.Model):
+    case = models.ForeignKey(
+        Case,
         on_delete=models.RESTRICT
+    )
+    service_item = models.ForeignKey(
+        ServiceItem,
+        on_delete=models.RESTRICT
+    )
+
+class OrderState(models.Model):
+    name = models.CharField(max_length=255, null=True , blank=True)
+    
+    def __str__(self):
+        return self.name
+
+class Order(models.Model):
+
+    servant = models.ForeignKey(
+        Servant,
+        on_delete=models.RESTRICT
+    )
+    recipient = models.ForeignKey(
+        Recipient,
+        on_delete = models.RESTRICT
+    )
+    case = models.ForeignKey(
+        Case,
+        on_delete = models.CASCADE,
+        blank=True,
+        null=True
+        
+    )
+    state =  models.ForeignKey(
+        OrderState,
+        on_delete=models.RESTRICT,
+        null =True
     )
     cityarea = models.ForeignKey(
         CityArea,
         on_delete=models.RESTRICT
     )
-    start_date = models.DateTimeField(auto_now=False, blank = True,null=True)
-    end_date = models.DateTimeField(auto_now=False, blank = True,null=True) 
+    address = models.CharField(max_length = 255, blank = True, null=True)
+    info = models.CharField(max_length = 255, blank = True, null=True)
+    start_date = models.DateField(auto_now=False, blank = True,null=True)
+    end_date = models.DateField(auto_now=False, blank = True,null=True) 
     start_time = models.TimeField(auto_now=False, auto_now_add=False )
     end_time = models.TimeField(auto_now=False, auto_now_add=False )
 
 
-class ServantReview(models.Model):
-    servant = models.ForeignKey(
-        Servant,
+class OrderServiceItemShip(models.Model):
+    order = models.ForeignKey(
+        Order,
         on_delete=models.RESTRICT
     )
-    score =  models.IntegerField(default=0, blank = True, null=True)
-    content = models.CharField(max_length = 255, blank = True, null=True)
-    create_date = models.DateTimeField(auto_now=False, blank = True,null=True) 
+    service_item = models.ForeignKey(
+        ServiceItem,
+        on_delete=models.RESTRICT
+    )
+class OrderReview(models.Model):
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.RESTRICT
+    )
+    customer_score =  models.IntegerField(default=0, blank = True, null=True)
+    customer_content = models.CharField(max_length = 255, blank = True, null=True)
+    customer_review_createdate = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    servant_score =  models.IntegerField(default=0, blank = True, null=True)
+    servant_content = models.CharField(max_length = 255, blank = True, null=True)
+    servant_review_createdate = models.DateTimeField(auto_now=True, blank = True,null=True) 
 
-class CustomerReview(models.Model):
-    customer = models.ForeignKey(
-        User,
-        on_delete=models.RESTRICT
+class PayInfo(models.Model):
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.RESTRICT,
+        default=''
     )
-    score =  models.IntegerField(default=0, blank = True, null=True)
-    content = models.CharField(max_length = 255, blank = True, null=True)
-    create_date = models.DateTimeField(auto_now=False, blank = True,null=True) 
+    
+    PaymentType = models.CharField(max_length=100, default='', blank = True, null=True)
+    MerchantID = models.CharField(max_length=100, default='', blank = True, null=True)
+    
+    OrderInfoMerchantTradeNo = models.CharField(max_length=100, default='', blank = True, null=True)
+    OrderInfoTradeDate = models.DateTimeField(auto_now=False,null=True)
+    OrderInfoTradeNo = models.CharField(max_length=100, default='', blank = True, null=True)
+    OrderInfoTradeAmt = models.IntegerField(default=0, null=True)
+    OrderInfoPaymentType = models.CharField(max_length=20, default='', blank = True, null=True)
+    OrderInfoChargeFee = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    OrderInfoTradeStatus = models.CharField(max_length=20, default='', blank = True, null=True)
+
+    ATMInfoBankCode = models.CharField(max_length=20, default='', blank = True, null=True)
+    ATMInfovAccount = models.CharField(max_length=20, default='', blank = True, null=True)
+    ATMInfoExpireDate = models.DateTimeField(auto_now=False,null=True)
+
+    CVSInfoPayFrom = models.CharField(max_length=20, default='', blank = True, null=True)
+    CVSInfoPaymentNo = models.CharField(max_length=20, default='', blank = True, null=True)
+    CVSInfoPaymentURL = models.CharField(max_length=100, default='', blank = True, null=True)
+
+    CardInfoAuthCode = models.CharField(max_length=100, default='', blank = True, null=True)
+    CardInfoGwsr = models.IntegerField(default=0, null=True)
+    CardInfoProcessDate =  models.DateTimeField(auto_now=False,null=True)
+    CardInfoAmount = models.IntegerField(default=0, null=True)
+    CardInfoCard6No = models.CharField(max_length=20, default='', blank = True, null=True)
+    CardInfoCard4No = models.CharField(max_length=20, default='', blank = True, null=True)
