@@ -83,7 +83,7 @@ class ServantMarkupItemPrice(models.Model):
         MarkupItem,
         on_delete=models.RESTRICT
     )
-    price = models.IntegerField(default=0, blank = True, null=True)
+    price = models.FloatField(default=0, blank = True, null=True)
 
 class ServantSkillShip(models.Model):
     servant = models.ForeignKey(
@@ -171,6 +171,11 @@ class Case(models.Model):
         on_delete=models.RESTRICT,
         default=''
     )
+    servant = models.ForeignKey(
+        Servant,
+        on_delete=models.RESTRICT,
+        default=''
+    )
     
     cityarea = models.ForeignKey(
         CityArea,
@@ -199,14 +204,6 @@ class OrderState(models.Model):
 
 class Order(models.Model):
 
-    servant = models.ForeignKey(
-        Servant,
-        on_delete=models.RESTRICT
-    )
-    recipient = models.ForeignKey(
-        Recipient,
-        on_delete = models.RESTRICT
-    )
     case = models.ForeignKey(
         Case,
         on_delete = models.CASCADE,
@@ -219,27 +216,12 @@ class Order(models.Model):
         on_delete=models.RESTRICT,
         null =True
     )
-    cityarea = models.ForeignKey(
-        CityArea,
-        on_delete=models.RESTRICT
-    )
     address = models.CharField(max_length = 255, blank = True, null=True)
     info = models.CharField(max_length = 255, blank = True, null=True)
-    start_date = models.DateField(auto_now=False, blank = True,null=True)
-    end_date = models.DateField(auto_now=False, blank = True,null=True) 
-    start_time = models.TimeField(auto_now=False, auto_now_add=False )
-    end_time = models.TimeField(auto_now=False, auto_now_add=False )
+    createdate = models.DateTimeField(auto_now=True, blank = True,null=True) 
 
 
-class OrderServiceItemShip(models.Model):
-    order = models.ForeignKey(
-        Order,
-        on_delete=models.RESTRICT
-    )
-    service_item = models.ForeignKey(
-        ServiceItem,
-        on_delete=models.RESTRICT
-    )
+
 class OrderReview(models.Model):
     order = models.ForeignKey(
         Order,

@@ -2,7 +2,7 @@ import csv
 import os
 import datetime 
 from datetime import timedelta
-from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip ,OrderServiceItemShip
+from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
 
 
 
@@ -520,6 +520,7 @@ def fakeData():
 
     case = Case()
     case.recipient = Recipient.objects.get(id=2)
+    case.servant = Servant.objects.get(id=1)
     case.cityarea = CityArea.objects.get(id=1)
     case.start_date = '2022-06-22'
     case.end_date = '2022-07-12'
@@ -529,6 +530,7 @@ def fakeData():
 
     case = Case()
     case.recipient = Recipient.objects.get(id=3)
+    case.servant = Servant.objects.get(id=2)
     case.cityarea = CityArea.objects.get(id=5)
     case.start_date = '2022-07-02'
     case.end_date = '2022-07-15'
@@ -537,7 +539,8 @@ def fakeData():
     case.save()
     
     case = Case()
-    case.recipient = Recipient.objects.get(id=1)
+    case.recipient = Recipient.objects.get(id=5)
+    case.servant = Servant.objects.get(id=3)
     case.cityarea = CityArea.objects.get(id=11)
     case.start_date = '2022-06-25'
     case.end_date = '2022-07-25'
@@ -588,70 +591,22 @@ def fakeData():
     orderstate.save()
 
     order = Order()
-    order.servant = Servant.objects.get(id=1)
-    order.recipient = Recipient.objects.get(id=2)
-    order.cityarea = CityArea.objects.get(id=1)
+    order.case = Case.objects.get(id=1)
     order.state = OrderState.objects.get(id=1)
     order.info = 'test'
-    order.start_date = '2022-06-29'
-    order.end_date = '2022-07-27'
-    order.start_time = datetime.time(10,30,0)
-    order.end_time = datetime.time(19,30,0)
     order.save()
 
     order = Order()
-    order.servant = Servant.objects.get(id=2)
-    order.recipient = Recipient.objects.get(id=1)
-    order.cityarea = CityArea.objects.get(id=5)
+    order.case = Case.objects.get(id=2)
     order.state = OrderState.objects.get(id=3)
     order.info = 'test'
-    order.start_date = '2022-07-01'
-    order.end_date = '2022-07-31'
-    order.start_time = datetime.time(11,30,0)
-    order.end_time = datetime.time(21,30,0)
     order.save()
 
     order = Order()
-    order.servant = Servant.objects.get(id=1)
     order.case = Case.objects.get(id=3)
-    order.recipient = order.case.recipient
-    order.cityarea = order.case.cityarea
     order.state = OrderState.objects.get(id=1)
     order.info = 'test'
-    order.start_date = order.case.start_date
-    order.end_date = order.case.end_date
-    order.start_time = order.case.start_time
-    order.end_time = order.case.end_time
     order.save()
-
-    orderitemship = OrderServiceItemShip()
-    orderitemship.order = Order.objects.get(id=1)
-    orderitemship.service_item = ServiceItem.objects.get(id=1)
-    orderitemship.save()
-
-    orderitemship = OrderServiceItemShip()
-    orderitemship.order = Order.objects.get(id=1)
-    orderitemship.service_item = ServiceItem.objects.get(id=3)
-    orderitemship.save()
-    
-    orderitemship = OrderServiceItemShip()
-    orderitemship.order = Order.objects.get(id=2)
-    orderitemship.service_item = ServiceItem.objects.get(id=4)
-    orderitemship.save()
-
-    orderitemship = OrderServiceItemShip()
-    orderitemship.order = Order.objects.get(id=2)
-    orderitemship.service_item = ServiceItem.objects.get(id=5)
-    orderitemship.save()
-
-    thecase = Order.objects.get(id=3).case
-    List_item = CaseServiceItemShip.objects.filter(case=thecase)
-    for x in range(len(List_item)):
-        theItem=List_item[x].service_item
-        orderitemship = OrderServiceItemShip()
-        orderitemship.order = Order.objects.get(id=3)
-        orderitemship.service_item = theItem
-        orderitemship.save()
 
     orderreview = OrderReview()
     orderreview.order = Order.objects.get(id=1)

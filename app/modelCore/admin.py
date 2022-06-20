@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip ,OrderServiceItemShip
+from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
 
 
 @admin.register(User)
@@ -60,16 +60,16 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Transportation)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'servant','cityarea')
+    list_display = ('id', 'servant','cityarea','price')
 
 @admin.register(Case)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'recipient','cityarea','start_date','end_date','start_time','end_time')
+    list_display = ('id', 'recipient','servant','cityarea','start_date','end_date','start_time','end_time')
 
     
 @admin.register(Order)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','servant','recipient','cityarea','state','start_date','end_date','start_time','end_time')
+    list_display = ('id','case','state','createdate')
 
 @admin.register(OrderReview)
 class UserAdmin(admin.ModelAdmin):
@@ -79,7 +79,5 @@ class UserAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'case','service_item')
 
-@admin.register(OrderServiceItemShip)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'order','service_item')
+
 
