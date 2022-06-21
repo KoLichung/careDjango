@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
 
 
 @admin.register(User)
@@ -24,15 +24,19 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Servant)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','gender','name','hourly_wage','halfday_wage','oneday_wage')
+    list_display = ('id','user','gender')
 
 @admin.register(ServantMarkupItemPrice)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'servant','markup_item','price')
+    list_display = ('id', 'servant','markup_item','pricePercent')
 
 @admin.register(ServantSkillShip)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'servant','skill')
+    list_display = ('id', 'servant','languageSkill')
+
+@admin.register(UserLicenseShipImage)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user','license','image')
 
 @admin.register(ServantLicenseShipImage)
 class UserAdmin(admin.ModelAdmin):
@@ -44,7 +48,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Recipient)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name','customer','gender','age','weight')
+    list_display = ('id', 'name','user','gender','age','weight')
 
 @admin.register(ServiceItem)
 class UserAdmin(admin.ModelAdmin):
@@ -73,7 +77,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(OrderReview)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'order','customer_score','customer_review_createdate','servant_score','servant_review_createdate')
+    list_display = ('id', 'order','user_score','user_review_createdate','servant_score','servant_review_createdate')
 
 @admin.register(CaseServiceItemShip)
 class UserAdmin(admin.ModelAdmin):

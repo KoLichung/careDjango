@@ -2,7 +2,7 @@ import csv
 import os
 import datetime 
 from datetime import timedelta
-from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
 
 
 
@@ -10,18 +10,43 @@ from .models import User, MarkupItem, Category, LanguageSkill, License, Servant,
 
 def fakeData():
     user = User()
-    user.name = 'customer01'
+    user.name = 'user01'
     user.phone = '0915323131'
     user.is_active = True
     user.is_staff =  False
     user.save()
 
     user = User()
-    user.name = 'customer02'
+    user.name = 'user02'
     user.phone = '0985463816'
     user.is_active = True
     user.is_staff =  False
     user.save()
+
+    user = User()
+    user.name = 'user03'
+    user.phone = '0985463888'
+    user.is_active = True
+    user.is_staff =  False
+    user.is_servant = True
+    user.save()
+
+    user = User()
+    user.name = 'user04'
+    user.phone = '0985490816'
+    user.is_active = True
+    user.is_staff =  False
+    user.is_servant = True
+    user.save()
+
+    user = User()
+    user.name = 'user05'
+    user.phone = '0985478816'
+    user.is_active = True
+    user.is_staff =  False
+    user.is_servant = True
+    user.save()
+
 
     user = User.objects.all()[0]
 
@@ -78,6 +103,18 @@ def fakeData():
     skill.save()
 
     license = License()
+    license.name = '身分證正面'
+    license.save()
+
+    license = License()
+    license.name = '身分證反面'
+    license.save()
+
+    license = License()
+    license.name = '健保卡正面'
+    license.save()
+
+    license = License()
     license.name = 'COVID-19 疫苗接種記錄卡 /n若未提供，服務者頁面會顯示「未提供」供預訂者參考'
     license.save()
 
@@ -106,103 +143,148 @@ def fakeData():
     license.save()
 
     servant = Servant()
-    servant.name = 'servant01'
-    servant.gender = 'Male'
-    servant.hourly_wage = 250
-    servant.halfday_wage = 1500
-    servant.oneday_wage = 3300
+    servant.user = User.objects.get(id=3)
+    servant.gender = 'M'
+    servant.home_hourly_wage = 250
+    servant.home_halfday_wage = 1500
+    servant.home_oneday_wage = 3300
+    servant.hospital_hourly_wage = 270
+    servant.hospital_halfday_wage = 1600
+    servant.hospital_oneday_wage = 3400
     servant.info = 'test'
     servant.save()
 
     servant = Servant()
-    servant.name = 'servant02'
-    servant.gender = 'Male'
-    servant.hourly_wage = 230
-    servant.halfday_wage = 1400
-    servant.oneday_wage = 3000
+    servant.user = User.objects.get(id=4)
+    servant.gender = 'M'
+    servant.home_hourly_wage = 240
+    servant.home_halfday_wage = 1450
+    servant.home_oneday_wage = 3000
+    servant.hospital_hourly_wage = 250
+    servant.hospital_halfday_wage = 1550
+    servant.hospital_oneday_wage = 3300
     servant.info = 'test'
     servant.save()
 
     servant = Servant()
-    servant.name = 'servant03'
-    servant.gender = 'Female'
-    servant.hourly_wage = 280
-    servant.halfday_wage = 1700
-    servant.oneday_wage = 3500
+    servant.user = User.objects.get(id=5)
+    servant.gender = 'F'
+    servant.home_hourly_wage = 330
+    servant.home_halfday_wage = 1800
+    servant.home_oneday_wage = 3700
+    servant.hospital_hourly_wage = 350
+    servant.hospital_halfday_wage = 1950
+    servant.hospital_oneday_wage = 4000
     servant.info = 'test'
     servant.save()
 
     markup_price = ServantMarkupItemPrice()
     markup_price.servant = Servant.objects.get(id=1)
     markup_price.markup_item = MarkupItem.objects.get(id=2)
-    markup_price.price = 1.25
+    markup_price.pricePercent = 1.25
     markup_price.save()
 
     markup_price = ServantMarkupItemPrice()
     markup_price.servant = Servant.objects.get(id=2)
     markup_price.markup_item = MarkupItem.objects.get(id=4)
-    markup_price.price = 1.45
+    markup_price.pricePercent = 1.45
     markup_price.save()
 
     markup_price = ServantMarkupItemPrice()
     markup_price.servant = Servant.objects.get(id=3)
     markup_price.markup_item = MarkupItem.objects.get(id=1)
-    markup_price.price = 1.3
+    markup_price.pricePercent = 1.3
     markup_price.save()
 
     servantskill = ServantSkillShip()
     servantskill.servant = Servant.objects.get(id=1)
-    servantskill.skill = LanguageSkill.objects.get(id=1)
+    servantskill.languageSkill = LanguageSkill.objects.get(id=1)
     servantskill.save()
     
     servantskill = ServantSkillShip()
     servantskill.servant = Servant.objects.get(id=1)
-    servantskill.skill = LanguageSkill.objects.get(id=3)
+    servantskill.languageSkill = LanguageSkill.objects.get(id=3)
     servantskill.save()
     
     servantskill = ServantSkillShip()
     servantskill.servant = Servant.objects.get(id=1)
-    servantskill.skill = LanguageSkill.objects.get(id=4)
+    servantskill.languageSkill = LanguageSkill.objects.get(id=4)
     servantskill.save()
     
     servantskill = ServantSkillShip()
     servantskill.servant = Servant.objects.get(id=2)
-    servantskill.skill = LanguageSkill.objects.get(id=1)
+    servantskill.languageSkill = LanguageSkill.objects.get(id=1)
     servantskill.save()
     
     servantskill = ServantSkillShip()
     servantskill.servant = Servant.objects.get(id=2)
-    servantskill.skill = LanguageSkill.objects.get(id=2)
+    servantskill.languageSkill = LanguageSkill.objects.get(id=2)
     servantskill.save()
 
     servantskill = ServantSkillShip()
     servantskill.servant = Servant.objects.get(id=3)
-    servantskill.skill = LanguageSkill.objects.get(id=1)
+    servantskill.languageSkill = LanguageSkill.objects.get(id=1)
     servantskill.save()
 
     servantskill = ServantSkillShip()
     servantskill.servant = Servant.objects.get(id=3)
-    servantskill.skill = LanguageSkill.objects.get(id=2)
+    servantskill.languageSkill = LanguageSkill.objects.get(id=2)
     servantskill.save()
 
     servantskill = ServantSkillShip()
     servantskill.servant = Servant.objects.get(id=3)
-    servantskill.skill = LanguageSkill.objects.get(id=4)
+    servantskill.languageSkill = LanguageSkill.objects.get(id=4)
     servantskill.save()
 
-    servantlicense = ServantLicenseShipImage()
-    servantlicense.servant = Servant.objects.get(id=1)
-    servantlicense.license = License.objects.get(id=1)
-    servantlicense.save()
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=3)
+    userlicense.license = License.objects.get(id=1)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=3)
+    userlicense.license = License.objects.get(id=2)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=3)
+    userlicense.license = License.objects.get(id=3)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=4)
+    userlicense.license = License.objects.get(id=1)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=4)
+    userlicense.license = License.objects.get(id=2)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=4)
+    userlicense.license = License.objects.get(id=3)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=5)
+    userlicense.license = License.objects.get(id=1)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=5)
+    userlicense.license = License.objects.get(id=2)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=5)
+    userlicense.license = License.objects.get(id=3)
+    userlicense.save()
+
 
     servantlicense = ServantLicenseShipImage()
     servantlicense.servant = Servant.objects.get(id=1)
-    servantlicense.license = License.objects.get(id=3)
-    servantlicense.save()
-
-    servantlicense = ServantLicenseShipImage()
-    servantlicense.servant = Servant.objects.get(id=1)
-    servantlicense.license = License.objects.get(id=5)
+    servantlicense.license = License.objects.get(id=4)
     servantlicense.save()
 
     servantlicense = ServantLicenseShipImage()
@@ -211,8 +293,13 @@ def fakeData():
     servantlicense.save()
 
     servantlicense = ServantLicenseShipImage()
-    servantlicense.servant = Servant.objects.get(id=2)
-    servantlicense.license = License.objects.get(id=1)
+    servantlicense.servant = Servant.objects.get(id=1)
+    servantlicense.license = License.objects.get(id=8)
+    servantlicense.save()
+
+    servantlicense = ServantLicenseShipImage()
+    servantlicense.servant = Servant.objects.get(id=1)
+    servantlicense.license = License.objects.get(id=9)
     servantlicense.save()
 
     servantlicense = ServantLicenseShipImage()
@@ -221,13 +308,18 @@ def fakeData():
     servantlicense.save()
 
     servantlicense = ServantLicenseShipImage()
-    servantlicense.servant = Servant.objects.get(id=3)
-    servantlicense.license = License.objects.get(id=3)
+    servantlicense.servant = Servant.objects.get(id=2)
+    servantlicense.license = License.objects.get(id=7)
     servantlicense.save()
 
     servantlicense = ServantLicenseShipImage()
     servantlicense.servant = Servant.objects.get(id=3)
-    servantlicense.license = License.objects.get(id=5)
+    servantlicense.license = License.objects.get(id=6)
+    servantlicense.save()
+
+    servantlicense = ServantLicenseShipImage()
+    servantlicense.servant = Servant.objects.get(id=3)
+    servantlicense.license = License.objects.get(id=8)
     servantlicense.save()
 
     servantlicense = ServantLicenseShipImage()
@@ -262,8 +354,8 @@ def fakeData():
 
     recipient = Recipient()
     recipient.name = 'recipient01'
-    recipient.customer = User.objects.get(id=2)
-    recipient.gender = 'Male'
+    recipient.user = User.objects.get(id=2)
+    recipient.gender = 'M'
     recipient.age = 65
     recipient.weight = 70
     recipient.disease = '無'
@@ -272,8 +364,8 @@ def fakeData():
 
     recipient = Recipient()
     recipient.name = 'recipient02'
-    recipient.customer = User.objects.get(id=2)
-    recipient.gender = 'Male'
+    recipient.user = User.objects.get(id=2)
+    recipient.gender = 'M'
     recipient.age = 65
     recipient.weight = 70
     recipient.disease = '無'
@@ -282,8 +374,8 @@ def fakeData():
 
     recipient = Recipient()
     recipient.name = 'recipient03'
-    recipient.customer = User.objects.get(id=2)
-    recipient.gender = 'Male'
+    recipient.user = User.objects.get(id=2)
+    recipient.gender = 'M'
     recipient.age = 80
     recipient.weight = 67
     recipient.disease = '關節炎'
@@ -292,8 +384,8 @@ def fakeData():
 
     recipient = Recipient()
     recipient.name = 'recipient04'
-    recipient.customer = User.objects.get(id=3)
-    recipient.gender = 'Female'
+    recipient.user = User.objects.get(id=3)
+    recipient.gender = 'F'
     recipient.age = 70
     recipient.weight = 55
     recipient.disease = '糖尿病'
@@ -302,8 +394,8 @@ def fakeData():
 
     recipient = Recipient()
     recipient.name = 'recipient05'
-    recipient.customer = User.objects.get(id=3)
-    recipient.gender = 'Male'
+    recipient.user = User.objects.get(id=3)
+    recipient.gender = 'M'
     recipient.age = 68
     recipient.weight = 95
     recipient.disease = '心臟病'
@@ -312,8 +404,8 @@ def fakeData():
 
     recipient = Recipient()
     recipient.name = 'recipient06'
-    recipient.customer = User.objects.get(id=3)
-    recipient.gender = 'Female'
+    recipient.user = User.objects.get(id=3)
+    recipient.gender = 'F'
     recipient.age = 72
     recipient.weight = 60
     recipient.disease = '手術照顧'
@@ -610,24 +702,24 @@ def fakeData():
 
     orderreview = OrderReview()
     orderreview.order = Order.objects.get(id=1)
-    orderreview.customer_score = 5
-    orderreview.customer_content = 'Test'
+    orderreview.user_score = 5
+    orderreview.user_content = 'Test'
     orderreview.servant_score = 5
     orderreview.servant_content = 'Test'
     orderreview.save()
     
     orderreview = OrderReview()
     orderreview.order = Order.objects.get(id=2)
-    orderreview.customer_score = 4
-    orderreview.customer_content = 'Test'
+    orderreview.user_score = 4
+    orderreview.user_content = 'Test'
     orderreview.servant_score = 5
     orderreview.servant_content = 'Test'
     orderreview.save()
     
     orderreview = OrderReview()
     orderreview.order = Order.objects.get(id=3)
-    orderreview.customer_score = 5
-    orderreview.customer_content = 'Test'
+    orderreview.user_score = 5
+    orderreview.user_content = 'Test'
     orderreview.servant_score = 4
     orderreview.servant_content = 'Test'
     orderreview.save()

@@ -36,6 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_servant = models.BooleanField(default=False)
     line_id = models.CharField(max_length= 100, blank = True, null=True)
     objects = UserManager()
 
@@ -67,10 +68,14 @@ class Servant(models.Model):
         ('F', 'Female'),
     )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    name = models.CharField(max_length= 100, unique=True)
-    hourly_wage = models.IntegerField(default=0, blank = True, null=True)
-    halfday_wage = models.IntegerField(default=0, blank = True, null=True)
-    oneday_wage = models.IntegerField(default=0, blank = True, null=True)
+    user =models.OneToOneField(User,on_delete=models.RESTRICT,unique=True,default='')
+    home_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
+    home_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
+    home_oneday_wage = models.IntegerField(default=0, blank = True, null=True)
+
+    hospital_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
+    hospital_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
+    hospital_oneday_wage = models.IntegerField(default=0, blank = True, null=True)
     info = models.CharField(max_length= 255, blank = True, null=True)
 
 
@@ -83,14 +88,14 @@ class ServantMarkupItemPrice(models.Model):
         MarkupItem,
         on_delete=models.RESTRICT
     )
-    price = models.FloatField(default=0, blank = True, null=True)
+    pricePercent = models.FloatField(default=0, blank = True, null=True)
 
 class ServantSkillShip(models.Model):
     servant = models.ForeignKey(
         Servant,
         on_delete=models.RESTRICT
     )
-    skill = models.ForeignKey(
+    languageSkill = models.ForeignKey(
         LanguageSkill,
         on_delete=models.RESTRICT
     )
@@ -99,6 +104,18 @@ def image_upload_handler(instance,filename):
     fpath = pathlib.Path(filename)
     new_fname = str(uuid.uuid1()) #uuid1 -> uuid + timestamp
     return f'images/{new_fname}{fpath.suffix}'
+
+class UserLicenseShipImage(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='images'
+        )
+    license = models.ForeignKey(
+        License,
+        on_delete=models.CASCADE
+    )
+    image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
 
 class ServantLicenseShipImage(models.Model):
     servant = models.ForeignKey(
@@ -125,7 +142,7 @@ class ServantCategoryShip(models.Model):
 
 class Recipient(models.Model):
     name = models.CharField(max_length= 100, blank=True, null=True)
-    customer =models.ForeignKey(User,on_delete=models.RESTRICT)
+    user =models.ForeignKey(User,on_delete=models.RESTRICT)
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),
@@ -227,9 +244,9 @@ class OrderReview(models.Model):
         Order,
         on_delete=models.RESTRICT
     )
-    customer_score =  models.IntegerField(default=0, blank = True, null=True)
-    customer_content = models.CharField(max_length = 255, blank = True, null=True)
-    customer_review_createdate = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    user_score =  models.IntegerField(default=0, blank = True, null=True)
+    user_content = models.CharField(max_length = 255, blank = True, null=True)
+    user_review_createdate = models.DateTimeField(auto_now=True, blank = True,null=True) 
     servant_score =  models.IntegerField(default=0, blank = True, null=True)
     servant_content = models.CharField(max_length = 255, blank = True, null=True)
     servant_review_createdate = models.DateTimeField(auto_now=True, blank = True,null=True) 
