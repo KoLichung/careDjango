@@ -53,9 +53,9 @@ class ServantMarkupItemPriceViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         queryset = self.queryset
-        theServant = self.request.user.servant
+        theUser = self.request.user
         markupItem_id = self.request.GET.get('markupItem_id')
-        queryset = queryset.filter(servant=theServant)
+        queryset = queryset.filter(servant__user=theUser)
         if markupItem_id != None:
             queryset = queryset.filter(markup_item=MarkupItem.objects.get(id=markupItem_id))
         for i in range(len(queryset)):
@@ -73,9 +73,9 @@ class ServantSkillShipViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         queryset = self.queryset
-        theServant = self.request.user.servant
+        theUser = self.request.user
         languageSkill_id = self.request.GET.get('languageSkill_id')
-        queryset = queryset.filter(servant=theServant)
+        queryset = queryset.filter(servant__user=theUser)
         if languageSkill_id != None:
             queryset = queryset.filter(languageSkill=LanguageSkill.objects.get(id=languageSkill_id))
         for i in range(len(queryset)):
@@ -118,14 +118,14 @@ class ServantLicenseShipImageViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         queryset = self.queryset
-        theServant = self.request.user.servant
+        theUser = self.request.user
         
         license_id = self.request.GET.get('license_id')
-        queryset = queryset.filter(servant=theServant)
+        queryset = queryset.filter(servant__user=theUser)
         if license_id != None:
             queryset = queryset.filter(license=License.objects.get(id=license_id))
         for i in range(len(queryset)):
-            queryset[i].servant_name = theServant.user.name
+            queryset[i].servant_name = queryset[i].servant.user.name
             queryset[i].license_name = queryset[i].license.name
         return queryset
 
@@ -139,13 +139,13 @@ class ServantCategoryShipViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         queryset = self.queryset
-        theServant = self.request.user.servant
+        theUser = self.request.user
         category_id = self.request.GET.get('category_id')
-        queryset = queryset.filter(servant=theServant)
+        queryset = queryset.filter(servant__user=theUser)
         if category_id != None:
             queryset = queryset.filter(category=Category.objects.get(id=category_id))
         for i in range(len(queryset)):
-            queryset[i].servant_name = theServant.user.name
+            queryset[i].servant_name = queryset[i].servant.user.name
             queryset[i].category_CareType = queryset[i].category.care_type
             queryset[i].category_TimeType = queryset[i].category.time_type
 
@@ -201,13 +201,13 @@ class TransportationViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         queryset = self.queryset
-        theServant = self.request.user.servant
+        theUser = self.request.user
         cityarea_id = self.request.GET.get('cityarea_id')
-        queryset = queryset.filter(servant=theServant)
+        queryset = queryset.filter(servant__user=theUser)
         if cityarea_id != None:
             queryset = queryset.filter(cityarea=CityArea.objects.get(id=cityarea_id))
         for i in range(len(queryset)):
-            queryset[i].servant_name = theServant.user.name
+            queryset[i].servant_name = queryset[i].servant.user.name
             queryset[i].cityarea_name = queryset[i].cityarea.city + queryset[i].cityarea.area
 
         return queryset
