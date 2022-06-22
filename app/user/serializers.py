@@ -5,11 +5,11 @@ from modelCore.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the users object"""
-    is_gotten_line_id = serializers.BooleanField(default=False)
+    # is_gotten_line_id = serializers.BooleanField(default=False)
 
     class Meta:
         model = get_user_model()
-        fields = ('phone', 'password', 'name')
+        fields = ('phone', 'password', 'name','line_id')
         extra_kwargs = {
             'password': {'write_only': True, 'min_length': 5},
             }
