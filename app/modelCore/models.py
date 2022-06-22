@@ -68,7 +68,7 @@ class Servant(models.Model):
         ('F', 'Female'),
     )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    user =models.OneToOneField(User,on_delete=models.RESTRICT,unique=True,default='')
+    user =models.OneToOneField(User,on_delete=models.RESTRICT,unique=True,default='',related_name='servant')
     home_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
     home_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
     home_oneday_wage = models.IntegerField(default=0, blank = True, null=True)
@@ -82,7 +82,7 @@ class Servant(models.Model):
 class ServantMarkupItemPrice(models.Model):
     servant = models.ForeignKey(
         Servant,
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
     )
     markup_item = models.ForeignKey(
         MarkupItem,
@@ -142,7 +142,7 @@ class ServantCategoryShip(models.Model):
 
 class Recipient(models.Model):
     name = models.CharField(max_length= 100, blank=True, null=True)
-    user =models.ForeignKey(User,on_delete=models.RESTRICT)
+    user =models.ForeignKey(User,on_delete=models.RESTRICT,related_name='recipient')
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),
@@ -172,11 +172,11 @@ class CityArea(models.Model):
     area = models.CharField(max_length = 100, blank = True, null=True)
 
 class Transportation(models.Model):
-    servant = cityarea = models.ForeignKey(
+    servant = models.ForeignKey(
         Servant,
         on_delete=models.CASCADE
     )
-    cityarea = cityarea = models.ForeignKey(
+    cityarea = models.ForeignKey(
         CityArea,
         on_delete=models.CASCADE
     )
@@ -268,14 +268,6 @@ class PayInfo(models.Model):
     OrderInfoPaymentType = models.CharField(max_length=20, default='', blank = True, null=True)
     OrderInfoChargeFee = models.DecimalField(max_digits=9, decimal_places=2, null=True)
     OrderInfoTradeStatus = models.CharField(max_length=20, default='', blank = True, null=True)
-
-    ATMInfoBankCode = models.CharField(max_length=20, default='', blank = True, null=True)
-    ATMInfovAccount = models.CharField(max_length=20, default='', blank = True, null=True)
-    ATMInfoExpireDate = models.DateTimeField(auto_now=False,null=True)
-
-    CVSInfoPayFrom = models.CharField(max_length=20, default='', blank = True, null=True)
-    CVSInfoPaymentNo = models.CharField(max_length=20, default='', blank = True, null=True)
-    CVSInfoPaymentURL = models.CharField(max_length=100, default='', blank = True, null=True)
 
     CardInfoAuthCode = models.CharField(max_length=100, default='', blank = True, null=True)
     CardInfoGwsr = models.IntegerField(default=0, null=True)

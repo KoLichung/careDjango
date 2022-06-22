@@ -143,7 +143,7 @@ def fakeData():
     license.save()
 
     servant = Servant()
-    servant.user = User.objects.get(id=3)
+    servant.user = User.objects.get(id=4)
     servant.gender = 'M'
     servant.home_hourly_wage = 250
     servant.home_halfday_wage = 1500
@@ -155,7 +155,7 @@ def fakeData():
     servant.save()
 
     servant = Servant()
-    servant.user = User.objects.get(id=4)
+    servant.user = User.objects.get(id=5)
     servant.gender = 'M'
     servant.home_hourly_wage = 240
     servant.home_halfday_wage = 1450
@@ -167,7 +167,7 @@ def fakeData():
     servant.save()
 
     servant = Servant()
-    servant.user = User.objects.get(id=5)
+    servant.user = User.objects.get(id=6)
     servant.gender = 'F'
     servant.home_hourly_wage = 330
     servant.home_halfday_wage = 1800
@@ -237,21 +237,6 @@ def fakeData():
     servantskill.save()
 
     userlicense = UserLicenseShipImage()
-    userlicense.user = User.objects.get(id=3)
-    userlicense.license = License.objects.get(id=1)
-    userlicense.save()
-
-    userlicense = UserLicenseShipImage()
-    userlicense.user = User.objects.get(id=3)
-    userlicense.license = License.objects.get(id=2)
-    userlicense.save()
-
-    userlicense = UserLicenseShipImage()
-    userlicense.user = User.objects.get(id=3)
-    userlicense.license = License.objects.get(id=3)
-    userlicense.save()
-
-    userlicense = UserLicenseShipImage()
     userlicense.user = User.objects.get(id=4)
     userlicense.license = License.objects.get(id=1)
     userlicense.save()
@@ -278,6 +263,21 @@ def fakeData():
 
     userlicense = UserLicenseShipImage()
     userlicense.user = User.objects.get(id=5)
+    userlicense.license = License.objects.get(id=3)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=6)
+    userlicense.license = License.objects.get(id=1)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=6)
+    userlicense.license = License.objects.get(id=2)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=6)
     userlicense.license = License.objects.get(id=3)
     userlicense.save()
 
@@ -320,11 +320,6 @@ def fakeData():
     servantlicense = ServantLicenseShipImage()
     servantlicense.servant = Servant.objects.get(id=3)
     servantlicense.license = License.objects.get(id=8)
-    servantlicense.save()
-
-    servantlicense = ServantLicenseShipImage()
-    servantlicense.servant = Servant.objects.get(id=3)
-    servantlicense.license = License.objects.get(id=6)
     servantlicense.save()
 
     servantcategory = ServantCategoryShip()
