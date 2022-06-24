@@ -1,9 +1,16 @@
 import pathlib
+from unicodedata import category
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.urls import reverse
 
+
+def image_upload_handler(instance,filename):
+    fpath = pathlib.Path(filename)
+    new_fname = str(uuid.uuid1()) #uuid1 -> uuid + timestamp
+    return f'images/{new_fname}{fpath.suffix}'
+    
 class UserManager(BaseUserManager):
 
     def create_user(self, phone, password=None, **extra_fields):
@@ -34,12 +41,19 @@ class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model that suppors using email instead of username"""
     phone = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=255)
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,default='')
+    email = models.CharField(max_length= 100, blank = True, null=True)
+    address = models.CharField(max_length= 100, blank = True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_servant = models.BooleanField(default=False)
     line_id = models.CharField(max_length= 100, blank = True, null=True)
     objects = UserManager()
-
+    image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
     USERNAME_FIELD = 'phone'
 
 class MarkupItem(models.Model):
@@ -100,10 +114,7 @@ class ServantSkillShip(models.Model):
         on_delete=models.RESTRICT
     )
 
-def image_upload_handler(instance,filename):
-    fpath = pathlib.Path(filename)
-    new_fname = str(uuid.uuid1()) #uuid1 -> uuid + timestamp
-    return f'images/{new_fname}{fpath.suffix}'
+
 
 class UserLicenseShipImage(models.Model):
     user = models.ForeignKey(
@@ -147,6 +158,7 @@ class Recipient(models.Model):
         ('M', 'Male'),
         ('F', 'Female'),
     )
+    
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     age = models.IntegerField(default=0, blank = True, null=True)
     weight = models.IntegerField(default=0, blank = True, null=True)
@@ -198,10 +210,21 @@ class Case(models.Model):
         CityArea,
         on_delete=models.RESTRICT
     )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.RESTRICT,
+        default=''
+    )
+    markup_item = models.ForeignKey(
+        ServantMarkupItemPrice,
+        on_delete=models.RESTRICT,
+        default=''
+    )
     start_date = models.DateField(auto_now=False, blank = True,null=True)
     end_date = models.DateField(auto_now=False, blank = True,null=True) 
     start_time = models.TimeField(auto_now=False, auto_now_add=False )
     end_time = models.TimeField(auto_now=False, auto_now_add=False )
+
 
 class CaseServiceItemShip(models.Model):
     case = models.ForeignKey(
@@ -245,11 +268,13 @@ class OrderReview(models.Model):
         on_delete=models.RESTRICT
     )
     user_score =  models.IntegerField(default=0, blank = True, null=True)
+    user_is_rated = models.BooleanField(default=False)
     user_content = models.CharField(max_length = 255, blank = True, null=True)
-    user_review_createdate = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    user_review_createdate = models.DateTimeField(auto_now=False, blank = True,null=True) 
     servant_score =  models.IntegerField(default=0, blank = True, null=True)
+    servant_is_rated = models.BooleanField(default=False)
     servant_content = models.CharField(max_length = 255, blank = True, null=True)
-    servant_review_createdate = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    servant_review_createdate = models.DateTimeField(auto_now=False, blank = True,null=True) 
 
 class PayInfo(models.Model):
     order = models.ForeignKey(

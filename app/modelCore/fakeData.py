@@ -237,6 +237,36 @@ def fakeData():
     servantskill.save()
 
     userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=2)
+    userlicense.license = License.objects.get(id=1)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=2)
+    userlicense.license = License.objects.get(id=2)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=2)
+    userlicense.license = License.objects.get(id=3)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=3)
+    userlicense.license = License.objects.get(id=1)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=3)
+    userlicense.license = License.objects.get(id=2)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
+    userlicense.user = User.objects.get(id=3)
+    userlicense.license = License.objects.get(id=3)
+    userlicense.save()
+
+    userlicense = UserLicenseShipImage()
     userlicense.user = User.objects.get(id=4)
     userlicense.license = License.objects.get(id=1)
     userlicense.save()
@@ -609,6 +639,8 @@ def fakeData():
     case.recipient = Recipient.objects.get(id=2)
     case.servant = Servant.objects.get(id=1)
     case.cityarea = CityArea.objects.get(id=1)
+    case.category = ServantCategoryShip.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[0].category
+    case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[0]
     case.start_date = '2022-06-22'
     case.end_date = '2022-07-12'
     case.start_time = datetime.time(10,0,0)
@@ -619,6 +651,8 @@ def fakeData():
     case.recipient = Recipient.objects.get(id=3)
     case.servant = Servant.objects.get(id=2)
     case.cityarea = CityArea.objects.get(id=5)
+    case.category = ServantCategoryShip.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[0].category
+    case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[0]
     case.start_date = '2022-07-02'
     case.end_date = '2022-07-15'
     case.start_time = datetime.time(12,30,0)
@@ -629,6 +663,8 @@ def fakeData():
     case.recipient = Recipient.objects.get(id=5)
     case.servant = Servant.objects.get(id=3)
     case.cityarea = CityArea.objects.get(id=11)
+    case.category = ServantCategoryShip.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[1].category
+    case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[0]
     case.start_date = '2022-06-25'
     case.end_date = '2022-07-25'
     case.start_time = datetime.time(9,0,0)
@@ -698,23 +734,23 @@ def fakeData():
     orderreview = OrderReview()
     orderreview.order = Order.objects.get(id=1)
     orderreview.user_score = 5
+    orderreview.user_is_rated = True
     orderreview.user_content = 'Test'
     orderreview.servant_score = 5
+    orderreview.servant_is_rated = True
     orderreview.servant_content = 'Test'
     orderreview.save()
     
     orderreview = OrderReview()
     orderreview.order = Order.objects.get(id=2)
     orderreview.user_score = 4
+    orderreview.user_is_rated = True
     orderreview.user_content = 'Test'
     orderreview.servant_score = 5
+    orderreview.servant_is_rated = True
     orderreview.servant_content = 'Test'
     orderreview.save()
     
     orderreview = OrderReview()
     orderreview.order = Order.objects.get(id=3)
-    orderreview.user_score = 5
-    orderreview.user_content = 'Test'
-    orderreview.servant_score = 4
-    orderreview.servant_content = 'Test'
     orderreview.save()

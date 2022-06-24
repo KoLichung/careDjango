@@ -112,6 +112,24 @@ class CaseSerializer(serializers.ModelSerializer):
     servant_name = serializers.CharField(read_only=True)
     recipient_name = serializers.CharField(read_only=True)
     cityarea_name = serializers.CharField(read_only=True)
+    category_CareType = serializers.CharField(read_only=True)
+    category_TimeType = serializers.CharField(read_only=True)
+    case_date = serializers.CharField(read_only=True)
+    basic_price = serializers.CharField(read_only=True)
+    hour_wage = serializers.CharField(read_only=True)
+    working_hours = serializers.CharField(read_only=True)
+    markup_Item = serializers.CharField(read_only=True)
+    markup_Item_percent = serializers.CharField(read_only=True)
+    markup_price = serializers.CharField(read_only=True)
+    total_price = serializers.CharField(read_only=True)
+    recipient_gender = serializers.CharField(read_only=True)
+    recipient_age = serializers.CharField(read_only=True)
+    recipient_weight = serializers.CharField(read_only=True)
+    recipient_disease = serializers.CharField(read_only=True)
+    recipient_conditions = serializers.CharField(read_only=True)
+    recipient_disease_info = serializers.CharField(read_only=True)
+    recipient_conditions_info = serializers.CharField(read_only=True)
+    service_Item= serializers.CharField(read_only=True)
     class Meta:    
         model = Case
         fields = '__all__'
@@ -144,9 +162,13 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class OrderReviewSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(read_only=True)
     servant_name = serializers.CharField(read_only=True)
     recipient_name = serializers.CharField(read_only=True)
     cityarea_name = serializers.CharField(read_only=True)
+    category_CareType = serializers.CharField(read_only=True)
+    category_TimeType = serializers.CharField(read_only=True)
+    case_date = serializers.CharField(read_only=True)
     class Meta:    
         model = OrderReview
         fields = '__all__'

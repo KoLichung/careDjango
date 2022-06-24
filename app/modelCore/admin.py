@@ -68,7 +68,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Case)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'recipient','servant','cityarea','start_date','end_date','start_time','end_time')
+    list_display = ('id', 'recipient','servant','cityarea','category','start_date','end_date','start_time','end_time')
 
     
 @admin.register(Order)
