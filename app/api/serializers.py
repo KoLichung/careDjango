@@ -1,7 +1,21 @@
 from rest_framework import serializers
 from modelCore.models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
 
+class RegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+        read_only_fields = ('id',)
 
+    def save(self):
+        user = User(phone=self.validated_data['phone'], name=self.validated_data['name'])
+        password = self.validated_data['password']
+        # password2 = self.validated_data['password2']
+        # if password != password2:
+        #     raise serializers.ValidationError({'password': 'Passwords must match.'})
+        user.set_password(password)
+        user.save()
+        return user
 class MarkupItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarkupItem

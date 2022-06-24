@@ -24,10 +24,10 @@ router.register('orderstates', views.OrderStateViewSet)
 router.register('orders', views.OrderViewSet)
 router.register('orderReviews', views.OrderReviewViewSet)
 router.register('post_cases', views.PostCaseViewSet)
-router.register('post_case_details', views.PostCaseDetailViewSet)
 router.register('not_rated_yet', views.NotRatedYetViewSet)
 router.register('servant_rate', views.ServantRateViewSet)
 router.register('user_rate', views.UserRateViewSet)
+router.register('login_register', views.LoginRegisterViewSet)
 
 
 app_name = 'api'
@@ -35,7 +35,6 @@ app_name = 'api'
 urlpatterns = [
     path('', include(router.urls)),
     path('add_rated', views.AddRateViewSet.as_view()),
-    path('basic_info', views.BasicInfoViewSet.as_view()),
     path('change_basic_info', views.ChangeBasicInfoViewSet.as_view()),
     path('my_document', views.MyDocumentViewSet.as_view()),
 ]
