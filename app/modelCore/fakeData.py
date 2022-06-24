@@ -2,10 +2,31 @@ import csv
 import os
 import datetime 
 from datetime import timedelta
-from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice
+from .models import ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from .models import City, CityArea
 
+def importCityCounty():
+    module_dir = os.path.dirname(__file__)  # get current directory
+    file_path = os.path.join(module_dir, 'county.csv')
 
+    file = open(file_path)
+    reader = csv.reader(file, delimiter=',')
+    for index, row in enumerate(reader):
+        if index != 0:
+            if City.objects.filter(name=row[0]).count()==0:
+                city = City()
+                city.name = row[0]
+                city.save()
+            else:
+                city = City.objects.get(name=row[0])
 
+            county_name = row[2].replace(row[0],'')
+            county = CityArea()
+            county.city = city
+            county.area = county_name
+            county.save()
+            print(city.name + " " + county.area)
             
 
 def fakeData():
