@@ -7,7 +7,7 @@ router = DefaultRouter()
 router.register('markup_items', views.MarkupItemViewSet)
 router.register('languages',views.LanguageSkillViewSet)
 router.register('licenses',views.LicenseViewSet)
-router.register('servants',views.ServantViewSet)
+router.register('servant_Recommend',views.ServantRecommendationViewSet)
 router.register('servant_markupItem_prices',views.ServantMarkupItemPriceViewSet)
 router.register('servant_skills',views.ServantSkillShipViewSet)
 router.register('user_licenses', views.UserLicenseShipImageViewSet)
@@ -23,18 +23,20 @@ router.register('case_serviceItems', views.CaseServiceItemShipViewSet)
 router.register('orderstates', views.OrderStateViewSet)
 router.register('orders', views.OrderViewSet)
 router.register('orderReviews', views.OrderReviewViewSet)
-router.register('post_cases', views.PostCaseViewSet)
+router.register('post_case', views.PostCaseViewSet)
+router.register('take_case', views.TakeCaseViewSet)
 router.register('not_rated_yet', views.NotRatedYetViewSet)
 router.register('servant_rate', views.ServantRateViewSet)
 router.register('user_rate', views.UserRateViewSet)
-router.register('login_register', views.LoginRegisterViewSet)
+
 
 
 app_name = 'api'
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('add_rated', views.AddRateViewSet.as_view()),
+    path('add_servant_rate', views.AddServantRateViewSet.as_view()),
+    path('add_user_rate', views.AddUserRateViewSet.as_view()),
     path('change_basic_info', views.ChangeBasicInfoViewSet.as_view()),
     path('my_document', views.MyDocumentViewSet.as_view()),
 ]

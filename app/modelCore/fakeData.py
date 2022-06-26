@@ -2,9 +2,9 @@ import csv
 import os
 import datetime 
 from datetime import timedelta
-from .models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice
+from .models import ServantCityAreaShip, User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice
 from .models import ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
-from .models import City, CityArea
+from .models import City, CityArea,ServantCityAreaShip
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -608,6 +608,66 @@ def fakeData():
     cityarea.area = '全區'
     cityarea.save()
 
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=1)
+    servantcityareaship.cityarea = CityArea.objects.get(id=1)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=1)
+    servantcityareaship.cityarea = CityArea.objects.get(id=3)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=1)
+    servantcityareaship.cityarea = CityArea.objects.get(id=6)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=1)
+    servantcityareaship.cityarea = CityArea.objects.get(id=10)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=2)
+    servantcityareaship.cityarea = CityArea.objects.get(id=2)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=2)
+    servantcityareaship.cityarea = CityArea.objects.get(id=4)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=2)
+    servantcityareaship.cityarea = CityArea.objects.get(id=8)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=2)
+    servantcityareaship.cityarea = CityArea.objects.get(id=9)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=3)
+    servantcityareaship.cityarea = CityArea.objects.get(id=1)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=3)
+    servantcityareaship.cityarea = CityArea.objects.get(id=4)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=3)
+    servantcityareaship.cityarea = CityArea.objects.get(id=5)
+    servantcityareaship.save()
+
+    servantcityareaship = ServantCityAreaShip()
+    servantcityareaship.servant = Servant.objects.get(id=3)
+    servantcityareaship.cityarea = CityArea.objects.get(id=12)
+    servantcityareaship.save()
+
     transportation = Transportation()
     transportation.servant = Servant.objects.get(id=1)
     transportation.cityarea = CityArea.objects.get(id=13)
@@ -659,7 +719,7 @@ def fakeData():
     case = Case()
     case.recipient = Recipient.objects.get(id=2)
     case.servant = Servant.objects.get(id=1)
-    case.cityarea = CityArea.objects.get(id=1)
+    case.cityarea = ServantCityAreaShip.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[1].cityarea
     case.category = ServantCategoryShip.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[0].category
     case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[0]
     case.start_date = '2022-06-22'
@@ -671,7 +731,7 @@ def fakeData():
     case = Case()
     case.recipient = Recipient.objects.get(id=3)
     case.servant = Servant.objects.get(id=2)
-    case.cityarea = CityArea.objects.get(id=5)
+    case.cityarea = ServantCityAreaShip.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[3].cityarea
     case.category = ServantCategoryShip.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[0].category
     case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[0]
     case.start_date = '2022-07-02'
@@ -683,7 +743,7 @@ def fakeData():
     case = Case()
     case.recipient = Recipient.objects.get(id=5)
     case.servant = Servant.objects.get(id=3)
-    case.cityarea = CityArea.objects.get(id=11)
+    case.cityarea = ServantCityAreaShip.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[2].cityarea
     case.category = ServantCategoryShip.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[1].category
     case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[0]
     case.start_date = '2022-06-25'

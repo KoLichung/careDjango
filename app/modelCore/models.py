@@ -51,7 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_servant = models.BooleanField(default=False)
-    line_id = models.CharField(max_length= 100, blank = True, null=True)
+    line_id = models.CharField(max_length= 100, blank = True, null=True, unique=True)
     objects = UserManager()
     image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
     USERNAME_FIELD = 'phone'
@@ -82,6 +82,7 @@ class Servant(models.Model):
         ('F', 'Female'),
     )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    score = models.FloatField(default=0, blank = True, null=True)
     user =models.OneToOneField(User,on_delete=models.RESTRICT,unique=True,default='',related_name='servant')
     home_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
     home_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
@@ -182,7 +183,15 @@ class City(models.Model):
 class CityArea(models.Model):
     city = models.CharField(max_length = 100, blank = True, null=True)
     area = models.CharField(max_length = 100, blank = True, null=True)
-
+class ServantCityAreaShip(models.Model):
+    servant = servant = models.ForeignKey(
+        Servant,
+        on_delete=models.RESTRICT,
+    )
+    cityarea = models.ForeignKey(
+        CityArea,
+        on_delete=models.RESTRICT
+    )
 class Transportation(models.Model):
     servant = models.ForeignKey(
         Servant,

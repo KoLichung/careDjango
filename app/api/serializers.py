@@ -1,21 +1,8 @@
 from rest_framework import serializers
 from modelCore.models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
 
-class RegistrationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
-        read_only_fields = ('id',)
 
-    def save(self):
-        user = User(phone=self.validated_data['phone'], name=self.validated_data['name'])
-        password = self.validated_data['password']
-        # password2 = self.validated_data['password2']
-        # if password != password2:
-        #     raise serializers.ValidationError({'password': 'Passwords must match.'})
-        user.set_password(password)
-        user.save()
-        return user
+
 class MarkupItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarkupItem
@@ -44,6 +31,9 @@ class LicenseSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class ServantSerializer(serializers.ModelSerializer):
+    servant_ratedNum = serializers.CharField(read_only=True)
+    caregory_type = serializers.CharField(read_only=True)
+    service_area = serializers.CharField(read_only=True)
     class Meta:
         model = Servant
         fields = '__all__'
@@ -123,6 +113,7 @@ class TransportationSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class CaseSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(read_only=True)
     servant_name = serializers.CharField(read_only=True)
     recipient_name = serializers.CharField(read_only=True)
     cityarea_name = serializers.CharField(read_only=True)
@@ -135,6 +126,7 @@ class CaseSerializer(serializers.ModelSerializer):
     markup_Item = serializers.CharField(read_only=True)
     markup_Item_percent = serializers.CharField(read_only=True)
     markup_price = serializers.CharField(read_only=True)
+    platform_fee = serializers.CharField(read_only=True)
     total_price = serializers.CharField(read_only=True)
     recipient_gender = serializers.CharField(read_only=True)
     recipient_age = serializers.CharField(read_only=True)
