@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from modelCore.models import User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice, ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from modelCore.models import User, MarkupItem, Category,License, Servant,ServantWeekdayTimeShip, ServantMarkupItemPrice, ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
 
 
 
@@ -16,14 +16,6 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class LanguageSkillSerializer(serializers.ModelSerializer):
-    coverImage = serializers.CharField(read_only=True)
-
-    class Meta:
-        model = LanguageSkill
-        fields = '__all__'
-        read_only_fields = ('id','coverImage')
-
 class LicenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = License
@@ -31,6 +23,10 @@ class LicenseSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class ServantSerializer(serializers.ModelSerializer):
+    serviceTime = serializers.CharField(read_only=True)
+    service_item = serializers.CharField(read_only=True)
+    servant_skill = serializers.CharField(read_only=True)
+    transportation = serializers.CharField(read_only=True)
     servant_ratedNum = serializers.CharField(read_only=True)
     caregory_type = serializers.CharField(read_only=True)
     service_area = serializers.CharField(read_only=True)
@@ -51,7 +47,7 @@ class ServantSkillShipSerializer(serializers.ModelSerializer):
     servant_name = serializers.CharField(read_only=True)
     language_skill_name = serializers.CharField(read_only=True)
     class Meta:    
-        model = ServantSkillShip
+        model = ServantSkill
         fields = '__all__'
         read_only_fields = ('id','user')
 
@@ -104,13 +100,7 @@ class CityAreaSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
         
-class TransportationSerializer(serializers.ModelSerializer):
-    servant_name = serializers.CharField(read_only=True)
-    cityarea_name = serializers.CharField(read_only=True)
-    class Meta:    
-        model = Transportation
-        fields = '__all__'
-        read_only_fields = ('id',)
+
 
 class CaseSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(read_only=True)

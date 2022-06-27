@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import ServantCityAreaShip, User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice
-from .models import ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
-from .models import City, CityArea
+from .models import ServantCityAreaShip, User, MarkupItem, Category,License, Servant, ServantMarkupItemPrice, Weekday
+from .models import ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from .models import City, CityArea ,ServantWeekdayTimeShip, Weekday, ServantServiceItemShip
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -15,11 +15,12 @@ class UserAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'care_type', 'time_type')
 
-@admin.register(LanguageSkill)
+
+@admin.register(License)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
 
-@admin.register(License)
+@admin.register(Weekday)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
 
@@ -27,11 +28,15 @@ class UserAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id','user','gender')
 
+@admin.register(ServantWeekdayTimeShip)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'servant','weekday','start_time','end_time')
+
 @admin.register(ServantMarkupItemPrice)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'servant','markup_item','pricePercent')
 
-@admin.register(ServantSkillShip)
+@admin.register(ServantSkill)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'servant','languageSkill')
 
@@ -55,6 +60,10 @@ class UserAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
 
+@admin.register(ServantServiceItemShip)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'servant','service_item')
+
 @admin.register(City)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
@@ -69,7 +78,7 @@ class UserAdmin(admin.ModelAdmin):
     
 @admin.register(Transportation)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'servant','cityarea','price')
+    list_display = ('id', 'servantCityArea','price')
 
 @admin.register(Case)
 class UserAdmin(admin.ModelAdmin):

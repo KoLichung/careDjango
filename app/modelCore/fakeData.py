@@ -2,9 +2,9 @@ import csv
 import os
 import datetime 
 from datetime import timedelta
-from .models import ServantCityAreaShip, User, MarkupItem, Category, LanguageSkill, License, Servant, ServantMarkupItemPrice
-from .models import ServantSkillShip,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
-from .models import City, CityArea,ServantCityAreaShip
+from .models import ServantCityAreaShip, User, MarkupItem, Category,License, Servant, ServantMarkupItemPrice, Weekday
+from .models import ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from .models import City, CityArea ,ServantWeekdayTimeShip,Weekday,ServantServiceItemShip
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -107,22 +107,6 @@ def fakeData():
     category.time_type = '每週時段預定'
     category.save()
 
-    skill = LanguageSkill()
-    skill.name = '國語'
-    skill.save()
-
-    skill = LanguageSkill()
-    skill.name = '台語'
-    skill.save()
-
-    skill = LanguageSkill()
-    skill.name = '客家話'
-    skill.save()
-
-    skill = LanguageSkill()
-    skill.name = '粵語'
-    skill.save()
-
     license = License()
     license.name = '身分證正面'
     license.save()
@@ -163,6 +147,38 @@ def fakeData():
     license.name = '護理相關畢業證書'
     license.save()
 
+    weekday = Weekday()
+    weekday.name = '0'
+    weekday.save()
+
+    weekday = Weekday()
+    weekday.name = '1'
+    weekday.save()
+
+    weekday = Weekday()
+    weekday.name = '2'
+    weekday.save()
+
+    weekday = Weekday()
+    weekday.name = '3'
+    weekday.save()
+
+    weekday = Weekday()
+    weekday.name = '4'
+    weekday.save()
+
+    weekday = Weekday()
+    weekday.name = '5'
+    weekday.save()
+
+    weekday = Weekday()
+    weekday.name = '6'
+    weekday.save()
+
+    weekday = Weekday()
+    weekday.name = '7'
+    weekday.save()
+
     servant = Servant()
     servant.user = User.objects.get(id=4)
     servant.gender = 'M'
@@ -199,6 +215,8 @@ def fakeData():
     servant.info = 'test'
     servant.save()
 
+ 
+
     markup_price = ServantMarkupItemPrice()
     markup_price.servant = Servant.objects.get(id=1)
     markup_price.markup_item = MarkupItem.objects.get(id=2)
@@ -217,45 +235,6 @@ def fakeData():
     markup_price.pricePercent = 1.3
     markup_price.save()
 
-    servantskill = ServantSkillShip()
-    servantskill.servant = Servant.objects.get(id=1)
-    servantskill.languageSkill = LanguageSkill.objects.get(id=1)
-    servantskill.save()
-    
-    servantskill = ServantSkillShip()
-    servantskill.servant = Servant.objects.get(id=1)
-    servantskill.languageSkill = LanguageSkill.objects.get(id=3)
-    servantskill.save()
-    
-    servantskill = ServantSkillShip()
-    servantskill.servant = Servant.objects.get(id=1)
-    servantskill.languageSkill = LanguageSkill.objects.get(id=4)
-    servantskill.save()
-    
-    servantskill = ServantSkillShip()
-    servantskill.servant = Servant.objects.get(id=2)
-    servantskill.languageSkill = LanguageSkill.objects.get(id=1)
-    servantskill.save()
-    
-    servantskill = ServantSkillShip()
-    servantskill.servant = Servant.objects.get(id=2)
-    servantskill.languageSkill = LanguageSkill.objects.get(id=2)
-    servantskill.save()
-
-    servantskill = ServantSkillShip()
-    servantskill.servant = Servant.objects.get(id=3)
-    servantskill.languageSkill = LanguageSkill.objects.get(id=1)
-    servantskill.save()
-
-    servantskill = ServantSkillShip()
-    servantskill.servant = Servant.objects.get(id=3)
-    servantskill.languageSkill = LanguageSkill.objects.get(id=2)
-    servantskill.save()
-
-    servantskill = ServantSkillShip()
-    servantskill.servant = Servant.objects.get(id=3)
-    servantskill.languageSkill = LanguageSkill.objects.get(id=4)
-    servantskill.save()
 
     userlicense = UserLicenseShipImage()
     userlicense.user = User.objects.get(id=2)
@@ -464,22 +443,22 @@ def fakeData():
     serviceitem.save()
     
     serviceitem = ServiceItem()
-    serviceitem.name = '協助進食 '
+    serviceitem.name = '協助進食'
     serviceitem.info = '用餐，按醫囑給藥'
     serviceitem.save()
     
     serviceitem = ServiceItem()
-    serviceitem.name = '協助如廁 '
+    serviceitem.name = '協助如廁'
     serviceitem.info = '大小便處理、更換尿布、會陰沖洗'
     serviceitem.save()
     
     serviceitem = ServiceItem()
-    serviceitem.name = '身體清潔 '
+    serviceitem.name = '身體清潔'
     serviceitem.info = '沐浴、擦澡'
     serviceitem.save()
     
     serviceitem = ServiceItem()
-    serviceitem.name = '陪同就醫 '
+    serviceitem.name = '陪同就醫'
     serviceitem.info = '陪伴看診、洗腎，代領藥品'
     serviceitem.save()
     
@@ -669,50 +648,42 @@ def fakeData():
     servantcityareaship.save()
 
     transportation = Transportation()
-    transportation.servant = Servant.objects.get(id=1)
-    transportation.cityarea = CityArea.objects.get(id=13)
+    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=1)
     transportation.price = 500
     transportation.save()
  
     transportation = Transportation()
-    transportation.servant = Servant.objects.get(id=1)
-    transportation.cityarea = CityArea.objects.get(id=9)
+    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=2)
     transportation.price = 0
     transportation.save()
 
     transportation = Transportation()
-    transportation.servant = Servant.objects.get(id=1)
-    transportation.cityarea = CityArea.objects.get(id=10)
+    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=3)
     transportation.price = 300
     transportation.save()
 
     transportation = Transportation()
-    transportation.servant = Servant.objects.get(id=1)
-    transportation.cityarea = CityArea.objects.get(id=12)
+    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=4)
     transportation.price = 500
     transportation.save()
     
     transportation = Transportation()
-    transportation.servant = Servant.objects.get(id=1)
-    transportation.cityarea = CityArea.objects.get(id=16)
+    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=5)
     transportation.price = 500
     transportation.save()
     
     transportation = Transportation()
-    transportation.servant = Servant.objects.get(id=2)
-    transportation.cityarea = CityArea.objects.get(id=1)
+    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=1)
     transportation.price = 200
     transportation.save()
     
     transportation = Transportation()
-    transportation.servant = Servant.objects.get(id=2)
-    transportation.cityarea = CityArea.objects.get(id=2)
+    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=6)
     transportation.price = 300
     transportation.save()
     
     transportation = Transportation()
-    transportation.servant = Servant.objects.get(id=2)
-    transportation.cityarea = CityArea.objects.get(id=3)
+    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=7)
     transportation.price = 400
     transportation.save()
 

@@ -10,7 +10,8 @@ def image_upload_handler(instance,filename):
     fpath = pathlib.Path(filename)
     new_fname = str(uuid.uuid1()) #uuid1 -> uuid + timestamp
     return f'images/{new_fname}{fpath.suffix}'
-    
+
+
 class UserManager(BaseUserManager):
 
     def create_user(self, phone, password=None, **extra_fields):
@@ -65,17 +66,25 @@ class Category(models.Model):
     care_type = models.CharField(max_length= 100, blank = True, null=True)
     time_type =models.CharField(max_length= 100, blank = True, null=True)   
 
-class LanguageSkill(models.Model):
-    name = models.CharField(max_length= 100, unique=True)
-
-    def __str__(self):
-        return self.name
-
 class License(models.Model):
     name = models.CharField(max_length= 100, unique=True)
     def __str__(self):
         return self.name
-
+class Weekday(models.Model):
+    WEEKDAY_CHOICES = (
+        ('0', 'Sunday'),
+        ('1', 'Monday'),
+        ('2', 'Tuesday'),
+        ('3', 'Wednesday'),
+        ('4', 'Thursday'),
+        ('5', 'Friday'),
+        ('6', 'Saturday'),
+        ('7', 'All'),
+        
+    )
+    name = models.CharField(max_length=1, choices=WEEKDAY_CHOICES)
+    def __str__(self):
+        return self.name
 class Servant(models.Model):
     GENDER_CHOICES = (
         ('M', 'Male'),
@@ -94,6 +103,17 @@ class Servant(models.Model):
     info = models.CharField(max_length= 255, blank = True, null=True)
 
 
+class ServantWeekdayTimeShip(models.Model):
+    servant = models.ForeignKey(
+        Servant,
+        on_delete=models.RESTRICT,
+    )
+    weekday =  models.ForeignKey(
+        Weekday,
+        on_delete=models.RESTRICT,
+    )
+    start_time = models.TimeField(auto_now=False, auto_now_add=False )
+    end_time = models.TimeField(auto_now=False, auto_now_add=False )
 class ServantMarkupItemPrice(models.Model):
     servant = models.ForeignKey(
         Servant,
@@ -105,15 +125,12 @@ class ServantMarkupItemPrice(models.Model):
     )
     pricePercent = models.FloatField(default=0, blank = True, null=True)
 
-class ServantSkillShip(models.Model):
+class ServantSkill(models.Model):
     servant = models.ForeignKey(
         Servant,
         on_delete=models.RESTRICT
     )
-    languageSkill = models.ForeignKey(
-        LanguageSkill,
-        on_delete=models.RESTRICT
-    )
+    languageSkill = models.CharField(max_length= 100)
 
 
 
@@ -171,8 +188,16 @@ class Recipient(models.Model):
 class ServiceItem(models.Model):
     name = models.CharField(max_length = 100, blank = True, null=True)
     info = models.CharField(max_length = 100, blank = True, null=True)
-    def __str__(self):
-            return self.name
+
+class ServantServiceItemShip(models.Model):
+    servant = models.ForeignKey(
+        Servant,
+        on_delete=models.RESTRICT,
+    )
+    service_item = models.ForeignKey(
+        ServiceItem,
+        on_delete=models.RESTRICT,
+    )
 
 class City(models.Model):
     name = models.CharField(max_length = 255, blank = True, null=True)
@@ -183,8 +208,9 @@ class City(models.Model):
 class CityArea(models.Model):
     city = models.CharField(max_length = 100, blank = True, null=True)
     area = models.CharField(max_length = 100, blank = True, null=True)
+
 class ServantCityAreaShip(models.Model):
-    servant = servant = models.ForeignKey(
+    servant = models.ForeignKey(
         Servant,
         on_delete=models.RESTRICT,
     )
@@ -192,13 +218,10 @@ class ServantCityAreaShip(models.Model):
         CityArea,
         on_delete=models.RESTRICT
     )
+
 class Transportation(models.Model):
-    servant = models.ForeignKey(
-        Servant,
-        on_delete=models.CASCADE
-    )
-    cityarea = models.ForeignKey(
-        CityArea,
+    servantCityArea = models.ForeignKey(
+        ServantCityAreaShip,
         on_delete=models.CASCADE
     )
     price = models.IntegerField(default=0, null=True)
