@@ -1,17 +1,11 @@
 from rest_framework import serializers
-from modelCore.models import User, MarkupItem, Category,License, Servant,ServantWeekdayTimeShip, ServantMarkupItemPrice, ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from modelCore.models import User, MarkupItem, License, Servant,ServantWeekdayTime, ServantMarkupItemPrice, ServantSkill,UserLicenseShipImage, ServantLicenseShipImage,Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
 
 
 
 class MarkupItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarkupItem
-        fields = '__all__'
-        read_only_fields = ('id',)
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
         fields = '__all__'
         read_only_fields = ('id',)
 
@@ -23,11 +17,13 @@ class LicenseSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class ServantSerializer(serializers.ModelSerializer):
+    license_image = serializers.CharField(read_only=True)
     serviceTime = serializers.CharField(read_only=True)
     service_item = serializers.CharField(read_only=True)
     servant_skill = serializers.CharField(read_only=True)
     transportation = serializers.CharField(read_only=True)
     servant_ratedNum = serializers.CharField(read_only=True)
+    mark_up_item = serializers.CharField(read_only=True)
     caregory_type = serializers.CharField(read_only=True)
     service_area = serializers.CharField(read_only=True)
     class Meta:
@@ -67,14 +63,6 @@ class ServantLicenseShipImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
-class ServantCategoryShipSerializer(serializers.ModelSerializer):
-    servant_name = serializers.CharField(read_only=True)
-    category_CareType = serializers.CharField(read_only=True)
-    category_TimeType = serializers.CharField(read_only=True)
-    class Meta:    
-        model = ServantCategoryShip
-        fields = '__all__'
-        read_only_fields = ('id',)
 
 class RecipientSerializer(serializers.ModelSerializer):
     class Meta:    
@@ -107,8 +95,8 @@ class CaseSerializer(serializers.ModelSerializer):
     servant_name = serializers.CharField(read_only=True)
     recipient_name = serializers.CharField(read_only=True)
     cityarea_name = serializers.CharField(read_only=True)
-    category_CareType = serializers.CharField(read_only=True)
-    category_TimeType = serializers.CharField(read_only=True)
+    CareType = serializers.CharField(read_only=True)
+    TimeType = serializers.CharField(read_only=True)
     case_date = serializers.CharField(read_only=True)
     basic_price = serializers.CharField(read_only=True)
     hour_wage = serializers.CharField(read_only=True)

@@ -2,9 +2,9 @@ import csv
 import os
 import datetime 
 from datetime import timedelta
-from .models import ServantCityAreaShip, User, MarkupItem, Category,License, Servant, ServantMarkupItemPrice, Weekday
-from .models import ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
-from .models import City, CityArea ,ServantWeekdayTimeShip,Weekday,ServantServiceItemShip
+from .models import  User, MarkupItem, License, Servant, ServantMarkupItemPrice
+from .models import ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from .models import City, CityArea ,ServantWeekdayTime,ServantServiceItemShip
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -87,25 +87,6 @@ def fakeData():
     item.name = '體重超過 90 公斤'
     item.save()
 
-    category = Category()
-    category.care_type = '居家照顧'
-    category.time_type = '連續時間'
-    category.save()
-
-    category = Category()
-    category.care_type = '居家照顧'
-    category.time_type = '每週時段預定'
-    category.save()
-
-    category = Category()
-    category.care_type = '醫院看護'
-    category.time_type = '連續時間'
-    category.save()
-
-    category = Category()
-    category.care_type = '醫院看護'
-    category.time_type = '每週時段預定'
-    category.save()
 
     license = License()
     license.name = '身分證正面'
@@ -146,38 +127,6 @@ def fakeData():
     license = License()
     license.name = '護理相關畢業證書'
     license.save()
-
-    weekday = Weekday()
-    weekday.name = '0'
-    weekday.save()
-
-    weekday = Weekday()
-    weekday.name = '1'
-    weekday.save()
-
-    weekday = Weekday()
-    weekday.name = '2'
-    weekday.save()
-
-    weekday = Weekday()
-    weekday.name = '3'
-    weekday.save()
-
-    weekday = Weekday()
-    weekday.name = '4'
-    weekday.save()
-
-    weekday = Weekday()
-    weekday.name = '5'
-    weekday.save()
-
-    weekday = Weekday()
-    weekday.name = '6'
-    weekday.save()
-
-    weekday = Weekday()
-    weekday.name = '7'
-    weekday.save()
 
     servant = Servant()
     servant.user = User.objects.get(id=4)
@@ -352,31 +301,6 @@ def fakeData():
     servantlicense.license = License.objects.get(id=8)
     servantlicense.save()
 
-    servantcategory = ServantCategoryShip()
-    servantcategory.servant = Servant.objects.get(id=1)
-    servantcategory.category = Category.objects.get(id=1)
-    servantcategory.save()
-    
-    servantcategory = ServantCategoryShip()
-    servantcategory.servant = Servant.objects.get(id=1)
-    servantcategory.category = Category.objects.get(id=4)
-    servantcategory.save()
-    
-    servantcategory = ServantCategoryShip()
-    servantcategory.servant = Servant.objects.get(id=2)
-    servantcategory.category = Category.objects.get(id=2)
-    servantcategory.save()
-    
-    servantcategory = ServantCategoryShip()
-    servantcategory.servant = Servant.objects.get(id=3)
-    servantcategory.category = Category.objects.get(id=3)
-    servantcategory.save()
-    
-    servantcategory = ServantCategoryShip()
-    servantcategory.servant = Servant.objects.get(id=3)
-    servantcategory.category = Category.objects.get(id=4)
-    servantcategory.save()
-
     recipient = Recipient()
     recipient.name = 'recipient01'
     recipient.user = User.objects.get(id=2)
@@ -466,6 +390,143 @@ def fakeData():
     serviceitem.name = '陪同復健'
     serviceitem.save()
 
+    transportation = Transportation()
+    transportation.servant = Servant.objects.get(id=1)
+    transportation.cityarea = CityArea.objects.get(id=1)
+    transportation.price = 500
+    transportation.save()
+ 
+    transportation = Transportation()
+    transportation.servant = Servant.objects.get(id=2)
+    transportation.cityarea = CityArea.objects.get(id=5)
+    transportation.price = 500
+    transportation.save()
+
+    transportation = Transportation()
+    transportation.servant = Servant.objects.get(id=3)
+    transportation.cityarea = CityArea.objects.get(id=7)
+    transportation.price = 500
+    transportation.save()
+
+    case = Case()
+    case.recipient = Recipient.objects.get(id=2)
+    case.servant = Servant.objects.get(id=1)
+    case.cityarea = Transportation.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[0].cityarea
+    case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[0]
+    case.start_date = '2022-06-22'
+    case.end_date = '2022-07-12'
+    case.start_time = datetime.time(10,0,0)
+    case.end_time = datetime.time(22,0,0)
+    case.save()
+
+    case = Case()
+    case.recipient = Recipient.objects.get(id=3)
+    case.servant = Servant.objects.get(id=2)
+    case.cityarea = Transportation.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[0].cityarea
+    case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[0]
+    case.start_date = '2022-07-02'
+    case.end_date = '2022-07-15'
+    case.start_time = datetime.time(12,30,0)
+    case.end_time = datetime.time(20,30,0)
+    case.save()
+    
+    case = Case()
+    case.recipient = Recipient.objects.get(id=5)
+    case.servant = Servant.objects.get(id=3)
+    case.cityarea = Transportation.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[0].cityarea
+    case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[0]
+    case.start_date = '2022-06-25'
+    case.end_date = '2022-07-25'
+    case.start_time = datetime.time(9,0,0)
+    case.end_time = datetime.time(17,0,0)
+    case.save()
+
+    caseitemship = CaseServiceItemShip()
+    caseitemship.case = Case.objects.get(id=1)
+    caseitemship.service_item = ServiceItem.objects.get(id=2)
+    caseitemship.save()
+    
+    caseitemship = CaseServiceItemShip()
+    caseitemship.case = Case.objects.get(id=1)
+    caseitemship.service_item = ServiceItem.objects.get(id=3)
+    caseitemship.save()
+    
+    caseitemship = CaseServiceItemShip()
+    caseitemship.case = Case.objects.get(id=2)
+    caseitemship.service_item = ServiceItem.objects.get(id=1)
+    caseitemship.save()
+    
+    caseitemship = CaseServiceItemShip()
+    caseitemship.case = Case.objects.get(id=2)
+    caseitemship.service_item = ServiceItem.objects.get(id=5)
+    caseitemship.save()
+        
+    caseitemship = CaseServiceItemShip()
+    caseitemship.case = Case.objects.get(id=3)
+    caseitemship.service_item = ServiceItem.objects.get(id=2)
+    caseitemship.save()
+
+    caseitemship = CaseServiceItemShip()
+    caseitemship.case = Case.objects.get(id=3)
+    caseitemship.service_item = ServiceItem.objects.get(id=6)
+    caseitemship.save()
+
+    orderstate = OrderState()
+    orderstate.name = '未完成'
+    orderstate.save()
+
+    orderstate = OrderState()
+    orderstate.name = '已完成'
+    orderstate.save()
+
+    orderstate = OrderState()
+    orderstate.name = '已取消'
+    orderstate.save()
+
+    order = Order()
+    order.case = Case.objects.get(id=1)
+    order.state = OrderState.objects.get(id=1)
+    order.info = 'test'
+    order.save()
+
+    order = Order()
+    order.case = Case.objects.get(id=2)
+    order.state = OrderState.objects.get(id=3)
+    order.info = 'test'
+    order.save()
+
+    order = Order()
+    order.case = Case.objects.get(id=3)
+    order.state = OrderState.objects.get(id=1)
+    order.info = 'test'
+    order.save()
+
+    orderreview = OrderReview()
+    orderreview.order = Order.objects.get(id=1)
+    orderreview.user_score = 5
+    orderreview.user_is_rated = True
+    orderreview.user_content = 'Test'
+    orderreview.servant_score = 5
+    orderreview.servant_is_rated = True
+    orderreview.servant_content = 'Test'
+    orderreview.save()
+    
+    orderreview = OrderReview()
+    orderreview.order = Order.objects.get(id=2)
+    orderreview.user_score = 4
+    orderreview.user_is_rated = True
+    orderreview.user_content = 'Test'
+    orderreview.servant_score = 5
+    orderreview.servant_is_rated = True
+    orderreview.servant_content = 'Test'
+    orderreview.save()
+    
+    orderreview = OrderReview()
+    orderreview.order = Order.objects.get(id=3)
+    orderreview.save()
+
+
+def importCityArea():
     city = City()
     city.name = '基隆市'
     city.save()
@@ -586,223 +647,3 @@ def fakeData():
     cityarea.city = City.objects.get(id=10)
     cityarea.area = '全區'
     cityarea.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=1)
-    servantcityareaship.cityarea = CityArea.objects.get(id=1)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=1)
-    servantcityareaship.cityarea = CityArea.objects.get(id=3)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=1)
-    servantcityareaship.cityarea = CityArea.objects.get(id=6)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=1)
-    servantcityareaship.cityarea = CityArea.objects.get(id=10)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=2)
-    servantcityareaship.cityarea = CityArea.objects.get(id=2)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=2)
-    servantcityareaship.cityarea = CityArea.objects.get(id=4)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=2)
-    servantcityareaship.cityarea = CityArea.objects.get(id=8)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=2)
-    servantcityareaship.cityarea = CityArea.objects.get(id=9)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=3)
-    servantcityareaship.cityarea = CityArea.objects.get(id=1)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=3)
-    servantcityareaship.cityarea = CityArea.objects.get(id=4)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=3)
-    servantcityareaship.cityarea = CityArea.objects.get(id=5)
-    servantcityareaship.save()
-
-    servantcityareaship = ServantCityAreaShip()
-    servantcityareaship.servant = Servant.objects.get(id=3)
-    servantcityareaship.cityarea = CityArea.objects.get(id=12)
-    servantcityareaship.save()
-
-    transportation = Transportation()
-    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=1)
-    transportation.price = 500
-    transportation.save()
- 
-    transportation = Transportation()
-    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=2)
-    transportation.price = 0
-    transportation.save()
-
-    transportation = Transportation()
-    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=3)
-    transportation.price = 300
-    transportation.save()
-
-    transportation = Transportation()
-    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=4)
-    transportation.price = 500
-    transportation.save()
-    
-    transportation = Transportation()
-    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=5)
-    transportation.price = 500
-    transportation.save()
-    
-    transportation = Transportation()
-    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=1)
-    transportation.price = 200
-    transportation.save()
-    
-    transportation = Transportation()
-    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=6)
-    transportation.price = 300
-    transportation.save()
-    
-    transportation = Transportation()
-    transportation.servantCityArea = ServantCityAreaShip.objects.get(id=7)
-    transportation.price = 400
-    transportation.save()
-
-    case = Case()
-    case.recipient = Recipient.objects.get(id=2)
-    case.servant = Servant.objects.get(id=1)
-    case.cityarea = ServantCityAreaShip.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[1].cityarea
-    case.category = ServantCategoryShip.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[0].category
-    case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=1)).order_by('id')[0]
-    case.start_date = '2022-06-22'
-    case.end_date = '2022-07-12'
-    case.start_time = datetime.time(10,0,0)
-    case.end_time = datetime.time(22,0,0)
-    case.save()
-
-    case = Case()
-    case.recipient = Recipient.objects.get(id=3)
-    case.servant = Servant.objects.get(id=2)
-    case.cityarea = ServantCityAreaShip.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[3].cityarea
-    case.category = ServantCategoryShip.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[0].category
-    case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=2)).order_by('id')[0]
-    case.start_date = '2022-07-02'
-    case.end_date = '2022-07-15'
-    case.start_time = datetime.time(12,30,0)
-    case.end_time = datetime.time(20,30,0)
-    case.save()
-    
-    case = Case()
-    case.recipient = Recipient.objects.get(id=5)
-    case.servant = Servant.objects.get(id=3)
-    case.cityarea = ServantCityAreaShip.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[2].cityarea
-    case.category = ServantCategoryShip.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[1].category
-    case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[0]
-    case.start_date = '2022-06-25'
-    case.end_date = '2022-07-25'
-    case.start_time = datetime.time(9,0,0)
-    case.end_time = datetime.time(17,0,0)
-    case.save()
-
-    caseitemship = CaseServiceItemShip()
-    caseitemship.case = Case.objects.get(id=1)
-    caseitemship.service_item = ServiceItem.objects.get(id=2)
-    caseitemship.save()
-    
-    caseitemship = CaseServiceItemShip()
-    caseitemship.case = Case.objects.get(id=1)
-    caseitemship.service_item = ServiceItem.objects.get(id=3)
-    caseitemship.save()
-    
-    caseitemship = CaseServiceItemShip()
-    caseitemship.case = Case.objects.get(id=2)
-    caseitemship.service_item = ServiceItem.objects.get(id=1)
-    caseitemship.save()
-    
-    caseitemship = CaseServiceItemShip()
-    caseitemship.case = Case.objects.get(id=2)
-    caseitemship.service_item = ServiceItem.objects.get(id=5)
-    caseitemship.save()
-        
-    caseitemship = CaseServiceItemShip()
-    caseitemship.case = Case.objects.get(id=3)
-    caseitemship.service_item = ServiceItem.objects.get(id=2)
-    caseitemship.save()
-
-    caseitemship = CaseServiceItemShip()
-    caseitemship.case = Case.objects.get(id=3)
-    caseitemship.service_item = ServiceItem.objects.get(id=6)
-    caseitemship.save()
-
-    orderstate = OrderState()
-    orderstate.name = '未完成'
-    orderstate.save()
-
-    orderstate = OrderState()
-    orderstate.name = '已完成'
-    orderstate.save()
-
-    orderstate = OrderState()
-    orderstate.name = '已取消'
-    orderstate.save()
-
-    order = Order()
-    order.case = Case.objects.get(id=1)
-    order.state = OrderState.objects.get(id=1)
-    order.info = 'test'
-    order.save()
-
-    order = Order()
-    order.case = Case.objects.get(id=2)
-    order.state = OrderState.objects.get(id=3)
-    order.info = 'test'
-    order.save()
-
-    order = Order()
-    order.case = Case.objects.get(id=3)
-    order.state = OrderState.objects.get(id=1)
-    order.info = 'test'
-    order.save()
-
-    orderreview = OrderReview()
-    orderreview.order = Order.objects.get(id=1)
-    orderreview.user_score = 5
-    orderreview.user_is_rated = True
-    orderreview.user_content = 'Test'
-    orderreview.servant_score = 5
-    orderreview.servant_is_rated = True
-    orderreview.servant_content = 'Test'
-    orderreview.save()
-    
-    orderreview = OrderReview()
-    orderreview.order = Order.objects.get(id=2)
-    orderreview.user_score = 4
-    orderreview.user_is_rated = True
-    orderreview.user_content = 'Test'
-    orderreview.servant_score = 5
-    orderreview.servant_is_rated = True
-    orderreview.servant_content = 'Test'
-    orderreview.save()
-    
-    orderreview = OrderReview()
-    orderreview.order = Order.objects.get(id=3)
-    orderreview.save()

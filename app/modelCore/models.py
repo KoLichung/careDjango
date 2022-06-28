@@ -62,15 +62,36 @@ class MarkupItem(models.Model):
     def __str__(self):
             return self.name
 
-class Category(models.Model):
-    care_type = models.CharField(max_length= 100, blank = True, null=True)
-    time_type =models.CharField(max_length= 100, blank = True, null=True)   
-
 class License(models.Model):
     name = models.CharField(max_length= 100, unique=True)
     def __str__(self):
         return self.name
-class Weekday(models.Model):
+
+class Servant(models.Model):
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    score = models.FloatField(default=0, blank = True, null=True)
+    user =models.OneToOneField(User,on_delete=models.RESTRICT,unique=True,default='',related_name='servant')
+    is_home = models.BooleanField(default=False)
+    home_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
+    home_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
+    home_oneday_wage = models.IntegerField(default=0, blank = True, null=True)
+    is_hospital = models.BooleanField(default=False)
+    hospital_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
+    hospital_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
+    hospital_oneday_wage = models.IntegerField(default=0, blank = True, null=True)
+    info = models.CharField(max_length= 255, blank = True, null=True)
+    is_alltime_service = models.BooleanField(default=False)
+    background_image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
+
+class ServantWeekdayTime(models.Model):
+    servant = models.ForeignKey(
+        Servant,
+        on_delete=models.RESTRICT,
+    )
     WEEKDAY_CHOICES = (
         ('0', 'Sunday'),
         ('1', 'Monday'),
@@ -82,38 +103,10 @@ class Weekday(models.Model):
         ('7', 'All'),
         
     )
-    name = models.CharField(max_length=1, choices=WEEKDAY_CHOICES)
-    def __str__(self):
-        return self.name
-class Servant(models.Model):
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-    )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    score = models.FloatField(default=0, blank = True, null=True)
-    user =models.OneToOneField(User,on_delete=models.RESTRICT,unique=True,default='',related_name='servant')
-    home_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
-    home_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
-    home_oneday_wage = models.IntegerField(default=0, blank = True, null=True)
-
-    hospital_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
-    hospital_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
-    hospital_oneday_wage = models.IntegerField(default=0, blank = True, null=True)
-    info = models.CharField(max_length= 255, blank = True, null=True)
-
-
-class ServantWeekdayTimeShip(models.Model):
-    servant = models.ForeignKey(
-        Servant,
-        on_delete=models.RESTRICT,
-    )
-    weekday =  models.ForeignKey(
-        Weekday,
-        on_delete=models.RESTRICT,
-    )
+    weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES)
     start_time = models.TimeField(auto_now=False, auto_now_add=False )
     end_time = models.TimeField(auto_now=False, auto_now_add=False )
+
 class ServantMarkupItemPrice(models.Model):
     servant = models.ForeignKey(
         Servant,
@@ -146,6 +139,8 @@ class UserLicenseShipImage(models.Model):
     )
     image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
 
+    is_upload_image = models.BooleanField(default=False)
+
 class ServantLicenseShipImage(models.Model):
     servant = models.ForeignKey(
         Servant,
@@ -158,16 +153,7 @@ class ServantLicenseShipImage(models.Model):
     )
     image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
 
-class ServantCategoryShip(models.Model):
-    servant = models.ForeignKey(
-        Servant,
-        on_delete=models.CASCADE
-    )
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE
-    )
-
+    is_upload_image = models.BooleanField(default=False)
 
 class Recipient(models.Model):
     name = models.CharField(max_length= 100, blank=True, null=True)
@@ -209,7 +195,8 @@ class CityArea(models.Model):
     city = models.CharField(max_length = 100, blank = True, null=True)
     area = models.CharField(max_length = 100, blank = True, null=True)
 
-class ServantCityAreaShip(models.Model):
+
+class Transportation(models.Model):
     servant = models.ForeignKey(
         Servant,
         on_delete=models.RESTRICT,
@@ -217,12 +204,6 @@ class ServantCityAreaShip(models.Model):
     cityarea = models.ForeignKey(
         CityArea,
         on_delete=models.RESTRICT
-    )
-
-class Transportation(models.Model):
-    servantCityArea = models.ForeignKey(
-        ServantCityAreaShip,
-        on_delete=models.CASCADE
     )
     price = models.IntegerField(default=0, null=True)
     
@@ -242,11 +223,7 @@ class Case(models.Model):
         CityArea,
         on_delete=models.RESTRICT
     )
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.RESTRICT,
-        default=''
-    )
+
     markup_item = models.ForeignKey(
         ServantMarkupItemPrice,
         on_delete=models.RESTRICT,

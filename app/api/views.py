@@ -16,7 +16,7 @@ import datetime
 from django.shortcuts import get_object_or_404
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
 import datetime 
-from modelCore.models import User, MarkupItem, Category, License,Weekday, Servant,ServantWeekdayTimeShip, ServantMarkupItemPrice, ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, ServantCategoryShip, Recipient, ServiceItem, City, CityArea,ServantCityAreaShip, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip ,ServantServiceItemShip
+from modelCore.models import User, MarkupItem, License, Servant,ServantWeekdayTime, ServantMarkupItemPrice, ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip ,ServantServiceItemShip
 from api import serializers
 
 class CreateListModelMixin:
@@ -46,21 +46,23 @@ class LicenseViewSet(viewsets.GenericViewSet,
 
 class ServantRecommendationViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
+    # http://127.0.0.1:8000/api/servant_Recommend?sort=HighPrice
     queryset = Servant.objects.all()
     serializer_class = serializers.ServantSerializer
-
-        
-
+    # care_type_id 1=home 2=hospital 3=all
     def filter_queryset(self, queryset):
         queryset = self.queryset 
-        category_id = self.request.GET.get('category_id')
-        cityarea_id = self.request.GET.get('cityarea_id')
+        care_type_id = self.request.GET.get('care_type_id')
+        cityarea_id = self.request.GET.get('care_type_id')
         sort = self.request.GET.get('sort')
-        print(type(sort))
-        if category_id != None:
-            queryset = queryset.filter(category=Category.objects.get(id=category_id))
+        if care_type_id == 1:
+            queryset = queryset.objects.filter(is_home=True)
+        elif care_type_id == 2:
+            queryset = queryset.objects.filter(is_hospital=True)
+        elif care_type_id == 3:
+            pass
         if cityarea_id != None:
-            queryset = queryset.filter(cityarea=CityArea.objects.get(id=cityarea_id))
+            queryset = Transportation.objects.filter(cityarea=CityArea.objects.get(id=cityarea_id))
         
         for i in range(len(queryset)):
             Score_Dict = OrderReview.objects.filter(order__case__servant=queryset[i],servant_is_rated=True).aggregate(avg_rating=Avg('servant_score'))
@@ -70,12 +72,8 @@ class ServantRecommendationViewSet(viewsets.GenericViewSet,
             Num_Dict = OrderReview.objects.filter(order__case__servant=queryset[i],servant_is_rated=True).aggregate(num=Count('servant_score'))
             queryset[i].servant_ratedNum = Num_Dict['num']
             ServantCareTypeList = {}
-            servantCategory = ServantCategoryShip.objects.filter(servant=queryset[i])
-            for n in range(len(servantCategory)):
-                ServantCareTypeList['servantCareType'+str(n+1)] = str(servantCategory[n].category.care_type)
-            queryset[i].caregory_type = ServantCareTypeList
             serviceCityList = {}
-            serviceCity = ServantCityAreaShip.objects.filter(servant=queryset[i])
+            serviceCity = Transportation.objects.filter(servant=queryset[i])
             for x in range(len(serviceCity)):  
                 serviceCityList['serviceCity'+str(x+1)] = str(serviceCity[x].cityarea.city)
             queryset[i].service_area = serviceCityList
@@ -160,27 +158,6 @@ class ServantLicenseShipImageViewSet(viewsets.GenericViewSet,
             queryset[i].license_name = queryset[i].license.name
         return queryset
 
-class ServantCategoryShipViewSet(viewsets.GenericViewSet,
-                    mixins.ListModelMixin,
-                    mixins.CreateModelMixin):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    queryset = ServantCategoryShip.objects.all()
-    serializer_class = serializers.ServantCategoryShipSerializer
-
-    def get_queryset(self):
-        queryset = self.queryset
-        theUser = self.request.user
-        category_id = self.request.GET.get('category_id')
-        queryset = queryset.filter(servant__user=theUser)
-        if category_id != None:
-            queryset = queryset.filter(category=Category.objects.get(id=category_id))
-        for i in range(len(queryset)):
-            queryset[i].servant_name = queryset[i].servant.user.name
-            queryset[i].category_CareType = queryset[i].category.care_type
-            queryset[i].category_TimeType = queryset[i].category.time_type
-
-        return queryset
 
 class RecipientViewSet(viewsets.GenericViewSet,
                             mixins.ListModelMixin,
@@ -366,12 +343,19 @@ class PostCaseViewSet(viewsets.GenericViewSet,
         theUser = self.request.user
  
         queryset = queryset.filter(recipient__user=theUser)
-
         for i in range(len(queryset)):
+            CareTypeDict = {}
             queryset[i].servant_name = queryset[i].servant.user.name
             queryset[i].recipient_name = queryset[i].recipient.name
-            queryset[i].category_CareType = queryset[i].category.care_type
-            queryset[i].category_TimeType = queryset[i].category.time_type
+            if queryset[i].servant.is_home == True:
+                CareTypeDict['caretype_1'] = '居家照顧'
+            if queryset[i].servant.is_hospital == True:
+                CareTypeDict['caretype_2'] = '醫院照護'
+            queryset[i].CareType = CareTypeDict
+            if queryset[i].servant.is_alltime_service == True:
+                queryset[i].TimeType = '連續時間'
+            else:
+                queryset[i].TimeType = '每週預定'
             queryset[i].case_date = str(queryset[i].start_date) + ' ~ ' + str(queryset[i].end_date)
 
         return queryset
@@ -383,13 +367,13 @@ class PostCaseViewSet(viewsets.GenericViewSet,
         case = Case.objects.get(id=uid)
     
         if case.recipient.user == theUser:
-            if case.category.care_type == '居家照顧':
+            if case.servant.is_home == True :
                 hour_wage = case.servant.home_hourly_wage
             else:
                 hour_wage = case.servant.hospital_hourly_wage
 
             working_hours = ((case.end_time).hour - (case.start_time).hour) * (((case.end_date) - (case.start_date)).days)
-
+            CareTypeDict = {}
             case.quservant_name = case.servant.user.name
             case.recipient_name = case.recipient.name
             case.recipient_gender = case.recipient.gender
@@ -400,8 +384,15 @@ class PostCaseViewSet(viewsets.GenericViewSet,
             case.recipient_disease_info = case.recipient.disease_info
             case.recipient_conditions_info = case.recipient.conditions_info
             case.cityarea_name = case.cityarea.city + case.cityarea.area
-            case.category_CareType = case.category.care_type
-            case.category_TimeType = case.category.time_type
+            if case.servant.is_home == True:
+                CareTypeDict['caretype_1'] = '居家照顧'
+            if case.servant.is_hospital == True:
+                CareTypeDict['caretype_2'] = '醫院照護'
+            case.CareType = CareTypeDict
+            if case.servant.is_alltime_service == True:
+                case.TimeType = '連續時間'
+            else:
+                case.TimeType = '每週預定'
             case.case_date = str(case.start_date) + ' ~ ' + str(case.end_date)
             case.basic_price =  hour_wage * working_hours
             case.hour_wage =  hour_wage 
@@ -442,8 +433,16 @@ class TakeCaseViewSet(viewsets.GenericViewSet,
             queryset[i].user_name = queryset[i].recipient.user.name
             queryset[i].servant_name = queryset[i].servant.user.name
             queryset[i].recipient_name = queryset[i].recipient.name
-            queryset[i].category_CareType = queryset[i].category.care_type
-            queryset[i].category_TimeType = queryset[i].category.time_type
+            CareTypeDict = {}
+            if queryset[i].servant.is_home == True:
+                CareTypeDict['caretype_1'] = '居家照顧'
+            if queryset[i].servant.is_hospital == True:
+                CareTypeDict['caretype_2'] = '醫院照護'
+            queryset[i].CareType = CareTypeDict
+            if queryset[i].servant.is_alltime_service == True:
+                queryset[i].TimeType = '連續時間'
+            else:
+                queryset[i].TimeType = '每週預定'
             queryset[i].case_date = str(queryset[i].start_date) + ' ~ ' + str(queryset[i].end_date)
 
         return queryset
@@ -452,13 +451,13 @@ class TakeCaseViewSet(viewsets.GenericViewSet,
         theUser = self.request.user
         case = Case.objects.get(id=uid)
         if case.servant.user == theUser:
-            if case.category.care_type == '居家照顧':
+            if case.servant.is_home == True :
                 hour_wage = case.servant.home_hourly_wage
             else:
                 hour_wage = case.servant.hospital_hourly_wage
 
             working_hours = ((case.end_time).hour - (case.start_time).hour) * (((case.end_date) - (case.start_date)).days)
-            case.user_name = case.recipient.user.name
+            CareTypeDict = {}
             case.quservant_name = case.servant.user.name
             case.recipient_name = case.recipient.name
             case.recipient_gender = case.recipient.gender
@@ -469,8 +468,15 @@ class TakeCaseViewSet(viewsets.GenericViewSet,
             case.recipient_disease_info = case.recipient.disease_info
             case.recipient_conditions_info = case.recipient.conditions_info
             case.cityarea_name = case.cityarea.city + case.cityarea.area
-            case.category_CareType = case.category.care_type
-            case.category_TimeType = case.category.time_type
+            if case.servant.is_home == True:
+                CareTypeDict['caretype_1'] = '居家照顧'
+            if case.servant.is_hospital == True:
+                CareTypeDict['caretype_2'] = '醫院照護'
+            case.CareType = CareTypeDict
+            if case.servant.is_alltime_service == True:
+                case.TimeType = '連續時間'
+            else:
+                case.TimeType = '每週預定'
             case.case_date = str(case.start_date) + ' ~ ' + str(case.end_date)
             case.basic_price =  hour_wage * working_hours
             case.hour_wage =  hour_wage 
@@ -518,8 +524,16 @@ class NotRatedYetViewSet(viewsets.GenericViewSet,
             queryset[i].servant_name = queryset[i].order.case.servant.user.name
             queryset[i].recipient_name = queryset[i].order.case.recipient.name
             queryset[i].cityarea_name = queryset[i].order.case.cityarea.city + queryset[i].order.case.cityarea.area
-            queryset[i].category_CareType = queryset[i].order.case.category.care_type
-            queryset[i].category_TimeType = queryset[i].order.case.category.time_type
+            CareTypeDict = {}
+            if queryset[i].case.servant.is_home == True:
+                CareTypeDict['caretype_1'] = '居家照顧'
+            if queryset[i].case.servant.is_hospital == True:
+                CareTypeDict['caretype_2'] = '醫院照護'
+            queryset[i].CareType = CareTypeDict
+            if queryset[i].case.servant.is_alltime_service == True:
+                queryset[i].TimeType = '連續時間'
+            else:
+                queryset[i].TimeType = '每週預定'
             queryset[i].case_date = str(queryset[i].order.case.start_date) + ' ~ ' + str(queryset[i].order.case.end_date)
         
         return queryset
@@ -601,8 +615,16 @@ class ServantRateViewSet(viewsets.GenericViewSet,
             queryset[i].user_name = theUser
             queryset[i].servant_name = queryset[i].order.case.servant.user.name
             queryset[i].cityarea_name = queryset[i].order.case.cityarea.city + queryset[i].order.case.cityarea.area
-            queryset[i].category_CareType = queryset[i].order.case.category.care_type
-            queryset[i].category_TimeType = queryset[i].order.case.category.time_type
+            CareTypeDict = {}
+            if queryset[i].case.servant.is_home == True:
+                CareTypeDict['caretype_1'] = '居家照顧'
+            if queryset[i].case.servant.is_hospital == True:
+                CareTypeDict['caretype_2'] = '醫院照護'
+            queryset[i].CareType = CareTypeDict
+            if queryset[i].case.servant.is_alltime_service == True:
+                queryset[i].TimeType = '連續時間'
+            else:
+                queryset[i].TimeType = '每週預定'
             queryset[i].case_date = str(queryset[i].order.case.start_date) + ' ~ ' + str(queryset[i].order.case.end_date)
         
         return queryset
@@ -639,8 +661,16 @@ class UserRateViewSet(viewsets.GenericViewSet,
             queryset[i].user_name = theUser
             queryset[i].servant_name = queryset[i].order.case.servant.user.name
             queryset[i].cityarea_name = queryset[i].order.case.cityarea.city + queryset[i].order.case.cityarea.area
-            queryset[i].category_CareType = queryset[i].order.case.category.care_type
-            queryset[i].category_TimeType = queryset[i].order.case.category.time_type
+            CareTypeDict = {}
+            if queryset[i].case.servant.is_home == True:
+                CareTypeDict['caretype_1'] = '居家照顧'
+            if queryset[i].case.servant.is_hospital == True:
+                CareTypeDict['caretype_2'] = '醫院照護'
+            queryset[i].CareType = CareTypeDict
+            if queryset[i].case.servant.is_alltime_service == True:
+                queryset[i].TimeType = '連續時間'
+            else:
+                queryset[i].TimeType = '每週預定'
             queryset[i].case_date = str(queryset[i].order.case.start_date) + ' ~ ' + str(queryset[i].order.case.end_date)
         
         return queryset
@@ -727,6 +757,8 @@ class ServiceSettings(APIView):
     # 服務類型 hospital_care : True , hospital_hourly_wage : 300
     # 服務地區 add_region_num：1 , city_1 : 基隆市 , area_1 : 全區 , transportation_1 : 200
     # 服務項目 service_item_id_1 : 協助進食
+    # 相關文件 license_name_1 : 護理師證書 , license_image_1 : image_001.jpeg
+
     def post(self,request):
         theUser = self.request.user
         theServant = Servant.objects.get(user=theUser)
@@ -754,6 +786,7 @@ class ServiceSettings(APIView):
         sunday = request.data.get('sunday')
         sunday_startTime = request.data.get('sunday_startTime')
         sunday_endTime = request.data.get('sunday_endTime')
+        
 
         Chinese = request.data.get('Chinese')
         Taiwanese = request.data.get('Taiwanese')
@@ -774,94 +807,105 @@ class ServiceSettings(APIView):
         hospital_halfday_wage = request.data.get('hospital_halfday_wage')
         hospital_oneday_wage = request.data.get('hospital_oneday_wage')
         add_region_num = request.data.get('add_region_num')
+        is_emergency = request.data.get('is_emergency')
+        emergency_pricePercent = request.data.get('emergency_pricePercent')
+        is_contagious = request.data.get('is_contagious')
+        contagious_pricePercent= request.data.get('contagious_pricePercent')
+        is_over70 = request.data.get('is_over70')
+        over70_pricePercent= request.data.get('over70_pricePercent')
+        is_over90 = request.data.get('is_over90')
+        over90_pricePercent= request.data.get('over90_pricePercent')
+        info = request.data.get('info')
+        background_image = request.data.get('background_image')
         service_item_num = ServiceItem.objects.all().count()
-        
+        licenses = License.objects.all()
+        print(emergency_pricePercent)
         theServant.gender = gender
 
         if all_time  == 'True' :
-            timeship = ServantWeekdayTimeShip()
+            timeship = ServantWeekdayTime()
             timeship.servant = theServant
-            timeship.weekday = Weekday.objects.get(name='7')
+            timeship.weekday = '7'
             timeship.start_time = datetime.time(0,0,0)
             timeship.end_time = datetime.time(23,59,59)
             timeship.save()
         else:
             if monday == 'True' :
-                if ServantWeekdayTimeShip.objects.filter(servant=theServant,weekday=Weekday.objects.get(name='1')).exists() != True:
-                    timeship = ServantWeekdayTimeShip()
+                if ServantWeekdayTime.objects.filter(servant=theServant,weekday='1').exists() != True:
+                    timeship = ServantWeekdayTime()
                     
                 else:
-                    timeship = ServantWeekdayTimeShip.objects.get(servant=theServant,weekday=Weekday.objects.get(name='1'))
+                    timeship = ServantWeekdayTime.objects.get(servant=theServant,weekday='1')
                 timeship.servant = theServant
-                timeship.weekday = Weekday.objects.get(name='1')
+                timeship.weekday = '1'
                 timeship.start_time = datetime.time(int(monday_startTime.split(':')[0]),int(monday_startTime.split(':')[1]))
                 timeship.end_time = datetime.time(int(monday_endTime.split(':')[0]),int(monday_endTime.split(':')[1]))
                 timeship.save()
 
             if tuesday == 'True' :
-                if ServantWeekdayTimeShip.objects.filter(servant=theServant,weekday=Weekday.objects.get(name='2')).exists() != True:
-                    timeship = ServantWeekdayTimeShip()
+                if ServantWeekdayTime.objects.filter(servant=theServant,weekday='2').exists() != True:
+                    timeship = ServantWeekdayTime()
                     
                 else:
-                    timeship = ServantWeekdayTimeShip.objects.get(servant=theServant,weekday=Weekday.objects.get(name='2'))
+                    timeship = ServantWeekdayTime.objects.get(servant=theServant,weekday='2')
                 timeship.servant = theServant
-                timeship.weekday = Weekday.objects.get(name='2')
+                timeship.weekday = '2'
                 timeship.start_time = datetime.time(int(tuesday_startTime.split(':')[0]),int(tuesday_startTime.split(':')[1]))
                 timeship.end_time = datetime.time(int(tuesday_endTime.split(':')[0]),int(tuesday_endTime.split(':')[1]))
                 timeship.save()
                 
             if wednesday == 'True' :
-                if ServantWeekdayTimeShip.objects.filter(servant=theServant,weekday=Weekday.objects.get(name='3')).exists() != True:
-                    timeship = ServantWeekdayTimeShip()
+                if ServantWeekdayTime.objects.filter(servant=theServant,weekday='3').exists() != True:
+                    timeship = ServantWeekdayTime()
                     
                 else:
-                    timeship = ServantWeekdayTimeShip.objects.get(servant=theServant,weekday=Weekday.objects.get(name='3'))
+                    timeship = ServantWeekdayTime.objects.get(servant=theServant,weekday='3')
                 timeship.servant = theServant
-                timeship.weekday = Weekday.objects.get(name='3')
+                timeship.weekday = '3'
                 timeship.start_time = datetime.time(int(wednesday_startTime.split(':')[0]),int(wednesday_startTime.split(':')[1]))
                 timeship.end_time = datetime.time(int(wednesday_endTime.split(':')[0]),int(wednesday_endTime.split(':')[1]))
                 timeship.save()
             if thursday == 'True' :
-                if ServantWeekdayTimeShip.objects.filter(servant=theServant,weekday=Weekday.objects.get(name='4')).exists() != True:
-                    timeship = ServantWeekdayTimeShip()
+                if ServantWeekdayTime.objects.filter(servant=theServant,weekday='4').exists() != True:
+                    timeship = ServantWeekdayTime()
                     
                 else:
-                    timeship = ServantWeekdayTimeShip.objects.get(servant=theServant,weekday=Weekday.objects.get(name='4'))
+                    timeship = ServantWeekdayTime.objects.get(servant=theServant,weekday='4')
                 timeship.servant = theServant
-                timeship.weekday = Weekday.objects.get(name='4')
+                timeship.weekday = '4'
                 timeship.start_time = datetime.time(int(thursday_startTime.split(':')[0]),int(thursday_startTime.split(':')[1]))
                 timeship.end_time = datetime.time(int(thursday_endTime.split(':')[0]),int(thursday_endTime.split(':')[1]))
                 timeship.save()
             if friday == 'True' :
-                if ServantWeekdayTimeShip.objects.filter(servant=theServant,weekday=Weekday.objects.get(name='5')).exists() != True:
-                    timeship = ServantWeekdayTimeShip()
+                if ServantWeekdayTime.objects.filter(servant=theServant,weekday='5').exists() != True:
+                    timeship = ServantWeekdayTime()
                     
                 else:
-                    timeship = ServantWeekdayTimeShip.objects.get(servant=theServant,weekday=Weekday.objects.get(name='5'))
+                    timeship = ServantWeekdayTime.objects.get(servant=theServant,weekday='5')
                 timeship.servant = theServant
-                timeship.weekday = Weekday.objects.get(name='5')
+                timeship.weekday = '5'
                 timeship.start_time = datetime.time(int(friday_startTime.split(':')[0]),int(friday_startTime.split(':')[1]))
                 timeship.end_time = datetime.time(int(friday_endTime.split(':')[0]),int(friday_endTime.split(':')[1]))
                 timeship.save()
             if saturday == 'True' :
-                if ServantWeekdayTimeShip.objects.filter(servant=theServant,weekday=Weekday.objects.get(name='6')).exists() != True:
-                    timeship = ServantWeekdayTimeShip()
+                if ServantWeekdayTime.objects.filter(servant=theServant,weekday='6').exists() != True:
+                    timeship = ServantWeekdayTime()
                     
                 else:
-                    timeship = ServantWeekdayTimeShip.objects.get(servant=theServant,weekday=Weekday.objects.get(name='6'))
+                    timeship = ServantWeekdayTime.objects.get(servant=theServant,weekday='6')
                 timeship.servant = theServant
-                timeship.weekday = Weekday.objects.get(name='6')
+                timeship.weekday = '6'
                 timeship.start_time = datetime.time(int(saturday_startTime.split(':')[0]),int(saturday_startTime.split(':')[1]))
                 timeship.end_time = datetime.time(int(saturday_endTime.split(':')[0]),int(saturday_endTime.split(':')[1]))
                 timeship.save()
             if sunday == True :
-                if ServantWeekdayTimeShip.objects.filter(servant=theServant,weekday=Weekday.objects.get(name='0')).exists() != True:
-                    timeship = ServantWeekdayTimeShip()
+                if ServantWeekdayTime.objects.filter(servant=theServant,weekday='0').exists() != True:
+                    timeship = ServantWeekdayTime()
                     
                 else:
-                    timeship = ServantWeekdayTimeShip.objects.get(servant=theServant,weekday=Weekday.objects.get(name='0'))
+                    timeship = ServantWeekdayTime.objects.get(servant=theServant,weekday='0')
                 timeship.servant = theServant
-                timeship.weekday = Weekday.objects.get(name='0')
+                timeship.weekday = '0'
                 timeship.start_time = datetime.time(int(sunday_startTime.split(':')[0]),int(sunday_startTime.split(':')[1]))
                 timeship.end_time = datetime.time(int(sunday_endTime.split(':')[0]),int(sunday_endTime.split(':')[1]))
                 timeship.save()
@@ -915,70 +959,31 @@ class ServiceSettings(APIView):
             servantskill.save()
 
         if home_care == 'True':
-            if all_time == 'True':
-                if ServantCategoryShip.objects.get(servant=theServant,category=Category.objects.get(id=1)) != None:
-                    pass
-                else:
-                    servantCategoryship = ServantCategoryShip()
-                    servantCategoryship.servant = theServant
-                    servantCategoryship.category = Category.objects.get(id=1)
-                    servantCategoryship.save()
-
-                theServant.home_hourly_wage = home_hourly_wage
-                theServant.home_halfday_wage = home_halfday_wage
-                theServant.home_oneday_wage = home_oneday_wage
-            else:
-                if ServantCategoryShip.objects.get(servant=theServant,category=Category.objects.get(id=2)) != None:
-                     pass
-                else:
-                    servantCategoryship = ServantCategoryShip()
-                    servantCategoryship.servant = theServant
-                    servantCategoryship.category = Category.objects.get(id=2)
-                    servantCategoryship.save()
-
-                theServant.home_hourly_wage = home_hourly_wage
-                theServant.home_halfday_wage = home_halfday_wage
-                theServant.home_oneday_wage = home_oneday_wage
+            
+            theServant.is_home = True
+            theServant.home_hourly_wage = home_hourly_wage
+            theServant.home_halfday_wage = home_halfday_wage
+            theServant.home_oneday_wage = home_oneday_wage
+            
 
         if hospital_care == 'True':
-            if all_time == 'True':
-                if ServantCategoryShip.objects.get(servant=theServant,category=Category.objects.get(id=3)) != None:
-                    pass
-                else:
-                    servantCategoryship = ServantCategoryShip()
-                    servantCategoryship.servant = theServant
-                    servantCategoryship.category = Category.objects.get(id=3)
-                    servantCategoryship.save()
 
-                theServant.hospital_hourly_wage = hospital_hourly_wage
-                theServant.hospital_halfday_wage = hospital_halfday_wage
-                theServant.hospital_oneday_wage = hospital_oneday_wage
-            else:
-                if ServantCategoryShip.objects.get(servant=theServant,category=Category.objects.get(id=4)) != None:
-                     pass
-                else:
-                    servantCategoryship = ServantCategoryShip()
-                    servantCategoryship.servant = theServant
-                    servantCategoryship.category = Category.objects.get(id=4)
-                    servantCategoryship.save()
+            theServant.is_hospital = True
+            theServant.hospital_hourly_wage = hospital_hourly_wage
+            theServant.hospital_halfday_wage = hospital_halfday_wage
+            theServant.hospital_oneday_wage = hospital_oneday_wage
 
-                theServant.hospital_hourly_wage = hospital_hourly_wage
-                theServant.hospital_halfday_wage = hospital_halfday_wage
-                theServant.hospital_oneday_wage = hospital_oneday_wage
 
         cityArealist = []
         transportation_dict = {}
         for i in range(int(add_region_num)):
             cityArealist.append({'city':request.data.get('city_'+str(i+1)),'area':request.data.get('area_'+str(i+1)),'transportation':request.data.get('transportation_'+str(i+1))})
-            if  ServantCityAreaShip.objects.filter(servant=theServant,cityarea=CityArea.objects.get(city=cityArealist[i]['city'],area=cityArealist[i]['area'])).exists() == False:
-               servantCityAreaShip = ServantCityAreaShip()
+            if  Transportation.objects.filter(servant=theServant,cityarea=CityArea.objects.get(city=cityArealist[i]['city'],area=cityArealist[i]['area'])).exists() == False:
+               transportation = Transportation()
             else:
-                servantCityAreaShip = ServantCityAreaShip.objects.get(servant=theServant,cityarea=CityArea.objects.get(city=cityArealist[i]['city'],area=cityArealist[i]['area']))
-            servantCityAreaShip.servant = theServant
-            servantCityAreaShip.cityarea = CityArea.objects.get(city=cityArealist[i]['city'],area=cityArealist[i]['area'])
-            servantCityAreaShip.save()
-            transportation = Transportation()
-            transportation.servantCityArea = servantCityAreaShip
+                transportation = Transportation.objects.get(servant=theServant,cityarea=CityArea.objects.get(city=cityArealist[i]['city'],area=cityArealist[i]['area']))
+            transportation.servant = theServant
+            transportation.cityarea = CityArea.objects.get(city=cityArealist[i]['city'],area=cityArealist[i]['area'])
             transportation.price = int(cityArealist[i]['transportation'])
             transportation.save()
 
@@ -987,7 +992,6 @@ class ServiceSettings(APIView):
         for i in range(service_item_num):
             if request.data.get('service_item_'+str(i+1))  != None:
                 service_item_count += 1
-        print(service_item_count)
         for n in range(service_item_count):
             service_item_list.append({'service_item':request.data.get('service_item_'+str(n+1))}) 
             if  ServantServiceItemShip.objects.filter(servant=theServant,service_item=ServiceItem.objects.get(name=service_item_list[n]['service_item'])).exists() == False:
@@ -999,28 +1003,88 @@ class ServiceSettings(APIView):
             servantItemShip.service_item = ServiceItem.objects.get(name=service_item_list[n]['service_item'])
             servantItemShip.save()
 
+        if is_emergency == 'True':
+            if ServantMarkupItemPrice.objects.filter(servant=theServant,markup_item=MarkupItem.objects.get(id=1)).exists() == True :
+                servantmarkupItemPrice = ServantMarkupItemPrice.objects.get(servant=theServant,markup_item=MarkupItem.objects.get(id=1))
+            else:
+                servantmarkupItemPrice = ServantMarkupItemPrice()
+                servantmarkupItemPrice.servant = theServant
+                servantmarkupItemPrice.markup_item = MarkupItem.objects.get(id=1)
+            servantmarkupItemPrice.pricePercent = float(emergency_pricePercent)
+            servantmarkupItemPrice.save()
 
+        if is_contagious == 'True':
+            if ServantMarkupItemPrice.objects.filter(servant=theServant,markup_item=MarkupItem.objects.get(id=2)).exists() == True :
+                servantmarkupItemPrice = ServantMarkupItemPrice.objects.get(servant=theServant,markup_item=MarkupItem.objects.get(id=2))
+            else:
+                servantmarkupItemPrice = ServantMarkupItemPrice()
+                servantmarkupItemPrice.servant = theServant
+                servantmarkupItemPrice.markup_item = MarkupItem.objects.get(id=2)
+            servantmarkupItemPrice.pricePercent = float(contagious_pricePercent)
+            servantmarkupItemPrice.save()
+
+        if is_over70 == 'True':
+            if ServantMarkupItemPrice.objects.filter(servant=theServant,markup_item=MarkupItem.objects.get(id=3)).exists() == True :
+                servantmarkupItemPrice = ServantMarkupItemPrice.objects.get(servant=theServant,markup_item=MarkupItem.objects.get(id=3))
+            else:
+                servantmarkupItemPrice = ServantMarkupItemPrice()
+                servantmarkupItemPrice.servant = theServant
+                servantmarkupItemPrice.markup_item = MarkupItem.objects.get(id=3)
+            servantmarkupItemPrice.pricePercent = float(over70_pricePercent)
+            servantmarkupItemPrice.save()
+
+        if is_over90 == 'True':
+            if ServantMarkupItemPrice.objects.filter(servant=theServant,markup_item=MarkupItem.objects.get(id=4)).exists() == True :
+                servantmarkupItemPrice = ServantMarkupItemPrice.objects.get(servant=theServant,markup_item=MarkupItem.objects.get(id=4))
+            else:
+                servantmarkupItemPrice = ServantMarkupItemPrice()
+                servantmarkupItemPrice.servant = theServant
+                servantmarkupItemPrice.markup_item = MarkupItem.objects.get(id=4)
+            servantmarkupItemPrice.pricePercent = float(over90_pricePercent)
+            servantmarkupItemPrice.save()
+
+        licenseImage_count = 0
+        licenseImage_list = []
+        for i in range(len(licenses)):
+             if request.data.get('license_name_'+str(i+1))  != None:
+                licenseImage_count += 1
+
+        for n in range(licenseImage_count):
+            licenseImage_list.append({'license_name':request.data.get('license_name_'+str(n+1))})
+            if ServantLicenseShipImage.objects.filter(servant=theServant,license=License.objects.get(name=licenseImage_list[n]['license_name']),is_upload_image=True).exists() == True :
+                licenseImage = ServantLicenseShipImage.objects.get(servant=theServant,license=License.objects.get(name=licenseImage_list[n]['license_name']))
+            else:
+                licenseImage = ServantLicenseShipImage()
+                licenseImage.servant = theServant
+                licenseImage.license = License.objects.get(name=licenseImage_list[n]['license_name'])
+            licenseImage.image = request.data.get('license_image_'+str(n+1))
+            licenseImage.is_upload_image = True
+            licenseImage.save()
+
+        theServant.info = info
+        theServant.background_image = background_image
+
+        # return data
         service_time_dict={}
-        service_time = ServantWeekdayTimeShip.objects.filter(servant=theServant)
+        service_time = ServantWeekdayTime.objects.filter(servant=theServant)
         
-        if service_time.filter(weekday=Weekday.objects.get(id=8)).exists() == True :
-            print('all')
+        if service_time.filter(weekday='7').exists() == True :
             service_time_dict['服務時段'] = '任何時段皆可'
         else:
-            if service_time.filter(weekday=Weekday.objects.get(id=2)).exists() == True :
-                service_time_dict['monday'] = '時段：' + str(service_time.get(weekday=Weekday.objects.get(id=2)).start_time) + '~' + str(service_time.get(weekday=Weekday.objects.get(id=2)).end_time)
-            if service_time.filter(weekday=Weekday.objects.get(id=3)).exists() == True :
-                service_time_dict['tuesday'] = '時段：' + str(service_time.get(weekday=Weekday.objects.get(id=3)).start_time) + '~' + str(service_time.get(weekday=Weekday.objects.get(id=3)).end_time)
-            if service_time.filter(weekday=Weekday.objects.get(id=4)).exists() == True :
-                service_time_dict['wednesday'] = '時段：' + str(service_time.get(weekday=Weekday.objects.get(id=4)).start_time) + '~' + str(service_time.get(weekday=Weekday.objects.get(id=4)).end_time)
-            if service_time.filter(weekday=Weekday.objects.get(id=5)).exists() == True :
-                service_time_dict['thursday'] = '時段：' + str(service_time.get(weekday=Weekday.objects.get(id=5)).start_time) + '~' + str(service_time.get(weekday=Weekday.objects.get(id=5)).end_time)
-            if service_time.filter(weekday=Weekday.objects.get(id=6)).exists() == True :
-                service_time_dict['friday'] = '時段：' + str(service_time.get(weekday=Weekday.objects.get(id=6)).start_time) + '~' + str(service_time.get(weekday=Weekday.objects.get(id=6)).end_time)
-            if service_time.filter(weekday=Weekday.objects.get(id=7)).exists() == True :
-                service_time_dict['saturday'] = '時段：' + str(service_time.get(weekday=Weekday.objects.get(id=7)).start_time) + '~' + str(service_time.get(weekday=Weekday.objects.get(id=7)).end_time)
-            if service_time.filter(weekday=Weekday.objects.get(id=1)).exists() == True :
-                service_time_dict['sunday'] = '時段：' + str(service_time.get(weekday=Weekday.objects.get(id=1)).start_time) + '~' + str(service_time.get(weekday=Weekday.objects.get(id=1)).end_time)
+            if service_time.filter(weekday='1').exists() == True :
+                service_time_dict['monday'] = '時段：' + str(service_time.get(weekday='1').start_time) + '~' + str(service_time.get(weekday='1').end_time)
+            if service_time.filter(weekday='2').exists() == True :
+                service_time_dict['tuesday'] = '時段：' + str(service_time.get(weekday='2').start_time) + '~' + str(service_time.get(weekday='2').end_time)
+            if service_time.filter(weekday='3').exists() == True :
+                service_time_dict['wednesday'] = '時段：' + str(service_time.get(weekday='3').start_time) + '~' + str(service_time.get(weekday='3').end_time)
+            if service_time.filter(weekday='4').exists() == True :
+                service_time_dict['thursday'] = '時段：' + str(service_time.get(weekday='4').start_time) + '~' + str(service_time.get(weekday='4').end_time)
+            if service_time.filter(weekday='5').exists() == True :
+                service_time_dict['friday'] = '時段：' + str(service_time.get(weekday='5').start_time) + '~' + str(service_time.get(weekday='5').end_time)
+            if service_time.filter(weekday='6').exists() == True :
+                service_time_dict['saturday'] = '時段：' + str(service_time.get(weekday='6').start_time) + '~' + str(service_time.get(weekday='6').end_time)
+            if service_time.filter(weekday='0').exists() == True :
+                service_time_dict['sunday'] = '時段：' + str(service_time.get(weekday='0').start_time) + '~' + str(service_time.get(weekday='0').end_time)
         theServant.serviceTime = service_time_dict
 
         servant_skill_dict={}
@@ -1030,9 +1094,9 @@ class ServiceSettings(APIView):
         theServant.servant_skill = servant_skill_dict
 
         transportation_list = []
-        transportation = Transportation.objects.filter(servantCityArea__servant=theServant)
+        transportation = Transportation.objects.filter(servant=theServant)
         for x in range(len(transportation)):
-            transportation_list.append({'city':transportation[x].servantCityArea.cityarea.city,'area':transportation[x].servantCityArea.cityarea.area,'transportation':transportation[x].price})
+            transportation_list.append({'city':transportation[x].cityarea.city,'area':transportation[x].cityarea.area,'transportation':transportation[x].price})
             transportation_dict[str(x+1)] = transportation_list[x]
         theServant.transportation = transportation_dict
 
@@ -1042,6 +1106,19 @@ class ServiceSettings(APIView):
             service_Item_dict['service_item'+str(x+1)] = service_item[x].service_item.name
         theServant.service_item = service_Item_dict
 
+        markup_item_dict = {}
+        markup_items = ServantMarkupItemPrice.objects.filter(servant=theServant)
+        for x in range(len(markup_items)):
+            markup_item_dict['markup_item'+str(x+1)] = markup_items[x].markup_item
+            markup_item_dict['markup_pricePercent'+str(x+1)] = markup_items[x].pricePercent
+        theServant.mark_up_item = markup_item_dict
+
+        license_image_dict = {}
+        licenseimages = ServantLicenseShipImage.objects.filter(servant=theServant)
+        for x in range(len(licenseimages)):
+            license_image_dict['license_name'+str(x+1)] = licenseimages[x].license
+            license_image_dict['license_image'+str(x+1)] = licenseimages[x].image
+        theServant.license_image = license_image_dict
 
         serializer = self.serializer_class(theServant)
         return Response(serializer.data)
