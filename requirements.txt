@@ -2,8 +2,11 @@ asgiref==3.5.2
 Django==4.0.5
 djangorestframework==3.13.1
 httplib2==0.20.4
+interval==1.0.0
 Pillow==9.1.1
 pyparsing==3.0.9
+python-dateutil==2.8.2
 pytz==2022.1
+six==1.16.0
 sqlparse==0.4.2
 tzdata==2022.1

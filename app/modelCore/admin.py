@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import  User, MarkupItem, License, Servant, ServantMarkupItemPrice
 from .models import ServantSkill,UserLicenseShipImage, ServantLicenseShipImage,  Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
-from .models import City, CityArea, ServantWeekdayTime, ServantServiceItemShip
+from .models import City, CityArea, ServantWeekdayTime, ServantServiceItemShip,Message,SystemMessage
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -81,6 +81,14 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(CaseServiceItemShip)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'case','service_item')
+
+@admin.register(Message)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'case','user','servant','speaker','create_time')
+
+@admin.register(SystemMessage)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'case','user','create_time')
 
 
 

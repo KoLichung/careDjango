@@ -3,8 +3,8 @@ import os
 import datetime 
 from datetime import timedelta
 from .models import  User, MarkupItem, License, Servant, ServantMarkupItemPrice
-from .models import ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
-from .models import City, CityArea ,ServantWeekdayTime,ServantServiceItemShip
+from .models import ServantSkill,UserLicenseShipImage, ServantLicenseShipImage,  Recipient, ServiceItem,  CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
+from .models import City, CityArea, ServantWeekdayTime, ServantServiceItemShip,Message,SystemMessage
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -138,6 +138,7 @@ def fakeData():
     servant.hospital_halfday_wage = 1600
     servant.hospital_oneday_wage = 3400
     servant.info = 'test'
+    servant.is_home = True
     servant.save()
 
     servant = Servant()
@@ -150,6 +151,7 @@ def fakeData():
     servant.hospital_halfday_wage = 1550
     servant.hospital_oneday_wage = 3300
     servant.info = 'test'
+    servant.is_hospital = True
     servant.save()
 
     servant = Servant()
@@ -162,6 +164,9 @@ def fakeData():
     servant.hospital_halfday_wage = 1950
     servant.hospital_oneday_wage = 4000
     servant.info = 'test'
+    servant.is_home = True
+    servant.is_hospital = True
+    servant.is_alltime_service = True
     servant.save()
 
  
@@ -417,6 +422,8 @@ def fakeData():
     case.end_date = '2022-07-12'
     case.start_time = datetime.time(10,0,0)
     case.end_time = datetime.time(22,0,0)
+    case.is_taken = True
+    case.care_type = '居家照顧'
     case.save()
 
     case = Case()
@@ -428,17 +435,22 @@ def fakeData():
     case.end_date = '2022-07-15'
     case.start_time = datetime.time(12,30,0)
     case.end_time = datetime.time(20,30,0)
+    case.consult_all_servant = True
+    case.care_type = '醫院看護'
     case.save()
     
     case = Case()
     case.recipient = Recipient.objects.get(id=5)
-    case.servant = Servant.objects.get(id=3)
+    case.specify_servant_1 = Servant.objects.get(id=2)
+    case.specify_servant_2 = Servant.objects.get(id=3)
     case.cityarea = Transportation.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[0].cityarea
     case.markup_item = ServantMarkupItemPrice.objects.filter(servant=Servant.objects.get(id=3)).order_by('id')[0]
     case.start_date = '2022-06-25'
     case.end_date = '2022-07-25'
     case.start_time = datetime.time(9,0,0)
     case.end_time = datetime.time(17,0,0)
+    case.care_type = '居家照顧'
+    case.is_alltime_service = True
     case.save()
 
     caseitemship = CaseServiceItemShip()

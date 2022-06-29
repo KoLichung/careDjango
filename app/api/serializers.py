@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from modelCore.models import User, MarkupItem, License, Servant,ServantWeekdayTime, ServantMarkupItemPrice, ServantSkill,UserLicenseShipImage, ServantLicenseShipImage,Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip 
-
+from modelCore.models import User, MarkupItem, License, Servant,ServantWeekdayTime, ServantMarkupItemPrice, ServantSkill,UserLicenseShipImage
+from modelCore.models import ServantLicenseShipImage, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview  
+from modelCore.models import CaseServiceItemShip ,ServantServiceItemShip,Message,SystemMessage
 
 
 class MarkupItemSerializer(serializers.ModelSerializer):
@@ -20,12 +21,20 @@ class ServantSerializer(serializers.ModelSerializer):
     license_image = serializers.CharField(read_only=True)
     serviceTime = serializers.CharField(read_only=True)
     service_item = serializers.CharField(read_only=True)
-    servant_skill = serializers.CharField(read_only=True)
+    licenses = serializers.CharField(read_only=True)
+    Languageskill = serializers.CharField(read_only=True)
     transportation = serializers.CharField(read_only=True)
     servant_ratedNum = serializers.CharField(read_only=True)
+    score  = serializers.FloatField(read_only=True)
     mark_up_item = serializers.CharField(read_only=True)
+    service_region = serializers.CharField(read_only=True)
     caregory_type = serializers.CharField(read_only=True)
-    service_area = serializers.CharField(read_only=True)
+    service_city = serializers.CharField(read_only=True)
+    search_result_city = serializers.CharField(read_only=True)
+    search_result_date= serializers.CharField(read_only=True)
+    search_result_caretype= serializers.CharField(read_only=True)
+    servant_detail_caretype = serializers.CharField(read_only=True)
+    order_review = serializers.CharField(read_only=True)
     class Meta:
         model = Servant
         fields = '__all__'
@@ -76,19 +85,6 @@ class ServiceItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
-class CitySerializer(serializers.ModelSerializer):
-    class Meta:    
-        model = City
-        fields = '__all__'
-        read_only_fields = ('id',)
-
-class CityAreaSerializer(serializers.ModelSerializer):
-    class Meta:    
-        model = CityArea
-        fields = '__all__'
-        read_only_fields = ('id',)
-        
-
 
 class CaseSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(read_only=True)
@@ -114,6 +110,9 @@ class CaseSerializer(serializers.ModelSerializer):
     recipient_disease_info = serializers.CharField(read_only=True)
     recipient_conditions_info = serializers.CharField(read_only=True)
     service_Item= serializers.CharField(read_only=True)
+    status = serializers.CharField(read_only=True)
+    disease = serializers.CharField(read_only=True)
+    conditions = serializers.CharField(read_only=True)
     class Meta:    
         model = Case
         fields = '__all__'

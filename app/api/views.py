@@ -1,7 +1,9 @@
 from calendar import weekday
+import queue
 from unicodedata import category
 from unittest import case
-from httplib2 import Authentication
+from interval import Interval
+from dateutil.parser import parse
 from rest_framework import viewsets, mixins
 from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
@@ -16,7 +18,9 @@ import datetime
 from django.shortcuts import get_object_or_404
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
 import datetime 
-from modelCore.models import User, MarkupItem, License, Servant,ServantWeekdayTime, ServantMarkupItemPrice, ServantSkill,UserLicenseShipImage, ServantLicenseShipImage, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview , CaseServiceItemShip ,ServantServiceItemShip
+from modelCore.models import User, MarkupItem, License, Servant,ServantWeekdayTime, ServantMarkupItemPrice, ServantSkill,UserLicenseShipImage
+from modelCore.models import ServantLicenseShipImage, Recipient, ServiceItem, City, CityArea, Transportation, Case,OrderState, Order, OrderReview  
+from modelCore.models import CaseServiceItemShip ,ServantServiceItemShip,Message,SystemMessage
 from api import serializers
 
 class CreateListModelMixin:
@@ -44,26 +48,51 @@ class LicenseViewSet(viewsets.GenericViewSet,
     queryset = License.objects.all()
     serializer_class = serializers.LicenseSerializer
 
-class ServantRecommendationViewSet(viewsets.GenericViewSet,
-                    mixins.ListModelMixin):
+class ServantSearchViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.UpdateModelMixin):
     # http://127.0.0.1:8000/api/servant_Recommend?sort=HighPrice
     queryset = Servant.objects.all()
     serializer_class = serializers.ServantSerializer
+    lookup_url_kwarg = "uid"
     # care_type_id 1=home 2=hospital 3=all
     def filter_queryset(self, queryset):
         queryset = self.queryset 
         care_type_id = self.request.GET.get('care_type_id')
-        cityarea_id = self.request.GET.get('care_type_id')
+        cityarea_id = self.request.GET.get('cityarea_id')
+        city_id = self.request.GET.get('city_id')
+        area = self.request.GET.get('area_id')
+        all_time_service = self.request.GET.get('all_time_service')
+        weekday_choose = self.request.GET.get('weekday_choose')
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        start_time = self.request.GET.get('start_time')
+        end_time = self.request.GET.get('end_time')
         sort = self.request.GET.get('sort')
-        if care_type_id == 1:
-            queryset = queryset.objects.filter(is_home=True)
-        elif care_type_id == 2:
-            queryset = queryset.objects.filter(is_hospital=True)
-        elif care_type_id == 3:
-            pass
+        start_time = datetime.time(int(start_time.split(':')[0]),int(start_time.split(':')[1]))
+        end_time = datetime.time(int(end_time.split(':')[0]),int(end_time.split(':')[1]))
+
         if cityarea_id != None:
-            queryset = Transportation.objects.filter(cityarea=CityArea.objects.get(id=cityarea_id))
+            queryset = queryset.filter(transportations__cityarea=CityArea.objects.get(id=cityarea_id))
+        if (city_id and area) != None :
+            queryset = queryset.filter(transportations=Transportation.objects.filter(cityarea=CityArea.objects.get(city=City.objects.get(id=city_id),area=area)))
         
+        if all_time_service != None:
+            queryset.filter(is_alltime_service=True)
+        elif weekday_choose != None:
+            weekday_list = weekday_choose.split(',')
+            for i in range(len(weekday_list)):
+                queryset = queryset.filter(weekdayTimes__weekday=weekday_list[i],weekdayTimes__start_time__lte=start_time,weekdayTimes__end_time__gte=end_time)
+        if care_type_id == '1':
+            queryset = queryset.filter(is_home=True)
+            caretype = '居家照顧'
+        elif care_type_id == '2':
+            queryset = queryset.filter(is_hospital=True)
+            caretype = '醫院看護'
+        elif care_type_id == '3':
+            caretype = '類型不限'
         for i in range(len(queryset)):
             Score_Dict = OrderReview.objects.filter(order__case__servant=queryset[i],servant_is_rated=True).aggregate(avg_rating=Avg('servant_score'))
             queryset[i].score = Score_Dict['avg_rating']
@@ -71,13 +100,15 @@ class ServantRecommendationViewSet(viewsets.GenericViewSet,
             print(queryset[i].score)
             Num_Dict = OrderReview.objects.filter(order__case__servant=queryset[i],servant_is_rated=True).aggregate(num=Count('servant_score'))
             queryset[i].servant_ratedNum = Num_Dict['num']
-            ServantCareTypeList = {}
             serviceCityList = {}
             serviceCity = Transportation.objects.filter(servant=queryset[i])
             for x in range(len(serviceCity)):  
                 serviceCityList['serviceCity'+str(x+1)] = str(serviceCity[x].cityarea.city)
-            queryset[i].service_area = serviceCityList
-        print(queryset[1].score)
+            queryset[i].service_city = serviceCityList
+            queryset[i].search_result_city = CityArea.objects.get(id=cityarea_id).city
+            queryset[i].search_result_date = start_date + "~" + end_date
+            queryset[i].search_result_caretype = caretype
+            
         if sort == 'HighScore':
             return queryset.order_by('-score')
         elif sort == 'LowScore':
@@ -88,6 +119,50 @@ class ServantRecommendationViewSet(viewsets.GenericViewSet,
             return queryset.order_by('home_hourly_wage')
         else:
             return queryset
+
+    def retrieve(self, request,uid):
+        uid = self.kwargs.get(self.lookup_url_kwarg)
+        theServant = Servant.objects.get(id=uid)
+        Num_Dict = OrderReview.objects.filter(order__case__servant=theServant,servant_is_rated=True).aggregate(num=Count('servant_score'))
+        theServant.servant_ratedNum = Num_Dict['num']
+        Score_Dict = OrderReview.objects.filter(order__case__servant=theServant,servant_is_rated=True).aggregate(avg_rating=Avg('servant_score'))
+        theServant.score = Score_Dict['avg_rating']
+        CareType_Dict = {}
+        if theServant.is_home == True :
+            CareType_Dict['1'] = '居家照顧'
+        if theServant.is_hospital == True :
+            CareType_Dict['2'] = '醫院看護'
+        LanguageSkill_Dict = {}
+        for i in range(len(ServantSkill.objects.filter(servant=theServant))):
+            LanguageSkill_Dict[str(i+1)] = ServantSkill.objects.filter(servant=theServant)[i].languageSkill
+        theServant.Languageskill = LanguageSkill_Dict
+
+        ServiceRegion_Dict = {}
+        for i in range(len(Transportation.objects.filter(servant=theServant))):
+            ServiceRegion_Dict[str(i+1)] = Transportation.objects.filter(servant=theServant)[i].cityarea.city + Transportation.objects.filter(servant=theServant)[i].cityarea.area
+        theServant.service_region = ServiceRegion_Dict
+
+        ServiceItem_Dict = {}
+        for i in range(len(ServantServiceItemShip.objects.filter(servant=theServant))):
+            ServiceItem_Dict[str(i+1)] = ServantServiceItemShip.objects.filter(servant=theServant)[i].service_item
+        theServant.service_item = ServiceItem_Dict
+
+        License_Dict = {}
+        for i in range(len(ServantLicenseShipImage.objects.filter(servant=theServant))):
+            License_Dict[str(i+1)] = ServantLicenseShipImage.objects.filter(servant=theServant)[i].license
+        theServant.licenses = License_Dict
+
+        Review_Dict = {}
+        for i in range(len(OrderReview.objects.filter(order__case__servant=theServant))):
+            Review_Dict['user_'+str(i+1)] = OrderReview.objects.filter(order__case__servant=theServant)[i].order.case.recipient.user
+            Review_Dict['create_date_'+str(i+1)] = OrderReview.objects.filter(order__case__servant=theServant)[i].servant_review_createdate
+            Review_Dict['score_'+str(i+1)] = OrderReview.objects.filter(order__case__servant=theServant)[i].servant_score
+            Review_Dict['content_'+str(i+1)] = OrderReview.objects.filter(order__case__servant=theServant)[i].servant_content
+        theServant.order_review = Review_Dict
+
+        serializer = self.get_serializer(theServant)
+        return Response(serializer.data)
+
 
 class ServantMarkupItemPriceViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -158,7 +233,6 @@ class ServantLicenseShipImageViewSet(viewsets.GenericViewSet,
             queryset[i].license_name = queryset[i].license.name
         return queryset
 
-
 class RecipientViewSet(viewsets.GenericViewSet,
                             mixins.ListModelMixin,
                             mixins.RetrieveModelMixin,
@@ -185,19 +259,6 @@ class ServiceItemViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = ServiceItem.objects.all()
     serializer_class = serializers.ServiceItemSerializer
-
-class CityViewSet(viewsets.GenericViewSet,
-                    mixins.ListModelMixin,
-                    mixins.CreateModelMixin):
-    queryset = City.objects.all()
-    serializer_class = serializers.CitySerializer
-
-class CityAreaViewSet(viewsets.GenericViewSet,
-                    mixins.ListModelMixin,
-                    mixins.CreateModelMixin):
-    queryset = CityArea.objects.all()
-    serializer_class = serializers.CityAreaSerializer
-
 
 class CaseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -226,37 +287,112 @@ class CaseViewSet(viewsets.GenericViewSet,
 
         return queryset
 
-class CaseServiceItemShipViewSet(viewsets.GenericViewSet,
-                    mixins.ListModelMixin,
-                    mixins.CreateModelMixin):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    queryset = CaseServiceItemShip.objects.all()
-    serializer_class = serializers.CaseServiceItemShipSerializer
+class CaseSearchViewSet(APIView):
+ 
+    queryset = Case.objects.all()
+    serializer_class = serializers.CaseSerializer
 
-    def get_queryset(self):
+    def post(self,request):
         queryset = self.queryset
-        theUser = self.request.user
-        queryset = queryset.filter(case__recipient__user=theUser)
-        servant_id = self.request.GET.get('servant_id')
-        cityarea_id = self.request.GET.get('cityarea_id')
-        serviceItem_id = self.request.GET.get('serviceItem_id')
-        if servant_id != None:
-            queryset = queryset.filter(case__servant=Servant.objects.get(id=servant_id))
-        
-        if cityarea_id != None:
-            queryset = queryset.filter(case__cityarea=CityArea.objects.get(id=cityarea_id))
+        cityarea = request.data.get('cityarea')
+        startDate_set = request.data.get('startDate_set')
+        endDate_set = request.data.get('endDate_set')
+        care_type = request.data.get('care_type')
+        startDate_set = datetime.date(int(startDate_set.split('-')[0]),int(startDate_set.split('-')[1]),int(startDate_set.split('-')[2]))
+        endDate_set = datetime.date(int(endDate_set.split('-')[0]),int(endDate_set.split('-')[1]),int(endDate_set.split('-')[2]))
 
-        if serviceItem_id != None:
-            queryset = queryset.filter(service_item=ServiceItem.objects.get(id=serviceItem_id))
+        if cityarea != None:
+            queryset = queryset.filter(case__cityarea=CityArea.objects.get(name=cityarea))
+        if (startDate_set != None) and (endDate_set != None):
+            queryset = queryset.filter(start_date__gte=startDate_set,end_date__lte=endDate_set)
+            print(queryset)
+        
+        if care_type == '居家照顧':
+            queryset = queryset.filter(servant__is_home=True)
+        elif care_type == '醫院看護':
+            queryset = queryset.filter(servant__is_hospital=True)
+        else: 
+            pass
 
         for i in range(len(queryset)):
-            queryset[i].servant_name = queryset[i].case.servant.user.name
-            queryset[i].recipient_name = queryset[i].case.recipient.name
-            queryset[i].serviceItem_name = queryset[i].service_item.name
-            queryset[i].cityarea_name = queryset[i].case.cityarea.city + queryset[i].case.cityarea.area
+            queryset[i].servant_name = queryset[i].servant.user.name
+            queryset[i].recipient_name = queryset[i].recipient.name
+            queryset[i].cityarea_name = queryset[i].cityarea.city + queryset[i].cityarea.area
+            CareTypeDict = {}
+            if queryset[i].servant.is_home == True:
+                CareTypeDict['caretype_1'] = '居家照顧'
+            if queryset[i].servant.is_hospital == True:
+                CareTypeDict['caretype_2'] = '醫院看護'
+            queryset[i].CareType = CareTypeDict
+            if queryset[i].servant.is_alltime_service == True:
+                queryset[i].TimeType = '連續時間'
+            else:
+                queryset[i].TimeType = '每週預定'
+
         
-        return queryset
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+class CaseDetailViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.UpdateModelMixin):
+
+
+    queryset = Case.objects.all()
+    serializer_class = serializers.CaseSerializer
+    lookup_url_kwarg = "uid"
+
+    def retrieve(self, request,uid):
+        uid = self.kwargs.get(self.lookup_url_kwarg)
+        case = Case.objects.get(id=uid)
+        if case.is_taken == True:
+            case.status = '案件已關閉'
+        else:
+            case.status = '尚未找到服務者'
+        if case.is_taken == True:
+            case.servant_name = case.servant.user.name
+            if case.servant.is_home == True :
+                hour_wage = case.servant.home_hourly_wage
+            else:
+                hour_wage = case.servant.hospital_hourly_wage
+
+            working_hours = ((case.end_time).hour - (case.start_time).hour) * (((case.end_date) - (case.start_date)).days)
+            case.working_hours =  working_hours 
+            case.basic_price =  hour_wage * working_hours
+            case.hour_wage =  hour_wage 
+            case.markup_price = round(((case.markup_item.pricePercent)-1) * hour_wage * working_hours)
+            case.platform_fee = round((case.markup_item.pricePercent) * 0.15 * hour_wage * working_hours)
+            case.total_price = round((case.markup_item.pricePercent) *(1-0.15)  * hour_wage * working_hours)
+
+        
+        case.recipient_name = case.recipient.name
+        case.recipient_gender = case.recipient.gender
+        case.recipient_age = case.recipient.age
+        case.recipient_weight = case.recipient.weight
+        case.recipient_disease = case.recipient.disease
+        case.recipient_conditions = case.recipient.conditions
+        case.recipient_disease_info = case.recipient.disease_info
+        case.recipient_conditions_info = case.recipient.conditions_info
+        case.cityarea_name = case.cityarea.city + case.cityarea.area
+        
+        if case.is_alltime_service == True:
+            case.TimeType = '連續時間'
+        else:
+            case.TimeType = '每週預定'
+        case.case_date = str(case.start_date) + ' ~ ' + str(case.end_date)
+        case.markup_Item = case.markup_item.markup_item
+        case.markup_Item_percent =  str(((case.markup_item.pricePercent)*100) - 100) + '%'
+        service_Items = CaseServiceItemShip.objects.filter(case=case)
+        All_service_item = {}
+        for x in range(len(service_Items)):                
+            All_service_item['serviveItem'+str(x+1)] = str(service_Items[x].service_item)
+        case.service_Item =  All_service_item
+        print(case.care_type)
+
+        serializer = self.get_serializer(case)
+        return Response(serializer.data)
 
 class OrderStateViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -325,8 +461,7 @@ class OrderReviewViewSet(viewsets.GenericViewSet,
         
         return queryset
 
-
-class PostCaseViewSet(viewsets.GenericViewSet,
+class MYPostCaseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.CreateModelMixin,
@@ -350,7 +485,7 @@ class PostCaseViewSet(viewsets.GenericViewSet,
             if queryset[i].servant.is_home == True:
                 CareTypeDict['caretype_1'] = '居家照顧'
             if queryset[i].servant.is_hospital == True:
-                CareTypeDict['caretype_2'] = '醫院照護'
+                CareTypeDict['caretype_2'] = '醫院看護'
             queryset[i].CareType = CareTypeDict
             if queryset[i].servant.is_alltime_service == True:
                 queryset[i].TimeType = '連續時間'
@@ -360,7 +495,6 @@ class PostCaseViewSet(viewsets.GenericViewSet,
 
         return queryset
        
-
     def retrieve(self, request,uid):
         uid = self.kwargs.get(self.lookup_url_kwarg)
         theUser = self.request.user
@@ -387,7 +521,7 @@ class PostCaseViewSet(viewsets.GenericViewSet,
             if case.servant.is_home == True:
                 CareTypeDict['caretype_1'] = '居家照顧'
             if case.servant.is_hospital == True:
-                CareTypeDict['caretype_2'] = '醫院照護'
+                CareTypeDict['caretype_2'] = '醫院看護'
             case.CareType = CareTypeDict
             if case.servant.is_alltime_service == True:
                 case.TimeType = '連續時間'
@@ -412,7 +546,7 @@ class PostCaseViewSet(viewsets.GenericViewSet,
         else:
             return Response({'message': "have no authority"})
         
-class TakeCaseViewSet(viewsets.GenericViewSet,
+class MYTakeCaseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.CreateModelMixin,
@@ -429,6 +563,7 @@ class TakeCaseViewSet(viewsets.GenericViewSet,
         theUser = self.request.user
         queryset = queryset.filter(servant__user=theUser)
         
+        
         for i in range(len(queryset)):
             queryset[i].user_name = queryset[i].recipient.user.name
             queryset[i].servant_name = queryset[i].servant.user.name
@@ -437,7 +572,7 @@ class TakeCaseViewSet(viewsets.GenericViewSet,
             if queryset[i].servant.is_home == True:
                 CareTypeDict['caretype_1'] = '居家照顧'
             if queryset[i].servant.is_hospital == True:
-                CareTypeDict['caretype_2'] = '醫院照護'
+                CareTypeDict['caretype_2'] = '醫院看護'
             queryset[i].CareType = CareTypeDict
             if queryset[i].servant.is_alltime_service == True:
                 queryset[i].TimeType = '連續時間'
@@ -471,7 +606,7 @@ class TakeCaseViewSet(viewsets.GenericViewSet,
             if case.servant.is_home == True:
                 CareTypeDict['caretype_1'] = '居家照顧'
             if case.servant.is_hospital == True:
-                CareTypeDict['caretype_2'] = '醫院照護'
+                CareTypeDict['caretype_2'] = '醫院看護'
             case.CareType = CareTypeDict
             if case.servant.is_alltime_service == True:
                 case.TimeType = '連續時間'
@@ -528,7 +663,7 @@ class NotRatedYetViewSet(viewsets.GenericViewSet,
             if queryset[i].case.servant.is_home == True:
                 CareTypeDict['caretype_1'] = '居家照顧'
             if queryset[i].case.servant.is_hospital == True:
-                CareTypeDict['caretype_2'] = '醫院照護'
+                CareTypeDict['caretype_2'] = '醫院看護'
             queryset[i].CareType = CareTypeDict
             if queryset[i].case.servant.is_alltime_service == True:
                 queryset[i].TimeType = '連續時間'
@@ -594,8 +729,6 @@ class AddUserRateViewSet(APIView):
         else:
             return Response({'message': "have no authority"})
 
-    
-
 class ServantRateViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
     authentication_classes = (TokenAuthentication,)
@@ -619,7 +752,7 @@ class ServantRateViewSet(viewsets.GenericViewSet,
             if queryset[i].case.servant.is_home == True:
                 CareTypeDict['caretype_1'] = '居家照顧'
             if queryset[i].case.servant.is_hospital == True:
-                CareTypeDict['caretype_2'] = '醫院照護'
+                CareTypeDict['caretype_2'] = '醫院看護'
             queryset[i].CareType = CareTypeDict
             if queryset[i].case.servant.is_alltime_service == True:
                 queryset[i].TimeType = '連續時間'
@@ -639,7 +772,6 @@ class ServantRateViewSet(viewsets.GenericViewSet,
             return Response(serializer.data)
         else:
             return Response({'message': "have no authority"})
-    
 
 class UserRateViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -649,14 +781,12 @@ class UserRateViewSet(viewsets.GenericViewSet,
     serializer_class = serializers.OrderReviewSerializer
     lookup_url_kwarg = "uid"
     
-
     def get_queryset(self):
         queryset = self.queryset
         theUser = self.request.user
         queryset = queryset.filter(order__case__recipient__user=theUser)
         queryset = queryset.filter(user_is_rated=True)
         
-
         for i in range(len(queryset)):
             queryset[i].user_name = theUser
             queryset[i].servant_name = queryset[i].order.case.servant.user.name
@@ -665,7 +795,7 @@ class UserRateViewSet(viewsets.GenericViewSet,
             if queryset[i].case.servant.is_home == True:
                 CareTypeDict['caretype_1'] = '居家照顧'
             if queryset[i].case.servant.is_hospital == True:
-                CareTypeDict['caretype_2'] = '醫院照護'
+                CareTypeDict['caretype_2'] = '醫院看護'
             queryset[i].CareType = CareTypeDict
             if queryset[i].case.servant.is_alltime_service == True:
                 queryset[i].TimeType = '連續時間'
@@ -685,9 +815,6 @@ class UserRateViewSet(viewsets.GenericViewSet,
             return Response(serializer.data)
         else:
             return Response({'message': "have no authority"})
-
-    
-
 
 class ChangeBasicInfoViewSet(APIView):
     authentication_classes = (TokenAuthentication,)
@@ -747,7 +874,7 @@ class MyDocumentViewSet(APIView):
         else:
             return Response({'message': "have no authority"})
 
-class ServiceSettings(APIView):
+class ServiceSettingsViewSet(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ServantSerializer
@@ -1091,7 +1218,7 @@ class ServiceSettings(APIView):
         theServantSkill = ServantSkill.objects.filter(servant=theServant)
         for x in range(len(theServantSkill)):
             servant_skill_dict['servant_skill'+str(x+1)] = theServantSkill[x].languageSkill
-        theServant.servant_skill = servant_skill_dict
+        theServant.Languageskill = servant_skill_dict
 
         transportation_list = []
         transportation = Transportation.objects.filter(servant=theServant)
@@ -1121,4 +1248,84 @@ class ServiceSettings(APIView):
         theServant.license_image = license_image_dict
 
         serializer = self.serializer_class(theServant)
+        return Response(serializer.data)
+
+class FillOrderViewSet(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    queryset = Case.objects.all()
+    serializer_class = serializers.CaseSerializer
+
+    def post(self, request, format=None):
+        case = Case()
+        theUser = self.request.user
+        caretype = request.data.get('caretype')
+        Servant_id = request.data.get('Servant_id')
+        cityarea_id = request.data.get('cityarea_id')
+        timetype = request.data.get('timetype')
+        start_date = request.data.get('start_date')
+        end_date = request.data.get('end_date')
+        weekday_choose = request.data.get('weekday_choose')
+        start_time = request.data.get('start_time')
+        end_time = request.data.get('end_time')
+        apply_recipient_info = request.data.get('apply_recipient_info')
+        recipient_nameSet = request.data.get('recipient_nameSet')
+        recipient_genderSet = request.data.get('recipient_genderSet')
+        recipient_weightSet = request.data.get('recipient_weightSet')
+        recipient_ageSet = request.data.get('recipient_ageSet')
+        infectious_disease = request.data.get('infectious_disease')
+        addition_conditions_info = request.data.get('addition_conditions_info')
+        markup_item_id = request.data.get('markup_item_id')
+        theServant = Servant.objects.get(id=Servant_id) 
+        if apply_recipient_info != None:
+            recipient = Recipient.objects.get(user=theUser)
+        else:
+            recipient = Recipient()
+            recipient.user = theUser
+        recipient.name = recipient_nameSet
+        recipient.gender = recipient_genderSet
+        recipient.weight = recipient_weightSet
+        recipient.age = recipient_ageSet
+        disease_count = 0
+        disease_list = []
+        disease_str = ''
+        for i in range(18):
+            if request.data.get('disease_'+str(i+1))  != None:
+                disease_count += 1
+
+        for n in range(disease_count):
+            disease_list.append({'disease_name':request.data.get('disease_'+str(n+1))})
+            disease_str += disease_list[n]['disease_name'] + ','
+
+        if infectious_disease != None :
+            disease_str += infectious_disease
+        recipient.disease = disease_str
+
+        conditions_count = 0
+        conditions_list = []
+        conditions_str = ''
+        for i in range(10):
+            if request.data.get('conditions_'+str(i+1))  != None:
+                conditions_count += 1
+
+        for n in range(conditions_count):
+            conditions_list.append({'conditions_name':request.data.get('conditions_'+str(n+1))})
+            conditions_str += conditions_list[n]['conditions_name'] + ','
+        if addition_conditions_info != None :
+            conditions_str += addition_conditions_info
+        recipient.conditions = conditions_str
+        recipient.save()
+
+        case.markup_item = ServantMarkupItemPrice.objects.filter(servant=theServant)[int(markup_item_id)-1]
+        case.recipient = recipient
+        case.disease = recipient.disease
+        case.conditions = recipient.conditions
+        case.start_time = datetime.time(int(start_time.split(':')[0]),int(start_time.split(':')[1]))
+        case.end_time = datetime.time(int(end_time.split(':')[0]),int(end_time.split(':')[1]))
+        case.start_date = datetime.date(int(start_date.split('-')[0]),int(start_date.split('-')[1]),int(start_date.split('-')[2]))
+        case.end_date = datetime.date(int(end_date.split('-')[0]),int(end_date.split('-')[1]),int(end_date.split('-')[2]))
+        case.cityarea = CityArea.objects.get(id=cityarea_id)
+        case.save()
+
+        serializer = self.serializer_class(case)
         return Response(serializer.data)

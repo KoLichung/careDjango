@@ -91,6 +91,7 @@ class ServantWeekdayTime(models.Model):
     servant = models.ForeignKey(
         Servant,
         on_delete=models.RESTRICT,
+        related_name='weekdayTimes'
     )
     WEEKDAY_CHOICES = (
         ('0', 'Sunday'),
@@ -174,6 +175,8 @@ class Recipient(models.Model):
 class ServiceItem(models.Model):
     name = models.CharField(max_length = 100, blank = True, null=True)
     info = models.CharField(max_length = 100, blank = True, null=True)
+    def __str__(self):
+        return self.name
 
 class ServantServiceItemShip(models.Model):
     servant = models.ForeignKey(
@@ -200,6 +203,7 @@ class Transportation(models.Model):
     servant = models.ForeignKey(
         Servant,
         on_delete=models.RESTRICT,
+        related_name='transportations'
     )
     cityarea = models.ForeignKey(
         CityArea,
@@ -216,7 +220,9 @@ class Case(models.Model):
     servant = models.ForeignKey(
         Servant,
         on_delete=models.RESTRICT,
-        default=''
+        blank = True,
+        null=True,
+        related_name='cases'
     )
     
     cityarea = models.ForeignKey(
@@ -229,10 +235,22 @@ class Case(models.Model):
         on_delete=models.RESTRICT,
         default=''
     )
+    CARETYPE_CHOICES = (
+        ('home', '居家照顧'),
+        ('hospital', '醫院看護'),
+    )
+    care_type = models.CharField(max_length=10, choices=CARETYPE_CHOICES,default='')
+    is_alltime_service = models.BooleanField(default=False)
     start_date = models.DateField(auto_now=False, blank = True,null=True)
     end_date = models.DateField(auto_now=False, blank = True,null=True) 
     start_time = models.TimeField(auto_now=False, auto_now_add=False )
     end_time = models.TimeField(auto_now=False, auto_now_add=False )
+
+    is_taken = models.BooleanField(default=False)
+    consult_all_servant = models.BooleanField(default=False)
+    specify_servant_1 = models.ForeignKey(Servant,on_delete=models.CASCADE, blank = True,null=True, related_name='cases_specify_1')
+    specify_servant_2 = models.ForeignKey(Servant,on_delete=models.CASCADE, blank = True,null=True, related_name='cases_specify_2')
+    specify_servant_3 = models.ForeignKey(Servant,on_delete=models.CASCADE, blank = True,null=True, related_name='cases_specify_3')
 
 
 class CaseServiceItemShip(models.Model):
@@ -257,8 +275,7 @@ class Order(models.Model):
         Case,
         on_delete = models.CASCADE,
         blank=True,
-        null=True
-        
+        null=True    
     )
     state =  models.ForeignKey(
         OrderState,
@@ -309,3 +326,44 @@ class PayInfo(models.Model):
     CardInfoAmount = models.IntegerField(default=0, null=True)
     CardInfoCard6No = models.CharField(max_length=20, default='', blank = True, null=True)
     CardInfoCard4No = models.CharField(max_length=20, default='', blank = True, null=True)
+
+class Message(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        )
+    servant = models.ForeignKey(
+        Servant,
+        on_delete=models.RESTRICT,
+        default=''
+    )
+    SPEAKER_CHOICES = (
+        ('0', 'user'),
+        ('1', 'servant'),
+    )
+    
+    speaker = models.CharField(max_length=1, choices=SPEAKER_CHOICES)
+
+    case = models.ForeignKey(
+        Case,
+        on_delete = models.CASCADE,
+        blank=True,
+        null=True    
+    )
+    content = models.TextField(default='', blank = True, null=True)
+    create_time = models.DateTimeField(auto_now=True, blank = True,null=True) 
+
+class SystemMessage(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        )
+    case = models.ForeignKey(
+        Case,
+        on_delete = models.CASCADE,
+        blank=True,
+        null=True    
+    )
+    content = models.TextField(default='', blank = True, null=True)
+    create_time = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    
