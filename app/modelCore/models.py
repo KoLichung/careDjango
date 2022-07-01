@@ -3,14 +3,13 @@ from unicodedata import category
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.forms import FloatField
 from django.urls import reverse
-
 
 def image_upload_handler(instance,filename):
     fpath = pathlib.Path(filename)
     new_fname = str(uuid.uuid1()) #uuid1 -> uuid + timestamp
     return f'images/{new_fname}{fpath.suffix}'
-
 
 class UserManager(BaseUserManager):
 
@@ -39,61 +38,60 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Custom user model that suppors using email instead of username"""
     phone = models.CharField(max_length=10, unique=True)
-    name = models.CharField(max_length=255)
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-    )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,default='')
-    email = models.CharField(max_length= 100, blank = True, null=True)
-    address = models.CharField(max_length= 100, blank = True, null=True)
+    objects = UserManager()
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    is_servant = models.BooleanField(default=False)
-    line_id = models.CharField(max_length= 100, blank = True, null=True, unique=True)
-    objects = UserManager()
+
+    name = models.CharField(max_length=255)
+
+    MALE = 'M'
+    FEMALE = 'F'
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+    ]
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,default=MALE)
+
+    email = models.CharField(max_length= 100, blank = True, null=True)
+    address = models.CharField(max_length= 100, blank = True, null=True)
     image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
+    line_id = models.CharField(max_length= 100, blank = True, null=True, unique=True)
+
+    is_servant = models.BooleanField(default=False)
+    rating = models.FloatField(default=0, blank = True, null=True)
+
+    is_home = models.BooleanField(default=False)
+    home_hour_wage = models.IntegerField(default=0, blank = True, null=True)
+    home_half_day_wage = models.IntegerField(default=0, blank = True, null=True)
+    home_one_day_wage = models.IntegerField(default=0, blank = True, null=True)
+    
+    is_hospital = models.BooleanField(default=False)
+    hospital_hour_wage = models.IntegerField(default=0, blank = True, null=True)
+    hospital_half_day_wage = models.IntegerField(default=0, blank = True, null=True)
+    hospital_one_day_wage = models.IntegerField(default=0, blank = True, null=True)
+
+    about_me = models.TextField(default='', blank = True, null=True)
+    is_alltime_service = models.BooleanField(default=True)
+
+    background_image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
+
     USERNAME_FIELD = 'phone'
 
-class MarkupItem(models.Model):
+class Service(models.Model):
     name = models.CharField(max_length= 100, unique=True)
-    def __str__(self):
-            return self.name
+    is_increase_price = models.BooleanField(default=False)
+    increase_pcercent = models.FloatField(default=0, blank = True, null=True)
 
-class License(models.Model):
-    name = models.CharField(max_length= 100, unique=True)
     def __str__(self):
         return self.name
 
-class Servant(models.Model):
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
+class UserWeekDayTime(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT
     )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    score = models.FloatField(default=0, blank = True, null=True)
-    user =models.OneToOneField(User,on_delete=models.RESTRICT,unique=True,default='',related_name='servant')
-    is_home = models.BooleanField(default=False)
-    home_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
-    home_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
-    home_oneday_wage = models.IntegerField(default=0, blank = True, null=True)
-    is_hospital = models.BooleanField(default=False)
-    hospital_hourly_wage = models.IntegerField(default=0, blank = True, null=True)
-    hospital_halfday_wage = models.IntegerField(default=0, blank = True, null=True)
-    hospital_oneday_wage = models.IntegerField(default=0, blank = True, null=True)
-    info = models.CharField(max_length= 255, blank = True, null=True)
-    is_alltime_service = models.BooleanField(default=False)
-    background_image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
-
-class ServantWeekdayTime(models.Model):
-    servant = models.ForeignKey(
-        Servant,
-        on_delete=models.RESTRICT,
-        related_name='weekdayTimes'
-    )
-    WEEKDAY_CHOICES = (
+    WEEKDAY_CHOICES = [
         ('0', 'Sunday'),
         ('1', 'Monday'),
         ('2', 'Tuesday'),
@@ -101,32 +99,37 @@ class ServantWeekdayTime(models.Model):
         ('4', 'Thursday'),
         ('5', 'Friday'),
         ('6', 'Saturday'),
-        ('7', 'All'),
-        
-    )
+    ]
     weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES)
-    start_time = models.TimeField(auto_now=False, auto_now_add=False )
-    end_time = models.TimeField(auto_now=False, auto_now_add=False )
+    start_time = models.IntegerField(default=0, blank=True, null=True)
+    end_time = models.IntegerField(default=24, blank=True, null=True)
 
-class ServantMarkupItemPrice(models.Model):
-    servant = models.ForeignKey(
-        Servant,
-        on_delete=models.RESTRICT,
-    )
-    markup_item = models.ForeignKey(
-        MarkupItem,
+class UserServiceShip(models.Model):
+    user = models.ForeignKey(
+        User,
         on_delete=models.RESTRICT
     )
-    pricePercent = models.FloatField(default=0, blank = True, null=True)
-
-class ServantSkill(models.Model):
-    servant = models.ForeignKey(
-        Servant,
+    service = models.ForeignKey(
+        Service,
         on_delete=models.RESTRICT
     )
-    languageSkill = models.CharField(max_length= 100)
 
+class Language(models.Model):
+    name = models.CharField(max_length= 100)
+    def __str__(self):
+        return self.name
 
+class UserLanguage(models.Model):
+    language =  models.ForeignKey(
+        Language,
+        on_delete=models.RESTRICT
+    )
+    remark = models.CharField(max_length= 100, unique=True)
+
+class License(models.Model):
+    name = models.CharField(max_length= 100, unique=True)
+    def __str__(self):
+        return self.name
 
 class UserLicenseShipImage(models.Model):
     user = models.ForeignKey(
@@ -140,167 +143,187 @@ class UserLicenseShipImage(models.Model):
     )
     image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
 
-    is_upload_image = models.BooleanField(default=False)
-
-class ServantLicenseShipImage(models.Model):
-    servant = models.ForeignKey(
-        Servant,
-        on_delete=models.CASCADE,
-        related_name='images'
-        )
-    license = models.ForeignKey(
-        License,
-        on_delete=models.CASCADE
-    )
-    image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
-
-    is_upload_image = models.BooleanField(default=False)
-
-class Recipient(models.Model):
-    name = models.CharField(max_length= 100, blank=True, null=True)
-    user =models.ForeignKey(User,on_delete=models.RESTRICT,related_name='recipient')
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-    )
-    
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    age = models.IntegerField(default=0, blank = True, null=True)
-    weight = models.IntegerField(default=0, blank = True, null=True)
-    disease = models.CharField(max_length= 100, blank = True, null=True)
-    disease_info = models.CharField(max_length= 255, blank = True, null=True)
-    conditions = models.CharField(max_length= 255, blank = True, null=True)
-    conditions_info = models.CharField(max_length= 255, blank = True, null=True)
-
-class ServiceItem(models.Model):
-    name = models.CharField(max_length = 100, blank = True, null=True)
-    info = models.CharField(max_length = 100, blank = True, null=True)
-    def __str__(self):
-        return self.name
-
-class ServantServiceItemShip(models.Model):
-    servant = models.ForeignKey(
-        Servant,
-        on_delete=models.RESTRICT,
-    )
-    service_item = models.ForeignKey(
-        ServiceItem,
-        on_delete=models.RESTRICT,
-    )
-
 class City(models.Model):
-    name = models.CharField(max_length = 255, blank = True, null=True)
-
+    name = models.CharField(max_length = 255, blank=True, null=True)
     def __str__(self):
             return self.name
 
-class CityArea(models.Model):
-    city = models.CharField(max_length = 100, blank = True, null=True)
-    area = models.CharField(max_length = 100, blank = True, null=True)
-
-
-class Transportation(models.Model):
-    servant = models.ForeignKey(
-        Servant,
+class County(models.Model):
+    city =  models.ForeignKey(
+        City,
         on_delete=models.RESTRICT,
-        related_name='transportations'
     )
-    cityarea = models.ForeignKey(
-        CityArea,
-        on_delete=models.RESTRICT
+    name = models.CharField(max_length=100, blank=True, null=True)
+    def __str__(self):
+            return self.name
+
+class UserServiceLocation(models.Model):
+    city = models.ForeignKey(
+        City,
+        on_delete=models.RESTRICT,
     )
-    price = models.IntegerField(default=0, null=True)
-    
+    county =  models.ForeignKey(
+        County,
+        on_delete=models.RESTRICT,
+    )
+    tranfer_fee = models.IntegerField(default=0, blank=True, null=True)
+
 class Case(models.Model):
-    recipient = models.ForeignKey(
-        Recipient,
+    user = models.ForeignKey(
+        User,
         on_delete=models.RESTRICT,
         default=''
     )
+
     servant = models.ForeignKey(
-        Servant,
+        User,
         on_delete=models.RESTRICT,
         blank = True,
         null=True,
         related_name='cases'
     )
     
-    cityarea = models.ForeignKey(
-        CityArea,
+    city = models.ForeignKey(
+        City,
         on_delete=models.RESTRICT
     )
 
-    markup_item = models.ForeignKey(
-        ServantMarkupItemPrice,
-        on_delete=models.RESTRICT,
-        default=''
+    county = models.ForeignKey(
+        County,
+        on_delete=models.RESTRICT
     )
-    CARETYPE_CHOICES = (
+
+    CARETYPE_CHOICES = [
         ('home', '居家照顧'),
         ('hospital', '醫院看護'),
-    )
+    ]
     care_type = models.CharField(max_length=10, choices=CARETYPE_CHOICES,default='')
+
+    name = models.CharField(max_length= 100, blank=True, null=True)
+
+    MALE = 'M'
+    FEMALE = 'F'
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+    ]
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,default=MALE)
+
+    age = models.IntegerField(default=0, blank=True, null=True)
+    weight = models.IntegerField(default=0, blank=True, null=True)
+    
+    disease_remark = models.CharField(max_length= 255, blank=True, null=True)
+    conditions_remark = models.CharField(max_length= 255, blank=True, null=True)
+
     is_alltime_service = models.BooleanField(default=False)
-    start_date = models.DateField(auto_now=False, blank = True,null=True)
-    end_date = models.DateField(auto_now=False, blank = True,null=True) 
-    start_time = models.TimeField(auto_now=False, auto_now_add=False )
-    end_time = models.TimeField(auto_now=False, auto_now_add=False )
 
     is_taken = models.BooleanField(default=False)
-    consult_all_servant = models.BooleanField(default=False)
-    specify_servant_1 = models.ForeignKey(Servant,on_delete=models.CASCADE, blank = True,null=True, related_name='cases_specify_1')
-    specify_servant_2 = models.ForeignKey(Servant,on_delete=models.CASCADE, blank = True,null=True, related_name='cases_specify_2')
-    specify_servant_3 = models.ForeignKey(Servant,on_delete=models.CASCADE, blank = True,null=True, related_name='cases_specify_3')
+    is_open_for_search = models.BooleanField(default=False)
 
+    start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
+    end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
-class CaseServiceItemShip(models.Model):
-    case = models.ForeignKey(
-        Case,
-        on_delete=models.RESTRICT
-    )
-    service_item = models.ForeignKey(
-        ServiceItem,
-        on_delete=models.RESTRICT
-    )
-
-class OrderState(models.Model):
-    name = models.CharField(max_length=255, null=True , blank=True)
-    
+class DiseaseCondition(models.Model):
+    name = models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
         return self.name
 
-class Order(models.Model):
+class BodyCondition(models.Model):
+    name = models.CharField(max_length=100, blank=True, null=True)
+    def __str__(self):
+        return self.name
 
+class CaseDiseaseShip(models.Model):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.RESTRICT
+    )
+    disease = models.ForeignKey(
+        DiseaseCondition,
+        on_delete=models.RESTRICT
+    )
+
+class CaseBodyConditionShip(models.Model):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.RESTRICT
+    )
+    body_condition = models.ForeignKey(
+        BodyCondition,
+        on_delete=models.RESTRICT
+    )
+
+class CaseWeekDayTime(models.Model):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.RESTRICT
+    )
+    WEEKDAY_CHOICES = [
+        ('0', 'Sunday'),
+        ('1', 'Monday'),
+        ('2', 'Tuesday'),
+        ('3', 'Wednesday'),
+        ('4', 'Thursday'),
+        ('5', 'Friday'),
+        ('6', 'Saturday'),
+    ]
+    weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES, blank=True, null=True)
+    start_time = models.IntegerField(default=0, blank=True, null=True)
+    end_time = models.IntegerField(default=24, blank=True, null=True)
+
+class CaseServiceShip(models.Model):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.RESTRICT
+    )
+    service = models.ForeignKey(
+        Service,
+        on_delete=models.RESTRICT
+    )
+
+class Order(models.Model):
     case = models.ForeignKey(
         Case,
         on_delete = models.CASCADE,
-        blank=True,
-        null=True    
     )
-    state =  models.ForeignKey(
-        OrderState,
+    user = models.ForeignKey(
+        User,
         on_delete=models.RESTRICT,
-        null =True
     )
-    address = models.CharField(max_length = 255, blank = True, null=True)
-    info = models.CharField(max_length = 255, blank = True, null=True)
-    createdate = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    
+    UNPAID = 'unPaid'
+    PAID = 'paid'
+    STATE_CHOICES = [
+        (UNPAID, '未付款'),
+        (PAID, '已付款'),
+    ]
+    state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
 
+    total_money = models.IntegerField(default=0, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
 
-
-class OrderReview(models.Model):
+class Review(models.Model):
     order = models.ForeignKey(
         Order,
         on_delete=models.RESTRICT
     )
-    user_score =  models.IntegerField(default=0, blank = True, null=True)
-    user_is_rated = models.BooleanField(default=False)
-    user_content = models.CharField(max_length = 255, blank = True, null=True)
-    user_review_createdate = models.DateTimeField(auto_now=False, blank = True,null=True) 
-    servant_score =  models.IntegerField(default=0, blank = True, null=True)
-    servant_is_rated = models.BooleanField(default=False)
-    servant_content = models.CharField(max_length = 255, blank = True, null=True)
-    servant_review_createdate = models.DateTimeField(auto_now=False, blank = True,null=True) 
+    case = models.ForeignKey(
+        Case,
+        on_delete = models.CASCADE,
+    )
+    servant = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+    )
+
+    case_offender_rating =  models.FloatField(default=0, blank = True, null=True)
+    case_offender_comment = models.CharField(max_length = 255, blank = True, null=True)
+    case_offender_rating_created_at= models.DateTimeField(auto_now=False, blank = True,null=True) 
+
+    servant_rating =  models.FloatField(default=0, blank = True, null=True)
+    servant_comment = models.CharField(max_length = 255, blank = True, null=True)
+    servant_rating_created_at = models.DateTimeField(auto_now=False, blank = True,null=True) 
 
 class PayInfo(models.Model):
     order = models.ForeignKey(
@@ -331,19 +354,7 @@ class Message(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        )
-    servant = models.ForeignKey(
-        Servant,
-        on_delete=models.RESTRICT,
-        default=''
     )
-    SPEAKER_CHOICES = (
-        ('0', 'user'),
-        ('1', 'servant'),
-    )
-    
-    speaker = models.CharField(max_length=1, choices=SPEAKER_CHOICES)
-
     case = models.ForeignKey(
         Case,
         on_delete = models.CASCADE,
@@ -351,7 +362,7 @@ class Message(models.Model):
         null=True    
     )
     content = models.TextField(default='', blank = True, null=True)
-    create_time = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    create_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
 
 class SystemMessage(models.Model):
     user = models.ForeignKey(
@@ -365,5 +376,5 @@ class SystemMessage(models.Model):
         null=True    
     )
     content = models.TextField(default='', blank = True, null=True)
-    create_time = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    create_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
     
