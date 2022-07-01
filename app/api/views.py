@@ -2,8 +2,6 @@ from calendar import weekday
 import queue
 from unicodedata import category
 from unittest import case
-from interval import Interval
-from dateutil.parser import parse
 from rest_framework import viewsets, mixins
 from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
@@ -48,15 +46,17 @@ class LicenseViewSet(viewsets.GenericViewSet,
     queryset = License.objects.all()
     serializer_class = serializers.LicenseSerializer
 
+# http://127.0.0.1:8000/api/servant_Recommend?sort=HighPrice
 class ServantSearchViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.CreateModelMixin,
                     mixins.UpdateModelMixin):
-    # http://127.0.0.1:8000/api/servant_Recommend?sort=HighPrice
+    
     queryset = Servant.objects.all()
     serializer_class = serializers.ServantSerializer
     lookup_url_kwarg = "uid"
+
     # care_type_id 1=home 2=hospital 3=all
     def filter_queryset(self, queryset):
         queryset = self.queryset 
