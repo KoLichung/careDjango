@@ -1,7 +1,6 @@
 import csv
 import os
-import datetime 
-from .models import  User, City, County
+from .models import  Language, User, City, County, License
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -24,7 +23,15 @@ def importCityCounty():
             county.name = county_name
             county.save()
             print(city.name + " " + county.name)
-            
+
+
+def seedData():
+    License.objects.create(name="身分證正面")
+    License.objects.create(name="身分證反面")
+    License.objects.create(name="健保卡正面")
+
+    Language.objects.create(name="國語")
+
 def fakeData():
     user = User()
     user.name = 'user01'
