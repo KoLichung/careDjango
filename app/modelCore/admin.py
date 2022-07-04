@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import  User, City, County
-
+from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,CaseWeekDayTime 
+from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'phone')
@@ -12,5 +13,86 @@ class CityAdmin(admin.ModelAdmin):
 @admin.register(County)
 class CountyAdmin(admin.ModelAdmin):
     list_display = ('id', 'city', 'name')
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'is_increase_price','increase_percent')
+
+@admin.register(UserWeekDayTime)
+class UserWeekDayTimeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'weekday','start_time','end_time')
+
+@admin.register(UserServiceShip)
+class UserServiceShipAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'service')
+
+@admin.register(Language)
+class LanguageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+@admin.register(UserLanguage)
+class UserLanguageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'language', 'remark')
+
+
+@admin.register(License)
+class LicenseAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+@admin.register(UserLicenseShipImage)
+class UserLicenseShipImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'license','image')
+
+@admin.register(UserServiceLocation)
+class UserServiceLocationAdmin(admin.ModelAdmin):
+    list_display = ('id','user', 'city', 'county','tranfer_fee')
+
+@admin.register(Case)
+class CaseAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'servant','city','county','care_type','start_datetime','end_datetime')
+
+@admin.register(DiseaseCondition)
+class DiseaseConditionAdmin(admin.ModelAdmin):
+    list_display = ('id','name')
+
+@admin.register(BodyCondition)
+class BodyConditionAdmin(admin.ModelAdmin):
+    list_display = ('id','name')
+
+@admin.register(CaseDiseaseShip)
+class CaseDiseaseShipAdmin(admin.ModelAdmin):
+    list_display = ('id','case', 'disease')
+
+@admin.register(CaseBodyConditionShip)
+class CaseBodyConditionShipAdmin(admin.ModelAdmin):
+    list_display = ('id','case', 'body_condition')
+
+@admin.register(CaseWeekDayTime)
+class CaseWeekDayTimeAdmin(admin.ModelAdmin):
+    list_display = ('id','case', 'weekday', 'start_time','end_time')
+
+@admin.register(CaseServiceShip)
+class CaseServiceShipAdmin(admin.ModelAdmin):
+    list_display = ('id','case', 'service')
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id','case', 'user','state','total_money')
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('id','order','case', 'servant', 'case_offender_rating','servant_rating')
+
+@admin.register(PayInfo)
+class PayInfoAdmin(admin.ModelAdmin):
+    list_display = ('id','order')
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('id','user', 'case')
+
+@admin.register(SystemMessage)
+class SystemMessageAdmin(admin.ModelAdmin):
+    list_display = ('id','user', 'case')
 
 

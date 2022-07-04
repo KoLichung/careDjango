@@ -81,7 +81,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Service(models.Model):
     name = models.CharField(max_length= 100, unique=True)
     is_increase_price = models.BooleanField(default=False)
-    increase_pcercent = models.FloatField(default=0, blank = True, null=True)
+    increase_percent = models.FloatField(default=0, blank = True, null=True)
 
     def __str__(self):
         return self.name
@@ -120,11 +120,16 @@ class Language(models.Model):
         return self.name
 
 class UserLanguage(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        related_name='languages'
+    )
     language =  models.ForeignKey(
         Language,
         on_delete=models.RESTRICT
     )
-    remark = models.CharField(max_length= 100, unique=True)
+    remark = models.CharField(max_length= 100, unique=True,null=True,blank=True)
 
 class License(models.Model):
     name = models.CharField(max_length= 100, unique=True)
@@ -158,9 +163,16 @@ class County(models.Model):
             return self.name
 
 class UserServiceLocation(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        related_name='service_locations'
+    )
     city = models.ForeignKey(
         City,
         on_delete=models.RESTRICT,
+        null=True,
+        blank=True
     )
     county =  models.ForeignKey(
         County,
@@ -185,7 +197,9 @@ class Case(models.Model):
     
     city = models.ForeignKey(
         City,
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        null=True,
+        blank=True
     )
 
     county = models.ForeignKey(
@@ -290,6 +304,8 @@ class Order(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
+        null=True,
+        blank=True
     )
     
     UNPAID = 'unPaid'
@@ -311,10 +327,14 @@ class Review(models.Model):
     case = models.ForeignKey(
         Case,
         on_delete = models.CASCADE,
+        null=True,
+        blank=True
     )
     servant = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
+        null=True,
+        blank=True
     )
 
     case_offender_rating =  models.FloatField(default=0, blank = True, null=True)
