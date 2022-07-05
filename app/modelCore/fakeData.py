@@ -7,6 +7,7 @@ import pytz
 from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,CaseWeekDayTime 
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
+
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
     file_path = os.path.join(module_dir, 'county.csv')
@@ -28,11 +29,6 @@ def importCityCounty():
             county.name = county_name
             county.save()
             print(city.name + " " + county.name)
-
-def days_count(weekdays: list, start: date, end: date):
-    dates_diff = end-start
-    days = [start + timedelta(days=i) for i in range(dates_diff.days)]
-    return len([day for day in days if day.weekday() in weekdays])
 
 def seedData():
     License.objects.create(name="身分證正面")
@@ -98,7 +94,6 @@ def seedData():
     DiseaseCondition.objects.create(name='腎臟病')
     DiseaseCondition.objects.create(name='癲癇')
 
-
     BodyCondition.objects.create(name='無')
     BodyCondition.objects.create(name='鼻胃管')
     BodyCondition.objects.create(name='使用輔具')
@@ -110,22 +105,16 @@ def seedData():
     BodyCondition.objects.create(name='昏迷')
     BodyCondition.objects.create(name='胃造口')
 
-  
-
 def fakeData():
     user = User()
     user.name = 'user01'
     user.phone = '0915323131'
-    user.is_active = True
-    user.is_staff =  False
     user.gender = 'M'
     user.save()
 
     user = User()
     user.name = 'user02'
     user.phone = '0985463816'
-    user.is_active = True
-    user.is_staff =  False
     user.gender = 'M'
     user.is_servant = True
     user.is_home = True
@@ -137,8 +126,6 @@ def fakeData():
     user = User()
     user.name = 'user03'
     user.phone = '0985463888'
-    user.is_active = True
-    user.is_staff =  False
     user.gender = 'F'
     user.is_servant = True
     user.is_hospital = True
@@ -146,7 +133,6 @@ def fakeData():
     user.hospital_half_day_wage = 1750
     user.hospital_one_day_wage = 3200
     user.is_alltime_service = True
-
     user.save()
 
     userWeekdayTIme = UserWeekDayTime()
@@ -218,18 +204,21 @@ def fakeData():
     userserviceLocation = UserServiceLocation()
     userserviceLocation.user = User.objects.get(id=2)
     userserviceLocation.county = County.objects.get(id=20)
+    userserviceLocation.city = userserviceLocation.county.city
     userserviceLocation.tranfer_fee = 200
     userserviceLocation.save()
 
     userserviceLocation = UserServiceLocation()
     userserviceLocation.user = User.objects.get(id=3)
     userserviceLocation.county = County.objects.get(id=35)
+    userserviceLocation.city = userserviceLocation.county.city
     userserviceLocation.tranfer_fee = 300
     userserviceLocation.save()
 
     userserviceLocation = UserServiceLocation()
     userserviceLocation.user = User.objects.get(id=4)
     userserviceLocation.county = County.objects.get(id=77)
+    userserviceLocation.city = userserviceLocation.county.city
     userserviceLocation.tranfer_fee = 450
     userserviceLocation.save()
 
@@ -367,3 +356,8 @@ def fakeData():
     systemMessage.case = Case.objects.get(id=2)
     systemMessage.content = 'SystemTest02'
     systemMessage.save()
+
+def days_count(weekdays: list, start: date, end: date):
+    dates_diff = end-start
+    days = [start + timedelta(days=i) for i in range(dates_diff.days)]
+    return len([day for day in days if day.weekday() in weekdays])

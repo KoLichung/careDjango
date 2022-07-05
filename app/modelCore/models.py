@@ -80,6 +80,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Service(models.Model):
     name = models.CharField(max_length= 100, unique=True)
+    remark = models.CharField(max_length= 150, blank = True, null=True)
     is_increase_price = models.BooleanField(default=False)
     increase_percent = models.FloatField(default=0, blank = True, null=True)
 
@@ -129,10 +130,11 @@ class UserLanguage(models.Model):
         Language,
         on_delete=models.RESTRICT
     )
-    remark = models.CharField(max_length= 100, unique=True,null=True,blank=True)
+    remark = models.CharField(max_length= 100, null=True, blank=True)
 
 class License(models.Model):
     name = models.CharField(max_length= 100, unique=True)
+    remark = models.CharField(max_length= 150, null=True, blank=True)
     def __str__(self):
         return self.name
 
