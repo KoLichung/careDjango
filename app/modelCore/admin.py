@@ -17,7 +17,7 @@ class CountyAdmin(admin.ModelAdmin):
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'is_increase_price', 'increase_percent')
+    list_display = ('id', 'name', 'remark','is_increase_price', 'increase_percent')
 
 @admin.register(UserWeekDayTime)
 class UserWeekDayTimeAdmin(admin.ModelAdmin):
@@ -37,7 +37,7 @@ class UserLanguageAdmin(admin.ModelAdmin):
 
 @admin.register(License)
 class LicenseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ('id', 'name', 'remark')
 
 @admin.register(UserLicenseShipImage)
 class UserLicenseShipImageAdmin(admin.ModelAdmin):

@@ -10,6 +10,7 @@ from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServ
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,CaseWeekDayTime 
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
 from api import serializers
+from user.serializers import UserSerializer
 
 class LicenseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -52,19 +53,19 @@ class CaseViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = Case.objects.all()
     serializer_class = serializers.CaseSerializer
-    lookup_url_kwarg = "pk"
+    # lookup_url_kwarg = "pk"
 
-    def retrieve(self, request,pk):
-        pk = self.kwargs.get(self.lookup_url_kwarg)
-        case = Case.objects.get(id=pk)
-        serializer = self.get_serializer(case)
-        return Response(serializer.data)
+    # def retrieve(self, request,pk):
+    #     pk = self.kwargs.get(self.lookup_url_kwarg)
+    #     case = Case.objects.get(id=pk)
+    #     serializer = self.get_serializer(case)
+    #     return Response(serializer.data)
 
-    def perform_update(self, serializer):
-        serializer.save()
+    # def perform_update(self, serializer):
+    #     serializer.save()
 
-    def perform_create(self, serializer):
-        serializer.save()
+    # def perform_create(self, serializer):
+    #     serializer.save()
  
 class CasePostViewSet(APIView):
         queryset = Case.objects.all()
@@ -187,3 +188,23 @@ class SystemMessageViewSet(viewsets.GenericViewSet,
 
     def perform_create(self, serializer):
         serializer.save()
+
+class SearchServantView(APIView):
+
+    def get(self, request, format=None):
+        #home, hospital
+        care_type= self.request.query_params.get('care_type')
+        city = self.request.query_params.get('city')
+        county = self.request.query_params.get('county')
+        is_alltime_service = self.request.query_params.get('is_alltime_service')
+        #2022-07-10T00:00:00Z
+        start_datetime = self.request.query_params.get('start_datetime')
+        end_datetime = self.request.query_params.get('end_datetime')
+        #1,3,5
+        weekdays = self.request.query_params.get('weekdays')
+        #0800:2200
+        start_end_time = self.request.query_params.get('start_end_time')
+
+        servants = User.objects.filter(is_servant=True)
+        serializer = UserSerializer(servants, many=True)
+        return Response(serializer.data)

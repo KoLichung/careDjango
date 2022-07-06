@@ -16,7 +16,7 @@ County 列表
 http://localhost:8000/api/countys/
 Case 的列表, 查詢, 新增, 修改
 http://localhost:8000/api/cases/
-http://127.0.0.1:8000/api/case_post
+http://localhost:8000/api/case_post
 Order 的列表, 查詢, 新增, 修改
 http://localhost:8000/api/orders/
 UserServiceLocation 的列表, 查詢, 新增, 修改
@@ -30,6 +30,10 @@ http://localhost:8000/api/messages/
 SystemMessage 的列表, 新增,
 http://localhost:8000/api/systemMessages/
 
+
+20220706
+1.把程式碼改乾淨
+2.把 model 的 is_alltime_service 改成 is_continuous_time
 
 20220705
 1.把 License, Service 的備註放到 remark 這個欄位
