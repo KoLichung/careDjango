@@ -40,7 +40,7 @@ http://localhost:8000/api/search_servants
 4.完成 SearchServantViewSet 的 retrieve method
 5.完成 SearchServantViewSet 的 get_queryset method 的 params filter  
 # start_datetime & end_datetime 好像不會用到
-# start_end_time 的部分還沒做
+
 20220705
 1.把 License, Service 的備註放到 remark 這個欄位
 2.做 Language, Service, DiseaseCondition, BodyCondition, City, County 的 List Api
