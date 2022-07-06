@@ -113,6 +113,24 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         start_end_time = self.request.query_params.get('start_end_time')
 
         queryset = User.objects.filter(is_servant=True)
+        if care_type == 'home':
+            queryset = queryset.filter(is_home=True)
+        elif care_type == 'hospital':
+            queryset = queryset.filter(is_hospital=True)
+        else: 
+            pass
+        if city != None:
+            queryset = queryset.filter(user_locations__city=City.objects.get(id=city))
+        if county != None:
+            queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
+        if is_continuous_time == 'True':
+            queryset = queryset.filter(is_continuous_time=True)
+        else:
+            pass
+        # queryset = queryset.filter(start_datetime__lte=datetime.date(int(start_datetime.split('-')[0]),int(start_datetime.split('-')[1]),int(start_datetime.split('-')[2])),end_datetime__gte=datetime.date(int(end_datetime.split('-')[0]),int(end_datetime.split('-')[1]),int(end_datetime.split('-')[2])))
+        for i in range(len(weekdays.split(','))):
+            queryset = queryset.filter(user_weekday__weekday=weekdays.split(',')[i])
+
         for i in range(len(queryset)):
             queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
             queryset[i].rate_num = 1
@@ -120,5 +138,10 @@ class SearchServantViewSet(viewsets.GenericViewSet,
 
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
-        serializer = self.get_serializer(user)
+        user.background_image_url = User.objects.get(phone=user).background_image
+        user.services = UserServiceShip.objects.filter(user=user)
+        user.licences = UserLicenseShipImage.objects.filter(user=user)
+        user.about_me = User.objects.get(phone=user).about_me
+        user.reviews = Review.objects.filter(servant=user)[:2]
+        serializer = self.get_serializer(user, context={"request":request})
         return Response(serializer.data)

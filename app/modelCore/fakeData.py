@@ -319,6 +319,8 @@ def fakeData():
 
     review = Review()
     review.order = Order.objects.get(id=1)
+    review.case = review.order.case
+    review.servant = review.case.servant
     review.case_offender_rating = 4.8
     review.case_offender_comment = 'good'
     review.servant_rating = 5
@@ -327,6 +329,8 @@ def fakeData():
 
     review = Review()
     review.order = Order.objects.get(id=2)
+    review.case = review.order.case
+    review.servant = review.case.servant
     review.case_offender_rating = 4.5
     review.case_offender_comment = 'very good'
     review.servant_rating = 4.3

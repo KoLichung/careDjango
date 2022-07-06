@@ -90,7 +90,8 @@ class Service(models.Model):
 class UserWeekDayTime(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        related_name='user_weekday'
     )
     WEEKDAY_CHOICES = [
         ('0', 'Sunday'),
@@ -101,7 +102,7 @@ class UserWeekDayTime(models.Model):
         ('5', 'Friday'),
         ('6', 'Saturday'),
     ]
-    weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES)
+    weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES,)
     start_time = models.IntegerField(default=0, blank=True, null=True)
     end_time = models.IntegerField(default=24, blank=True, null=True)
 
@@ -168,7 +169,7 @@ class UserServiceLocation(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
-        related_name='service_locations'
+        related_name='user_locations',
     )
     city = models.ForeignKey(
         City,
