@@ -29,10 +29,16 @@ http://localhost:8000/api/messages/
 SystemMessage 的列表, 新增,
 http://localhost:8000/api/systemMessages/
 
+Search Searvant 的列表, 用於首頁
+http://localhost:8000/api/search_servant
+
 
 20220706
 1.把程式碼改乾淨
 2.把 model 的 is_alltime_service 改成 is_continuous_time
+3.增加 ServantSerializer 的欄位 background_image, services, licences, about_me, reivews[:2] (記得要給 default data)
+4.完成 SearchServantViewSet 的 retrieve method
+5.完成 SearchServantViewSet 的 get_queryset method 的 params filter
 
 20220705
 1.把 License, Service 的備註放到 remark 這個欄位

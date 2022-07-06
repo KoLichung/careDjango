@@ -87,5 +87,14 @@ class SystemMessageSerializer(serializers.ModelSerializer):
         model = SystemMessage
         fields = '__all__'
         read_only_fields = ('id',)
+
+class ServantSerializer(serializers.ModelSerializer):
+    locations = UserServiceLocationSerializer(read_only=True, many=True)
+    rate_num = serializers.IntegerField(default=0)
+    
+    class Meta:
+        model = User
+        fields = ('id', 'name', 'image', 'rating', 'is_home', 'home_hour_wage', 'home_half_day_wage', 'home_one_day_wage', 'is_hospital', 'hospital_hour_wage', 'hospital_half_day_wage', 'hospital_one_day_wage', 'locations', 'rate_num')
+        read_only_fields = ('id',)
         
 

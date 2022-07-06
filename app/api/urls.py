@@ -17,7 +17,7 @@ router.register('caseWeekDayTimes', views.CaseWeekDayTimeViewSet)
 router.register('userWeekDayTimes', views.UserWeekDayTimeViewSet)
 router.register('messages', views.MessageViewSet)
 router.register('systemMessages', views.SystemMessageViewSet)
-
+router.register('search_servants', views.SearchServantViewSet)
 
 app_name = 'api'
 

@@ -10,7 +10,6 @@ from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServ
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,CaseWeekDayTime 
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
 from api import serializers
-from user.serializers import UserSerializer
 
 class LicenseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -93,10 +92,14 @@ class SystemMessageViewSet(viewsets.GenericViewSet,
     queryset = SystemMessage.objects.all()
     serializer_class = serializers.SystemMessageSerializer
 
-class SearchServantView(APIView):
+class SearchServantViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,):
 
-    def get(self, request, format=None):
-        #home, hospital
+    queryset = User.objects.all()
+    serializer_class = serializers.ServantSerializer
+
+    def get_queryset(self):
         care_type= self.request.query_params.get('care_type')
         city = self.request.query_params.get('city')
         county = self.request.query_params.get('county')
@@ -109,6 +112,13 @@ class SearchServantView(APIView):
         #0800:2200
         start_end_time = self.request.query_params.get('start_end_time')
 
-        servants = User.objects.filter(is_servant=True)
-        serializer = UserSerializer(servants, many=True)
+        queryset = User.objects.filter(is_servant=True)
+        for i in range(len(queryset)):
+            queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
+            queryset[i].rate_num = 1
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(user)
         return Response(serializer.data)
