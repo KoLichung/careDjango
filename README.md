@@ -16,7 +16,6 @@ County 列表
 http://localhost:8000/api/countys/
 Case 的列表, 查詢, 新增, 修改
 http://localhost:8000/api/cases/
-http://localhost:8000/api/case_post
 Order 的列表, 查詢, 新增, 修改
 http://localhost:8000/api/orders/
 UserServiceLocation 的列表, 查詢, 新增, 修改

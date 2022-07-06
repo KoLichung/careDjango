@@ -132,7 +132,7 @@ def fakeData():
     user.hospital_hour_wage = 320
     user.hospital_half_day_wage = 1750
     user.hospital_one_day_wage = 3200
-    user.is_alltime_service = True
+    user.is_continuous_time = True
     user.save()
 
     userWeekdayTIme = UserWeekDayTime()
@@ -233,7 +233,7 @@ def fakeData():
     case.weight = 67
     case.disease_remark = 'Test'
     case.conditions_remark = 'Test'
-    case.is_alltime_service = True
+    case.is_continuous_time = True
     case.start_datetime = datetime.datetime(2022,7,20).replace(tzinfo=pytz.UTC)
     case.end_datetime = datetime.datetime(2022,8,20).replace(tzinfo=pytz.UTC)
     case.save()

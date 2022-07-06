@@ -72,7 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     hospital_one_day_wage = models.IntegerField(default=0, blank = True, null=True)
 
     about_me = models.TextField(default='', blank = True, null=True)
-    is_alltime_service = models.BooleanField(default=True)
+    is_continuous_time = models.BooleanField(default=True)
 
     background_image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
 
@@ -231,7 +231,7 @@ class Case(models.Model):
     disease_remark = models.CharField(max_length= 255, blank=True, null=True)
     conditions_remark = models.CharField(max_length= 255, blank=True, null=True)
 
-    is_alltime_service = models.BooleanField(default=False)
+    is_continuous_time = models.BooleanField(default=False)
 
     is_taken = models.BooleanField(default=False)
     is_open_for_search = models.BooleanField(default=False)

@@ -53,44 +53,6 @@ class CaseViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = Case.objects.all()
     serializer_class = serializers.CaseSerializer
-    # lookup_url_kwarg = "pk"
-
-    # def retrieve(self, request,pk):
-    #     pk = self.kwargs.get(self.lookup_url_kwarg)
-    #     case = Case.objects.get(id=pk)
-    #     serializer = self.get_serializer(case)
-    #     return Response(serializer.data)
-
-    # def perform_update(self, serializer):
-    #     serializer.save()
-
-    # def perform_create(self, serializer):
-    #     serializer.save()
- 
-class CasePostViewSet(APIView):
-        queryset = Case.objects.all()
-        serializer_class = serializers.CaseSerializer
-
-        def post(self,request):
-            case = Case()
-            case.user = User.objects.get(id=(request.data.get('user_id')))
-            case.servant = User.objects.get(id=(request.data.get('servant_id')))
-            case.county = County.objects.get(id=(request.data.get('county_id')))
-            case.care_type = (request.data.get('care_type'))
-            case.name = request.data.get('name')
-            case.gender = request.data.get('gender')
-            case.age = int(request.data.get('age'))
-            case.weight = int(request.data.get('weight'))
-            case.disease_remark = request.data.get('disease_remark')
-            case.conditions_remark = request.data.get('conditions_remark')
-            case.is_alltime_service = eval(request.data.get('is_alltime_service'))
-            case.is_taken = eval(request.data.get('is_taken'))
-            case.is_open_for_search = eval(request.data.get('is_open_for_search'))
-            case.start_datetime = datetime.datetime(int(request.data.get('start_datetime').split(',')[0]),int(request.data.get('start_datetime').split(',')[1]),int(request.data.get('start_datetime').split(',')[2])).replace(tzinfo=pytz.UTC)
-            case.end_datetime = datetime.datetime(int(request.data.get('end_datetime').split(',')[0]),int(request.data.get('end_datetime').split(',')[1]),int(request.data.get('end_datetime').split(',')[2])).replace(tzinfo=pytz.UTC)
-            case.save()
-            serializer = self.serializer_class(case)
-            return Response(serializer.data)
 
 class OrderViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -98,19 +60,6 @@ class OrderViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = Order.objects.all()
     serializer_class = serializers.OrderSerializer
-    lookup_url_kwarg = "pk"
-
-    def retrieve(self, request,pk):
-        pk = self.kwargs.get(self.lookup_url_kwarg)
-        order = Order.objects.get(id=pk)
-        serializer = self.get_serializer(order)
-        return Response(serializer.data)
-
-    def perform_update(self, serializer):
-        serializer.save()
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 class UserServiceLocationViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -118,19 +67,6 @@ class UserServiceLocationViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = UserServiceLocation.objects.all()
     serializer_class = serializers.UserServiceLocationSerializer
-    lookup_url_kwarg = "pk"
-
-    def retrieve(self, request,pk):
-        pk = self.kwargs.get(self.lookup_url_kwarg)
-        userServiceLocation = UserServiceLocation.objects.get(id=pk)
-        serializer = self.get_serializer(userServiceLocation)
-        return Response(serializer.data)
-
-    def perform_update(self, serializer):
-        serializer.save()
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 class CaseWeekDayTimeViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -138,19 +74,6 @@ class CaseWeekDayTimeViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = CaseWeekDayTime.objects.all()
     serializer_class = serializers.CaseWeekDayTimeSerializer
-    lookup_url_kwarg = "pk"
-
-    def retrieve(self, request,pk):
-        pk = self.kwargs.get(self.lookup_url_kwarg)
-        caseWeekDayTime = CaseWeekDayTime.objects.get(id=pk)
-        serializer = self.get_serializer(caseWeekDayTime)
-        return Response(serializer.data)
-
-    def perform_update(self, serializer):
-        serializer.save()
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 class UserWeekDayTimeViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -158,19 +81,6 @@ class UserWeekDayTimeViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = UserWeekDayTime.objects.all()
     serializer_class = serializers.UserWeekDayTimeSerializer
-    lookup_url_kwarg = "pk"
-
-    def retrieve(self, request,pk):
-        pk = self.kwargs.get(self.lookup_url_kwarg)
-        userWeekDayTime = UserWeekDayTime.objects.get(id=pk)
-        serializer = self.get_serializer(userWeekDayTime)
-        return Response(serializer.data)
-
-    def perform_update(self, serializer):
-        serializer.save()
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 class MessageViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -178,16 +88,10 @@ class MessageViewSet(viewsets.GenericViewSet,
     queryset = Message.objects.all()
     serializer_class = serializers.MessageSerializer
 
-    def perform_create(self, serializer):
-        serializer.save()
-
 class SystemMessageViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
     queryset = SystemMessage.objects.all()
     serializer_class = serializers.SystemMessageSerializer
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 class SearchServantView(APIView):
 
@@ -196,7 +100,7 @@ class SearchServantView(APIView):
         care_type= self.request.query_params.get('care_type')
         city = self.request.query_params.get('city')
         county = self.request.query_params.get('county')
-        is_alltime_service = self.request.query_params.get('is_alltime_service')
+        is_continuous_time = self.request.query_params.get('is_continuous_time')
         #2022-07-10T00:00:00Z
         start_datetime = self.request.query_params.get('start_datetime')
         end_datetime = self.request.query_params.get('end_datetime')

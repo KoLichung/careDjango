@@ -23,5 +23,4 @@ app_name = 'api'
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('case_post', views.CasePostViewSet.as_view()),
 ]
