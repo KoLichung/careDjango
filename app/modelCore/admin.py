@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,CaseWeekDayTime 
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,OrderWorkDate 
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
 
 @admin.register(User)
@@ -67,9 +67,9 @@ class CaseDiseaseShipAdmin(admin.ModelAdmin):
 class CaseBodyConditionShipAdmin(admin.ModelAdmin):
     list_display = ('id', 'case', 'body_condition')
 
-@admin.register(CaseWeekDayTime)
-class CaseWeekDayTimeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'case', 'weekday', 'start_time', 'end_time')
+@admin.register(OrderWorkDate)
+class OrderWorkDateAdmin(admin.ModelAdmin):
+    list_display = ('id', 'order', 'workdate', 'weekday', 'start_time', 'end_time')
 
 @admin.register(CaseServiceShip)
 class CaseServiceShipAdmin(admin.ModelAdmin):

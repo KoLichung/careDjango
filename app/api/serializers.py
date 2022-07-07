@@ -2,18 +2,12 @@ from email.policy import default
 from rest_framework import serializers
 
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,CaseWeekDayTime 
+from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,OrderWorkDate 
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
 
 class LicenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = License
-        fields = '__all__'
-        read_only_fields = ('id',)
-
-class UserLicenseShipImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserLicenseShipImage
         fields = '__all__'
         read_only_fields = ('id',)
 
@@ -26,12 +20,6 @@ class LangaugeSerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = '__all__'
-        read_only_fields = ('id',)
-
-class UserServiceShipSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserServiceShip
         fields = '__all__'
         read_only_fields = ('id',)
 
@@ -77,12 +65,6 @@ class UserServiceLocationSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
-class CaseWeekDayTimeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CaseWeekDayTime
-        fields = '__all__'
-        read_only_fields = ('id',)
-
 class UserWeekDayTimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserWeekDayTime
@@ -112,7 +94,7 @@ class ServantSerializer(serializers.ModelSerializer):
     rate_num = serializers.IntegerField(default=0)
     background_image_url = serializers.ImageField(max_length=None, use_url=True, allow_null=True, required=False)
     services = ServiceSerializer(read_only=True, many=True)
-    licences = UserLicenseShipImageSerializer(read_only=True, many=True)
+    licences = LicenseSerializer(read_only=True, many=True)
     about_me = serializers.CharField(default='')
     reviews = ReviewSerializer(read_only=True, many=True)
     

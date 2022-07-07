@@ -2,8 +2,12 @@ from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from collections import namedtuple
+from django.db.models import Q
+from django.db.models import Avg
+from datetime import datetime
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,CaseWeekDayTime 
+from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,OrderWorkDate 
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
 from api import serializers
 
@@ -63,12 +67,7 @@ class UserServiceLocationViewSet(viewsets.GenericViewSet,
     queryset = UserServiceLocation.objects.all()
     serializer_class = serializers.UserServiceLocationSerializer
 
-class CaseWeekDayTimeViewSet(viewsets.GenericViewSet,
-                    mixins.ListModelMixin,
-                    mixins.RetrieveModelMixin,
-                    mixins.CreateModelMixin):
-    queryset = CaseWeekDayTime.objects.all()
-    serializer_class = serializers.CaseWeekDayTimeSerializer
+
 
 class UserWeekDayTimeViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -107,6 +106,8 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         weekdays = self.request.query_params.get('weekdays')
         #8:22
         start_end_time = self.request.query_params.get('start_end_time')
+        start_time_int = int(start_end_time.split(':')[0])
+        end_time_int = int(start_end_time.split(':')[1])
 
         queryset = User.objects.filter(is_servant=True)
         if care_type == 'home':
@@ -123,20 +124,17 @@ class SearchServantViewSet(viewsets.GenericViewSet,
 
         # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
         # 2022-07-10
-        # start_date = start_datetime.split('T')[0]
-        # end_date = end_datetime.split('T')[0]
-        # queryset = queryset.filter(start_datetime__lte=start_date,end_datetime__gte=end_date)
-
         if weekdays != None:
-            start_time_int = int(start_end_time.split(':')[0])
-            end_time_int = int(start_end_time.split(':')[1])
             weekdays_num_list = weekdays.split(',')
+            start_date = start_datetime.split('T')[0]
+            end_date = end_datetime.split('T')[0]
+            queryset = queryset.filter((~Q(servant_workdays__workdate__range=[start_date, end_date],servant_workdays__weekday__in=weekdays_num_list,servant_workdays__start_time__gte=start_time_int,servant_workdays__start_time__lte=end_time_int))|(~Q(servant_workdays__workdate__range=[start_date, end_date],servant_workdays__weekday__in=weekdays_num_list,servant_workdays__end_time__gte=start_time_int,servant_workdays__end_time__lte=end_time_int)))
             for day_num in weekdays_num_list:
                 queryset = queryset.filter(user_weekday__weekday=day_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
 
         for i in range(len(queryset)):
             queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
-            queryset[i].rate_num = 1
+            queryset[i].rate_num = Review.objects.filter(servant=queryset[i]).aggregate(Avg('servant_rating'))['servant_rating__avg']
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -146,7 +144,8 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         service_ids = list(UserServiceShip.objects.filter(user=user).values_list('service', flat=True))
         user.services = Service.objects.filter(id__in=service_ids)
 
-        user.licences = UserLicenseShipImage.objects.filter(user=user)
+        license_ids = list(UserLicenseShipImage.objects.filter(user=user).values_list('license', flat=True))
+        user.licences = License.objects.filter(id__in=license_ids)
 
         user.about_me = User.objects.get(phone=user).about_me
         user.reviews = Review.objects.filter(servant=user)[:2]
