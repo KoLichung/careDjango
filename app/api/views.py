@@ -106,8 +106,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         weekdays = self.request.query_params.get('weekdays')
         #8:22
         start_end_time = self.request.query_params.get('start_end_time')
-        start_time_int = int(start_end_time.split(':')[0])
-        end_time_int = int(start_end_time.split(':')[1])
+        
 
         queryset = User.objects.filter(is_servant=True)
         if care_type == 'home':
@@ -128,7 +127,9 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             weekdays_num_list = weekdays.split(',')
             start_date = start_datetime.split('T')[0]
             end_date = end_datetime.split('T')[0]
-            queryset = queryset.filter((~Q(servant_workdays__workdate__range=[start_date, end_date],servant_workdays__weekday__in=weekdays_num_list,servant_workdays__start_time__gte=start_time_int,servant_workdays__start_time__lte=end_time_int))|(~Q(servant_workdays__workdate__range=[start_date, end_date],servant_workdays__weekday__in=weekdays_num_list,servant_workdays__end_time__gte=start_time_int,servant_workdays__end_time__lte=end_time_int)))
+            start_time_int = int(start_end_time.split(':')[0])
+            end_time_int = int(start_end_time.split(':')[1])
+            queryset = queryset.filter((~Q(servant_workdays__workdate__range=[start_date, end_date],servant_workdays__weekday__in=weekdays_num_list,servant_workdays__start_time__lte=start_time_int,servant_workdays__end_time__gte=start_time_int))&(~Q(servant_workdays__workdate__range=[start_date, end_date],servant_workdays__weekday__in=weekdays_num_list,servant_workdays__start_time__lte=end_time_int,servant_workdays__end_time__gte=end_time_int)))
             for day_num in weekdays_num_list:
                 queryset = queryset.filter(user_weekday__weekday=day_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
 

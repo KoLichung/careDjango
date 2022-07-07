@@ -30,7 +30,7 @@ SystemMessage 的列表, 新增,
 http://localhost:8000/api/systemMessages/
 
 Search Servant 的列表, 用於首頁
-http://localhost:8000/api/search_servants?
+http://localhost:8000/api/search_servants/?care_type=home&city=3&county=35&is_continuous_time=True&weekdays=1,3,5&start_end_time=6:9&start_datetime=2022-07-21T00:00:00Z&end_datetime=2022-08-20T00:00:00Z
 
 20220707
 1.在 retrieve method 把 license 改成跟 service 同樣做法
