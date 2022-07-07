@@ -2,10 +2,6 @@ from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import datetime
-from datetime import date ,timedelta
-from pytz import timezone
-import pytz
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,CaseWeekDayTime 
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
@@ -109,7 +105,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         end_datetime = self.request.query_params.get('end_datetime')
         #1,3,5
         weekdays = self.request.query_params.get('weekdays')
-        #0800:2200
+        #8:22
         start_end_time = self.request.query_params.get('start_end_time')
 
         queryset = User.objects.filter(is_servant=True)
@@ -117,21 +113,26 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(is_home=True)
         elif care_type == 'hospital':
             queryset = queryset.filter(is_hospital=True)
-        else: 
-            pass
+
         if city != None:
             queryset = queryset.filter(user_locations__city=City.objects.get(id=city))
         if county != None:
             queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
         if is_continuous_time == 'True':
             queryset = queryset.filter(is_continuous_time=True)
-        else:
-            pass
-        # queryset = queryset.filter(start_datetime__lte=datetime.date(int(start_datetime.split('-')[0]),int(start_datetime.split('-')[1]),int(start_datetime.split('-')[2])),end_datetime__gte=datetime.date(int(end_datetime.split('-')[0]),int(end_datetime.split('-')[1]),int(end_datetime.split('-')[2])))
+
+        # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
+        # 2022-07-10
+        # start_date = start_datetime.split('T')[0]
+        # end_date = end_datetime.split('T')[0]
+        # queryset = queryset.filter(start_datetime__lte=start_date,end_datetime__gte=end_date)
 
         if weekdays != None:
-            for i in range(len(weekdays.split(','))):
-                queryset = queryset.filter(user_weekday__weekday=weekdays.split(',')[i],user_weekday__start_time__lte=(int(start_end_time.split(':')[0])/100),user_weekday__end_time__gte=(int(start_end_time.split(':')[1])/100))
+            start_time_int = int(start_end_time.split(':')[0])
+            end_time_int = int(start_end_time.split(':')[1])
+            weekdays_num_list = weekdays.split(',')
+            for day_num in weekdays_num_list:
+                queryset = queryset.filter(user_weekday__weekday=day_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
 
         for i in range(len(queryset)):
             queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
@@ -141,8 +142,12 @@ class SearchServantViewSet(viewsets.GenericViewSet,
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
         user.background_image_url = User.objects.get(phone=user).background_image
-        user.services = UserServiceShip.objects.filter(user=user)
+
+        service_ids = list(UserServiceShip.objects.filter(user=user).values_list('service', flat=True))
+        user.services = Service.objects.filter(id__in=service_ids)
+
         user.licences = UserLicenseShipImage.objects.filter(user=user)
+
         user.about_me = User.objects.get(phone=user).about_me
         user.reviews = Review.objects.filter(servant=user)[:2]
         serializer = self.get_serializer(user, context={"request":request})

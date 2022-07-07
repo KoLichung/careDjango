@@ -111,7 +111,7 @@ class ServantSerializer(serializers.ModelSerializer):
     locations = UserServiceLocationSerializer(read_only=True, many=True)
     rate_num = serializers.IntegerField(default=0)
     background_image_url = serializers.ImageField(max_length=None, use_url=True, allow_null=True, required=False)
-    services = UserServiceShipSerializer(read_only=True, many=True)
+    services = ServiceSerializer(read_only=True, many=True)
     licences = UserLicenseShipImageSerializer(read_only=True, many=True)
     about_me = serializers.CharField(default='')
     reviews = ReviewSerializer(read_only=True, many=True)

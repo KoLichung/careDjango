@@ -29,9 +29,16 @@ http://localhost:8000/api/messages/
 SystemMessage 的列表, 新增,
 http://localhost:8000/api/systemMessages/
 
-Search Searvant 的列表, 用於首頁
-http://localhost:8000/api/search_servants
+Search Servant 的列表, 用於首頁
+http://localhost:8000/api/search_servants?
 
+20220707
+1.在 retrieve method 把 license 改成跟 service 同樣做法
+2.檢查 SearchServantViewSet 的 get_queryset method 的 weekdays filter 是否正確
+3.完成 SearchServantViewSet 的 get_queryset method 的 rate_num 回傳
+4.在 Order model 增加 start_datetime, end_datetime, weekday, start_time, end_time
+5.完成 SearchServantViewSet 的 start_datetime, end_datetime 應用
+6.修改 readme 的 search servant 連結, 放入 params
 
 20220706
 1.把程式碼改乾淨
