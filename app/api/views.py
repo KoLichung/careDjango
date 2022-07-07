@@ -128,8 +128,10 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         else:
             pass
         # queryset = queryset.filter(start_datetime__lte=datetime.date(int(start_datetime.split('-')[0]),int(start_datetime.split('-')[1]),int(start_datetime.split('-')[2])),end_datetime__gte=datetime.date(int(end_datetime.split('-')[0]),int(end_datetime.split('-')[1]),int(end_datetime.split('-')[2])))
-        for i in range(len(weekdays.split(','))):
-            queryset = queryset.filter(user_weekday__weekday=weekdays.split(',')[i],user_weekday__start_time__lte=(int(start_end_time.split(':')[0])/100),user_weekday__end_time__gte=(int(start_end_time.split(':')[1])/100))
+
+        if weekdays != None:
+            for i in range(len(weekdays.split(','))):
+                queryset = queryset.filter(user_weekday__weekday=weekdays.split(',')[i],user_weekday__start_time__lte=(int(start_end_time.split(':')[0])/100),user_weekday__end_time__gte=(int(start_end_time.split(':')[1])/100))
 
         for i in range(len(queryset)):
             queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
