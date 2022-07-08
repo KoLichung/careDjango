@@ -147,7 +147,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
 
         license_ids = list(UserLicenseShipImage.objects.filter(user=user).values_list('license', flat=True))
         user.licences = License.objects.filter(id__in=license_ids)
-
+        user.rate_num = Review.objects.filter(servant=user).aggregate(Avg('servant_rating'))['servant_rating__avg']
         user.about_me = User.objects.get(phone=user).about_me
         user.reviews = Review.objects.filter(servant=user)[:2]
         serializer = self.get_serializer(user, context={"request":request})
