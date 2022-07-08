@@ -39,6 +39,13 @@ http://localhost:8000/api/recommend_servants/
 20220708
 1.CaseViewSet 的 get_queryset, retrieve
 2.RecommendServantViewSet 的 get_queryset
+----------
+1.把 OrderWeekDay 寫進 admin
+2.把 OrderWeekDay 寫進 fakeData
+3.CaseSearchViewSet 用於接案者找尋案子, 以及觀看案子詳細, 包含 get_queryset 跟 retrieve
+4.ServantCaseViewSet 用於使用者取得自己已接的案子(我接的案, 我接的案件詳細), 包含 get_queryset 跟 retrieve
+5.NeedCaseViewSet 用於使用者取得自己發出的案子(我發的需求案件, 我發的案件詳細), 包含 get_queryset 跟 retrieve
+(3,4,5 在資料上應該會有些不同, 4跟5 要用上 authentication)
 
 20220707
 1.在 retrieve method 把 license 改成跟 service 同樣做法

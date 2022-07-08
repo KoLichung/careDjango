@@ -308,11 +308,28 @@ class Order(models.Model):
 
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
-    weekday = models.CharField(max_length=20, blank=True, null=True)
+
     start_time = models.IntegerField(default=0, blank=True, null=True)
     end_time = models.IntegerField(default=24, blank=True, null=True)
     
     created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
+
+class OrderWeekDay(models.Model):
+    order =  models.ForeignKey(
+        Order,
+        on_delete = models.CASCADE,
+        related_name='order_weekday',
+    )
+    WEEKDAY_CHOICES = [
+        ('0', 'Sunday'),
+        ('1', 'Monday'),
+        ('2', 'Tuesday'),
+        ('3', 'Wednesday'),
+        ('4', 'Thursday'),
+        ('5', 'Friday'),
+        ('6', 'Saturday'),
+    ]
+    weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES,)
 
 class Review(models.Model):
     order = models.ForeignKey(

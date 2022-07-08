@@ -3,7 +3,6 @@ from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from collections import namedtuple
 from django.db.models import Q
 from django.db.models import Avg , Count
 from datetime import datetime
@@ -55,7 +54,6 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
     serializer_class = serializers.CaseSerializer
 
     def get_queryset(self):
-
         city = self.request.query_params.get('city')
         county = self.request.query_params.get('county')
         #2022-07-10T00:00:00Z
@@ -68,7 +66,7 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(city=City.objects.get(id=city))
         if county != None:
             queryset = queryset.filter(county=County.objects.get(id=county))
-        if (start_datetime != None)&(end_datetime != None) == True:
+        if start_datetime != None and end_datetime != None :
             queryset = queryset.filter(start_datetime__gte=start_datetime,end_datetime__lte=end_datetime)
         if care_type == 'home':
             queryset = queryset.filter(care_type='home')
@@ -95,9 +93,6 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
 
         serializer = self.get_serializer(case)
         return Response(serializer.data)
-
-        
-        
 
 class OrderViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -161,8 +156,17 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(user_locations__city=City.objects.get(id=city))
         if county != None:
             queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
+        
+        #以下兩個情形只會有其中一個發生
         if is_continuous_time == 'True':
             queryset = queryset.filter(is_continuous_time=True)
+
+        #所選擇的周間跟時段 要符合 servant 的服務時段
+        if weekdays != None:
+            weekdays_num_list = weekdays.split(',')
+            service_time_condition_1 = Q(is_continuous_time=True)
+            service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+            queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
 
         # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
         # 2022-07-10
@@ -176,16 +180,19 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         condition1 = Q(start_datetime__range=[start_date, end_date])
         condition2 = Q(end_datetime__range=[start_date, end_date])
         condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
-        orders = Order.objects.filter( condition1 | condition2 | condition3)
+        orders = Order.objects.filter(condition1 | condition2 | condition3)
         #2.再從 1 取出週間有交集的訂單
         #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
-
-        #3.再從 2 取出時段有交集的訂單
-
-        #所選擇的周間跟時段 要符合 servant 的服務時段
         if weekdays != None:
             weekdays_num_list = weekdays.split(',')
-            queryset = queryset.filter(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int).distinct()
+            orders = orders.filter(order_weekday__weekday__in=weekdays_num_list).distinct()
+        #3.再從 2 取出時段有交集的訂單
+        time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
+        time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
+        time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
+        orders = orders.filter(time_condition_1 | time_condition_2 | time_condition3)
+        order_conflict_servants_id = list(orders.values_list('user', flat=True))
+        queryset = queryset.filter(~Q(id__in=order_conflict_servants_id))
 
         for i in range(len(queryset)):
             queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
