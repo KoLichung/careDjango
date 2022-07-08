@@ -1,3 +1,4 @@
+from tracemalloc import start
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -106,7 +107,6 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         weekdays = self.request.query_params.get('weekdays')
         #8:22
         start_end_time = self.request.query_params.get('start_end_time')
-        
 
         queryset = User.objects.filter(is_servant=True)
         if care_type == 'home':
@@ -123,23 +123,26 @@ class SearchServantViewSet(viewsets.GenericViewSet,
 
         # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
         # 2022-07-10
+        start_date = start_datetime.split('T')[0]
+        end_date = end_datetime.split('T')[0]
+        start_time_int = int(start_end_time.split(':')[0])
+        end_time_int = int(start_end_time.split(':')[1])
+
+        #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
+        #1.取出日期期間有交集的訂單
+        condition1 = Q(start_datetime__range=[start_date, end_date])
+        condition2 = Q(end_datetime__range=[start_date, end_date])
+        condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
+        orders = Order.objects.filter( condition1 | condition2 | condition3)
+        #2.再從 1 取出週間有交集的訂單
+        #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
+
+        #3.再從 2 取出時段有交集的訂單
+
+        #所選擇的周間跟時段 要符合 servant 的服務時段
         if weekdays != None:
             weekdays_num_list = weekdays.split(',')
-            start_date = start_datetime.split('T')[0]
-            end_date = end_datetime.split('T')[0]
-            start_time_int = int(start_end_time.split(':')[0])
-            end_time_int = int(start_end_time.split(':')[1])
-
-            #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外
-            #1.如果日期在既有的訂單日期之外 => pass, 否則進行步驟 2
-            #a.先
-
-            #2.如果週間在既有的周間之外 => pass, 否則進行步驟 3
-            #3.如果時段在既有的時段之外 => pass, 否則 not pass
-            
-            #所選擇的周間跟時段 要符合 servant 的服務時段
-            for day_num in weekdays_num_list:
-                queryset = queryset.filter(user_weekday__weekday=day_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+            queryset = queryset.filter(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int).distinct()
 
         for i in range(len(queryset)):
             queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
