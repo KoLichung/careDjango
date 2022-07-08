@@ -1,0 +1,99 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+      <div class="container pt-5">
+        
+        <div class="alert alert-danger text-center" role="alert">委託人尚未找到服務者</div>
+
+        <div class="row">
+          
+          <div class="col-12 col-md-6 ">
+
+              <!-- <span class="green-border-tag">尚未找到服務者</span> -->
+
+                <p class="small-section-title-purple mt-2">委託人</p>
+                <div class="container" style="display: flex; padding-left: 0;" >
+                  
+                    <div class="avatar avatar-3xl" >
+                      <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
+                    </div>
+
+                    <div class="mx-3">
+                      <span class="h5">林瑜婷</span>
+                      <div>
+                      <span class="fas fa-star" style="color: yellow;"></span>
+                      <span class="fas fa-star" style="color: yellow;"></span>
+                      <span class="fas fa-star" style="color: yellow;"></span>
+                      <span class="fas fa-star" style="color: yellow;"></span>
+                      <span class="fas fa-star" style="color: yellow;"></span>
+                      <span class="h6">評價7</span>
+                      </div>
+                    </div>
+
+                </div>
+
+                <p class="small-section-title-purple mt-3">被照顧者資訊</p>
+                <div class="case-info-font">
+                  <p>性別：男</p>
+                  <p>體重：70</p>
+                  <p>年齡：70</p>
+                  <p>疾病：阿茲海默症</p>
+                  <p>補充說明：補充說明補充說明</p>
+                  <p>身體狀況：使用輔具</p>
+                  <p class="text-indent-5">補充說明：補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明</p>
+                </div>
+
+                <p class="small-section-title-purple mt-5">需求服務項目</p>
+                <div class="case-info-font mb-5">
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    安全維護 (預防跌倒、陪同散步、推輪椅、心靈陪伴)
+                  </p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    協助進食</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    協助如廁</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    陪同就醫</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    代購物品</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    簡易備餐</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    身體清潔
+                  </p>
+
+
+                 
+                </div>
+
+          </div>
+
+          <div class="col-12 col-md-6 ">
+            <p class="small-section-title-purple mt-2">案件資訊</p>
+            <div class="case-info-font">
+                  <p>照顧類型：<span style="color: #BB6BD9;">居家照護</span></p>
+                  <p>地點：桃園市 楊梅區</p>
+                  <p class="text-indent-3">時間：<span style="color: red;">每週預定</span><br>
+                    2022/04/18 ~ 2022/04/28<br>
+                    星期一、星期三、星期五<br>
+                    早上 8:00 ~ 晚上 8:00  
+                  </p>
+            </div>
+            <button class="full-purple-button mt-3 mb-5">我可以接案</button>
+          </div>
+
+        </div>
+      </div>
+     
+</main>
+{% endblock %}

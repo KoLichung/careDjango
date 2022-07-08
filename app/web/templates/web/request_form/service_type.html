@@ -1,0 +1,115 @@
+{% extends 'web/base_logged_in.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white h-100" id="top" >
+      <h4 class="text-center pt-5 pb-2 section-title-purple">填寫需求單</h4>
+
+      <div class="row text-center mt-3" style="font-weight: 600;">
+        <div class="col-6 col-md-3" style="color: #BB6BD9;">
+          ① 需求基本資料
+        </div>
+        <div class="col-6 col-md-3" style="color: #CCCCCC;">
+          ② 被照顧者資訊
+        </div>
+        <div class="col-6 col-md-3" style="color: #CCCCCC;">
+          ③ 聯絡人
+        </div>
+        <div class="col-6 col-md-3" style="color: #CCCCCC;">
+          ④ 確認送出
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-11 ">
+          <hr>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-11 mx-auto mt-3">
+
+          <div class="mt-3 h6" style="display: flex;">
+            <label class="h6" for="home_care" style="padding-top: 2px; padding-right: 10px;">需求類型：</label>
+            <label class="custom-radio-parent">居家照顧
+              <input type="radio" checked="checked" name="care_type" id="home_care"> 
+              <span class="checkmark"></span>
+            </label>
+            <label class="custom-radio-parent">醫院看護
+              <input type="radio" name="care_type" id="hospital_care">
+              <span class="checkmark"></span>
+            </label>           
+          </div>
+
+          <div style="display: flex;">
+            <span class="h6 mt-2">照護地點：</span>
+            
+              <div class="btn-group">
+              <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                台中市
+              </button>
+              <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
+                <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
+              </div>
+              </div>
+              &emsp;
+              <div class="btn-group">
+              <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                全區
+              </button>
+              <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
+                <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
+              </div>
+              </div>
+            
+          </div>     
+
+          <div class="mt-2 h6" style="display: flex;">
+            <p class="mt-2 h6">需求日期：</p>
+            <input class="modal-timePicker-button datetimepicker" style="width: 200px;" id="timepicker2" type="text" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
+          </div>
+
+          <div class=" h6" style="display: flex;">
+            <label class="h6" for="time_type" style="padding-top: 2px; padding-right: 10px;">時間類型：</label>
+            <label class="custom-radio-parent">連續時間
+              <input type="radio" checked="checked" name="time_type" id="continuous_time"> 
+              <span class="checkmark"></span>
+            </label>
+            <label class="custom-radio-parent">每週時段預定
+              <input type="radio" name="time_type" id="weekly_time">
+              <span class="checkmark"></span>
+            </label>           
+          </div>
+
+          <div style="display: flex;">
+            <span class="h6 mt-2">開始時間：</span>
+            <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+
+          </div>
+
+          <div class="mt-2" style="display: flex;">
+            <span class="h6 mt-2">結束時間：</span>
+            <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row mt-7 justify-content-between">
+        <div class="col-5 col-md-4 mx-auto">
+          <a href="{% url 'index' %}">
+            <button class="full-purple-button" >取消</button>
+          </a>
+        </div>
+        <div class="col-5 col-md-4 mx-auto">
+          <a href="{% url 'request_form_patient_info' %}">
+            <button class="full-purple-button">下一頁繼續 <span class="far fa-arrow-alt-circle-right"></span></button>
+          </a>
+        </div>
+      </div>
+
+
+</main>
+{% endblock %}

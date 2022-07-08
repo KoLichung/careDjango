@@ -1,0 +1,135 @@
+{% extends 'web/base_logged_in.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+      <div class="col pt-4 text-center">
+        <button class="small-green-button">
+          <span class="fas fa-cloud-download-alt"></span>
+            下載PDF檔
+        </button>
+
+        <button class="small-green-button">
+          <span class="fas fa-print"></span>
+            列印此頁
+        </button>
+      </div>
+      
+      <h3 class="text-center mt-6">看護證明書</h3>
+      
+      <div class="container pt-5">
+        <div class="row">
+            <div class="col-12">
+
+                <p class="h5 mt-2">看護資訊</p>
+                <div class="case-info-font mt-2">
+                  <p>看護類型：居家照顧</p>
+                  <p>看護地點：桃園市 楊梅區</p>
+                  <p class="text-indent-5" >看護時間：連續時間<br>2022/04/18 晚上 8:00 ~ 2022/04/22 晚上 8:00</p>
+                </div>
+
+                <p class="h5 mt-5">被照顧者資訊</p>
+                <div class="case-info-font mt-2">
+                  <p>性別：男</p>
+                  <p>體重：70</p>
+                  <p>年齡：70</p>
+                  <p>疾病：阿茲海默症</p>
+                  <p>補充說明：補充說明補充說明</p>
+                  <p>身體狀況：使用輔具</p>
+                  <p class="text-indent-5">補充說明：補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明</p>
+                </div>
+
+                <p class="h5 mt-5">需求服務項目</p>
+                <div class="case-info-font mt-2 mb-5">
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    安全維護 (預防跌倒、陪同散步、推輪椅、心靈陪伴)
+                  </p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    協助進食</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    協助如廁</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    陪同就醫</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    代購物品</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    簡易備餐</p>
+                  <p>
+                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                    身體清潔
+                  </p>
+
+
+                 
+                </div>
+
+                <p class="h5 mt-2">看護費用</p>
+                <div class="section-bg-grey mt-2 mb-5" style="width: 50%;">
+                  <span class="case-info-font"><strong>基本費用</strong></span>
+                  <div class="row case-info-font">
+                    <div class="col-8">
+                      $208x72小時
+                    </div>
+                    <div class="col text-end">
+                      $ 14,976
+                    </div>
+                  </div>
+                  <br>
+                  <span class="case-info-font"><strong>加價項目</strong></span>
+                  <div class="row case-info-font">
+                    <div class="col-8">
+                      體重超過70公斤<br>
+                      &emsp;每小時加 20% x 72小時
+                    </div>
+                    <div class="col text-end">
+                      <br>
+                      $ 2,995
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-8 case-info-font">
+                      <strong>總計</strong>
+                    </div>
+                    <div class="col text-end " style="color: red;">
+                      <strong>$ 14,825</strong> 
+                    </div>
+                  </div>
+
+
+                </div>
+
+                <hr style="color: black;">
+
+                <p class="h5 mt-5">委託人</p>
+                <div class="case-info-font mt-2">
+                    <p>姓名：林瑜婷</p>
+                    <p>電話：0912345678</p>
+                    <p>簽名：</p>
+                </div>
+
+                <p class="h5 mt-5">照顧者</p>
+                <div class="case-info-font mt-2 mb-9">
+                    <p>姓名：林瑜婷</p>
+                    <p>電話：0912345678</p>
+                    <p>簽名：</p>
+                  </div>
+
+
+
+            </div>
+
+            
+
+        </div>
+      </div>
+     
+</main>
+{% endblock %}
+   

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'modelCore',
     'user',
     'api',
+    'web',
 ]
 
 MIDDLEWARE = [

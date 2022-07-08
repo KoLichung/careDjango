@@ -1,0 +1,113 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+
+<main class="main bg-white" id="top" >
+      
+  <!-- main content -->
+  <section class="bg-frontpage-cover">
+    <div class="bg-text container-fluid col-11 col-sm-10  col-md-7  col-xl-5 my-4 row" >
+          <span  class="mt-4 mx-3" style="color: white; font-size:30px;"><strong>照護 168 | slogan slogan</strong></span> 
+          
+          <!-- form content -->
+          <div class="card bg-white">
+            
+            <!-- care type segment -->
+            <div class="mt-4  mb-3" style="margin: 0; display: flex;">
+
+              <div class="segment__item">
+                <input type="radio" class="segment__input" name="segment-a" checked>
+                <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">居家照顧</div>
+              </div>
+        
+              <div class="segment__item">
+                <input type="radio" class="segment__input" name="segment-a">
+                <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">醫院看護</div>
+              </div>
+              
+            </div>
+
+            <!-- 照護地點 -->
+            <div class="row">
+              <div class="col-12 col-sm-3 inner title-font">&emsp;照護地點</div>
+              
+              <div class="col-12 col-sm-3 mt-2" style="margin-right: 20px;">
+                <div class="btn-group" >
+                  <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    台中市
+                  </button>
+                  <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
+                    <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- <div  class="col-1 inner" style="color: #BB6BD9;font-size:20px;">|</div> -->
+  
+              <div class="col-sm-3 mt-2">
+                  <div class="btn-group">
+                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      全區
+                    </button>
+                    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
+                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
+                    </div>
+                  </div>
+              </div>
+                  
+            </div>
+
+            <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+
+            <!-- 時間類型 -->
+            <div class="row justify-content-start">
+              <div class="col-12 col-sm-3  inner title-font" >&emsp;時間類型</div>
+              <div class="col-12 col-sm-4">
+                <label class="custom-radio-parent align-self-center" style="margin: 0px;">連續時間
+                  <input type="radio" checked="checked" name="radio">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="col-12 col-sm-4">
+                <label class="custom-radio-parent align-self-center" style="margin: 0px;">每週時段預定
+                  <input type="radio" name="radio">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+
+            <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+                
+            <!-- 開始時間 -->
+            <div class="row">
+              <div class="col-12 col-sm-3 inner title-font">&emsp;開始時間</div>
+              <div class="col-12 col-sm-5" >
+                <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_start" type="text" placeholder="年/月/日&emsp;時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d&emsp;H:i","disableMobile":true}' />         
+              </div> 
+            </div>
+            
+            <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+                
+            <!-- 結束時間 -->
+            <div class="row">
+              <div class="col-12 col-sm-3 title-font inner">&emsp;結束時間</div>
+              <div class="col-12 col-sm-5" >
+                <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_end" type="text" placeholder="年/月/日&emsp;時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d&emsp;H:i","disableMobile":true}' />         
+              </div>
+            </div>
+
+            <br>  
+
+          </div>
+
+          <a href="{% url 'search_list' %}">
+            <button class="mt-4 full-purple-button" >搜尋</button>
+          </a>
+          
+    </div>  
+  </section>
+       
+</main>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+  <h4 class="text-center pt-5 pb-2" style="color:#BB6BD9;">Care 168 最新資訊</h4>
+
+  <!-- 導覽目錄 -->
+  <nav class="navbar navbar-expand-lg  navbar-light">
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLightExample" aria-controls="navbarLightExample" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarLightExample">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">
+                
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">最新文章</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">全部</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">居家照護</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">接案資訊</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">其他分類</a>
+                </li>
+                
+              </ul>
+            </div>
+          </div>
+  </nav>
+
+      <!-- 文章內容 -->
+      <!-- title -->
+      <div class="row justify-content-center">
+        
+        <div class="col-7 text-center">
+          <p class="news-title">台東高中以下學校 23日至27日改採線上教學</p>
+        </div>
+        
+      </div>
+
+      <div class="row justify-content-center">  
+        <div class="col-9">
+          <p class="news-content">（中央社記者盧太城台東縣19日電）台東縣政府今晚宣布，高級中等以下學校（含公幼）自23日起暫停實體課程至27日，改採線上教學，國小低年級原則上採非同步教學。
+
+        至於縣內私幼、非營利幼兒園、準公共化幼兒園及補習班、課照中心安親班尊重各校彈性決定，得參考前述措施彈性辦理暫停實體課程。另外，國中9年級學生及高中3年級學生自23日起停課，並於畢業典禮前1天返校。
+        
+        台東縣政府教育處晚間發布新聞稿指出，依據衛生福利部疾病管制署（CDC）的專家意見，下星期是疫情高峰期，希望將校園染疫風險降到最低，以保障學生健康為優先，且考量台東縣的醫療負擔及多數學校停課復課又停課也造成學校教學上的困擾，教育處公告最新停課措施。
+        
+        教育處表示，考慮家長照顧問題，比照去年停課的模式，如家長無法請假在家照顧孩子，學校仍需承擔照顧的責任，學校老師停課期間原則上仍到校實施線上教學，如有照顧12歲以下子女的需求或有特殊原因經校長同意者可實施居家辦公。
+        
+        停課期間有施打疫苗需求，仍可請學生到校施打，或學校有其他情形需學生返校服務或參與活動者，經家長同意仍可到校參與學校活動。</p>
+
+        <hr>
+
+        <p class="news-subtitle">看更多相關文章：</p>
+
+       
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <img src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" class="img-fluid img-thumbnail" style=" object-fit: cover;">
+            <p class="news-subtitle mt-2">相關文章標題相關文章標題相關文章標題1</p>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4  col-lg-3 col-xl-2">
+            <img src="{% static 'web/assets/img/new/index_bg_hands.jpg' %}" class="img-fluid img-thumbnail" style="object-fit: cover;">
+            <p class="news-subtitle mt-2">相關文章標題相關文章標題相關文章標題1</p>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4  col-lg-3 col-xl-2">
+            <img src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" class="img-fluid img-thumbnail" style="object-fit: cover;">
+            <p class="news-subtitle mt-2">相關文章標題相關文章標題相關文章標題1</p>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4  col-lg-3 col-xl-2">
+            <img src="{% static 'web/assets/img/new/login_bg.png' %}" class="img-fluid img-thumbnail" style="object-fit: cover;">
+            <p class="news-subtitle mt-2">相關文章標題相關文章標題相關文章標題1</p>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <img src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" class="img-fluid img-thumbnail" style="object-fit: cover;">
+            <p class="news-subtitle mt-2">相關文章標題相關文章標題相關文章標題1</p>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4  col-lg-3 col-xl-2">
+            <img src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" class="img-fluid img-thumbnail" style="object-fit: cover;">
+            <p class="news-subtitle mt-2">相關文章標題相關文章標題相關文章標題1</p>
+          </div>
+        </div>
+
+        </div>
+      </div>
+      
+      
+</main>
+{% endblock %}
+

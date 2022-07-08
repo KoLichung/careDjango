@@ -1,0 +1,173 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+      <div class="container pt-5">
+
+        <div class="row">
+          <span class="section-title-purple"><strong>申請預訂</strong></span>
+
+          <div class="col-12 col-md-7">
+
+            <div class="row text-center mt-3" style="font-weight: 600;">
+              <div class="col" style="color: #BB6BD9;">
+                ① 填寫資料
+              </div>
+              <div class="col" style="color: #BB6BD9;">
+                ② 照護地點
+              </div>
+              <div class="col" style="color: #BB6BD9;">
+                ③ 聯絡人
+              </div>
+              <div class="col" style="color: #CCCCCC;">
+                ④ 確認付款
+              </div>
+            </div>
+
+            <hr style="color: #BB6BD9;">
+            
+            <div class=" py-4">
+              <div class="tab-content">
+                <!-- 聯絡人 -->
+                <div class="px-sm-3 px-md-5" role="tabpanel" aria-labelledby="form-wizard-progress-tab3" id="form-wizard-progress-tab3">
+                    <form>
+                      <p class="h6" style="font-weight: 600;">預定者：</p>
+                      <p class="h6">姓名：王小明</p>
+                      <p class="h6">聯絡電話：0912345678</p>
+                      <br>
+                      <p class="h6" style="font-weight: 600;">緊急聯絡人：</p>
+                      
+                      <div class="mt-2">
+                        <label class="h6" for="contact-name">姓名：</label>
+                        <input class="custom-form-control" style="width: 100%;" id="contact-name" type="text"/>
+                      </div>
+                      <div class="mt-2">
+                        <label class="h6" for="contact-relation">與被照顧者關係：</label>
+                        <input class="custom-form-control" style="width: 100%;" id="contact-relation" type="text"/>
+                      </div>
+                      <div class="mt-2">
+                        <label class="h6" for="contact-phone">聯絡電話：</label>
+                        <input class="custom-form-control" style="width: 100%;" id="contact-phone" type="text"/>
+                      </div>
+                    </form>
+                    <div class="row mt-4">
+                      <div class="col">
+                        <a href="{% url 'booking_location' %}">
+                          <button class="full-purple-button"><span class="far fa-arrow-alt-circle-left"></span> 上一頁</button>
+                        </a>
+                      </div>
+                      <div class="col">
+                        <a href="{% url 'booking_confirm' %}">
+                          <button class="full-purple-button">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
+                        </a>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            
+
+          <!-- 右側 預定欄位 -->
+
+          <div class="d-sm-none d-md-block col-12 col-md-5 col-lg-4 mb-5">
+            <div class="booking-box px-4">
+              <div class="row">
+                <div class="col-1">
+                  <p class="small-section-title-purple" style="font-weight: 700;">4.8</p>
+                </div>
+                <div class="col mx-0" style="color: yellow;">
+                    <span class="fas fa-star"></span>
+                    <span class="fas fa-star"></span>
+                    <span class="fas fa-star"></span>
+                    <span class="fas fa-star"></span>
+                    <span class="fas fa-star-half-alt"></span>
+                    <span class="case-info-font">&ensp;7評價</span>
+                </div>
+              </div>             
+
+              <div class="mb-3" style="margin: 0; display: flex;">
+
+                <div class="segment__item">
+                  <input type="radio" class="segment__input" name="segment-a" checked>
+                  <div class="segment__button">居家照顧</div>
+                </div>
+          
+                <div class="segment__item">
+                  <input type="radio" class="segment__input" name="segment-a">
+                  <div class="segment__button">醫院看護</div>
+                </div>
+                
+              </div>
+              
+              <div class="case-info-font">
+
+                <span class="news-subtitle">照護地點</span><br>
+                <div class="mt-1 mb-3">
+                  台中市，西屯區
+                </div>
+
+                <span class="news-subtitle mt-2">日期</span><br>
+                <div class="mt-2 mb-3">
+                  3/12 ~ 3/23
+                </div>
+
+                <span class="news-subtitle mt-2">時間類型</span><br>
+                <div class="my-2 ">
+                  連續時間
+                </div>
+                
+                <span class="news-subtitle">開始時間 & 結束時間</span><br>
+                <div class="mt-1 mb-3">
+                  9:00~14:00
+                </div>
+                
+                <span class="news-subtitle mt-2">費率</span><br>
+                <div class="mt-2 mb-3">
+                  每小時 $350｜半天 $2500｜全天 $4000 
+                </div>
+
+                <span class="news-subtitle mt-2">費用</span><br>
+                <div class="row case-info-font mt-2 h6">
+                  <div class="col-12  col-lg-8">
+                    $208x72小時 
+                  </div>
+                  <div class="col-12  col-lg-4 text-end">
+                    $ 14,976
+                  </div>
+                </div>
+                <div class="row case-info-font mt-2 h6">
+                  <div class="col-12  col-lg-8">
+                    體重超過70公斤<br>
+                    每小時加 20% x 72小時
+                  </div>
+                  <div class="col-12  col-lg-4 text-end">
+                    <br>
+                    $ 2,995
+                  </div>
+                </div>
+                <hr>
+                <div class="row case-info-font mt-2">
+                  <div class="col-4 align-self-center">
+                    總計
+                  </div>
+                  <div class="col text-end">
+                    <strong>$ </strong><span class="section-title-purple"><strong>20,971</strong></span>
+                  </div>
+                </div>
+                
+              </div>
+
+
+            </div>
+            
+            
+          </div>
+          
+
+        </div>
+      </div>
+     
+</main>
+{% endblock %}

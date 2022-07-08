@@ -1,0 +1,186 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white " id="top">
+
+  <!-- 條件篩選 toggle -->
+  <div class="row">
+    <div class="col mx-3 mt-3">
+          <div class="accordion" id="accordionExample">
+            
+            <button class="custom-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+              <span class="fas fa-plus-circle"></span> 展開篩選條件
+            </button>
+            
+            <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+              <div class="row mx-3" >
+    
+                <div class="row col-11 mt-3">
+    
+                  <!-- 照護類型&地點 -->
+                  <div class="col-lg-6 col-xl-4 row ">
+        
+                    <div class="col-sm-10 col-lg-6">
+                      <p class="h5">照護類型</p>
+                      <div class="btn-group my-2">
+                        <button class="dropdown-button dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">居家照護</button>
+                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">醫院看護</span></a>
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">居家照護</span></a>
+                        </div>
+                      </div>
+                    </div>
+        
+                    <div class="col-sm-10 col-lg-6">
+                      <p class="h5">照護地點</p>
+                      <div class=" btn-group my-2">
+                          <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            台中市
+                          </button>
+                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
+                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
+                          </div>
+                      </div>
+                      <div class=" btn-group my-2">
+                        <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          全區
+                        </button>
+                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
+                        </div>
+                      </div>  
+                    </div>
+                  </div>
+
+                  <!-- 開始&結束日期 -->
+                  <div class="col-lg-6 col-xl-4 row">
+                    <div class="col-sm-10 col-lg-6 ">
+                      <label class="h5" for="datepicker_startDate">開始日期</label>
+                      <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
+                    </div>
+                    <div class="col-sm-10 col-lg-6 ">
+                      <label class="h5" for="datepicker_endDate">結束日期</label>
+                      <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
+                    </div>
+                  </div>
+                </div>
+        
+                <!-- 篩選button -->
+                <div class="col-1 mt-3 align-self-end" >
+                  <a href="">
+                    <button class="small-purple-button align-bottom">篩選</button>
+                  </a>
+                </div> 
+    
+              </div>
+              <hr>
+            </div>
+          </div>
+    </div>
+  </div>
+      
+  <!-- 搜尋結果 -->
+  <div class="mx-5 my-4">
+        <h5 >需求案件</h5>
+  </div>
+
+  <div class="row g-3" >
+
+    <div class="mb-4 col-md-6 col-xl-4" >
+      <div class="card mx-auto border border-dark" style="width: 20rem; height: 17rem;">
+        <div class="card-body">
+          <div class="pb-2">
+            <span class="purple-border-tag">居家照顧</span>
+            <span class="purple-border-tag">連續時間</span>
+          </div>
+          <p class="require-info my-2">開始時間： 2022/04/18 (晚上 20:00) </p>
+          <p class="require-info my-2">結束時間： 2022/04/22 (晚上 20:00) </p>
+          <hr>
+          <p class="col-7 require-info my-2">地點： 台中市 中區 </p>
+          <div class="pt-5 row justify-content-between">
+            <div class="col-7"></div>
+            <div class="col-auto container">
+              <a href="{% url 'requirement_detail' %}">
+                <button class="small-purple-button">查看詳情</button>
+              </a>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-4 col-md-6 col-xl-4" >
+          <div class="card mx-auto border border-dark" style="width: 20rem; height: 17rem;">
+            <div class="card-body">
+              <div class="pb-2">
+                <span class="purple-border-tag">居家照顧</span>
+                <span class="purple-border-tag">連續時間</span>
+              </div>
+              <p class="require-info my-2">開始時間： 2022/04/18 (晚上 20:00) </p>
+              <p class="require-info my-2">結束時間： 2022/04/22 (晚上 20:00) </p>
+              <hr>
+              <p class="col-7 require-info my-2">地點： 台中市 中區 </p>
+              <div class="pt-5 row justify-content-between">
+                <div class="col-7"></div>
+                <div class="col-auto container">
+                  <button class="small-purple-button">查看詳情</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+
+    <div class="mb-4 col-md-6 col-xl-4" >
+          <div class="card mx-auto border border-dark" style="width: 20rem;">
+            <div class="card-body">
+              <div class="pb-2">
+                <span class="purple-border-tag">居家照顧</span>
+                <span class="purple-border-tag">每週預定</span>
+              </div>
+              <p class="require-info my-2">開始時間： 2022/04/18 (晚上 20:00) </p>
+              <p class="require-info my-2">結束時間： 2022/04/22 (晚上 20:00) </p>
+              <hr>
+              <p class="require-info my-2">每週固定：</p>
+              <p class="require-info my-2">星期一、星期三、星期四</p>
+              <p class="require-info my-2">時段：8:00 ~ 20:00</p>
+              <div class="row">
+                <p class="col-7 require-info my-2">地點： 台中市 中區 </p>
+                <div class="col-auto container">
+                  <button class="small-purple-button">查看詳情</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+
+    <div class="mb-4 col-md-6 col-xl-4" >
+          <div class="card mx-auto border border-dark" style="width: 20rem;">
+            <div class="card-body">
+              <div class="pb-2">
+                <span class="purple-border-tag">居家照顧</span>
+                <span class="purple-border-tag">每週預定</span>
+              </div>
+              <p class="require-info my-2">開始時間： 2022/04/18 (晚上 20:00) </p>
+              <p class="require-info my-2">結束時間： 2022/04/22 (晚上 20:00) </p>
+              <hr>
+              <p class="require-info my-2">每週固定：</p>
+              <p class="require-info my-2">星期一、星期三、星期四</p>
+              <p class="require-info my-2">時段：8:00 ~ 20:00</p>
+              <div class="row">
+                <p class="col-7 require-info my-2">地點： 台中市 中區 </p>
+                <div class="col-auto container">
+                  <button class="small-purple-button">查看詳情</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+
+  </div>
+     
+</main>
+
+{% endblock %}

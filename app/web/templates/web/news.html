@@ -1,0 +1,160 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+      <h4 class="text-center pt-5 pb-2 section-title-purple">Care 168 最新資訊</h4>
+
+      <!-- 導覽目錄 -->
+      <nav class="navbar navbar-expand-lg  navbar-light">
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLightExample" aria-controls="navbarLightExample" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarLightExample">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">
+                
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">最新文章</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">全部</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">居家照護</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">接案資訊</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">其他分類</a>
+                </li>
+                
+              </ul>
+            </div>
+          </div>
+      </nav>
+
+      <!-- 文章列表 -->
+      <div class="content row ">
+        
+        <div class="col-lg-8 col-11 my-3 mx-auto" >
+
+            <div class="card mx-auto" style="border: 2px solid #CCADE9;border-radius: 6px;">
+              <!-- 文章連結 -->
+              <a class="custom-card-link" href="{% url 'news_detail' %}">
+                <div class="p-4 row" >
+  
+                <div class=" col-xl-3 col-md-4 col-5">
+                  <div class="card mx-auto" >
+                    <img src="{% static 'web/assets/img/new/Rectangle78.png' %}" style="min-height:80px;min-width:120px;">
+                  </div>
+                </div>
+  
+                <div class=" col-7 col-md-8 col-xl-9">
+                  <div class="row  justify-content-between">
+                    <div class="col">
+                      <p class="news-date">2022/04/23</p>
+                    </div>
+                    <div class="col-auto">
+                      <button class="purple-border-tag">精選文章</button>
+                    </div>
+                  </div>
+                  <p class="news-title">Care 168 全新上線，找照護，真方便！新手優惠多多！</p>
+                  <p class="news-content">文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽...</p>
+                </div>
+  
+                </div>
+              </a>
+            
+            </div>
+            
+        </div>
+
+        <div class="col-lg-8 col-11 my-3 mx-auto" >
+          <div class="card mx-auto border border-black" >
+            <div class=" p-4 row" >
+
+              <div class=" col-xl-3 col-md-4 col-5">
+                <div class="card mx-auto " >
+                  <img src="../assets/img/new/Rectangle78.png" style="min-height:80px;min-width:120px;">
+                </div>
+              </div>
+
+              <div class=" col-7 col-md-8 col-xl-9">
+                <div class="row  justify-content-between">
+                  <div class="col">
+                    <p class="news-date">2022/04/23</p>
+                  </div>
+                  <div class="col-auto">
+                  </div>
+                </div>
+                <p class="news-title">Care 168 全新上線，找照護，真方便！新手優惠多多！</p>
+                <p class="news-content">文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽...</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-8 col-11 my-3 mx-auto" >
+          <div class="card mx-auto border border-black" >
+            <div class=" p-4 row" >
+
+              <div class=" col-xl-3 col-md-4 col-5">
+                <div class="card mx-auto " >
+                  <img src="../assets/img/new/Rectangle78.png" style="min-height:80px;min-width:120px;">
+                </div>
+              </div>
+
+              <div class=" col-7 col-md-8 col-xl-9">
+                <div class="row  justify-content-between">
+                  <div class="col">
+                    <p class="news-date">2022/04/23</p>
+                  </div>
+                  <div class="col-auto">
+                  </div>
+                </div>
+                <p class="news-title">Care 168 全新上線，找照護，真方便！新手優惠多多！</p>
+                <p class="news-content">文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽...</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-8 col-11 my-3 mx-auto" >
+          <div class="card mx-auto border border-black" >
+            <div class=" p-4 row" >
+
+              <div class=" col-xl-3 col-md-4 col-5">
+                <div class="card mx-auto " >
+                  <img src="../assets/img/new/Rectangle78.png" style="min-height:80px;min-width:120px;">
+                </div>
+              </div>
+
+              <div class=" col-7 col-md-8 col-xl-9">
+                <div class="row  justify-content-between">
+                  <div class="col">
+                    <p class="news-date">2022/04/23</p>
+                  </div>
+                  <div class="col-auto">
+                  </div>
+                </div>
+                <p class="news-title">Care 168 全新上線，找照護，真方便！新手優惠多多！</p>
+                <p class="news-content">文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽文字預覽...</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        
+
+      </div>
+
+</main>
+
+{% endblock %}
+
+    

@@ -1,0 +1,19 @@
+{% extends 'web/base_logged_in.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white h-100 " id="top" >
+      <div class="row">
+       
+        <div class="my-auto col-8 col-sm-6 col-xl-4 mx-auto text-center">
+          <h4 class="section-title-purple mt-10 mb-5">歡迎您的加入</h4>
+          <p>加入服務者的說明文字加入服務者的說明文字加入服務者的說明文字加入服務者的說明文字加入服務者的說明文字</p>
+          <a href="{% url 'my_service_setting' %}">
+            <button class="full-purple-button mt-5">
+              <i class="fa-solid fa-pen-to-square"></i>
+              開始填資料
+            </button>
+          </a>
+        </div>
+      </div>
+</main>
+{% endblock %}

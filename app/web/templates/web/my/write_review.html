@@ -1,0 +1,48 @@
+{% extends 'web/base_logged_in.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white h-100" id="top" >
+
+      <div class="row text-center mx-3">
+        <h4 class="section-title-purple mt-5">寫評價</h4>
+      </div>
+
+      <div class="mx-auto">
+        <div class="row">
+          <div class="col-10 col-sm-10 col-md-9 col-lg-8 col-xl-7 mx-auto mt-3">
+            <div class="p-3 custom-card-font">
+              <p style="font-weight: 700;">給照顧者 張先生 評價</p>
+              <p class="">2022/04/17 ~ 2022/04/22  |  連續時間  |  醫院看護</p>
+              
+              <div class="">我給照顧者幾顆星：</div>
+              <div class="my-3" data-rater='{"starSize":32,"step":0.5}'></div>
+              
+              <p>請輸入給照顧者的評價(150字以內)：</p>
+              <textarea class="custom-form-control" id="" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center mt-3">
+          <div class="col-5 col-sm-5 col-md-5 col-lg-4 col-xl-3 text-end">
+            <a href="{% url 'my_reviews' %}">
+              <button class="full-purple-button mt-5">
+                <span class="far fa-arrow-alt-circle-left"></span>
+                上一頁
+              </button>
+            </a>
+            
+          </div>
+          <div class="col-5 col-sm-5 col-md-5 col-lg-4 col-xl-3 text-start">
+            <button class="full-purple-button mt-5" onclick="location.href='#'">
+              送出
+            </button>
+          </div>
+  
+        </div>
+      </div>
+      
+
+      
+
+</main>
+{% endblock %}

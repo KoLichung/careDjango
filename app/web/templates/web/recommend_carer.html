@@ -1,0 +1,225 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white h-100" id="top" >
+
+      <div class="row">
+        <div class="col mx-5 mt-4">
+          <h5 >照護員推薦</h5>
+        </div>
+      </div>
+
+      <!-- 篩選  -->
+      <div class="row">
+        <div class="col mx-5 mt-3">
+          <div class="accordion" id="accordionExample">
+            
+            <button class="custom-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+              <span class="fas fa-plus-circle"></span> 展開篩選條件
+            </button>
+            
+            <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+              <div class="row mx-3" >
+                  <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
+                    
+                    <!-- 照護類型 -->
+                    <div class="col-sm-4 my-3">
+                      <h5 class="mb-2">照護類型</h5>
+                      <div class="dropdown font-sans-serif d-inline-block mb-2">
+                        <div class="">
+                          <button class="dropdown-button dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">居家照護</button>
+                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">醫院看護</span></a>
+                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">居家照護</span></a>
+                          </div>
+                        </div> 
+                      </div>
+                    </div>
+          
+                    <!-- 照護地點 -->
+                    <div class="col-sm-4 my-3">
+                      <h5 class=" mb-2">照護地點</h5>
+                      <div class="btn-group mb-2">
+                        <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          台中市
+                        </button>
+                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
+                        </div>
+                      </div>
+                      <div class="btn-group mb-2">
+                        <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          全區
+                        </button>
+                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
+                        </div>
+                      </div>
+                    </div>
+          
+                    <!-- 時間類型 -->
+                    <div class="col-sm-4 my-3">
+                      <h5 class="mb-2">排序</h5>
+                      <div class="btn-group mb-2">
+                        <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">自然推薦</button>
+                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
+                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <hr>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- 搜尋結果 -->
+      <div class="row g-3 mx-3 mt-3" >
+
+          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
+            <div class="card mx-auto border border-dark" style="width: 20rem;">
+
+              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
+              
+              <div class="card-body">
+                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
+                  
+                  <span class="carer-name">林瑜婷</span >
+                  
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+
+                  <span class="carer-review-number"> 評價7</span>
+                  
+                  <div class="mt-2">
+                    <span class="purple-border-tag">居家照顧</span>
+                    <span class="purple-border-tag">醫院看護</span>
+                  </div>
+
+                  <div class="mt-3">
+                    <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+                    <p class="h6">服務地區：</p>
+                    <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
+                  </div>
+                  
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
+            <div class="card mx-auto border border-dark" style="width: 20rem;">
+
+              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
+              
+              <div class="card-body">
+                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
+                  
+                  <span class="carer-name">林瑜婷</span >
+                  
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+
+                  <span class="carer-review-number"> 評價7</span>
+                  
+                  <div class="mt-2">
+                    <span class="purple-border-tag">居家照顧</span>
+                    <span class="purple-border-tag">醫院看護</span>
+                  </div>
+
+                  <div class="mt-3">
+                    <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+                    <p class="h6">服務地區：</p>
+                    <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
+                  </div>
+                  
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
+            <div class="card mx-auto border border-dark" style="width: 20rem;">
+
+              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
+              
+              <div class="card-body">
+                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
+                  
+                  <span class="carer-name">林瑜婷</span >
+                  
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+
+                  <span class="carer-review-number"> 評價7</span>
+                  
+                  <div class="mt-2">
+                    <span class="purple-border-tag">居家照顧</span>
+                    <span class="purple-border-tag">醫院看護</span>
+                  </div>
+
+                  <div class="mt-3">
+                    <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+                    <p class="h6">服務地區：</p>
+                    <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
+                  </div>
+                  
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
+            <div class="card mx-auto border border-dark" style="width: 20rem;">
+
+              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
+              
+              <div class="card-body">
+                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
+                  
+                  <span class="carer-name">林瑜婷</span >
+                  
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+                  <span class="fas fa-star"  style="color: yellow;"></span>
+
+                  <span class="carer-review-number"> 評價7</span>
+                  
+                  <div class="mt-2">
+                    <span class="purple-border-tag">居家照顧</span>
+                    <span class="purple-border-tag">醫院看護</span>
+                  </div>
+
+                  <div class="mt-3">
+                    <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+                    <p class="h6">服務地區：</p>
+                    <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
+                  </div>
+                  
+              </div>
+            </div>
+          </div>
+          
+          
+
+          
+
+      </div>
+
+     
+</main>
+{% endblock %}
