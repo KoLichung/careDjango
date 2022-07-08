@@ -32,12 +32,16 @@ http://localhost:8000/api/systemMessages/
 Search Servant 的列表, 用於首頁
 http://localhost:8000/api/search_servants/?care_type=home&city=3&county=35&is_continuous_time=True&weekdays=1,3,5&start_end_time=6:9&start_datetime=2022-07-21T00:00:00Z&end_datetime=2022-08-20T00:00:00Z
 
+20220708
+1.CaseViewSet 的 get_queryset, retrieve
+2.RecommendServantViewSet 的 get_queryset
+
 20220707
 1.在 retrieve method 把 license 改成跟 service 同樣做法
 2.檢查 SearchServantViewSet 的 get_queryset method 的 weekdays filter 是否正確
 3.完成 SearchServantViewSet 的 get_queryset method 的 rate_num 回傳
 4.在 Order model 增加 start_datetime, end_datetime, weekday, start_time, end_time
-5.完成 SearchServantViewSet 的 start_datetime, end_datetime 應用
+！5.完成 SearchServantViewSet 的 start_datetime, end_datetime 應用
 6.修改 readme 的 search servant 連結, 放入 params
 
 20220706

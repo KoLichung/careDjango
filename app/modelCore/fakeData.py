@@ -4,8 +4,8 @@ import datetime
 from datetime import date ,timedelta
 from pytz import timezone
 import pytz
-from .models import  OrderWorkDate, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,OrderWorkDate 
+from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip 
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
 
 def importCityCounty():
@@ -360,44 +360,6 @@ def fakeData():
     order.end_time = order.case.end_time
     order.total_money = total_hours * (Case.objects.get(id=2).servant.hospital_hour_wage)
     order.save()
-
-    date_range = (Order.objects.get(id=1).end_datetime - Order.objects.get(id=1).start_datetime).days + 1
-    list = Order.objects.get(id=1).weekday.split(',')
-    weekdays_num_list = []
-    for i in list:
-        weekdays_num_list.append(int(i))
-    for day in range(date_range):
-        theDate = Order.objects.get(id=1).start_datetime
-        theDate = theDate + timedelta(days=day)
-        if theDate.weekday() in weekdays_num_list:
-            orderWorkday = OrderWorkDate()
-            orderWorkday.order = Order.objects.get(id=1)
-            orderWorkday.servant = orderWorkday.order.case.servant
-            orderWorkday.workdate = theDate.date()
-            orderWorkday.weekday =  theDate.weekday()
-            orderWorkday.start_time = orderWorkday.order.case.start_time
-            orderWorkday.end_time = orderWorkday.order.case.end_time
-            orderWorkday.save()
-
-    date_range = (Order.objects.get(id=2).end_datetime - Order.objects.get(id=2).start_datetime).days + 1
-    list = Order.objects.get(id=2).weekday.split(',')
-    weekdays_num_list = []
-    for i in list:
-        weekdays_num_list.append(int(i))
-    for day in range(date_range):
-        theDate = Order.objects.get(id=2).start_datetime
-        theDate = theDate + timedelta(days=day)
-        if theDate.weekday() in weekdays_num_list:
-            orderWorkday = OrderWorkDate()
-            orderWorkday.order = Order.objects.get(id=2)
-            orderWorkday.servant = orderWorkday.order.case.servant
-            orderWorkday.workdate = theDate.date()
-            orderWorkday.weekday =  theDate.weekday()
-            orderWorkday.start_time = orderWorkday.order.case.start_time
-            orderWorkday.end_time = orderWorkday.order.case.end_time
-            orderWorkday.save()
-
-
 
     review = Review()
     review.order = Order.objects.get(id=1)

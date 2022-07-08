@@ -294,7 +294,7 @@ class Order(models.Model):
         User,
         on_delete=models.RESTRICT,
         null=True,
-        blank=True
+        blank=True,
     )
     UNPAID = 'unPaid'
     PAID = 'paid'
@@ -305,29 +305,14 @@ class Order(models.Model):
     state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
     
     total_money = models.IntegerField(default=0, blank=True, null=True)
+
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
-    weekday = models.CharField(max_length=8, blank=True, null=True)
+    weekday = models.CharField(max_length=20, blank=True, null=True)
     start_time = models.IntegerField(default=0, blank=True, null=True)
     end_time = models.IntegerField(default=24, blank=True, null=True)
+    
     created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
-
-class OrderWorkDate(models.Model):
-    order = models.ForeignKey(
-        Order,
-        on_delete=models.RESTRICT,
-    )
-    servant = models.ForeignKey(
-        User,
-        on_delete=models.RESTRICT,
-        blank = True,
-        null=True,
-        related_name='servant_workdays'
-    )
-    workdate = models.DateField(auto_now=False, blank=True, null=True)
-    weekday = models.CharField(max_length=8, blank=True, null=True)
-    start_time = models.IntegerField(default=0, blank=True, null=True)
-    end_time = models.IntegerField(default=24, blank=True, null=True)
 
 class Review(models.Model):
     order = models.ForeignKey(
