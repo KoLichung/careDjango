@@ -48,6 +48,12 @@ class CountySerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class CaseSerializer(serializers.ModelSerializer):
+    services = ServiceSerializer(read_only=True, many=True)
+    disease = DiseaseConditionSerializer(read_only=True, many=True)
+    body_condition = BodyConditionSerializer(read_only=True, many=True)
+    reviews_num = serializers.IntegerField(default=0)
+    rated_num = serializers.IntegerField(default=0)
+    status = serializers.CharField(default='')
     class Meta:
         model = Case
         fields = '__all__'
@@ -97,10 +103,11 @@ class ServantSerializer(serializers.ModelSerializer):
     licences = LicenseSerializer(read_only=True, many=True)
     about_me = serializers.CharField(default='')
     reviews = ReviewSerializer(read_only=True, many=True)
+    reviews_num = serializers.IntegerField(default=0)
     
     class Meta:
         model = User
-        fields = ('id', 'name', 'image', 'rating', 'is_home', 'home_hour_wage', 'home_half_day_wage', 'home_one_day_wage', 'is_hospital', 'hospital_hour_wage', 'hospital_half_day_wage', 'hospital_one_day_wage', 'locations', 'rate_num', 'background_image_url', 'services', 'licences', 'about_me', 'reviews',)
+        fields = ('id', 'name', 'image', 'rating', 'is_home', 'home_hour_wage', 'home_half_day_wage', 'home_one_day_wage', 'is_hospital', 'hospital_hour_wage', 'hospital_half_day_wage', 'hospital_one_day_wage', 'locations', 'rate_num', 'background_image_url', 'services', 'licences', 'about_me', 'reviews', 'reviews_num')
         read_only_fields = ('id',)
         
 

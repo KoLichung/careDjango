@@ -14,8 +14,9 @@ City 列表
 http://localhost:8000/api/citys/
 County 列表
 http://localhost:8000/api/countys/
-Case 的列表, 查詢, 新增, 修改
-http://localhost:8000/api/cases/
+CaseSearch 的列表, 查詢, 新增, 修改
+http://localhost:8000/api/search_cases/?city=6&county=77&start_datetime=2022-07-10T00:00:00Z&end_datetime=2022-08-05T00:00:00Z&care_type=hospital
+
 Order 的列表, 查詢, 新增, 修改
 http://localhost:8000/api/orders/
 UserServiceLocation 的列表, 查詢, 新增, 修改
@@ -31,6 +32,9 @@ http://localhost:8000/api/systemMessages/
 
 Search Servant 的列表, 用於首頁
 http://localhost:8000/api/search_servants/?care_type=home&city=3&county=35&is_continuous_time=True&weekdays=1,3,5&start_end_time=6:9&start_datetime=2022-07-21T00:00:00Z&end_datetime=2022-08-20T00:00:00Z
+
+RecommendServantViewSet 的列表
+http://localhost:8000/api/recommend_servants/
 
 20220708
 1.CaseViewSet 的 get_queryset, retrieve

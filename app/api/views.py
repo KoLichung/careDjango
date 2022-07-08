@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 
 from collections import namedtuple
 from django.db.models import Q
-from django.db.models import Avg
+from django.db.models import Avg , Count
 from datetime import datetime
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip 
@@ -47,12 +47,57 @@ class CountyViewSet(viewsets.GenericViewSet,
     queryset = County.objects.all()
     serializer_class = serializers.CountySerializer
 
-class CaseViewSet(viewsets.GenericViewSet,
+class CaseSearchViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.CreateModelMixin):
     queryset = Case.objects.all()
     serializer_class = serializers.CaseSerializer
+
+    def get_queryset(self):
+
+        city = self.request.query_params.get('city')
+        county = self.request.query_params.get('county')
+        #2022-07-10T00:00:00Z
+        start_datetime = self.request.query_params.get('start_datetime')
+        end_datetime = self.request.query_params.get('end_datetime')
+        care_type= self.request.query_params.get('care_type')
+        queryset = self.queryset
+
+        if city != None:
+            queryset = queryset.filter(city=City.objects.get(id=city))
+        if county != None:
+            queryset = queryset.filter(county=County.objects.get(id=county))
+        if (start_datetime != None)&(end_datetime != None) == True:
+            queryset = queryset.filter(start_datetime__gte=start_datetime,end_datetime__lte=end_datetime)
+        if care_type == 'home':
+            queryset = queryset.filter(care_type='home')
+        elif care_type == 'hospital':
+            queryset = queryset.filter(care_type='hospital')
+
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        case = self.get_object()
+        case.reviews_num = Review.objects.filter(order__case=case).aggregate(reviews_num=Count('servant_rating'))['reviews_num']
+        case.rated_num = Review.objects.filter(order__case=case).aggregate(rated_num=Avg('servant_rating'))['rated_num']
+        if case.is_taken == True:
+            case.status = '案件已關閉'
+        else:
+            case.status = '尚未找到服務者'
+        
+        disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
+        case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
+        body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
+        case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
+        service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True))
+        case.services = Service.objects.filter(id__in=service_ids)
+
+        serializer = self.get_serializer(case)
+        return Response(serializer.data)
+
+        
+        
 
 class OrderViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -67,8 +112,6 @@ class UserServiceLocationViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = UserServiceLocation.objects.all()
     serializer_class = serializers.UserServiceLocationSerializer
-
-
 
 class UserWeekDayTimeViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -163,3 +206,31 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         user.reviews = Review.objects.filter(servant=user)[:2]
         serializer = self.get_serializer(user, context={"request":request})
         return Response(serializer.data)
+
+class RecommendServantViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,):
+    
+    queryset = User.objects.all()
+    serializer_class = serializers.ServantSerializer
+
+    def get_queryset(self):
+
+        care_type= self.request.query_params.get('care_type')
+        city = self.request.query_params.get('city')
+        county = self.request.query_params.get('county')
+
+        queryset = User.objects.filter(is_servant=True)
+        if care_type == 'home':
+            queryset = queryset.filter(is_home=True)
+        elif care_type == 'hospital':
+            queryset = queryset.filter(is_hospital=True)
+
+        if city != None:
+            queryset = queryset.filter(user_locations__city=City.objects.get(id=city))
+        if county != None:
+            queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
+        for i in range(len(queryset)):
+            queryset[i].rate_num = Review.objects.filter(servant=queryset[i]).aggregate(Avg('servant_rating'))['servant_rating__avg']
+            queryset[i].reviews_num = Review.objects.filter(servant=queryset[i]).aggregate(reviews_num=Count('servant_rating'))['reviews_num']
+
+        return queryset
