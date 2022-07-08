@@ -268,6 +268,7 @@ def fakeData():
     case.user = User.objects.get(id=2)
     case.servant = User.objects.get(id=3)
     case.county = County.objects.get(id=35)
+    case.city = case.county.city
     case.care_type = 'home'
     case.name = '王大明'
     case.gender = 'M'
@@ -287,6 +288,7 @@ def fakeData():
     case.user = User.objects.get(id=3)
     case.servant = User.objects.get(id=4)
     case.county = County.objects.get(id=77)
+    case.city = case.county.city
     case.care_type = 'hospital'
     case.name = '陳小芬'
     case.gender = 'F'
