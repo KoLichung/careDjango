@@ -195,7 +195,7 @@ class Case(models.Model):
         on_delete=models.RESTRICT,
         blank = True,
         null=True,
-        related_name='cases'
+        related_name='servant_cases'
     )
     
     city = models.ForeignKey(
@@ -237,6 +237,9 @@ class Case(models.Model):
     is_taken = models.BooleanField(default=False)
     is_open_for_search = models.BooleanField(default=False)
 
+    weekday = models.CharField(max_length=100, blank=True, null=True)
+    start_time = models.IntegerField(default=0, blank=True, null=True)
+    end_time = models.IntegerField(default=24, blank=True, null=True)
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -271,24 +274,6 @@ class CaseBodyConditionShip(models.Model):
         on_delete=models.RESTRICT
     )
 
-class CaseWeekDayTime(models.Model):
-    case = models.ForeignKey(
-        Case,
-        on_delete=models.RESTRICT
-    )
-    WEEKDAY_CHOICES = [
-        ('0', 'Sunday'),
-        ('1', 'Monday'),
-        ('2', 'Tuesday'),
-        ('3', 'Wednesday'),
-        ('4', 'Thursday'),
-        ('5', 'Friday'),
-        ('6', 'Saturday'),
-    ]
-    weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES, blank=True, null=True)
-    start_time = models.IntegerField(default=0, blank=True, null=True)
-    end_time = models.IntegerField(default=24, blank=True, null=True)
-
 class CaseServiceShip(models.Model):
     case = models.ForeignKey(
         Case,
@@ -303,14 +288,14 @@ class Order(models.Model):
     case = models.ForeignKey(
         Case,
         on_delete = models.CASCADE,
+        related_name='orders',
     )
     user = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
         null=True,
-        blank=True
+        blank=True,
     )
-    
     UNPAID = 'unPaid'
     PAID = 'paid'
     STATE_CHOICES = [
@@ -318,9 +303,33 @@ class Order(models.Model):
         (PAID, '已付款'),
     ]
     state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
-
+    
     total_money = models.IntegerField(default=0, blank=True, null=True)
+
+    start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
+    end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
+
+    start_time = models.IntegerField(default=0, blank=True, null=True)
+    end_time = models.IntegerField(default=24, blank=True, null=True)
+    
     created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
+
+class OrderWeekDay(models.Model):
+    order =  models.ForeignKey(
+        Order,
+        on_delete = models.CASCADE,
+        related_name='order_weekday',
+    )
+    WEEKDAY_CHOICES = [
+        ('0', 'Sunday'),
+        ('1', 'Monday'),
+        ('2', 'Tuesday'),
+        ('3', 'Wednesday'),
+        ('4', 'Thursday'),
+        ('5', 'Friday'),
+        ('6', 'Saturday'),
+    ]
+    weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES,)
 
 class Review(models.Model):
     order = models.ForeignKey(
