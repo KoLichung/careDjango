@@ -30,11 +30,17 @@ http://localhost:8000/api/messages/
 SystemMessage 的列表, 新增,
 http://localhost:8000/api/systemMessages/
 
-Search Servant 的列表, 用於首頁
+Search Servant 的列表, 查詢 用於首頁
 http://localhost:8000/api/search_servants/?care_type=home&city=3&county=35&is_continuous_time=True&weekdays=1,3,5&start_end_time=6:9&start_datetime=2022-07-21T00:00:00Z&end_datetime=2022-08-20T00:00:00Z
 
 RecommendServantViewSet 的列表
 http://localhost:8000/api/recommend_servants/
+
+ServantCaseViewSet 的列表, 查詢
+http://localhost:8000/api/servant_cases/
+
+NeedCaseViewSet 的列表, 查詢
+http://localhost:8000/api/need_cases/
 
 20220708
 1.CaseViewSet 的 get_queryset, retrieve

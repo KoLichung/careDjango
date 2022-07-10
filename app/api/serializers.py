@@ -47,18 +47,6 @@ class CountySerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
-class CaseSerializer(serializers.ModelSerializer):
-    services = ServiceSerializer(read_only=True, many=True)
-    disease = DiseaseConditionSerializer(read_only=True, many=True)
-    body_condition = BodyConditionSerializer(read_only=True, many=True)
-    reviews_num = serializers.IntegerField(default=0)
-    rated_num = serializers.IntegerField(default=0)
-    status = serializers.CharField(default='')
-    class Meta:
-        model = Case
-        fields = '__all__'
-        read_only_fields = ('id',)
-
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
@@ -110,4 +98,25 @@ class ServantSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'rating', 'is_home', 'home_hour_wage', 'home_half_day_wage', 'home_one_day_wage', 'is_hospital', 'hospital_hour_wage', 'hospital_half_day_wage', 'hospital_one_day_wage', 'locations', 'rate_num', 'background_image_url', 'services', 'licences', 'about_me', 'reviews', 'reviews_num')
         read_only_fields = ('id',)
         
-
+class CaseSerializer(serializers.ModelSerializer):
+    services = ServiceSerializer(read_only=True, many=True)
+    disease = DiseaseConditionSerializer(read_only=True, many=True)
+    body_condition = BodyConditionSerializer(read_only=True, many=True)
+    reviews = ReviewSerializer(read_only=True, many=True)
+    reviews_num = serializers.IntegerField(default=0)
+    rated_num = serializers.IntegerField(default=0)
+    servant_rating = serializers.IntegerField(default=0)
+    servant_comment = serializers.CharField(default='')
+    case_offender_rating = serializers.IntegerField(default=0)
+    case_offender_comment = serializers.CharField(default='')
+    status = serializers.CharField(default='')
+    hour_wage = serializers.IntegerField(default=0)
+    work_hours = serializers.IntegerField(default=0)
+    base_fee = serializers.IntegerField(default=0)
+    mark_up_fee = serializers.CharField(default='')
+    platform_fee = serializers.IntegerField(default=0)
+    total_fee = serializers.IntegerField(default=0)
+    class Meta:
+        model = Case
+        fields = '__all__'
+        read_only_fields = ('id',)

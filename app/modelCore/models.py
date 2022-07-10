@@ -82,7 +82,7 @@ class Service(models.Model):
     name = models.CharField(max_length= 100, unique=True)
     remark = models.CharField(max_length= 150, blank = True, null=True)
     is_increase_price = models.BooleanField(default=False)
-    increase_percent = models.FloatField(default=0, blank = True, null=True)
+    
 
     def __str__(self):
         return self.name
@@ -283,6 +283,7 @@ class CaseServiceShip(models.Model):
         Service,
         on_delete=models.RESTRICT
     )
+    increase_percent = models.FloatField(default=0, blank = True, null=True)
 
 class Order(models.Model):
     case = models.ForeignKey(

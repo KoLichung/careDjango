@@ -4,7 +4,7 @@ import datetime
 from datetime import date ,timedelta
 from pytz import timezone
 import pytz
-from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
+from .models import  OrderWeekDay, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip 
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
 
@@ -121,6 +121,7 @@ def fakeData():
     user.home_hour_wage = 300
     user.home_half_day_wage = 1600
     user.home_one_day_wage = 2900
+    user.is_continuous_time = True
     user.save()
 
     user = User()
@@ -132,43 +133,7 @@ def fakeData():
     user.hospital_hour_wage = 320
     user.hospital_half_day_wage = 1750
     user.hospital_one_day_wage = 3200
-    user.is_continuous_time = True
     user.save()
-
-    userWeekdayTIme = UserWeekDayTime()
-    userWeekdayTIme.user = User.objects.get(id=2)
-    userWeekdayTIme.weekday = '1'
-    userWeekdayTIme.start_time = 8
-    userWeekdayTIme.end_time = 20
-    userWeekdayTIme.save()
-
-    userWeekdayTIme = UserWeekDayTime()
-    userWeekdayTIme.user = User.objects.get(id=3)
-    userWeekdayTIme.weekday = '1'
-    userWeekdayTIme.start_time = 6
-    userWeekdayTIme.end_time = 20
-    userWeekdayTIme.save()
-
-    userWeekdayTIme = UserWeekDayTime()
-    userWeekdayTIme.user = User.objects.get(id=3)
-    userWeekdayTIme.weekday = '3'
-    userWeekdayTIme.start_time = 6
-    userWeekdayTIme.end_time = 20
-    userWeekdayTIme.save()
-
-    userWeekdayTIme = UserWeekDayTime()
-    userWeekdayTIme.user = User.objects.get(id=3)
-    userWeekdayTIme.weekday = '5'
-    userWeekdayTIme.start_time = 6
-    userWeekdayTIme.end_time = 21
-    userWeekdayTIme.save()
-
-    userWeekdayTIme = UserWeekDayTime()
-    userWeekdayTIme.user = User.objects.get(id=3)
-    userWeekdayTIme.weekday = '0'
-    userWeekdayTIme.start_time = 6
-    userWeekdayTIme.end_time = 21
-    userWeekdayTIme.save()
 
     userWeekdayTIme = UserWeekDayTime()
     userWeekdayTIme.user = User.objects.get(id=4)
@@ -323,10 +288,34 @@ def fakeData():
     caseBodyconditionShip.case = Case.objects.get(id=2)
     caseBodyconditionShip.body_condition = BodyCondition.objects.get(id=7)
     caseBodyconditionShip.save()
+
+    caseServiceShip = CaseServiceShip()
+    caseServiceShip.case = Case.objects.get(id=1)
+    caseServiceShip.service = Service.objects.get(id=2)
+    caseServiceShip.increase_percent = 30
+    caseServiceShip.save()
+
+    caseServiceShip = CaseServiceShip()
+    caseServiceShip.case = Case.objects.get(id=1)
+    caseServiceShip.service = Service.objects.get(id=3)
+    caseServiceShip.increase_percent = 25
+    caseServiceShip.save()
     
     caseServiceShip = CaseServiceShip()
     caseServiceShip.case = Case.objects.get(id=1)
     caseServiceShip.service = Service.objects.get(id=5)
+    caseServiceShip.save()
+
+    caseServiceShip = CaseServiceShip()
+    caseServiceShip.case = Case.objects.get(id=2)
+    caseServiceShip.service = Service.objects.get(id=1)
+    caseServiceShip.increase_percent = 20
+    caseServiceShip.save()
+
+    caseServiceShip = CaseServiceShip()
+    caseServiceShip.case = Case.objects.get(id=2)
+    caseServiceShip.service = Service.objects.get(id=4)
+    caseServiceShip.increase_percent = 25
     caseServiceShip.save()
 
     caseServiceShip = CaseServiceShip()
@@ -338,7 +327,6 @@ def fakeData():
     order.case = Case.objects.get(id=1)
     order.user = order.case.user
     order.state = 'unPaid'
-    order.weekday = order.case.weekday
     order.start_time = order.case.start_time
     order.end_time = order.case.end_time
     order.start_datetime = order.case.start_datetime
@@ -350,17 +338,33 @@ def fakeData():
     order.case = Case.objects.get(id=2)
     order.user = order.case.user
     order.state = 'paid'
-    case = Case.objects.get(id=2)
     order.start_datetime = Case.objects.get(id=2).start_datetime
     order.end_datetime = Case.objects.get(id=2).end_datetime
-    case_weekday_list = case.weekday.split(',')
-    total_hours = 0
-    for i in case_weekday_list:
-        total_hours += (days_count([int(i)], case.start_datetime.date(), case.end_datetime.date())) * (case.end_time - case.start_time)
-    order.weekday = order.case.weekday
     order.start_time = order.case.start_time
     order.end_time = order.case.end_time
-    order.total_money = total_hours * (Case.objects.get(id=2).servant.hospital_hour_wage)
+    order.save()
+
+    orderWeekday = OrderWeekDay()
+    orderWeekday.order = Order.objects.get(id=2)
+    orderWeekday.weekday = '2'
+    orderWeekday.save()
+
+    orderWeekday = OrderWeekDay()
+    orderWeekday.order = Order.objects.get(id=2)
+    orderWeekday.weekday = '4'
+    orderWeekday.save()
+
+    orderWeekday = OrderWeekDay()
+    orderWeekday.order = Order.objects.get(id=2)
+    orderWeekday.weekday = '5'
+    orderWeekday.save()
+
+    order = Order.objects.get(id=2)
+    weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+    total_hours = 0
+    for i in weekday_list:
+        total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+    order.total_money = total_hours * (order.case.servant.hospital_hour_wage)
     order.save()
 
     review = Review()

@@ -18,6 +18,8 @@ router.register('messages', views.MessageViewSet)
 router.register('systemMessages', views.SystemMessageViewSet)
 router.register('search_servants', views.SearchServantViewSet)
 router.register('recommend_servants', views.RecommendServantViewSet)
+router.register('servant_cases', views.ServantCaseViewSet)
+router.register('need_cases', views.NeedCaseViewSet)
 
 app_name = 'api'
 

@@ -2,13 +2,16 @@ from tracemalloc import start
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from django.db.models import Q
 from django.db.models import Avg , Count
-from datetime import datetime
+import datetime
+from datetime import date ,timedelta
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip 
-from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
+from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage , OrderWeekDay
 from api import serializers
 
 class LicenseViewSet(viewsets.GenericViewSet,
@@ -45,54 +48,6 @@ class CountyViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
     queryset = County.objects.all()
     serializer_class = serializers.CountySerializer
-
-class CaseSearchViewSet(viewsets.GenericViewSet,
-                    mixins.ListModelMixin,
-                    mixins.RetrieveModelMixin,
-                    mixins.CreateModelMixin):
-    queryset = Case.objects.all()
-    serializer_class = serializers.CaseSerializer
-
-    def get_queryset(self):
-        city = self.request.query_params.get('city')
-        county = self.request.query_params.get('county')
-        #2022-07-10T00:00:00Z
-        start_datetime = self.request.query_params.get('start_datetime')
-        end_datetime = self.request.query_params.get('end_datetime')
-        care_type= self.request.query_params.get('care_type')
-        queryset = self.queryset
-
-        if city != None:
-            queryset = queryset.filter(city=City.objects.get(id=city))
-        if county != None:
-            queryset = queryset.filter(county=County.objects.get(id=county))
-        if start_datetime != None and end_datetime != None :
-            queryset = queryset.filter(start_datetime__gte=start_datetime,end_datetime__lte=end_datetime)
-        if care_type == 'home':
-            queryset = queryset.filter(care_type='home')
-        elif care_type == 'hospital':
-            queryset = queryset.filter(care_type='hospital')
-
-        return queryset
-
-    def retrieve(self, request, *args, **kwargs):
-        case = self.get_object()
-        case.reviews_num = Review.objects.filter(order__case=case).aggregate(reviews_num=Count('servant_rating'))['reviews_num']
-        case.rated_num = Review.objects.filter(order__case=case).aggregate(rated_num=Avg('servant_rating'))['rated_num']
-        if case.is_taken == True:
-            case.status = '案件已關閉'
-        else:
-            case.status = '尚未找到服務者'
-        
-        disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
-        case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
-        body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
-        case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
-        service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True))
-        case.services = Service.objects.filter(id__in=service_ids)
-
-        serializer = self.get_serializer(case)
-        return Response(serializer.data)
 
 class OrderViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -241,3 +196,176 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
             queryset[i].reviews_num = Review.objects.filter(servant=queryset[i]).aggregate(reviews_num=Count('servant_rating'))['reviews_num']
 
         return queryset
+
+class CaseSearchViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,):
+    queryset = Case.objects.all()
+    serializer_class = serializers.CaseSerializer
+
+    def get_queryset(self):
+        city = self.request.query_params.get('city')
+        county = self.request.query_params.get('county')
+        #2022-07-10T00:00:00Z
+        start_datetime = self.request.query_params.get('start_datetime')
+        end_datetime = self.request.query_params.get('end_datetime')
+        care_type= self.request.query_params.get('care_type')
+        queryset = self.queryset.filter(is_taken=False)
+
+        if city != None:
+            queryset = queryset.filter(city=City.objects.get(id=city))
+        if county != None:
+            queryset = queryset.filter(county=County.objects.get(id=county))
+        if start_datetime != None and end_datetime != None :
+            queryset = queryset.filter(start_datetime__gte=start_datetime,end_datetime__lte=end_datetime)
+        if care_type == 'home':
+            queryset = queryset.filter(care_type='home')
+        elif care_type == 'hospital':
+            queryset = queryset.filter(care_type='hospital')
+
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        case = self.get_object()
+        case.reviews_num = Review.objects.filter(order__case=case).aggregate(reviews_num=Count('servant_rating'))['reviews_num']
+        case.rated_num = Review.objects.filter(order__case=case).aggregate(rated_num=Avg('servant_rating'))['rated_num']
+        if case.is_taken == True:
+            case.status = '案件已關閉'
+        else:
+            case.status = '尚未找到服務者'
+        
+        disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
+        case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
+        body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
+        case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
+        service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True))
+        case.services = Service.objects.filter(id__in=service_ids)
+
+        serializer = self.get_serializer(case)
+        return Response(serializer.data)
+
+class ServantCaseViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,):
+
+    queryset = Case.objects.all()
+    serializer_class = serializers.CaseSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        servant = self.request.user
+        queryset = self.queryset.filter(servant=servant)
+
+        for i in range(len(queryset)):
+            if Review.objects.get(case=queryset[i]).servant_rating != None:
+                queryset[i].servant_rating = Review.objects.get(case=queryset[i]).servant_rating
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        case = self.get_object()
+        servant = self.request.user
+        if case.servant == servant:
+            case.reviews = Review.objects.filter(case=case)
+            if case.care_type == 'home':
+                case.hour_wage = servant.home_hour_wage
+            elif case.care_type == 'hospital':
+                case.hour_wage = servant.hospital_hour_wage
+            if case.is_continuous_time == True:
+                case.work_hours = (case.end_time - case.start_time) * ((case.end_datetime - case.start_datetime).days)
+            else:
+                weekday_list = list(OrderWeekDay.objects.filter(order__case=case).values_list('weekday', flat=True))
+                total_hours = 0
+                for i in weekday_list:
+                    total_hours += (days_count([int(i)], case.start_datetime.date(), case.end_datetime.date())) * (case.end_time - case.start_time)
+                case.work_hours = total_hours
+            case.base_fee = case.hour_wage * case.work_hours
+            service_increase_price_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
+            case.services = Service.objects.filter(id__in=service_increase_price_ids)
+            mark_up_service_dict = {}
+            total_fee = case.base_fee
+            for service_id in service_increase_price_ids:
+                mark_up_service_dict['increase_percent'+str(service_id)] = CaseServiceShip.objects.get(service=service_id,case=case).increase_percent
+                mark_up_service_dict['mark_up_fee'+str(service_id)] = CaseServiceShip.objects.get(service=service_id,case=case).increase_percent * case.work_hours
+                total_fee += mark_up_service_dict['mark_up_fee'+str(service_id)]
+            case.platform_fee = total_fee * 0.15
+            case.total_fee = total_fee - case.platform_fee
+            case.mark_up_fee = mark_up_service_dict
+            case.servant_rating = Review.objects.get(case=case).servant_rating
+            case.servant_rating = Review.objects.get(case=case).servant_rating
+            disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
+            case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
+            body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
+            case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
+            service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True)) 
+            case.services  = Service.objects.filter(Q(id__in=service_ids)&~Q(id__in=service_increase_price_ids))
+
+            serializer = self.get_serializer(case)
+            return Response(serializer.data)
+        else:
+            return Response({'message': "have no authority"})
+
+class NeedCaseViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,):
+
+    queryset = Case.objects.all()
+    serializer_class = serializers.CaseSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(user=user)
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        case = self.get_object()
+        user = self.request.user
+        if case.user == user:
+            case.reviews = Review.objects.filter(case=case)
+            if case.care_type == 'home':
+                case.hour_wage = case.servant.home_hour_wage
+            elif case.care_type == 'hospital':
+                case.hour_wage = case.servant.hospital_hour_wage
+            if case.is_continuous_time == True:
+                case.work_hours = (case.end_time - case.start_time) * ((case.end_datetime - case.start_datetime).days)
+            else:
+                weekday_list = list(OrderWeekDay.objects.filter(order__case=case).values_list('weekday', flat=True))
+                total_hours = 0
+                for i in weekday_list:
+                    total_hours += (days_count([int(i)], case.start_datetime.date(), case.end_datetime.date())) * (case.end_time - case.start_time)
+                case.work_hours = total_hours
+            case.base_fee = case.hour_wage * case.work_hours
+            service_increase_price_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
+            case.services = Service.objects.filter(id__in=service_increase_price_ids)
+            mark_up_service_dict = {}
+            total_fee = case.base_fee
+            for service_id in service_increase_price_ids:
+                mark_up_service_dict['increase_percent'+str(service_id)] = CaseServiceShip.objects.get(service=service_id,case=case).increase_percent
+                mark_up_service_dict['mark_up_fee'+str(service_id)] = CaseServiceShip.objects.get(service=service_id,case=case).increase_percent * case.work_hours
+                total_fee += mark_up_service_dict['mark_up_fee'+str(service_id)]
+            case.platform_fee = total_fee * 0.15
+            case.total_fee = total_fee - case.platform_fee
+            case.mark_up_fee = mark_up_service_dict
+            case.servant_rating = Review.objects.get(case=case).servant_rating
+            case.servant_rating = Review.objects.get(case=case).servant_rating
+            disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
+            case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
+            body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
+            case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
+            service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True)) 
+            case.services  = Service.objects.filter(Q(id__in=service_ids)&~Q(id__in=service_increase_price_ids))
+
+            serializer = self.get_serializer(case)
+            return Response(serializer.data)
+        else:
+            print('no auth')
+            return Response({'message': "have no authority"})
+
+def days_count(weekdays: list, start: date, end: date):
+    dates_diff = end-start
+    days = [start + timedelta(days=i) for i in range(dates_diff.days)]
+    return len([day for day in days if day.weekday() in weekdays])
+
+            
