@@ -14,8 +14,6 @@ City 列表
 http://localhost:8000/api/citys/
 County 列表
 http://localhost:8000/api/countys/
-CaseSearch 的列表, 查詢, 新增, 修改
-http://localhost:8000/api/search_cases/?city=6&county=77&start_datetime=2022-07-10T00:00:00Z&end_datetime=2022-08-05T00:00:00Z&care_type=hospital
 
 Order 的列表, 查詢, 新增, 修改
 http://localhost:8000/api/orders/
@@ -29,18 +27,23 @@ Message 的列表, 新增,
 http://localhost:8000/api/messages/
 SystemMessage 的列表, 新增,
 http://localhost:8000/api/systemMessages/
-
 Search Servant 的列表, 查詢 用於首頁
 http://localhost:8000/api/search_servants/?care_type=home&city=3&county=35&is_continuous_time=True&weekdays=1,3,5&start_end_time=6:9&start_datetime=2022-07-21T00:00:00Z&end_datetime=2022-08-20T00:00:00Z
-
 RecommendServantViewSet 的列表
 http://localhost:8000/api/recommend_servants/
 
+CaseSearch 的列表, 查詢, 新增, 修改
+http://localhost:8000/api/search_cases/?city=6&county=77&start_datetime=2022-07-10T00:00:00Z&end_datetime=2022-08-05T00:00:00Z&care_type=hospital
 ServantCaseViewSet 的列表, 查詢
 http://localhost:8000/api/servant_cases/
-
 NeedCaseViewSet 的列表, 查詢
 http://localhost:8000/api/need_cases/
+
+20220711
+1.Case 查詢的 reviews 改成 review, 並回傳該案件的 review 就好了
+2.Service 要返回所有該 case 的 services
+3.設計 Order 的案件金額相關欄位, 並 fakeData
+4.Case 只要回傳 order 就好了
 
 20220708
 1.CaseViewSet 的 get_queryset, retrieve
@@ -67,7 +70,6 @@ http://localhost:8000/api/need_cases/
 3.增加 ServantSerializer 的欄位 background_image, services, licences, about_me, reivews[:2] (記得要給 default data)
 4.完成 SearchServantViewSet 的 retrieve method
 5.完成 SearchServantViewSet 的 get_queryset method 的 params filter  
-# start_datetime & end_datetime 好像不會用到
 
 20220705
 1.把 License, Service 的備註放到 remark 這個欄位

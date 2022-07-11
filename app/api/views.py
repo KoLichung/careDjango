@@ -266,7 +266,7 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
         case = self.get_object()
         servant = self.request.user
         if case.servant == servant:
-            case.reviews = Review.objects.filter(case=case)
+            case.review = Review.objects.get(case=case)
             if case.care_type == 'home':
                 case.hour_wage = servant.home_hour_wage
             elif case.care_type == 'hospital':
@@ -323,39 +323,50 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
         case = self.get_object()
         user = self.request.user
         if case.user == user:
-            case.reviews = Review.objects.filter(case=case)
+            
             if case.care_type == 'home':
                 case.hour_wage = case.servant.home_hour_wage
             elif case.care_type == 'hospital':
                 case.hour_wage = case.servant.hospital_hour_wage
-            if case.is_continuous_time == True:
-                case.work_hours = (case.end_time - case.start_time) * ((case.end_datetime - case.start_datetime).days)
-            else:
-                weekday_list = list(OrderWeekDay.objects.filter(order__case=case).values_list('weekday', flat=True))
-                total_hours = 0
-                for i in weekday_list:
-                    total_hours += (days_count([int(i)], case.start_datetime.date(), case.end_datetime.date())) * (case.end_time - case.start_time)
-                case.work_hours = total_hours
-            case.base_fee = case.hour_wage * case.work_hours
-            service_increase_price_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
-            case.services = Service.objects.filter(id__in=service_increase_price_ids)
-            mark_up_service_dict = {}
-            total_fee = case.base_fee
-            for service_id in service_increase_price_ids:
-                mark_up_service_dict['increase_percent'+str(service_id)] = CaseServiceShip.objects.get(service=service_id,case=case).increase_percent
-                mark_up_service_dict['mark_up_fee'+str(service_id)] = CaseServiceShip.objects.get(service=service_id,case=case).increase_percent * case.work_hours
-                total_fee += mark_up_service_dict['mark_up_fee'+str(service_id)]
-            case.platform_fee = total_fee * 0.15
-            case.total_fee = total_fee - case.platform_fee
-            case.mark_up_fee = mark_up_service_dict
+            
             case.servant_rating = Review.objects.get(case=case).servant_rating
             case.servant_rating = Review.objects.get(case=case).servant_rating
             disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
             case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
             body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
             case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
-            service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True)) 
-            case.services  = Service.objects.filter(Q(id__in=service_ids)&~Q(id__in=service_increase_price_ids))
+
+            # service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True)) 
+            # case.services  = Service.objects.filter(Q(id__in=service_ids)&~Q(id__in=service_increase_price_ids))
+
+            # 以下做 order 相關欄位
+            
+
+            # if case.is_continuous_time == True:
+            #     case.work_hours = (case.end_time - case.start_time) * ((case.end_datetime - case.start_datetime).days)
+            # else:
+            #     weekday_list = list(OrderWeekDay.objects.filter(order__case=case).values_list('weekday', flat=True))
+            #     total_hours = 0
+            #     for i in weekday_list:
+            #         total_hours += (days_count([int(i)], case.start_datetime.date(), case.end_datetime.date())) * (case.end_time - case.start_time)
+            #     case.work_hours = total_hours
+            # case.base_fee = case.hour_wage * case.work_hours
+            
+            # service_increase_price_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
+            # case.services = Service.objects.filter(id__in=service_increase_price_ids)
+
+            # mark_up_service_dict = {}
+            # total_fee = case.base_fee
+            # for service_id in service_increase_price_ids:
+            #     mark_up_service_dict['increase_percent'+str(service_id)] = CaseServiceShip.objects.get(service=service_id,case=case).increase_percent
+            #     mark_up_service_dict['mark_up_fee'+str(service_id)] = CaseServiceShip.objects.get(service=service_id,case=case).increase_percent * case.work_hours
+            #     total_fee += mark_up_service_dict['mark_up_fee'+str(service_id)]
+
+            #platform fee percent need change in the future
+            # case.platform_fee = total_fee * 0.15
+
+            # case.total_fee = total_fee - case.platform_fee
+            # case.mark_up_fee = mark_up_service_dict
 
             serializer = self.get_serializer(case)
             return Response(serializer.data)

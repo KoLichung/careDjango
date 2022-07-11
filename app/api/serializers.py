@@ -102,7 +102,7 @@ class CaseSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(read_only=True, many=True)
     disease = DiseaseConditionSerializer(read_only=True, many=True)
     body_condition = BodyConditionSerializer(read_only=True, many=True)
-    reviews = ReviewSerializer(read_only=True, many=True)
+    review = ReviewSerializer(read_only=True, many=False)
     reviews_num = serializers.IntegerField(default=0)
     rated_num = serializers.IntegerField(default=0)
     servant_rating = serializers.IntegerField(default=0)
@@ -113,9 +113,10 @@ class CaseSerializer(serializers.ModelSerializer):
     hour_wage = serializers.IntegerField(default=0)
     work_hours = serializers.IntegerField(default=0)
     base_fee = serializers.IntegerField(default=0)
-    mark_up_fee = serializers.CharField(default='')
     platform_fee = serializers.IntegerField(default=0)
     total_fee = serializers.IntegerField(default=0)
+
+    mark_up_fee = serializers.CharField(default='')
     class Meta:
         model = Case
         fields = '__all__'

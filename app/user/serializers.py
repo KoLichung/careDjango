@@ -34,7 +34,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('id','phone','name')
-        read_only_fields = ('id')
+        # read_only_fields = ('id')
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user authentication object"""
