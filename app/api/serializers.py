@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip 
-from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
+from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderIncreaseService
 
 class LicenseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,6 +50,12 @@ class CountySerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class OrderIncreaseServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderIncreaseService
         fields = '__all__'
         read_only_fields = ('id',)
 
@@ -112,11 +118,12 @@ class CaseSerializer(serializers.ModelSerializer):
     status = serializers.CharField(default='')
     hour_wage = serializers.IntegerField(default=0)
     work_hours = serializers.IntegerField(default=0)
-    base_fee = serializers.IntegerField(default=0)
-    platform_fee = serializers.IntegerField(default=0)
-    total_fee = serializers.IntegerField(default=0)
+    base_money = serializers.IntegerField(default=0)
+    platform_percent = serializers.FloatField(default=0)
+    platform_money = serializers.IntegerField(default=0)
+    total_money = serializers.IntegerField(default=0)
 
-    mark_up_fee = serializers.CharField(default='')
+    increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
     class Meta:
         model = Case
         fields = '__all__'

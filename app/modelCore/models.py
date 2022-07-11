@@ -283,7 +283,6 @@ class CaseServiceShip(models.Model):
         Service,
         on_delete=models.RESTRICT
     )
-    increase_percent = models.FloatField(default=0, blank = True, null=True)
 
 class Order(models.Model):
     case = models.ForeignKey(
@@ -305,6 +304,9 @@ class Order(models.Model):
     ]
     state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
     
+    work_hours = models.FloatField(default=0, blank = True, null=True)
+    base_money = models.IntegerField(default=0, blank=True, null=True)
+    platform_percent = models.FloatField(default=0, blank = True, null=True)
     total_money = models.IntegerField(default=0, blank=True, null=True)
 
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
@@ -314,6 +316,20 @@ class Order(models.Model):
     end_time = models.IntegerField(default=24, blank=True, null=True)
     
     created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
+
+class OrderIncreaseService(models.Model):
+    order =  models.ForeignKey(
+        Order,
+        on_delete = models.CASCADE,
+        related_name='order_service',
+    )
+    service = service = models.ForeignKey(
+        Service,
+        on_delete=models.RESTRICT
+    )
+    increase_percent = models.FloatField(default=0, blank = True, null=True)
+
+    increase_money = models.IntegerField(default=0, blank=True, null=True)
 
 class OrderWeekDay(models.Model):
     order =  models.ForeignKey(
