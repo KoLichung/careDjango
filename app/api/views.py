@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.db.models import Q
 from django.db.models import Avg , Count
+from django.shortcuts import get_object_or_404
 import datetime
 from datetime import date ,timedelta
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
@@ -151,7 +152,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
 
         for i in range(len(queryset)):
             queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
-            queryset[i].rate_num = Review.objects.filter(servant=queryset[i]).aggregate(Avg('servant_rating'))['servant_rating__avg']
+            queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -163,7 +164,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
 
         license_ids = list(UserLicenseShipImage.objects.filter(user=user).values_list('license', flat=True))
         user.licences = License.objects.filter(id__in=license_ids)
-        user.rate_num = Review.objects.filter(servant=user).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        user.avg_rate = Review.objects.filter(servant=user,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
         user.about_me = User.objects.get(phone=user).about_me
         user.reviews = Review.objects.filter(servant=user)[:2]
         serializer = self.get_serializer(user, context={"request":request})
@@ -192,8 +193,8 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
         if county != None:
             queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
         for i in range(len(queryset)):
-            queryset[i].rate_num = Review.objects.filter(servant=queryset[i]).aggregate(Avg('servant_rating'))['servant_rating__avg']
-            queryset[i].reviews_num = Review.objects.filter(servant=queryset[i]).aggregate(reviews_num=Count('servant_rating'))['reviews_num']
+            queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+            queryset[i].rate_num = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rate_num=Count('servant_rating'))['rate_num']
 
         return queryset
 
@@ -227,8 +228,8 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
 
     def retrieve(self, request, *args, **kwargs):
         case = self.get_object()
-        case.reviews_num = Review.objects.filter(order__case=case).aggregate(reviews_num=Count('servant_rating'))['reviews_num']
-        case.rated_num = Review.objects.filter(order__case=case).aggregate(rated_num=Avg('servant_rating'))['rated_num']
+        case.rate_num = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(rate_num=Count('servant_rating'))['rate_num']
+        case.rated_num = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(rated_num=Avg('servant_rating'))['rated_num']
         if case.is_taken == True:
             case.status = '案件已關閉'
         else:
@@ -288,7 +289,7 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
             case.base_money = order.base_money
             case.platform_percent = order.platform_percent
             # !!!
-            case.platform_money = order.total_money * (order.platform_percent/100)
+            case.platform_money = order.platform_money
             case.total_money = order.total_money
             increase_service_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
             case.increase_money = OrderIncreaseService.objects.filter(order=order,service__id__in=increase_service_ids)
@@ -336,7 +337,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             case.base_money = order.base_money
             case.platform_percent = order.platform_percent
             # !!!!!!
-            case.platform_money = order.total_money * (order.platform_percent/100)
+            case.platform_money = order.platform_money
             case.total_money = order.total_money
             increase_service_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
             case.increase_money = OrderIncreaseService.objects.filter(order=order,service__id__in=increase_service_ids)
@@ -347,4 +348,91 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             print('no auth')
             return Response({'message': "have no authority"})
 
+class ReviewViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin):
+
+    queryset = Review.objects.all()
+    serializer_class = serializers.ReviewSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(case__user=user)
+        servant_not_rated = self.request.query_params.get('servant_not_rated')
+        servant_is_rated = self.request.query_params.get('servant_is_rated')
+        user_rate = self.request.query_params.get('user_rate')
+        # 尚未評價 : 給參數 "servant_not_rated" : "True", 我的評價：給參數 "servant_is_rated" : "True" , 給我的評價： 給參數 "user_rate" : "True"
+        if servant_not_rated != None :
+            queryset = queryset.filter(servant_rating__lt=1)
+        elif servant_is_rated != None:
+            queryset = queryset.filter(servant_rating__gte=1)
+        elif user_rate != None:
+            queryset = queryset.filter(case_offender_rating__gte=1)  
+
+        for i in range(len(queryset)):
+            queryset[i].care_type = queryset[i].case.care_type
+            queryset[i].is_continuous_time = queryset[i].case.is_continuous_time
+            queryset[i].start_datetime = queryset[i].case.start_datetime
+            queryset[i].end_datetime = queryset[i].case.end_datetime
+            queryset[i].user_avg_rate = queryset.filter(case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
+            queryset[i].user_rated_num = queryset.filter(case_offender_rating__gte=1).aggregate(Count('case_offender_rating'))['case_offender_rating__count']
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        review = self.get_object()
+        user = self.request.user
+        if review.case.user == user:
+            review.care_type = review.case.care_type
+            review.is_continuous_time = review.case.is_continuous_time
+            review.start_datetime = review.case.start_datetime
+            review.end_datetime = review.case.end_datetime
+            serializer = self.get_serializer(review)
+            return Response(serializer.data)
+        else:
+            return Response({'message': "have no authority"})
+    
+    def update(self, request, *args, **kwargs):
+        review = self.get_object()
+        user = self.request.user
+        servant_rating = request.data.get('servant_rating')
+        servant_comment = request.data.get('servant_comment')
+        if review.case.user == user:
+            review.servant_rating = servant_rating
+            review.servant_comment = servant_comment
+            review.save()
+            serializer = self.get_serializer(review)
+            return Response(serializer.data)
+        else:
+            return Response({'message': "have no authority"})
+        
+class ServantPutReviewView(APIView):
+    queryset = Review.objects.all()
+    serializer_class = serializers.ReviewSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, pk):
+        review = get_object_or_404(Review.objects.all(),pk=pk)
+        servant = self.request.user
+        if review.servant == servant:
+            serializer = serializers.ReviewSerializer(review)
+            return Response(serializer.data)
+        else:
+            return Response({'message': "have no authority"})
             
+    def put(self, request, pk):
+        review = get_object_or_404(Review.objects.all(),pk=pk)
+        servant = self.request.user
+        if review.servant == servant:
+            case_offender_rating = request.data.get('case_offender_rating')
+            case_offender_comment = request.data.get('case_offender_comment')
+            review.case_offender_rating = case_offender_rating
+            review.case_offender_comment = case_offender_comment
+            review.save()
+            serializer = serializers.ReviewSerializer(review)
+            return Response(serializer.data)
+        else:
+            return Response({'message': "have no authority"})

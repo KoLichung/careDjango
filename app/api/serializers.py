@@ -72,6 +72,12 @@ class UserWeekDayTimeSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class ReviewSerializer(serializers.ModelSerializer):
+    care_type = serializers.CharField(default='')
+    is_continuous_time = serializers.CharField(default='')
+    start_datetime = serializers.CharField(default='')
+    end_datetime = serializers.CharField(default='')
+    user_avg_rate = serializers.IntegerField(default=0)
+    user_rated_num = serializers.IntegerField(default=0)
     class Meta:
         model = Review
         fields = '__all__'
@@ -91,13 +97,13 @@ class SystemMessageSerializer(serializers.ModelSerializer):
 
 class ServantSerializer(serializers.ModelSerializer):
     locations = UserServiceLocationSerializer(read_only=True, many=True)
-    rate_num = serializers.IntegerField(default=0)
+    avg_rate = serializers.IntegerField(default=0)
     background_image_url = serializers.ImageField(max_length=None, use_url=True, allow_null=True, required=False)
     services = ServiceSerializer(read_only=True, many=True)
     licences = LicenseSerializer(read_only=True, many=True)
     about_me = serializers.CharField(default='')
     reviews = ReviewSerializer(read_only=True, many=True)
-    reviews_num = serializers.IntegerField(default=0)
+    rate_num = serializers.IntegerField(default=0)
     
     class Meta:
         model = User
@@ -112,9 +118,7 @@ class CaseSerializer(serializers.ModelSerializer):
     reviews_num = serializers.IntegerField(default=0)
     rated_num = serializers.IntegerField(default=0)
     servant_rating = serializers.IntegerField(default=0)
-    servant_comment = serializers.CharField(default='')
     case_offender_rating = serializers.IntegerField(default=0)
-    case_offender_comment = serializers.CharField(default='')
     status = serializers.CharField(default='')
     hour_wage = serializers.IntegerField(default=0)
     work_hours = serializers.IntegerField(default=0)

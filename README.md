@@ -39,6 +39,17 @@ http://localhost:8000/api/servant_cases/
 NeedCaseViewSet 的列表, 查詢
 http://localhost:8000/api/need_cases/
 
+ReviewViewSet 的列表, 查詢, 修改
+尚未評價
+http://localhost:8000/api/reviews/?servant_not_rated=True
+我的評價
+http://localhost:8000/api/reviews/?servant_is_rated=True
+給我的評價
+http://localhost:8000/api/reviews/?user_rate=True
+
+ServantPutReviewView 的 查詢, 修改
+http://localhost:8000/api/servant_put_review/1
+
 20220712
 1.改掉 views 裡面的計算
 2.當 order 產生時, review 應該也要相應產生 (先 FakeData 再做下一步)

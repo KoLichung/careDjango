@@ -339,6 +339,9 @@ def fakeData():
     order.work_hours = total_hours
     order.platform_percent = 15
     order.save()
+    Review.objects.create(order=order,case=order.case,servant=order.case.servant,
+                        case_offender_rating=4.8,case_offender_comment='good',
+                        servant_rating=5,servant_comment='nice')
 
     order = Order()
     order.case = Case.objects.get(id=2)
@@ -356,7 +359,7 @@ def fakeData():
     order.base_money = order.work_hours * order.case.servant.hospital_hour_wage
     order.platform_percent = 15
     order.save()
-
+    Review.objects.create(order=order,case=order.case,servant=order.case.servant)
 
     orderIncreaseService = OrderIncreaseService()
     orderIncreaseService.order = Order.objects.get(id=1)
@@ -403,28 +406,8 @@ def fakeData():
 
     for order in Order.objects.all():
         order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+        order.platform_money = order.total_money * (order.platform_percent/100)
         order.save()
-
-
-    review = Review()
-    review.order = Order.objects.get(id=1)
-    review.case = review.order.case
-    review.servant = review.case.servant
-    review.case_offender_rating = 4.8
-    review.case_offender_comment = 'good'
-    review.servant_rating = 5
-    review.servant_comment = 'nice'
-    review.save()
-
-    review = Review()
-    review.order = Order.objects.get(id=2)
-    review.case = review.order.case
-    review.servant = review.case.servant
-    review.case_offender_rating = 4.5
-    review.case_offender_comment = 'very good'
-    review.servant_rating = 4.3
-    review.servant_comment = 'very nice'
-    review.save()
 
     message = Message()
     message.case = Case.objects.get(id=1)

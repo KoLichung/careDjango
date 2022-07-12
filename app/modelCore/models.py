@@ -307,6 +307,7 @@ class Order(models.Model):
     work_hours = models.FloatField(default=0, blank = True, null=True)
     base_money = models.IntegerField(default=0, blank=True, null=True)
     platform_percent = models.FloatField(default=0, blank = True, null=True)
+    platform_money = models.IntegerField(default=0, blank=True, null=True)
     total_money = models.IntegerField(default=0, blank=True, null=True)
 
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
