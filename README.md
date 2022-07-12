@@ -39,6 +39,13 @@ http://localhost:8000/api/servant_cases/
 NeedCaseViewSet 的列表, 查詢
 http://localhost:8000/api/need_cases/
 
+20220712
+1.改掉 views 裡面的計算
+2.當 order 產生時, review 應該也要相應產生 (先 FakeData 再做下一步)
+3.(需求者)做 Reviews API 的部分 ReviewViewSet 的 改Put(新增評論), 查Get(list, retrieve) 
+=> xxx/reviews/1 
+4.(服務者)給評價 寫一個 APIView, ServantPutReviewView(APIView) 的 Put Method
+
 20220711
 1.Case 查詢的 reviews 改成 review, 並回傳該案件的 review 就好了
 2.Service 要返回所有該 case 的 services

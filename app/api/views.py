@@ -287,6 +287,7 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
             case.work_hours = order.work_hours
             case.base_money = order.base_money
             case.platform_percent = order.platform_percent
+            # !!!
             case.platform_money = order.total_money * (order.platform_percent/100)
             case.total_money = order.total_money
             increase_service_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
@@ -300,7 +301,6 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
 class NeedCaseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,):
-
     queryset = Case.objects.all()
     serializer_class = serializers.CaseSerializer
     authentication_classes = (TokenAuthentication,)
@@ -314,8 +314,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
     def retrieve(self, request, *args, **kwargs):
         case = self.get_object()
         user = self.request.user
-        if case.user == user:
-            
+        if case.user == user:  
             if case.care_type == 'home':
                 case.hour_wage = case.servant.home_hour_wage
             elif case.care_type == 'hospital':
@@ -336,6 +335,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             case.work_hours = order.work_hours
             case.base_money = order.base_money
             case.platform_percent = order.platform_percent
+            # !!!!!!
             case.platform_money = order.total_money * (order.platform_percent/100)
             case.total_money = order.total_money
             increase_service_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
@@ -346,10 +346,5 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
         else:
             print('no auth')
             return Response({'message': "have no authority"})
-
-def days_count(weekdays: list, start: date, end: date):
-    dates_diff = end-start
-    days = [start + timedelta(days=i) for i in range(dates_diff.days)]
-    return len([day for day in days if day.weekday() in weekdays])
 
             
