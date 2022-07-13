@@ -352,7 +352,6 @@ class ReviewViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin):
-
     queryset = Review.objects.all()
     serializer_class = serializers.ReviewSerializer
     authentication_classes = (TokenAuthentication,)
@@ -361,15 +360,15 @@ class ReviewViewSet(viewsets.GenericViewSet,
     def get_queryset(self):
         user = self.request.user
         queryset = self.queryset.filter(case__user=user)
-        servant_not_rated = self.request.query_params.get('servant_not_rated')
-        servant_is_rated = self.request.query_params.get('servant_is_rated')
-        user_rate = self.request.query_params.get('user_rate')
-        # 尚未評價 : 給參數 "servant_not_rated" : "True", 我的評價：給參數 "servant_is_rated" : "True" , 給我的評價： 給參數 "user_rate" : "True"
-        if servant_not_rated != None :
+        
+        #review_type=unrated, given, received
+        review_type = self.request.query_params.get('review_type')
+
+        if review_type == 'unrated':
             queryset = queryset.filter(servant_rating__lt=1)
-        elif servant_is_rated != None:
+        elif review_type == 'given':
             queryset = queryset.filter(servant_rating__gte=1)
-        elif user_rate != None:
+        elif review_type == 'received':
             queryset = queryset.filter(case_offender_rating__gte=1)  
 
         for i in range(len(queryset)):
@@ -413,15 +412,6 @@ class ServantPutReviewView(APIView):
     serializer_class = serializers.ReviewSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-
-    def get(self, request, pk):
-        review = get_object_or_404(Review.objects.all(),pk=pk)
-        servant = self.request.user
-        if review.servant == servant:
-            serializer = serializers.ReviewSerializer(review)
-            return Response(serializer.data)
-        else:
-            return Response({'message': "have no authority"})
             
     def put(self, request, pk):
         review = get_object_or_404(Review.objects.all(),pk=pk)

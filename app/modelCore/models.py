@@ -298,9 +298,11 @@ class Order(models.Model):
     )
     UNPAID = 'unPaid'
     PAID = 'paid'
+    CANCELED = 'canceled'
     STATE_CHOICES = [
         (UNPAID, '未付款'),
         (PAID, '已付款'),
+        (CANCELED, '已取消')
     ]
     state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
     
@@ -401,6 +403,7 @@ class PayInfo(models.Model):
     CardInfoCard4No = models.CharField(max_length=20, default='', blank = True, null=True)
 
 class Message(models.Model):
+    # user is the one who make message
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -409,8 +412,16 @@ class Message(models.Model):
         Case,
         on_delete = models.CASCADE,
         blank=True,
-        null=True    
+        null=True,
     )
+    # SERVNAT = 'servant'
+    # NEEDER = 'needer'
+    # ID_TYPE_CHOICES = [
+    #     (SERVNAT, 'servant'),
+    #     (NEEDER, 'needer'),
+    # ]
+    # id_type = models.CharField(choices=ID_TYPE_CHOICES)
+    is_this_message_only_case = models.BooleanField(default=False)
     content = models.TextField(default='', blank = True, null=True)
     create_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
 

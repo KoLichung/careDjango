@@ -40,15 +40,25 @@ NeedCaseViewSet 的列表, 查詢
 http://localhost:8000/api/need_cases/
 
 ReviewViewSet 的列表, 查詢, 修改
-尚未評價
-http://localhost:8000/api/reviews/?servant_not_rated=True
-我的評價
-http://localhost:8000/api/reviews/?servant_is_rated=True
-給我的評價
-http://localhost:8000/api/reviews/?user_rate=True
+#review_type=unrated, given, received
+http://localhost:8000/api/reviews/?review_type=unrated
+Get
+http://localhost:8000/api/reviews/1
+Put 
+http://localhost:8000/api/reviews/1
+body_params
 
-ServantPutReviewView 的 查詢, 修改
+ServantPutReviewView 的修改
 http://localhost:8000/api/servant_put_review/1
+
+20220713
+1.把 readme 的 ReviewViewSet 的 Put 資料補上
+2.做一個 model Chatroom => 紀錄 user ids, 跟 update_at
+3.chatroom 跟 message 是一對多關係
+4.Chatroom 的 viewset (List, Create)
+5.Message 的 viewset (List, Create) a.string b.case c.case(order)
+(如果格式能調好就條好,不行就先傳 case.id, order.id)
+6.SystemMessage 的 viewset (List)
 
 20220712
 1.改掉 views 裡面的計算
