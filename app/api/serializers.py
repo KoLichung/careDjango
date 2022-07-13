@@ -1,5 +1,6 @@
 from asyncore import read
 from email.policy import default
+from unittest import case
 from rest_framework import serializers
 
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
@@ -84,25 +85,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
-class MessageSerializer(serializers.ModelSerializer):
-    message_is_mine = serializers.BooleanField(default=False)
-    class Meta:
-        model = Message
-        fields = '__all__'
-        read_only_fields = ('id',)
-
-class ChatRoomSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ChatRoom
-        fields = '__all__'
-        read_only_fields = ('id',)
-
-class SystemMessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SystemMessage
-        fields = '__all__'
-        read_only_fields = ('id',)
-
 class ServantSerializer(serializers.ModelSerializer):
     locations = UserServiceLocationSerializer(read_only=True, many=True)
     avg_rate = serializers.IntegerField(default=0)
@@ -138,5 +120,25 @@ class CaseSerializer(serializers.ModelSerializer):
     increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
     class Meta:
         model = Case
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class MessageSerializer(serializers.ModelSerializer):
+    message_is_mine = serializers.BooleanField(default=False)
+    orders = OrderSerializer(read_only=True, many=True)
+    class Meta:
+        model = Message
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class ChatRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatRoom
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class SystemMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SystemMessage
         fields = '__all__'
         read_only_fields = ('id',)

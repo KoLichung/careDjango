@@ -111,6 +111,8 @@ class MessageViewSet(viewsets.GenericViewSet,
         for i in range(len(queryset)):
             if queryset[i].user == user:
                 queryset[i].message_is_mine = True
+            if queryset[i].case != None:
+                queryset[i].orders = Order.objects.filter(case=queryset[i].case)
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -125,6 +127,7 @@ class MessageViewSet(viewsets.GenericViewSet,
             message.user = user
             if case != None:
                 message.case = Case.objects.get(id=case)
+                message.orders = Order.objects.filter(case=message.case)
                 message.is_this_message_only_case = True
             else:
                 message.content = content
