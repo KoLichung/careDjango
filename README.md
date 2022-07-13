@@ -49,7 +49,19 @@ http://localhost:8000/api/reviews/1
 body_params
 
 ServantPutReviewView 的修改
+body form-data: case_offender_rating : 5 , case_offender_comment : Test
 http://localhost:8000/api/servant_put_review/1
+
+ChatRoomViewSet 的列表, 新增
+body form-data: members : 2,4
+http://localhost:8000/api/chatroom
+
+SystemMessageViewSet 的列表, 新增
+body form-data: case : 1 , content : Ok
+http://localhost:8000/api/messages/?chatroom=1
+
+SystemMessageViewSet 的列表
+http://localhost:8000/api/system_messages
 
 20220713
 1.把 readme 的 ReviewViewSet 的 Put 資料補上

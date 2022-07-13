@@ -402,7 +402,16 @@ class PayInfo(models.Model):
     CardInfoCard6No = models.CharField(max_length=20, default='', blank = True, null=True)
     CardInfoCard4No = models.CharField(max_length=20, default='', blank = True, null=True)
 
+class ChatRoom(models.Model):
+    members = models.CharField(max_length= 3, blank=True, null=True)
+    update_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
+
 class Message(models.Model):
+    chatroom = models.ForeignKey(
+        ChatRoom,
+        on_delete=models.CASCADE,
+        related_name='messages',
+    )
     # user is the one who make message
     user = models.ForeignKey(
         User,

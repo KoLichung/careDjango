@@ -1,8 +1,9 @@
+from asyncore import read
 from email.policy import default
 from rest_framework import serializers
 
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip 
+from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderIncreaseService
 
 class LicenseSerializer(serializers.ModelSerializer):
@@ -84,8 +85,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class MessageSerializer(serializers.ModelSerializer):
+    message_is_mine = serializers.BooleanField(default=False)
     class Meta:
         model = Message
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class ChatRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatRoom
         fields = '__all__'
         read_only_fields = ('id',)
 

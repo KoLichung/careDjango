@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 import datetime
 from datetime import date ,timedelta
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip 
+from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage , OrderWeekDay ,OrderIncreaseService
 from api import serializers
 
@@ -71,16 +71,80 @@ class UserWeekDayTimeViewSet(viewsets.GenericViewSet,
     queryset = UserWeekDayTime.objects.all()
     serializer_class = serializers.UserWeekDayTimeSerializer
 
+class ChatRoomViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.CreateModelMixin):
+    queryset = ChatRoom.objects.all()
+    serializer_class = serializers.ChatRoomSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(user=user)
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        members = request.data.get('members')
+        members_list = [int(i) for i in members.split(',')]
+        if user.id in members_list:
+            ChatRoom.objects.create(members=members)
+            return Response({'message': "Successfully create"})
+        else:
+            return Response({'message': "have no authority"})
+
 class MessageViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.CreateModelMixin):
     queryset = Message.objects.all()
     serializer_class = serializers.MessageSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        chatroom= self.request.query_params.get('chatroom')
+        members_list = [int(i) for i in ChatRoom.objects.get(id=chatroom).members.split(',')]
+        if user.id in members_list:
+            queryset = self.queryset.filter(chatroom=chatroom)
+        for i in range(len(queryset)):
+            if queryset[i].user == user:
+                queryset[i].message_is_mine = True
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        chatroom= self.request.query_params.get('chatroom')
+        members_list = [int(i) for i in ChatRoom.objects.get(id=chatroom).members.split(',')]
+        case = request.data.get('case')
+        content = request.data.get('content')
+        if user.id in members_list:
+            message = Message()
+            message.chatroom = ChatRoom.objects.get(id=chatroom)
+            message.user = user
+            if case != None:
+                message.case = Case.objects.get(id=case)
+                message.is_this_message_only_case = True
+            else:
+                message.content = content
+            message.save()
+            serializer = self.get_serializer(message)
+            return Response(serializer.data)
+        else:
+            return Response({'message': "have no authority"})
 
 class SystemMessageViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
     queryset = SystemMessage.objects.all()
     serializer_class = serializers.SystemMessageSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(user=user)
+        return queryset
 
 class SearchServantViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -426,3 +490,6 @@ class ServantPutReviewView(APIView):
             return Response(serializer.data)
         else:
             return Response({'message': "have no authority"})
+
+
+    

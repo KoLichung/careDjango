@@ -14,13 +14,16 @@ router.register('search_cases', views.CaseSearchViewSet)
 router.register('orders', views.OrderViewSet)
 router.register('userServiceLocations', views.UserServiceLocationViewSet)
 router.register('userWeekDayTimes', views.UserWeekDayTimeViewSet)
+router.register('chatroom', views.ChatRoomViewSet)
 router.register('messages', views.MessageViewSet)
-router.register('systemMessages', views.SystemMessageViewSet)
+router.register('system_messages', views.SystemMessageViewSet)
 router.register('search_servants', views.SearchServantViewSet)
 router.register('recommend_servants', views.RecommendServantViewSet)
 router.register('servant_cases', views.ServantCaseViewSet)
 router.register('need_cases', views.NeedCaseViewSet)
 router.register('reviews', views.ReviewViewSet)
+
+
 
 app_name = 'api'
 

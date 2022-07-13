@@ -6,7 +6,7 @@ from pytz import timezone
 import pytz
 from django.db.models import Sum
 from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService
 
 def importCityCounty():
@@ -409,16 +409,35 @@ def fakeData():
         order.platform_money = order.total_money * (order.platform_percent/100)
         order.save()
 
+    ChatRoom.objects.create(members='2,3',update_at=datetime.datetime.now())
+    ChatRoom.objects.create(members='3,4',update_at=datetime.datetime.now())
+    
     message = Message()
-    message.case = Case.objects.get(id=1)
-    message.user = User.objects.get(id=2)
+    chatroom = ChatRoom.objects.get(id=1)
+    message.chatroom = chatroom
+    message.user = User.objects.get(id=3)
     message.content = 'Hello'
+    chatroom.update_at = datetime.datetime.now()
+    chatroom.save()
     message.save()
 
     message = Message()
-    message.case = Case.objects.get(id=2)
+    chatroom = ChatRoom.objects.get(id=1)
+    message.chatroom = chatroom
+    message.user = User.objects.get(id=2)
+    message.is_this_message_only_case = True
+    message.case = Case.objects.get(id=1)
+    chatroom.update_at = datetime.datetime.now()
+    chatroom.save()
+    message.save()
+
+    message = Message()
+    chatroom = ChatRoom.objects.get(id=2)
+    message.chatroom = chatroom
     message.user = User.objects.get(id=3)
-    message.content = 'Test'
+    message.content = 'Hello'
+    chatroom.update_at = datetime.datetime.now()
+    chatroom.save()
     message.save()
     
     systemMessage = SystemMessage()

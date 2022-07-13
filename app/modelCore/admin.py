@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService
 
 @admin.register(User)
@@ -90,6 +90,10 @@ class ReviewAdmin(admin.ModelAdmin):
 @admin.register(PayInfo)
 class PayInfoAdmin(admin.ModelAdmin):
     list_display = ('id', 'order')
+
+@admin.register(ChatRoom)
+class ChatRoomAdmin(admin.ModelAdmin):
+    list_display = ('id', 'members', 'update_at')
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
