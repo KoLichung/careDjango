@@ -404,7 +404,7 @@ class PayInfo(models.Model):
 
 class ChatRoom(models.Model):
     members = models.CharField(max_length= 3, blank=True, null=True)
-    update_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    update_at = models.DateTimeField(auto_now=True, blank = True, null=True) 
 
 class Message(models.Model):
     chatroom = models.ForeignKey(

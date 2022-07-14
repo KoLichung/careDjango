@@ -81,7 +81,7 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         user = self.request.user
-        queryset = self.queryset.filter(user=user)
+        queryset = self.queryset.filter(members__contains=user.id).order_by('-update_at')
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -107,13 +107,15 @@ class MessageViewSet(viewsets.GenericViewSet,
         chatroom= self.request.query_params.get('chatroom')
         members_list = [int(i) for i in ChatRoom.objects.get(id=chatroom).members.split(',')]
         if user.id in members_list:
-            queryset = self.queryset.filter(chatroom=chatroom)
-        for i in range(len(queryset)):
-            if queryset[i].user == user:
-                queryset[i].message_is_mine = True
-            if queryset[i].case != None:
-                queryset[i].orders = Order.objects.filter(case=queryset[i].case)
-        return queryset
+            queryset = self.queryset.filter(chatroom=chatroom).order_by('-id')
+
+            for i in range(len(queryset)):
+                if queryset[i].user == user:
+                    queryset[i].message_is_mine = True
+                if queryset[i].case != None:
+                    queryset[i].orders = Order.objects.filter(case=queryset[i].case)
+            return queryset
+        return Response({'message': "have no authority"})
 
     def create(self, request, *args, **kwargs):
         user = self.request.user

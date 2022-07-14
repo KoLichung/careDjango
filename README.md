@@ -63,6 +63,23 @@ http://localhost:8000/api/messages/?chatroom=1
 SystemMessageViewSet 的列表
 http://localhost:8000/api/system_messages
 
+20220714~0715
+1.memebers 的 length 開到 30
+2.新訊息產生時, 要去更新 chatroom update_at
+3.訊息要排序, 越晚創建越前面
+!!4.chatroom 的返回要 order_by update_at (ChatRoomViewSet 的 get_queryset filter??)
+!!5.chatroom 用 string 去記, 應該是不行?! => 要再想一下~
+6.OrderViewSet 的 List, Get
+7.User 的 functions
+a.Update 付款ATM資料
+b.Create, Update User Service Week Time
+c.Create, Update User Language
+d.Update User 的 服務類型, 價錢
+f.Create Update User 的服務地區
+g.Create, Update User 的服務
+h.Create, Update User 的 Licence
+i.Update User background_image
+
 20220713
 1.把 readme 的 ReviewViewSet 的 Put 資料補上
 2.做一個 model Chatroom => 紀錄 user ids, 跟 update_at
