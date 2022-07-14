@@ -4,9 +4,10 @@ import datetime
 from datetime import date ,timedelta
 from pytz import timezone
 import pytz
-from .models import  OrderWeekDay, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip 
-from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
+from django.db.models import Sum
+from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
+from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -331,8 +332,16 @@ def fakeData():
     order.end_time = order.case.end_time
     order.start_datetime = order.case.start_datetime
     order.end_datetime = order.case.end_datetime
-    order.total_money =(((Case.objects.get(id=1).end_datetime) - (Case.objects.get(id=1).start_datetime)).days) * (Case.objects.get(id=1).servant.home_one_day_wage)
+    order.base_money =(((Case.objects.get(id=1).end_datetime) - (Case.objects.get(id=1).start_datetime)).days) * (Case.objects.get(id=1).servant.home_one_day_wage)
+    total_hours = 0
+    for i in range(7):
+        total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+    order.work_hours = total_hours
+    order.platform_percent = 15
     order.save()
+    Review.objects.create(order=order,case=order.case,servant=order.case.servant,
+                        case_offender_rating=4.8,case_offender_comment='good',
+                        servant_rating=5,servant_comment='nice')
 
     order = Order()
     order.case = Case.objects.get(id=2)
@@ -342,7 +351,43 @@ def fakeData():
     order.end_datetime = Case.objects.get(id=2).end_datetime
     order.start_time = order.case.start_time
     order.end_time = order.case.end_time
+    weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+    total_hours = 0
+    for i in weekday_list:
+        total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+    order.work_hours = total_hours
+    order.base_money = order.work_hours * order.case.servant.hospital_hour_wage
+    order.platform_percent = 15
     order.save()
+    Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+
+    orderIncreaseService = OrderIncreaseService()
+    orderIncreaseService.order = Order.objects.get(id=1)
+    orderIncreaseService.service = Service.objects.get(id=2)
+    orderIncreaseService.increase_percent = 15
+    orderIncreaseService.increase_money = (Order.objects.get(id=1).base_money) * (orderIncreaseService.increase_percent)/100
+    orderIncreaseService.save()
+
+    orderIncreaseService = OrderIncreaseService()
+    orderIncreaseService.order = Order.objects.get(id=1)
+    orderIncreaseService.service = Service.objects.get(id=3)
+    orderIncreaseService.increase_percent = 25
+    orderIncreaseService.increase_money = (Order.objects.get(id=1).base_money) * (orderIncreaseService.increase_percent)/100
+    orderIncreaseService.save()
+
+    orderIncreaseService = OrderIncreaseService()
+    orderIncreaseService.order = Order.objects.get(id=2)
+    orderIncreaseService.service = Service.objects.get(id=1)
+    orderIncreaseService.increase_percent = 20
+    orderIncreaseService.increase_money = (Order.objects.get(id=1).base_money) * (orderIncreaseService.increase_percent)/100
+    orderIncreaseService.save()
+
+    orderIncreaseService = OrderIncreaseService()
+    orderIncreaseService.order = Order.objects.get(id=2)
+    orderIncreaseService.service = Service.objects.get(id=4)
+    orderIncreaseService.increase_percent = 30
+    orderIncreaseService.increase_money = (Order.objects.get(id=1).base_money) * (orderIncreaseService.increase_percent)/100
+    orderIncreaseService.save()
 
     orderWeekday = OrderWeekDay()
     orderWeekday.order = Order.objects.get(id=2)
@@ -359,44 +404,40 @@ def fakeData():
     orderWeekday.weekday = '5'
     orderWeekday.save()
 
-    order = Order.objects.get(id=2)
-    weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
-    total_hours = 0
-    for i in weekday_list:
-        total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
-    order.total_money = total_hours * (order.case.servant.hospital_hour_wage)
-    order.save()
+    for order in Order.objects.all():
+        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+        order.platform_money = order.total_money * (order.platform_percent/100)
+        order.save()
 
-    review = Review()
-    review.order = Order.objects.get(id=1)
-    review.case = review.order.case
-    review.servant = review.case.servant
-    review.case_offender_rating = 4.8
-    review.case_offender_comment = 'good'
-    review.servant_rating = 5
-    review.servant_comment = 'nice'
-    review.save()
-
-    review = Review()
-    review.order = Order.objects.get(id=2)
-    review.case = review.order.case
-    review.servant = review.case.servant
-    review.case_offender_rating = 4.5
-    review.case_offender_comment = 'very good'
-    review.servant_rating = 4.3
-    review.servant_comment = 'very nice'
-    review.save()
-
+    ChatRoom.objects.create(members='2,3',update_at=datetime.datetime.now())
+    ChatRoom.objects.create(members='3,4',update_at=datetime.datetime.now())
+    
     message = Message()
-    message.case = Case.objects.get(id=1)
-    message.user = User.objects.get(id=2)
+    chatroom = ChatRoom.objects.get(id=1)
+    message.chatroom = chatroom
+    message.user = User.objects.get(id=3)
     message.content = 'Hello'
+    chatroom.update_at = datetime.datetime.now()
+    chatroom.save()
     message.save()
 
     message = Message()
-    message.case = Case.objects.get(id=2)
+    chatroom = ChatRoom.objects.get(id=1)
+    message.chatroom = chatroom
+    message.user = User.objects.get(id=2)
+    message.is_this_message_only_case = True
+    message.case = Case.objects.get(id=1)
+    chatroom.update_at = datetime.datetime.now()
+    chatroom.save()
+    message.save()
+
+    message = Message()
+    chatroom = ChatRoom.objects.get(id=2)
+    message.chatroom = chatroom
     message.user = User.objects.get(id=3)
-    message.content = 'Test'
+    message.content = 'Hello'
+    chatroom.update_at = datetime.datetime.now()
+    chatroom.save()
     message.save()
     
     systemMessage = SystemMessage()

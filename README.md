@@ -39,6 +39,46 @@ http://localhost:8000/api/servant_cases/
 NeedCaseViewSet 的列表, 查詢
 http://localhost:8000/api/need_cases/
 
+ReviewViewSet 的列表, 查詢, 修改
+#review_type=unrated, given, received
+http://localhost:8000/api/reviews/?review_type=unrated
+Get
+http://localhost:8000/api/reviews/1
+Put 
+http://localhost:8000/api/reviews/1
+body_params
+
+ServantPutReviewView 的修改
+body form-data: case_offender_rating : 5 , case_offender_comment : Test
+http://localhost:8000/api/servant_put_review/1
+
+ChatRoomViewSet 的列表, 新增
+body form-data: members : 2,4
+http://localhost:8000/api/chatroom
+
+SystemMessageViewSet 的列表, 新增
+body form-data: case : 1 , content : Ok
+http://localhost:8000/api/messages/?chatroom=1
+
+SystemMessageViewSet 的列表
+http://localhost:8000/api/system_messages
+
+20220713
+1.把 readme 的 ReviewViewSet 的 Put 資料補上
+2.做一個 model Chatroom => 紀錄 user ids, 跟 update_at
+3.chatroom 跟 message 是一對多關係
+4.Chatroom 的 viewset (List, Create)
+5.Message 的 viewset (List, Create) a.string b.case c.case(order)
+(如果格式能調好就條好,不行就先傳 case.id, order.id)
+6.SystemMessage 的 viewset (List)
+
+20220712
+1.改掉 views 裡面的計算
+2.當 order 產生時, review 應該也要相應產生 (先 FakeData 再做下一步)
+3.(需求者)做 Reviews API 的部分 ReviewViewSet 的 改Put(新增評論), 查Get(list, retrieve) 
+=> xxx/reviews/1 
+4.(服務者)給評價 寫一個 APIView, ServantPutReviewView(APIView) 的 Put Method
+
 20220711
 1.Case 查詢的 reviews 改成 review, 並回傳該案件的 review 就好了
 2.Service 要返回所有該 case 的 services

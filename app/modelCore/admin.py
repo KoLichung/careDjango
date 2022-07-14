@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip
-from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
+from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -69,15 +69,19 @@ class CaseBodyConditionShipAdmin(admin.ModelAdmin):
 
 @admin.register(CaseServiceShip)
 class CaseServiceShipAdmin(admin.ModelAdmin):
-    list_display = ('id','case', 'service', 'increase_percent')
+    list_display = ('id','case', 'service')
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id','case', 'user','state','total_money')
 
+@admin.register(OrderIncreaseService)
+class OrderWeekDayAdmin(admin.ModelAdmin):
+    list_display = ('id', 'order', 'service', 'increase_percent', 'increase_money')
+
 @admin.register(OrderWeekDay)
 class OrderWeekDayAdmin(admin.ModelAdmin):
-    list_display = ('id','weekday')
+    list_display = ('id', 'order', 'weekday')
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
@@ -86,6 +90,10 @@ class ReviewAdmin(admin.ModelAdmin):
 @admin.register(PayInfo)
 class PayInfoAdmin(admin.ModelAdmin):
     list_display = ('id', 'order')
+
+@admin.register(ChatRoom)
+class ChatRoomAdmin(admin.ModelAdmin):
+    list_display = ('id', 'members', 'update_at')
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):

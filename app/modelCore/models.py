@@ -283,7 +283,6 @@ class CaseServiceShip(models.Model):
         Service,
         on_delete=models.RESTRICT
     )
-    increase_percent = models.FloatField(default=0, blank = True, null=True)
 
 class Order(models.Model):
     case = models.ForeignKey(
@@ -299,12 +298,18 @@ class Order(models.Model):
     )
     UNPAID = 'unPaid'
     PAID = 'paid'
+    CANCELED = 'canceled'
     STATE_CHOICES = [
         (UNPAID, '未付款'),
         (PAID, '已付款'),
+        (CANCELED, '已取消')
     ]
     state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
     
+    work_hours = models.FloatField(default=0, blank = True, null=True)
+    base_money = models.IntegerField(default=0, blank=True, null=True)
+    platform_percent = models.FloatField(default=0, blank = True, null=True)
+    platform_money = models.IntegerField(default=0, blank=True, null=True)
     total_money = models.IntegerField(default=0, blank=True, null=True)
 
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
@@ -314,6 +319,20 @@ class Order(models.Model):
     end_time = models.IntegerField(default=24, blank=True, null=True)
     
     created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
+
+class OrderIncreaseService(models.Model):
+    order =  models.ForeignKey(
+        Order,
+        on_delete = models.CASCADE,
+        related_name='order_service',
+    )
+    service = service = models.ForeignKey(
+        Service,
+        on_delete=models.RESTRICT
+    )
+    increase_percent = models.FloatField(default=0, blank = True, null=True)
+
+    increase_money = models.IntegerField(default=0, blank=True, null=True)
 
 class OrderWeekDay(models.Model):
     order =  models.ForeignKey(
@@ -383,7 +402,17 @@ class PayInfo(models.Model):
     CardInfoCard6No = models.CharField(max_length=20, default='', blank = True, null=True)
     CardInfoCard4No = models.CharField(max_length=20, default='', blank = True, null=True)
 
+class ChatRoom(models.Model):
+    members = models.CharField(max_length= 3, blank=True, null=True)
+    update_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
+
 class Message(models.Model):
+    chatroom = models.ForeignKey(
+        ChatRoom,
+        on_delete=models.CASCADE,
+        related_name='messages',
+    )
+    # user is the one who make message
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -392,8 +421,16 @@ class Message(models.Model):
         Case,
         on_delete = models.CASCADE,
         blank=True,
-        null=True    
+        null=True,
     )
+    # SERVNAT = 'servant'
+    # NEEDER = 'needer'
+    # ID_TYPE_CHOICES = [
+    #     (SERVNAT, 'servant'),
+    #     (NEEDER, 'needer'),
+    # ]
+    # id_type = models.CharField(choices=ID_TYPE_CHOICES)
+    is_this_message_only_case = models.BooleanField(default=False)
     content = models.TextField(default='', blank = True, null=True)
     create_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
 

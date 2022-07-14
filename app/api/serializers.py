@@ -1,9 +1,11 @@
+from asyncore import read
 from email.policy import default
+from unittest import case
 from rest_framework import serializers
 
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip 
-from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage
+from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
+from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderIncreaseService
 
 class LicenseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,6 +55,12 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
+class OrderIncreaseServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderIncreaseService
+        fields = '__all__'
+        read_only_fields = ('id',)
+
 class UserServiceLocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserServiceLocation
@@ -66,32 +74,26 @@ class UserWeekDayTimeSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class ReviewSerializer(serializers.ModelSerializer):
+    care_type = serializers.CharField(default='')
+    is_continuous_time = serializers.CharField(default='')
+    start_datetime = serializers.CharField(default='')
+    end_datetime = serializers.CharField(default='')
+    user_avg_rate = serializers.IntegerField(default=0)
+    user_rated_num = serializers.IntegerField(default=0)
     class Meta:
         model = Review
         fields = '__all__'
         read_only_fields = ('id',)
 
-class MessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Message
-        fields = '__all__'
-        read_only_fields = ('id',)
-
-class SystemMessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SystemMessage
-        fields = '__all__'
-        read_only_fields = ('id',)
-
 class ServantSerializer(serializers.ModelSerializer):
     locations = UserServiceLocationSerializer(read_only=True, many=True)
-    rate_num = serializers.IntegerField(default=0)
+    avg_rate = serializers.IntegerField(default=0)
     background_image_url = serializers.ImageField(max_length=None, use_url=True, allow_null=True, required=False)
     services = ServiceSerializer(read_only=True, many=True)
     licences = LicenseSerializer(read_only=True, many=True)
     about_me = serializers.CharField(default='')
     reviews = ReviewSerializer(read_only=True, many=True)
-    reviews_num = serializers.IntegerField(default=0)
+    rate_num = serializers.IntegerField(default=0)
     
     class Meta:
         model = User
@@ -106,18 +108,37 @@ class CaseSerializer(serializers.ModelSerializer):
     reviews_num = serializers.IntegerField(default=0)
     rated_num = serializers.IntegerField(default=0)
     servant_rating = serializers.IntegerField(default=0)
-    servant_comment = serializers.CharField(default='')
     case_offender_rating = serializers.IntegerField(default=0)
-    case_offender_comment = serializers.CharField(default='')
     status = serializers.CharField(default='')
     hour_wage = serializers.IntegerField(default=0)
     work_hours = serializers.IntegerField(default=0)
-    base_fee = serializers.IntegerField(default=0)
-    platform_fee = serializers.IntegerField(default=0)
-    total_fee = serializers.IntegerField(default=0)
+    base_money = serializers.IntegerField(default=0)
+    platform_percent = serializers.FloatField(default=0)
+    platform_money = serializers.IntegerField(default=0)
+    total_money = serializers.IntegerField(default=0)
 
-    mark_up_fee = serializers.CharField(default='')
+    increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
     class Meta:
         model = Case
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class MessageSerializer(serializers.ModelSerializer):
+    message_is_mine = serializers.BooleanField(default=False)
+    orders = OrderSerializer(read_only=True, many=True)
+    class Meta:
+        model = Message
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class ChatRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatRoom
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class SystemMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SystemMessage
         fields = '__all__'
         read_only_fields = ('id',)
