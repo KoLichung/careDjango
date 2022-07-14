@@ -9,6 +9,7 @@
 /* google font icon */
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.md-24 { font-size: 24px; }
+.material-icons.md-30 { font-size: 30px; }
 .material-icons.md-36 { font-size: 36px; }
 .material-icons.md-40 { font-size: 40px; }
 .material-icons { color: #999; }
@@ -39,9 +40,10 @@ html,body {
 }
 
 .nav-link-custom-icon{
-  font-size: 24px;
+  font-size: 26px;
   display: block;      
-  padding: 0.5rem 1rem;
+  /* padding: 0.5rem 1rem; */
+  padding: 1rem;
   color: #CCADE9;
 }
 
@@ -50,20 +52,20 @@ html,body {
   color: #BB6BD9;
 }      
 
-.icon-badge-icon {
-  font-size: 24px;
+/* .icon-badge-icon {
+  font-size: 26px;
   position: relative;
-}
+} */
       
 .icon-badge {
   background-color: red;
-  font-size: 12px;
+  font-size: 10px;
   text-align: center;
   width: 10px;
   height: 10px;
   border-radius: 50%;
   position: relative;
-  top: -40px;
+  top: -50px;
   left: 40px;
 }
             
@@ -820,6 +822,7 @@ input .service-setting-input {
   border-color: #BB6BD9;
   outline: 0;
 }
+
 
 
 

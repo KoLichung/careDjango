@@ -1,33 +1,32 @@
 {% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
-<main class="main bg-white " id="top" >
+<main class="main bg-white" id="top" >
   <!-- 篩選  -->
   <div class="row">
-        <div class="col mx-3 mt-3">
-          <div class="accordion" id="accordionExample">
+    <div class="col mx-5 mt-4">
+      <div class="accordion" id="accordionExample">    
+        <button class="custom-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+          <span class="fas fa-plus-circle"></span> 展開篩選條件
+        </button>
             
-            <button class="custom-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-              <span class="fas fa-plus-circle"></span> 展開篩選條件
-            </button>
-            
-            <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
-              <div class="row mx-3" >
-                  <!-- 開始&結束日期 -->
-                  <div class="col-xl-3 col-lg-5 col-md-6 row mt-3 ">
+        <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+          <div class="row mx-3" >
+            <!-- 開始&結束日期 -->
+            <div class="col-xl-3 col-lg-5 col-md-6 row mt-3 ">
                     <div class="col my-3">
                       <!-- picker -->
                       <label class="h5 mb-2" for="datepicker_startDate">開始日期</label>
-                      <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" type="text" placeholder="年/月/日" data-options='{"disableMobile":true}' />
+                      <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
                     </div>
                     <div class="col my-3">
                       <!-- picker -->
                       <label class="h5 mb-2" for="datepicker_endDate">結束日期</label>
-                      <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" type="text" placeholder="年/月/日" data-options='{"disableMobile":true}' />
+                      <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
                     </div>
-                  </div>
-                  <!-- 開始&結束時間 -->
-                  <div class="col-xl-3 col-lg-5 col-md-6 row mt-3  ">
+            </div>
+            <!-- 開始&結束時間 -->
+            <div class="col-xl-3 col-lg-5 col-md-6 row mt-3  ">
 
                     <div class="col my-3">
                       <!-- picker -->
@@ -41,9 +40,9 @@
                       <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                     </div>
 
-                  </div>
+            </div>
           
-                  <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
+            <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
                     
                     <!-- 照護類型 -->
                     <div class="col-sm-4 my-3">
@@ -154,37 +153,39 @@
                         </div>
                      
                     </div>
-                  </div>
+            </div>
                       
                   
-              </div>
-              <hr>
-            </div>
           </div>
+          <hr>
         </div>
+      </div>
+    </div>
   </div>
       
-  <div class="mx-5 my-4">
-        <h5 >搜尋結果</h5>
+  <div class="mx-5 my-3">
+    <h5 >搜尋結果</h5>
   </div>
       
   <!-- 搜尋結果 -->
   <div class="row g-3 mx-5 d-flex" >
         
     <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="card border border-dark">
+      <div class="border border-600" style="border-radius: 6px;">
         <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
-          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
+          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖">
           <div class="card-body">
-            <div class="">
-                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" style="max-width: 50px; margin-right: 0px;">     
-                <span class="carer-name">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="carer-review-number">評價7</span>
+            <div class="d-flex">
+              <div class="avatar avatar-xl" style="margin-right: 5px;">
+                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+              </div>
+                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
             </div>
 
             <div class="mt-2">
@@ -193,9 +194,9 @@
             </div>
   
             <div class="mt-3">
-              <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6">服務地區：</p>
-              <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
+              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+              <p class="h6 text-800">服務地區：</p>
+              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
             </div>
                     
           </div>
@@ -204,19 +205,21 @@
     </div>
 
     <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="card border border-dark">
+      <div class="border border-600" style="border-radius: 6px;">
         <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
           <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
           <div class="card-body">
-            <div class="">
-                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" style="max-width: 50px; margin-right: 0px;">     
-                <span class="carer-name">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="carer-review-number">評價7</span>
+            <div class="d-flex">
+              <div class="avatar avatar-xl" style="margin-right: 5px;">
+                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+              </div>
+                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
             </div>
 
             <div class="mt-2">
@@ -225,9 +228,9 @@
             </div>
   
             <div class="mt-3">
-              <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6">服務地區：</p>
-              <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
+              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+              <p class="h6 text-800">服務地區：</p>
+              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
             </div>
                     
           </div>
@@ -236,19 +239,21 @@
     </div>
 
     <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="card border border-dark">
+      <div class="border border-600" style="border-radius: 6px;">
         <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
           <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
           <div class="card-body">
-            <div class="">
-                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" style="max-width: 50px; margin-right: 0px;">     
-                <span class="carer-name">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="carer-review-number">評價7</span>
+            <div class="d-flex">
+              <div class="avatar avatar-xl" style="margin-right: 5px;">
+                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+              </div>
+                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
             </div>
 
             <div class="mt-2">
@@ -257,9 +262,9 @@
             </div>
   
             <div class="mt-3">
-              <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6">服務地區：</p>
-              <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
+              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+              <p class="h6 text-800">服務地區：</p>
+              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
             </div>
                     
           </div>
@@ -268,19 +273,21 @@
     </div>
 
     <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="card border border-dark">
+      <div class="border border-600" style="border-radius: 6px;">
         <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
           <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
           <div class="card-body">
-            <div class="">
-                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" style="max-width: 50px; margin-right: 0px;">     
-                <span class="carer-name">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="carer-review-number">評價7</span>
+            <div class="d-flex">
+              <div class="avatar avatar-xl" style="margin-right: 5px;">
+                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+              </div>
+                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
             </div>
 
             <div class="mt-2">
@@ -289,19 +296,15 @@
             </div>
   
             <div class="mt-3">
-              <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6">服務地區：</p>
-              <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
+              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+              <p class="h6 text-800">服務地區：</p>
+              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
             </div>
                     
           </div>
         </a>   
       </div>
     </div>
-
-   
-    
-    
 
   </div>
 
