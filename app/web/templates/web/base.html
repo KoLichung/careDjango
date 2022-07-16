@@ -31,13 +31,10 @@
     <!--    Stylesheets-->
     <!-- ===============================================-->
 
-    <!-- font awesome -->
-    <!-- <link rel="stylesheet" href="/styles/css/all.css" /> -->
     <!-- custom css -->
     <link rel="stylesheet" href="{% static 'web/assets/css/user.css' %}">
     <!-- google font icon -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
-
     <!-- datepicker -->
     <link href="{% static 'web/vendors/flatpickr/flatpickr.min.css' %}" rel="stylesheet" />
 
@@ -62,29 +59,29 @@
     <!--    Main Content-->
     <!-- ===============================================-->
     
-    <!-- nav bar -->
-    <nav class="navbar navbar-expand-lg bg-white navbar-light" style="border-bottom: 1px solid #BB6BD9;">
+    <!-- new nav bar -->
+    <script>
+      var isFluid = JSON.parse(localStorage.getItem('isFluid'));
+      if (isFluid) {
+        var container = document.querySelector('[data-layout]');
+        container.classList.remove('container');
+        container.classList.add('container-fluid');
+      }
+    </script>
+    <nav class="navbar navbar-light bg-white navbar-light navbar-top navbar-expand-lg" style="border-bottom: 1px solid #BB6BD9;">
 
       <div class="container-fluid">
-        
+        <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarStandard" aria-controls="navbarStandard" aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
         <!-- logo -->
         <a class="navbar-brand" href="{% url 'index' %}">
           <img class="me-2" src="{% static 'web/assets/img/new/Group575.png' %}" alt="" width="80"   />
         </a>
-        
-        <!-- toggle button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLightExample" aria-controls="navbarLightExample" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
 
-        <!-- nav -->
-        <div class="collapse navbar-collapse" id="navbarLightExample">
-          
-          <!-- left part -->
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <div class="collapse navbar-collapse scrollbar" id="navbarStandard">
+          <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
             <li class="nav-item">
               <a class="nav-link-custom" aria-current="page" href="#">
-                  <i class="fa-solid fa-mobile-screen"></i>
+                  <span class="fas fa-mobile-alt"></span>
                   下載 App
               </a>
             </li>
@@ -101,20 +98,18 @@
               <a class="nav-link-custom" href="{% url 'become_carer' %}">成為服務者</a>
             </li>
           </ul>
+        </div>
 
-          <!-- right part -->
-          <div class="d-flex">
-
+        <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
+          <li class="nav-item">
             <a class="nav-link-custom" href="{% url 'login' %}">
               登入/註冊
             </a>
-
-          </div>
-
-        </div>
+          </li>
+        </ul>
 
       </div>
-  
+      
     </nav>
 
     <!-- main -->
@@ -158,9 +153,9 @@
             <!-- Grid column 聯繫客服 -->
             <div class="col-md-4 col-lg-4 col-xl-3 mb-3 ">
               <h6 class="title-font pb-2" style="color:white">客服聯繫方式</h6>
-              <span><i class="fas fa-envelope me-1"></i> service@care168.com</span>
+              <span><span class="fas fa-envelope me-1"></span> service@care168.com</span>
               <br>
-              <span><i class="fas fa-phone me-1"></i> 02-12345678</span>
+              <span><span class="fas fa-phone me-1"></span> 02-12345678</span>
             </div>
               
            
