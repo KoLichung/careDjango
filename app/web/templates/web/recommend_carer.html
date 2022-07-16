@@ -1,26 +1,20 @@
 {% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
-<main class="main bg-white h-100" id="top" >
+<main class="main bg-white" id="top" >
 
-      <div class="row">
-        <div class="col mx-5 mt-4">
-          <h5 >照護員推薦</h5>
-        </div>
-      </div>
-
-      <!-- 篩選  -->
-      <div class="row">
-        <div class="col mx-5 mt-3">
-          <div class="accordion" id="accordionExample">
+  <!-- 篩選  -->
+  <div class="row">
+    <div class="col mx-5 mt-4">
+      <div class="accordion" id="accordionExample">
             
-            <button class="custom-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-              <span class="fas fa-plus-circle"></span> 展開篩選條件
-            </button>
+        <button class="custom-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+          <span class="fas fa-plus-circle"></span> 展開篩選條件
+        </button>
             
-            <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
-              <div class="row mx-3" >
-                  <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
+        <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+          <div class="row mx-3 justify-content-between">
+            <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
                     
                     <!-- 照護類型 -->
                     <div class="col-sm-4 my-3">
@@ -70,155 +64,169 @@
                         </div>
                       </div>
                     </div>
-                  </div>
-              </div>
-              <hr>
+
+                   
             </div>
-            
+             <!-- 篩選button -->
+            <div class="col-1 mt-3 align-self-end" >
+              <a href="">
+                <button class="small-purple-button align-bottom">篩選</button>
+              </a>
+            </div>
           </div>
+          <hr>
         </div>
+            
       </div>
+    </div>
+  </div>
 
-      <!-- 搜尋結果 -->
-      <div class="row g-3 mx-3 mt-3" >
+  <div class="row">
+    <div class="col mx-5 my-3">
+      <h5 >照護員推薦</h5>
+    </div>
+  </div>
 
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-dark" style="width: 20rem;">
+  <!-- 搜尋結果 -->
+  <div class="row g-3 mx-5 pb-5" >
 
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  
-                  <span class="carer-name">林瑜婷</span >
-                  
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-
-                  <span class="carer-review-number"> 評價7</span>
-                  
-                  <div class="mt-2">
-                    <span class="purple-border-tag">居家照顧</span>
-                    <span class="purple-border-tag">醫院看護</span>
-                  </div>
-
-                  <div class="mt-3">
-                    <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                    <p class="h6">服務地區：</p>
-                    <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                  </div>
-                  
+    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
+      <div class="border border-600" style="border-radius: 6px;">
+        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
+          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
+          <div class="card-body">
+            <div class="d-flex">
+              <div class="avatar avatar-xl" style="margin-right: 5px;">
+                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
               </div>
+                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
             </div>
-          </div>
 
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-dark" style="width: 20rem;">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  
-                  <span class="carer-name">林瑜婷</span >
-                  
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-
-                  <span class="carer-review-number"> 評價7</span>
-                  
-                  <div class="mt-2">
-                    <span class="purple-border-tag">居家照顧</span>
-                    <span class="purple-border-tag">醫院看護</span>
-                  </div>
-
-                  <div class="mt-3">
-                    <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                    <p class="h6">服務地區：</p>
-                    <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                  </div>
-                  
-              </div>
+            <div class="mt-2">
+              <span class="purple-border-tag">居家照顧</span>
+              <span class="purple-border-tag">醫院看護</span>
             </div>
-          </div>
-
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-dark" style="width: 20rem;">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  
-                  <span class="carer-name">林瑜婷</span >
-                  
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-
-                  <span class="carer-review-number"> 評價7</span>
-                  
-                  <div class="mt-2">
-                    <span class="purple-border-tag">居家照顧</span>
-                    <span class="purple-border-tag">醫院看護</span>
-                  </div>
-
-                  <div class="mt-3">
-                    <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                    <p class="h6">服務地區：</p>
-                    <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                  </div>
-                  
-              </div>
+  
+            <div class="mt-3">
+              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+              <p class="h6 text-800">服務地區：</p>
+              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
             </div>
+                    
           </div>
-
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-dark" style="width: 20rem;">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  
-                  <span class="carer-name">林瑜婷</span >
-                  
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-
-                  <span class="carer-review-number"> 評價7</span>
-                  
-                  <div class="mt-2">
-                    <span class="purple-border-tag">居家照顧</span>
-                    <span class="purple-border-tag">醫院看護</span>
-                  </div>
-
-                  <div class="mt-3">
-                    <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                    <p class="h6">服務地區：</p>
-                    <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                  </div>
-                  
-              </div>
-            </div>
-          </div>
-          
-          
-
-          
-
+        </a>   
       </div>
+    </div>
+
+    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
+      <div class="border border-600" style="border-radius: 6px;">
+        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
+          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
+          <div class="card-body">
+            <div class="d-flex">
+              <div class="avatar avatar-xl" style="margin-right: 5px;">
+                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+              </div>
+                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
+            </div>
+
+            <div class="mt-2">
+              <span class="purple-border-tag">居家照顧</span>
+              <span class="purple-border-tag">醫院看護</span>
+            </div>
+  
+            <div class="mt-3">
+              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+              <p class="h6 text-800">服務地區：</p>
+              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
+            </div>
+                    
+          </div>
+        </a>   
+      </div>
+    </div>
+
+    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
+      <div class="border border-600" style="border-radius: 6px;">
+        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
+          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖">
+          <div class="card-body">
+            <div class="d-flex">
+              <div class="avatar avatar-xl" style="margin-right: 5px;">
+                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+              </div>
+                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
+            </div>
+
+            <div class="mt-2">
+              <span class="purple-border-tag">居家照顧</span>
+              <span class="purple-border-tag">醫院看護</span>
+            </div>
+  
+            <div class="mt-3">
+              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+              <p class="h6 text-800">服務地區：</p>
+              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
+            </div>
+                    
+          </div>
+        </a>   
+      </div>
+    </div>
+
+    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
+      <div class="border border-600" style="border-radius: 6px;">
+        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
+          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
+          <div class="card-body">
+            <div class="d-flex">
+              <div class="avatar avatar-xl" style="margin-right: 5px;">
+                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+              </div>
+                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
+            </div>
+
+            <div class="mt-2">
+              <span class="purple-border-tag">居家照顧</span>
+              <span class="purple-border-tag">醫院看護</span>
+            </div>
+  
+            <div class="mt-3">
+              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
+              <p class="h6 text-800">服務地區：</p>
+              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
+            </div>
+                    
+          </div>
+        </a>   
+      </div>
+    </div>
+
+  </div>
 
      
 </main>

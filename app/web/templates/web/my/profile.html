@@ -2,17 +2,17 @@
 {% load static %}
 <!-- main -->
 <main class="main bg-white h-100 " id="top" >
-      <div class="row text-center mx-3">
-        <h4 class="section-title-purple mt-5 mb-5">我的基本資料</h4>
-      </div>
+  <div class="row text-center mx-3">
+    <h4 class="section-title-purple mt-5 mb-5">我的基本資料</h4>
+  </div>
 
-      <div class="text-center">
-        <div class="img-fluid avatar avatar-5xl ">
-          <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
-        </div>
-      </div>
+  <div class="text-center">
+    <div class="img-fluid avatar avatar-5xl ">
+      <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
+    </div>
+  </div>
 
-      <div class="row">
+  <div class="row">
        
         <div class="my-auto col-11 col-sm-6 col-md-5 col-xl-3 mx-auto text-center ">
           
@@ -30,24 +30,16 @@
             <div class="col-8 mx-auto">
               <a href="{% url 'my_edit_profile' %}">
                 <button class="full-purple-button mt-5">
-                  <i class="fa-solid fa-pen-to-square"></i>
+                  <span class="fas fa-edit"></span>
                   修改資料
                 </button>
               </a>
-              
             </div>
-
-          </div>
-          
-          
+          </div>    
           
         </div>
         
-      </div>
-
-
-      
-
+  </div>
      
 </main>
 {% endblock %}

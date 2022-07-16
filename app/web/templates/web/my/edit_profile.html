@@ -40,18 +40,17 @@
           <div class="row mx-auto mt-3 align-items-center">
 
             <div class="col-3 custom-card-font">
-              <label for="user_name">性別：</label>  
+              <label for="user_gender">性別：</label>  
             </div>
-            <div class="col-9 text-start">
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" id="inlineRadio2" type="radio" name="inlineRadioOptions" value="option2" />
-                <label class="h6" for="inlineRadio2">  男</label>
-              </div>
-    
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" id="inlineRadio2" type="radio" name="inlineRadioOptions" value="option2" />
-                <label class="h6" for="inlineRadio2">  女</label>
-              </div>
+            <div class="col-9 my-2 " style="display: flex;">
+              <label class="custom-radio-parent">男
+                <input type="radio" checked="checked" name="gender">
+                <span class="checkmark"></span>
+              </label>
+              <label class="custom-radio-parent">女
+                <input type="radio" name="gender">
+                <span class="checkmark"></span>
+              </label>
             </div>
 
           </div>

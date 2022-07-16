@@ -56,6 +56,30 @@ class OrderViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = Order.objects.all()
     serializer_class = serializers.OrderSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(case__user=user)
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        order = self.get_object()
+        user = self.request.user
+        if order.case.user == user:
+            order.cases = order.case
+            order.servants = order.case.servant
+            order.cases.rated_num= Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(rated_num=Count('servant_rating'))['rated_num']
+            order.cases.servant_rating = Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
+            disease_ids = list(CaseDiseaseShip.objects.filter(case=order.case).values_list('disease', flat=True))
+            order.cases.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
+            body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=order.case).values_list('body_condition', flat=True))
+            order.cases.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
+            serializer = self.get_serializer(order)
+            return Response(serializer.data)
+        else:
+            return Response({'message': "have no authority"})
 
 class UserServiceLocationViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -120,12 +144,13 @@ class MessageViewSet(viewsets.GenericViewSet,
     def create(self, request, *args, **kwargs):
         user = self.request.user
         chatroom= self.request.query_params.get('chatroom')
-        members_list = [int(i) for i in ChatRoom.objects.get(id=chatroom).members.split(',')]
+        chatroom = ChatRoom.objects.get(id=chatroom)
+        members_list = [int(i) for i in chatroom.members.split(',')]
         case = request.data.get('case')
         content = request.data.get('content')
         if user.id in members_list:
             message = Message()
-            message.chatroom = ChatRoom.objects.get(id=chatroom)
+            message.chatroom = chatroom
             message.user = user
             if case != None:
                 message.case = Case.objects.get(id=case)
@@ -134,6 +159,8 @@ class MessageViewSet(viewsets.GenericViewSet,
             else:
                 message.content = content
             message.save()
+            chatroom.update_at = datetime.datetime.now()
+            chatroom.save()
             serializer = self.get_serializer(message)
             return Response(serializer.data)
         else:
@@ -148,7 +175,7 @@ class SystemMessageViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         user = self.request.user
-        queryset = self.queryset.filter(user=user)
+        queryset = self.queryset.filter(user=user).order_by('-id')
         return queryset
 
 class SearchServantViewSet(viewsets.GenericViewSet,
@@ -263,7 +290,7 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
         for i in range(len(queryset)):
             queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
-            queryset[i].rate_num = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rate_num=Count('servant_rating'))['rate_num']
+            queryset[i].rated_num = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rated_num=Count('servant_rating'))['rated_num']
 
         return queryset
 
@@ -297,8 +324,8 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
 
     def retrieve(self, request, *args, **kwargs):
         case = self.get_object()
-        case.rate_num = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(rate_num=Count('servant_rating'))['rate_num']
-        case.rated_num = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(rated_num=Avg('servant_rating'))['rated_num']
+        case.rated_num = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(rated_num=Count('servant_rating'))['rated_num']
+        case.servant_rating = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating ']
         if case.is_taken == True:
             case.status = '案件已關閉'
         else:

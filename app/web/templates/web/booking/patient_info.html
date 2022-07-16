@@ -3,37 +3,35 @@
 <!-- main -->
 <main class="main bg-white" id="top" >
 
-      <div class="container pt-5">
-
-        <div class="row">
-          <span class="section-title-purple"><strong>申請預訂</strong></span>
+  <div class="container pt-5">
+    <div class="row">
+      <span class="section-title-purple"><strong>申請預訂</strong></span>
           
-          <!-- 左側填表 -->
-          <div class="col-12 col-md-7">
+      <!-- 左側填表 -->
+      <div class="col-12 col-md-7">
 
-            <div class="row text-center mt-3" style="font-weight: 600;">
-                <div class="col" style="color: #BB6BD9;">
-                  ① 填寫資料
-                </div>
-                <div class="col" style="color: #CCCCCC;">
-                  ② 照護地點
-                </div>
-                <div class="col" style="color: #CCCCCC;">
-                  ③ 聯絡人
-                </div>
-                <div class="col" style="color: #CCCCCC;">
-                  ④ 確認付款
-                </div>
-
-            </div>
+        <div class="row text-center mt-3" style="font-weight: 600;">
+          <div class="col" style="color: #BB6BD9;">
+            ① 填寫資料
+          </div>
+          <div class="col" style="color: #CCCCCC;">
+            ② 照護地點
+          </div>
+          <div class="col" style="color: #CCCCCC;">
+            ③ 聯絡人
+          </div>
+          <div class="col" style="color: #CCCCCC;">
+             ④ 確認付款
+          </div>
+        </div>
               
-            <hr style="color: #BB6BD9;">
+        <hr style="color: #BB6BD9;">
               
-            <div class="py-4">
-                <div class="">
-                  <!-- 填寫資料 -->
-                  <div class="px-sm-3">
-                    <form>
+        <div class="py-4">
+          <div class="">
+            <!-- 填寫資料 -->
+            <div class="px-sm-3">
+              <form>
                       <p class="h6" style="font-weight: 600;">被照顧者資料：</p>
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="same_patient" />
@@ -317,24 +315,23 @@
                           <label class="h6 mb-0" for="flexCheckChecked">協助移位</label>
                         </div>
                       </div>
-                    </form>
+              </form>
 
-                    <div class="mt-3">
-                      <a href="{% url 'booking_location' %}">
-                        <button class="full-purple-button">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
-                      </a>
-                    </div>
+              <div class="mt-3">
+                <a href="{% url 'booking_location' %}">
+                  <button class="full-purple-button">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
+                </a>
+              </div>
                     
-                  </div>
-                </div>
             </div>
-
           </div>
+        </div>
+
+      </div>
             
+      <!-- 右側 預定欄位 -->
 
-          <!-- 右側 預定欄位 -->
-
-          <div class="d-sm-none d-md-block col-12 col-md-5 col-lg-4 mb-5">
+      <div class="d-sm-none d-md-block col-12 col-md-5 col-lg-4 mb-5">
             <div class="booking-box px-4">
               <div class="row">
                 <div class="col-1">
@@ -471,11 +468,11 @@
             </div>
             
             
-          </div>
+      </div>
           
 
-        </div>
-      </div>
+    </div>
+  </div>
      
 </main>
 {% endblock %}
