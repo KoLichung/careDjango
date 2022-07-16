@@ -33,7 +33,7 @@ class LanguageAdmin(admin.ModelAdmin):
 
 @admin.register(UserLanguage)
 class UserLanguageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'language', 'remark')
+    list_display = ('id', 'user', 'language', 'remark')
 
 @admin.register(License)
 class LicenseAdmin(admin.ModelAdmin):

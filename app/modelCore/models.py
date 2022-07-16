@@ -76,6 +76,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     background_image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
 
+    Financial_Institutions_Code = models.CharField(max_length=100, default='', blank = True, null=True)
+    Branch_Financial_Institutions_Code = models.CharField(max_length=100, default='', blank = True, null=True)
+    accounts = models.CharField(max_length=100, default='', blank = True, null=True)
+
     USERNAME_FIELD = 'phone'
 
 class Service(models.Model):
@@ -103,8 +107,8 @@ class UserWeekDayTime(models.Model):
         ('6', 'Saturday'),
     ]
     weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES,)
-    start_time = models.IntegerField(default=0, blank=True, null=True)
-    end_time = models.IntegerField(default=24, blank=True, null=True)
+    start_time = models.FloatField(default=0, blank=True, null=True)
+    end_time = models.FloatField(default=24, blank=True, null=True)
 
 class UserServiceShip(models.Model):
     user = models.ForeignKey(
@@ -115,7 +119,8 @@ class UserServiceShip(models.Model):
         Service,
         on_delete=models.RESTRICT
     )
-
+    increase_percent = models.FloatField(default=0, blank = True, null=True)
+    
 class Language(models.Model):
     name = models.CharField(max_length= 100)
     def __str__(self):
@@ -238,8 +243,8 @@ class Case(models.Model):
     is_open_for_search = models.BooleanField(default=False)
 
     weekday = models.CharField(max_length=100, blank=True, null=True)
-    start_time = models.IntegerField(default=0, blank=True, null=True)
-    end_time = models.IntegerField(default=24, blank=True, null=True)
+    start_time = models.FloatField(default=0, blank=True, null=True)
+    end_time = models.FloatField(default=24, blank=True, null=True)
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -315,8 +320,8 @@ class Order(models.Model):
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
 
-    start_time = models.IntegerField(default=0, blank=True, null=True)
-    end_time = models.IntegerField(default=24, blank=True, null=True)
+    start_time = models.FloatField(default=0, blank=True, null=True)
+    end_time = models.FloatField(default=24, blank=True, null=True)
     
     created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
 
@@ -403,7 +408,7 @@ class PayInfo(models.Model):
     CardInfoCard4No = models.CharField(max_length=20, default='', blank = True, null=True)
 
 class ChatRoom(models.Model):
-    members = models.CharField(max_length= 3, blank=True, null=True)
+    members = models.CharField(max_length= 30, blank=True, null=True)
     update_at = models.DateTimeField(auto_now=True, blank = True, null=True) 
 
 class Message(models.Model):
