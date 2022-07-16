@@ -1,5 +1,5 @@
-asgiref==3.5.2
-backports.zoneinfo==0.2.1
+# asgiref==3.5.2
+# backports.zoneinfo==0.2.1
 Django==4.0.5
 django-utils==0.0.2
 djangorestframework==3.13.1
@@ -11,4 +11,4 @@ python-dateutil==2.8.2
 pytz==2022.1
 six==1.16.0
 sqlparse==0.4.2
-tzdata==2022.1
+# tzdata==2022.1
