@@ -63,10 +63,10 @@ http://localhost:8000/api/messages/?chatroom=1
 SystemMessageViewSet 的列表
 http://localhost:8000/api/system_messages
 
-SystemMessageViewSet 的列表, 查詢
+OrderViewSet 的列表, 查詢
 http://localhost:8000/api/orders
 
-UpdateUserWeekDayTime 的修改
+UpdateATMInfo 的修改
 # Financial_Institutions_Code : xxx  Branch_Financial_Institutions_Code: xxx accounts: xxx
 http://localhost:8000/api/user/update_ATM_info
 
@@ -86,7 +86,7 @@ UpdateUserLocations的修改
 # locations: 39,57 tranfer_fee: 300,500
 http://localhost:8000/api/user/update_user_locations
 
-UpdateUserLocations的修改
+UpdateUserService 的修改
 # services: 2,4,6,8  increase_prices: 20,25
 http://localhost:8000/api/user/update_user_services
 
