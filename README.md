@@ -67,35 +67,35 @@ OrderViewSet 的列表, 查詢
 http://localhost:8000/api/orders
 
 UpdateATMInfo 的修改
-# Financial_Institutions_Code : xxx  Branch_Financial_Institutions_Code: xxx accounts: xxx
+body form-data:Financial_Institutions_Code : xxx  Branch_Financial_Institutions_Code: xxx accounts: xxx
 http://localhost:8000/api/user/update_ATM_info
 
 UpdateUserWeekDayTime 的修改
-# weekday: 1,3,6 weektime: 0900:2100,1000:1900,1100:2000
+body form-data:weekday: 1,3,6 weektime: 0900:2100,1000:1900,1100:2000
 http://localhost:8000/api/user/update_user_weekdaytimes
 
 UpdateUserLanguage 的修改
-# language: 1,3,5,6,7,8  remark_original:排灣族語  remark_others: 法語
+body form-data: language: 1,3,5,6,7,8  remark_original:排灣族語  remark_others: 法語
 http://localhost:8000/api/user/update_user_languages
 
 UpdateUserCareType 的修改
-# home: 300,1650,3350 hospital: 330,1700,3450
+body form-data: home: 300,1650,3350 hospital: 330,1700,3450
 http://localhost:8000/api/user/update_user_caretype
 
 UpdateUserLocations的修改
-# locations: 39,57 tranfer_fee: 300,500
+body form-data: locations: 39,57 tranfer_fee: 300,500
 http://localhost:8000/api/user/update_user_locations
 
 UpdateUserService 的修改
-# services: 2,4,6,8  increase_prices: 20,25
+body form-data:services: 2,4,6,8  increase_prices: 20,25
 http://localhost:8000/api/user/update_user_services
 
 UpdateUserLicenseImage 的修改
-# license_id_4: file  license_id_7: file
+body form-data:license_id_4: file  license_id_7: file
 http://localhost:8000/api/user/update_user_license_images
 
 UpdateUserInfoImage 的修改
-# info: Test   background_image: file
+body form-data: info: Test   background_image: file
 http://localhost:8000/api/user/update_user_info_images
 
 20220714~0715
