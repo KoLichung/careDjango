@@ -98,6 +98,15 @@ UpdateUserInfoImage 的修改
 # info: Test   background_image: file
 http://localhost:8000/api/user/update_user_info_images
 
+20220718
+1.在 MessageViewSet Create response 時, 會回傳 Case, 如果該 Case 有 Order, 則傳回最近的 order
+2.檢查修正 User 的 ATM Data
+3.UserServiceWeekTime, User Language, User Service, User Location, 
+a.返回的時候, 返回 UserWeekTime 細節就好
+b.比對後再動作, 不要資料全刪 => 可以分兩個 for loop 第一步 把不需要的資料刪除 第二步 把沒有的新資料加進來
+4.User 服務類型要加上 isHome, isHospital 的 param
+5.User Licence Ship Image 改成 licence_id, image
+
 20220714~0715
 1.memebers 的 length 開到 30
 2.新訊息產生時, 要去更新 chatroom update_at
@@ -107,13 +116,13 @@ http://localhost:8000/api/user/update_user_info_images
 6.OrderViewSet 的 List, Get
 7.User 的 functions
 a.Update 付款ATM資料
-b.Create, Update User Service Week Time
-c.Create, Update User Language
-d.Update User 的 服務類型, 價錢
-f.Create Update User 的服務地區
-g.Create, Update User 的服務
-h.Create, Update User 的 Licence
-i.Update User background_image
+b.List, Create, Update User Service Week Time
+c.List, Create, Update User Language
+d.List, Update User 的 服務類型, 價錢
+f.List, Create Update User 的服務地區
+g.List, Create, Update User 的服務
+h.List, Create, Update User 的 Licence
+i.List, Update User background_image
 
 20220713
 1.把 readme 的 ReviewViewSet 的 Put 資料補上

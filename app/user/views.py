@@ -5,6 +5,7 @@ from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
+from rest_framework import viewsets, mixins
 
 from user.serializers import UserSerializer, AuthTokenSerializer, UpdateUserSerializer ,GetUserSerializer
 
@@ -79,6 +80,8 @@ class UpdateATMInfo(APIView):
         return Response(serializer.data)
 
 class UpdateUserWeekDayTime(APIView):
+    queryset = UserWeekDayTime.objects.all()
+    
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -197,23 +200,28 @@ class UpdateUserService(APIView):
         serializer = GetUserSerializer(user)
         return Response(serializer.data)
 
-class UpdateUserLicenseImage(APIView):
+class UpdateUserLicenseImage(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+
+                    mixins.CreateModelMixin):
+    queryset = UserLicenseShipImage.objects.all()
+
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def put(self, request, format=None):
-        user = self.request.user
-        license_ids = License.objects.filter(id__gt=3).values_list('id', flat=True)
-        UserLicenseShipImage.objects.filter(user=user).delete()
-        for i in license_ids:
-            if request.data.get('license_id_'+str(i)) != None:
-                userlicenseshipimage = UserLicenseShipImage()
-                userlicenseshipimage.user = user
-                userlicenseshipimage.license = License.objects.get(id=int(i))
-                userlicenseshipimage.image = request.data.get('license_id_'+str(i))
-                userlicenseshipimage.save()
-        serializer = GetUserSerializer(user)
-        return Response(serializer.data)
+    # def put(self, request, format=None):
+    #     user = self.request.user
+    #     license_ids = License.objects.filter(id__gt=3).values_list('id', flat=True)
+    #     UserLicenseShipImage.objects.filter(user=user).delete()
+    #     for i in license_ids:
+    #         if request.data.get('license_id_'+str(i)) != None:
+    #             userlicenseshipimage = UserLicenseShipImage()
+    #             userlicenseshipimage.user = user
+    #             userlicenseshipimage.license = License.objects.get(id=int(i))
+    #             userlicenseshipimage.image = request.data.get('license_id_'+str(i))
+    #             userlicenseshipimage.save()
+    #     serializer = GetUserSerializer(user)
+    #     return Response(serializer.data)
 
 class UpdateUserInfoImage(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
