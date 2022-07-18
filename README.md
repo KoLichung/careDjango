@@ -67,7 +67,7 @@ OrderViewSet 的列表, 查詢
 http://localhost:8000/api/orders
 
 UpdateATMInfo 的修改
-# Financial_Institutions_Code : xxx  Branch_Financial_Institutions_Code: xxx accounts: xxx
+# Financial_Institutions_Code:xxx Branch_Financial_Institutions_Code: xxx accounts: xxx
 http://localhost:8000/api/user/update_ATM_info
 
 UpdateUserWeekDayTime 的修改
@@ -75,7 +75,7 @@ UpdateUserWeekDayTime 的修改
 http://localhost:8000/api/user/update_user_weekdaytimes
 
 UpdateUserLanguage 的修改
-# language: 1,3,5,6,7,8  remark_original:排灣族語  remark_others: 法語
+# language: 1,3,5,6,7,8 remark_original:排灣族語  remark_others: 法語
 http://localhost:8000/api/user/update_user_languages
 
 UpdateUserCareType 的修改
@@ -87,15 +87,15 @@ UpdateUserLocations的修改
 http://localhost:8000/api/user/update_user_locations
 
 UpdateUserService 的修改
-# services: 2,4,6,8  increase_prices: 20,25
+# services: 2,4,6,8 increase_prices: 20,25
 http://localhost:8000/api/user/update_user_services
 
 UpdateUserLicenseImage 的修改
-# license_id_4: file  license_id_7: file
+# license_id_4: file license_id_7: file
 http://localhost:8000/api/user/update_user_license_images
 
 UpdateUserInfoImage 的修改
-# info: Test   background_image: file
+# info: Test background_image: file
 http://localhost:8000/api/user/update_user_info_images
 
 20220718
