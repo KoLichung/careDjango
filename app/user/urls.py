@@ -1,5 +1,4 @@
 from django.urls import path
-
 from user import views
 
 
@@ -17,6 +16,6 @@ urlpatterns = [
     path('update_user_caretype', views.UpdateUserCareType.as_view()),
     path('update_user_locations', views.UpdateUserLocations.as_view()),
     path('update_user_services', views.UpdateUserService.as_view()),
-    path('update_user_license_images', views.UpdateUserLicenseImage.as_view()),
+    path('update_user_license_images', views.UpdateUserLicenseImage.as_view({'get': 'list'})),
     path('update_user_info_images', views.UpdateUserInfoImage.as_view()),
 ]

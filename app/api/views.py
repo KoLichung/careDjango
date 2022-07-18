@@ -143,8 +143,8 @@ class MessageViewSet(viewsets.GenericViewSet,
 
     def create(self, request, *args, **kwargs):
         user = self.request.user
-        chatroom= self.request.query_params.get('chatroom')
-        chatroom = ChatRoom.objects.get(id=chatroom)
+        chatroom_id = self.request.query_params.get('chatroom')
+        chatroom = ChatRoom.objects.get(id=chatroom_id)
         members_list = [int(i) for i in chatroom.members.split(',')]
         case = request.data.get('case')
         content = request.data.get('content')
@@ -154,7 +154,7 @@ class MessageViewSet(viewsets.GenericViewSet,
             message.user = user
             if case != None:
                 message.case = Case.objects.get(id=case)
-                message.orders = Order.objects.filter(case=message.case)
+                message.order = Order.objects.filter(case=message.case).order_by('-created_at')[0]
                 message.is_this_message_only_case = True
             else:
                 message.content = content

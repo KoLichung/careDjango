@@ -5,8 +5,10 @@ from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
+from rest_framework import viewsets, mixins
 
 from user.serializers import UserSerializer, AuthTokenSerializer, UpdateUserSerializer ,GetUserSerializer
+from api import serializers
 
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system"""
@@ -71,51 +73,63 @@ class UpdateATMInfo(APIView):
 
     def put(self, request, format=None):
         user = self.request.user
-        user.Financial_Institutions_Code = request.data.get('Financial_Institutions_Code')
-        user.Branch_Financial_Institutions_Code = request.data.get('Branch_Financial_Institutions_Code')
-        user.accounts = request.data.get('accounts')
+        user.ATMInfoBankCode = request.data.get('ATMInfoBankCode')
+        user.ATMInfoBranchBankCode = request.data.get('ATMInfoBranchBankCode')
+        user.ATMInfoAccount = request.data.get('ATMInfoAccount')
         user.save()
         serializer = GetUserSerializer(user)
         return Response(serializer.data)
 
-class UpdateUserWeekDayTime(APIView):
+class UpdateUserWeekDayTime(generics.UpdateAPIView):
+    queryset = UserWeekDayTime.objects.all()
+    serializer_class = serializers.UserWeekDayTimeSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def put(self, request, format=None):
+    def update(self, request, *args, **kwargs):
         user = self.request.user
+        queryset = self.queryset
         weekday = request.data.get('weekday')
         weektime = request.data.get('weektime')
         if weekday != None:
             weekday_ids = weekday.split(',')
             weektime_list = weektime.split(',')
-            UserWeekDayTime.objects.filter(user=user).delete()
             for i in range(len(weekday_ids)):
-                start_time = int(weektime_list[i].split(':')[0][:2]) + float(int(weektime_list[i].split(':')[0][2:])/60)
-                end_time = int(weektime_list[i].split(':')[1][:2]) + float(int(weektime_list[i].split(':')[1][2:])/60)
-                userweekdaytime = UserWeekDayTime()
+                if queryset.filter(user=user,weekday=weekday_ids[i]).exists() != True:
+                    start_time = int(weektime_list[i].split(':')[0][:2]) + float(int(weektime_list[i].split(':')[0][2:])/60)
+                    end_time = int(weektime_list[i].split(':')[1][:2]) + float(int(weektime_list[i].split(':')[1][2:])/60)
+                    userweekdaytime = UserWeekDayTime()
+                else:
+                    userweekdaytime = queryset.get(user=user,weekday=weekday_ids[i])
                 userweekdaytime.user = user
                 userweekdaytime.weekday = weekday_ids[i]
                 userweekdaytime.start_time = start_time
                 userweekdaytime.end_time = end_time
                 userweekdaytime.save()
-        serializer = GetUserSerializer(user)
+            for userweekdaytime in queryset.filter(user=user):
+                if userweekdaytime.weekday not in weekday_ids:
+                    userweekdaytime.delete()
+        queryset = queryset.filter(user=user)
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-class UpdateUserLanguage(APIView):
+class UpdateUserLanguage(generics.UpdateAPIView):
+    queryset = UserLanguage.objects.all()
+    serializer_class = serializers.LangaugeSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def put(self, request, format=None):
+    def update(self, request, *args, **kwargs):
         user = self.request.user
+        queryset = self.queryset
         language = request.data.get('language')
         remark_original = request.data.get('remark_original')
         remark_others = request.data.get('remark_others')
         if language != None:
             language_ids = language.split(',')
-            UserLanguage.objects.filter(user=user).delete()
             for language_id in language_ids:
-                UserLanguage.objects.create(user=user,language=Language.objects.get(id=language_id))
+                if queryset.filter(user=user,language=language_id).exists() != True:
+                    UserLanguage.objects.create(user=user,language=Language.objects.get(id=language_id))
             if '5' in language_ids :
                 if remark_original != None:
                     userlanguage = UserLanguage.objects.get(user=user,language=Language.objects.get(id=5))
@@ -126,7 +140,13 @@ class UpdateUserLanguage(APIView):
                     userlanguage = UserLanguage.objects.get(user=user,language=Language.objects.get(id=8))
                     userlanguage.remark = remark_others
                     userlanguage.save()
-        serializer = GetUserSerializer(user)
+            for userlanguage in queryset.filter(user=user):
+                if str(userlanguage.language.id) not in language_ids:
+                    userlanguage.delete()
+                    
+        language_list = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
+        langueges = Language.objects.filter(id__in=language_list)
+        serializer = self.get_serializer(langueges,many=True)
         return Response(serializer.data)
 
 class UpdateUserCareType(APIView):
@@ -135,84 +155,124 @@ class UpdateUserCareType(APIView):
 
     def put(self, request, format=None):
         user = self.request.user
-        home = request.data.get('home')
-        hospital = request.data.get('hospital')
-        if home != None:
-            home = home.split(',')
-            user.is_home = True
-            user.home_hour_wage = int(home[0])
-            user.home_half_day_wage = int(home[1])
-            user.home_one_day_wage = int(home[2])
-        if hospital != None:
-            hospital = hospital.split(',')
-            user.is_hospital = True
-            user.hospital_hour_wage = hospital[0]
-            user.hospital_half_day_wage = hospital[1]
-            user.hospital_one_day_wage = hospital[2]
+        is_home = request.data.get('is_home')
+        is_hospital = request.data.get('is_hospital')
+        home_wage = request.data.get('home_wage')
+        hospital_wage = request.data.get('hospital_wage')
+        if is_home != None:
+            user.is_home = True 
+        else: 
+            user.is_home = False
+        if home_wage != None:
+            home_wage = home_wage.split(',')
+            user.home_hour_wage = int(home_wage[0])
+            user.home_half_day_wage = int(home_wage[1])
+            user.home_one_day_wage = int(home_wage[2])
+        if is_hospital != None:
+            user.is_hospital = True 
+        else: 
+            user.is_hospital = False
+        if hospital_wage != None:
+            hospital_wage = hospital_wage.split(',')
+            user.hospital_hour_wage = hospital_wage[0]
+            user.hospital_half_day_wage = hospital_wage[1]
+            user.hospital_one_day_wage = hospital_wage[2]
         user.save()
         serializer = GetUserSerializer(user)
         return Response(serializer.data)
 
-class UpdateUserLocations(APIView):
+class UpdateUserLocations(generics.UpdateAPIView):
+    queryset = UserServiceLocation.objects.all()
+    serializer_class = serializers.UserServiceLocationSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def put(self, request, format=None):
+    def update(self, request, *args, **kwargs):
         user = self.request.user
+        queryset = self.queryset
         locations = request.data.get('locations')
         tranfer_fee = request.data.get('tranfer_fee')
         if locations != None:
             location_ids = locations.split(',')
             tranfer_fee_list = tranfer_fee.split(',')
-            UserServiceLocation.objects.filter(user=user).delete()
             for i in range(len(location_ids)):
-                userservicelocation = UserServiceLocation()
+                if queryset.filter(user=user,county=location_ids[i]).exists() != True:
+                    userservicelocation = UserServiceLocation()
+                else:
+                    userservicelocation = queryset.get(user=user,county=location_ids[i])
                 userservicelocation.user = user
                 userservicelocation.city = County.objects.get(id=location_ids[i]).city
                 userservicelocation.county = County.objects.get(id=location_ids[i])
                 userservicelocation.tranfer_fee = tranfer_fee_list[i]
                 userservicelocation.save()
-        serializer = GetUserSerializer(user)
+            for userservicelocation in queryset.filter(user=user):
+                if str(userservicelocation.county.id) not in location_ids:
+                    userservicelocation.delete()
+        queryset = queryset.filter(user=user)
+        serializer = self.get_serializer(queryset,many=True)
         return Response(serializer.data)
 
-class UpdateUserService(APIView):
+class UpdateUserService(generics.UpdateAPIView):
+    queryset = UserServiceShip.objects.all()
+    serializer_class = serializers.ServiceSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def put(self, request, format=None):
+    def update(self, request, *args, **kwargs):
         user = self.request.user
+        queryset = self.queryset
         services = request.data.get('services')
         increase_prices = request.data.get('increase_prices')
         if services != None:
             service_ids = services.split(',')
             increase_price_list = increase_prices.split(',')
-            UserServiceShip.objects.filter(user=user).delete()
             for i in range(len(service_ids)):
-                userserviceship = UserServiceShip()
+                if queryset.filter(user=user,service=service_ids[i]).exists() != True:
+                    userserviceship = UserServiceShip()
+                else:
+                    userserviceship = queryset.get(user=user,service=service_ids[i])
                 userserviceship.user = user
                 userserviceship.service = Service.objects.get(id=service_ids[i])
                 if int(service_ids[i]) < 5 :
                     userserviceship.increase_percent = increase_price_list[i]
                 userserviceship.save()
-        serializer = GetUserSerializer(user)
+            for userserviceship in queryset.filter(user=user):
+                if str(userserviceship.service.id) not in service_ids:
+                    userserviceship.delete()
+        service_list = list(UserServiceShip.objects.filter(user=user).values_list('service', flat=True))
+        services = Service.objects.filter(id__in=service_list)
+        for i in range(len(services)):
+            if queryset.get(user=user,service=services[i]).increase_percent > 0:
+                services[i].increase_percent = queryset.get(user=user,service=services[i]).increase_percent
+        serializer = self.get_serializer(services,many=True)
         return Response(serializer.data)
 
-class UpdateUserLicenseImage(APIView):
+class UpdateUserLicenseImage(viewsets.GenericViewSet,
+                            generics.UpdateAPIView,
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin):
+    queryset = UserLicenseShipImage.objects.all()
+    serializer_class = serializers.LicenseSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def put(self, request, format=None):
+    def update(self, request, *args, **kwargs):
         user = self.request.user
-        license_ids = License.objects.filter(id__gt=3).values_list('id', flat=True)
-        UserLicenseShipImage.objects.filter(user=user).delete()
-        for i in license_ids:
-            if request.data.get('license_id_'+str(i)) != None:
-                userlicenseshipimage = UserLicenseShipImage()
-                userlicenseshipimage.user = user
-                userlicenseshipimage.license = License.objects.get(id=int(i))
-                userlicenseshipimage.image = request.data.get('license_id_'+str(i))
-                userlicenseshipimage.save()
-        serializer = GetUserSerializer(user)
+        queryset = self.queryset
+        license = request.data.get('license')
+        image = request.data.get('image')
+        if license != None:
+            if queryset.filter(user=user,license=license).exists() != True:
+                userlicenseimage = UserLicenseShipImage()
+            else:
+                userlicenseimage = queryset.get(user=user,license=license)
+            userlicenseimage.user = user
+            userlicenseimage.license = License.objects.get(id=license)
+            userlicenseimage.image = image
+            userlicenseimage.save()
+        license_list = list(UserLicenseShipImage.objects.filter(user=user).values_list('license', flat=True))
+        licences = License.objects.filter(id__in=license_list)
+        serializer = self.get_serializer(licences,many=True)
         return Response(serializer.data)
 
 class UpdateUserInfoImage(APIView):

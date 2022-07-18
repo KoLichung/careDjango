@@ -20,6 +20,7 @@ class LangaugeSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class ServiceSerializer(serializers.ModelSerializer):
+    increase_percent = serializers.IntegerField(default=0)
     class Meta:
         model = Service
         fields = '__all__'
@@ -125,7 +126,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
     message_is_mine = serializers.BooleanField(default=False)
-    orders = OrderSerializer(read_only=True, many=True)
+    order = OrderSerializer(read_only=True)
     class Meta:
         model = Message
         fields = '__all__'

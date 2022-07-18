@@ -76,9 +76,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     background_image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
 
-    Financial_Institutions_Code = models.CharField(max_length=100, default='', blank = True, null=True)
-    Branch_Financial_Institutions_Code = models.CharField(max_length=100, default='', blank = True, null=True)
-    accounts = models.CharField(max_length=100, default='', blank = True, null=True)
+    ATMInfoBankCode = models.CharField(max_length=20, default='', blank = True, null=True)
+    ATMInfoBranchBankCode = models.CharField(max_length=20, default='', blank = True, null=True)
+    ATMInfoAccount = models.CharField(max_length=20, default='', blank = True, null=True)
 
     USERNAME_FIELD = 'phone'
 
