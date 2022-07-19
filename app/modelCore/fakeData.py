@@ -5,8 +5,8 @@ from datetime import date ,timedelta
 from pytz import timezone
 import pytz
 from django.db.models import Sum
-from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
+from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService
 
 def importCityCounty():
@@ -411,6 +411,11 @@ def fakeData():
 
     ChatRoom.objects.create(members='2,3',update_at=datetime.datetime.now())
     ChatRoom.objects.create(members='3,4',update_at=datetime.datetime.now())
+
+    ChatroomUserShip.objects.create(user=User.objects.get(id=2),chatroom=ChatRoom.objects.get(id=1))
+    ChatroomUserShip.objects.create(user=User.objects.get(id=3),chatroom=ChatRoom.objects.get(id=1))
+    ChatroomUserShip.objects.create(user=User.objects.get(id=3),chatroom=ChatRoom.objects.get(id=2))
+    ChatroomUserShip.objects.create(user=User.objects.get(id=4),chatroom=ChatRoom.objects.get(id=2))
     
     message = Message()
     chatroom = ChatRoom.objects.get(id=1)

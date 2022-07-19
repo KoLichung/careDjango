@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import  User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
+from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService
 
 @admin.register(User)
@@ -94,6 +94,10 @@ class PayInfoAdmin(admin.ModelAdmin):
 @admin.register(ChatRoom)
 class ChatRoomAdmin(admin.ModelAdmin):
     list_display = ('id', 'members', 'update_at')
+
+@admin.register(ChatroomUserShip)
+class ChatroomUserShipAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'chatroom')
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):

@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 import datetime
 from datetime import date ,timedelta
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
+from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom ,ChatroomUserShip
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage , OrderWeekDay ,OrderIncreaseService
 from api import serializers
 
@@ -105,7 +105,8 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         user = self.request.user
-        queryset = self.queryset.filter(members__contains=user.id).order_by('-update_at')
+        chatroom_ids = list(ChatroomUserShip.objects.filter(user=user).values_list('chatroom', flat=True))
+        queryset = self.queryset.filter(id__in=chatroom_ids).order_by('-update_at')
         return queryset
 
     def create(self, request, *args, **kwargs):

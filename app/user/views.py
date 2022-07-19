@@ -80,11 +80,16 @@ class UpdateATMInfo(APIView):
         serializer = GetUserSerializer(user)
         return Response(serializer.data)
 
-class UpdateUserWeekDayTime(generics.UpdateAPIView):
+class UserWeekDayTimesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
     queryset = UserWeekDayTime.objects.all()
     serializer_class = serializers.UserWeekDayTimeSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(user=user)
+        return queryset
 
     def update(self, request, *args, **kwargs):
         user = self.request.user
@@ -113,11 +118,16 @@ class UpdateUserWeekDayTime(generics.UpdateAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-class UpdateUserLanguage(generics.UpdateAPIView):
+class UserLanguagesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
     queryset = UserLanguage.objects.all()
-    serializer_class = serializers.LangaugeSerializer
+    serializer_class = serializers.UserLangaugeSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(user=user)
+        return queryset
 
     def update(self, request, *args, **kwargs):
         user = self.request.user
@@ -143,10 +153,8 @@ class UpdateUserLanguage(generics.UpdateAPIView):
             for userlanguage in queryset.filter(user=user):
                 if str(userlanguage.language.id) not in language_ids:
                     userlanguage.delete()
-                    
-        language_list = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
-        langueges = Language.objects.filter(id__in=language_list)
-        serializer = self.get_serializer(langueges,many=True)
+        userlanguages = UserLanguage.objects.filter(user=user)    
+        serializer = self.get_serializer(userlanguages,many=True)
         return Response(serializer.data)
 
 class UpdateUserCareType(APIView):
@@ -181,11 +189,16 @@ class UpdateUserCareType(APIView):
         serializer = GetUserSerializer(user)
         return Response(serializer.data)
 
-class UpdateUserLocations(generics.UpdateAPIView):
+class UserLocationsViewSet(generics.UpdateAPIView,generics.ListAPIView,):
     queryset = UserServiceLocation.objects.all()
     serializer_class = serializers.UserServiceLocationSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(user=user)
+        return queryset
 
     def update(self, request, *args, **kwargs):
         user = self.request.user
@@ -212,11 +225,16 @@ class UpdateUserLocations(generics.UpdateAPIView):
         serializer = self.get_serializer(queryset,many=True)
         return Response(serializer.data)
 
-class UpdateUserService(generics.UpdateAPIView):
+class UserServicesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
     queryset = UserServiceShip.objects.all()
-    serializer_class = serializers.ServiceSerializer
+    serializer_class = serializers.UserServiceSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(user=user)
+        return queryset
 
     def update(self, request, *args, **kwargs):
         user = self.request.user
@@ -239,28 +257,20 @@ class UpdateUserService(generics.UpdateAPIView):
             for userserviceship in queryset.filter(user=user):
                 if str(userserviceship.service.id) not in service_ids:
                     userserviceship.delete()
-        service_list = list(UserServiceShip.objects.filter(user=user).values_list('service', flat=True))
-        services = Service.objects.filter(id__in=service_list)
-        for i in range(len(services)):
-            if queryset.get(user=user,service=services[i]).increase_percent > 0:
-                services[i].increase_percent = queryset.get(user=user,service=services[i]).increase_percent
-        serializer = self.get_serializer(services,many=True)
+        userservices = UserServiceShip.objects.filter(user=user)
+        serializer = self.get_serializer(userservices,many=True)
         return Response(serializer.data)
 
-class UserLicenseImageViewSet(viewsets.GenericViewSet,
-                                mixins.ListModelMixin,
-                                mixins.RetrieveModelMixin,
-                                mixins.CreateModelMixin,
-                                mixins.UpdateModelMixin):
+class UserLicenseImagesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
-
     queryset = UserLicenseShipImage.objects.all()
     serializer_class = UserLicenceImageSerializer
 
-    # def get_queryset(self):
-    #     queryset = self.queryset.filter(user=self.request.user)
-    #     return queryset
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(user=user)
+        return queryset
 
     def update(self, request, *args, **kwargs):
         user = self.request.user
@@ -276,9 +286,8 @@ class UserLicenseImageViewSet(viewsets.GenericViewSet,
             userlicenseimage.license = License.objects.get(id=license)
             userlicenseimage.image = image
             userlicenseimage.save()
-        license_list = list(UserLicenseShipImage.objects.filter(user=user).values_list('license', flat=True))
-        licences = License.objects.filter(id__in=license_list)
-        serializer = self.get_serializer(licences,many=True)
+        userlicences = UserLicenseShipImage.objects.filter(user=user)
+        serializer = self.get_serializer(userlicences,many=True)
         return Response(serializer.data)
 
 class UpdateUserInfoImage(APIView):

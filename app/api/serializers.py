@@ -50,6 +50,18 @@ class CountySerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
+class UserLangaugeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserLanguage
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class UserServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserServiceShip
+        fields = '__all__'
+        read_only_fields = ('id',)
+
 class UserServiceLocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserServiceLocation

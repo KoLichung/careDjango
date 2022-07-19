@@ -411,6 +411,16 @@ class ChatRoom(models.Model):
     members = models.CharField(max_length= 30, blank=True, null=True)
     update_at = models.DateTimeField(auto_now=True, blank = True, null=True) 
 
+class ChatroomUserShip(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+    chatroom = models.ForeignKey(
+        ChatRoom,
+        on_delete=models.CASCADE,
+    ) 
+
 class Message(models.Model):
     chatroom = models.ForeignKey(
         ChatRoom,
