@@ -259,7 +259,7 @@ class UpdateUserLicenseImage(viewsets.GenericViewSet,
     def update(self, request, *args, **kwargs):
         user = self.request.user
         queryset = self.queryset
-        license = request.data.get('license')
+        license = request.data.get('licence_id')
         image = request.data.get('image')
         if license != None:
             if queryset.filter(user=user,license=license).exists() != True:

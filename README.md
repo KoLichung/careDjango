@@ -91,7 +91,7 @@ body form-data:services: 2,4,6,8  increase_prices: 20,25
 http://localhost:8000/api/user/update_user_services
 
 UpdateUserLicenseImage 的修改
-body form-data:license_id_4: file  license_id_7: file
+body form-data:license_id_4: image: file  
 http://localhost:8000/api/user/update_user_license_images
 
 UpdateUserInfoImage 的修改
