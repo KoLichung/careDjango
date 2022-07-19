@@ -96,11 +96,11 @@ class UpdateUserWeekDayTime(generics.UpdateAPIView):
             weektime_list = weektime.split(',')
             for i in range(len(weekday_ids)):
                 if queryset.filter(user=user,weekday=weekday_ids[i]).exists() != True:
-                    start_time = int(weektime_list[i].split(':')[0][:2]) + float(int(weektime_list[i].split(':')[0][2:])/60)
-                    end_time = int(weektime_list[i].split(':')[1][:2]) + float(int(weektime_list[i].split(':')[1][2:])/60)
                     userweekdaytime = UserWeekDayTime()
                 else:
                     userweekdaytime = queryset.get(user=user,weekday=weekday_ids[i])
+                start_time = int(weektime_list[i].split(':')[0][:2]) + float(int(weektime_list[i].split(':')[0][2:])/60)
+                end_time = int(weektime_list[i].split(':')[1][:2]) + float(int(weektime_list[i].split(':')[1][2:])/60)
                 userweekdaytime.user = user
                 userweekdaytime.weekday = weekday_ids[i]
                 userweekdaytime.start_time = start_time
@@ -155,22 +155,22 @@ class UpdateUserCareType(APIView):
 
     def put(self, request, format=None):
         user = self.request.user
-        is_home = request.data.get('is_home')
-        is_hospital = request.data.get('is_hospital')
+        is_home = eval(request.data.get('is_home'))
+        is_hospital = eval(request.data.get('is_hospital'))
         home_wage = request.data.get('home_wage')
         hospital_wage = request.data.get('hospital_wage')
-        if is_home != None:
+        if is_home == True:
             user.is_home = True 
-        else: 
+        elif is_home == False: 
             user.is_home = False
         if home_wage != None:
             home_wage = home_wage.split(',')
             user.home_hour_wage = int(home_wage[0])
             user.home_half_day_wage = int(home_wage[1])
             user.home_one_day_wage = int(home_wage[2])
-        if is_hospital != None:
+        if is_hospital == True:
             user.is_hospital = True 
-        else: 
+        elif is_hospital == False: 
             user.is_hospital = False
         if hospital_wage != None:
             hospital_wage = hospital_wage.split(',')
