@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model, authenticate
 
 from rest_framework import serializers
-from modelCore.models import User
+from modelCore.models import User, UserLicenseShipImage
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the users object"""
@@ -84,3 +84,9 @@ class GetUserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
         read_only_fields = ('id',)
+
+class UserLicenceImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserLicenseShipImage
+        fields = '__all__'
+        read_only_fields = ('id','user')

@@ -7,7 +7,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins
 
-from user.serializers import UserSerializer, AuthTokenSerializer, UpdateUserSerializer ,GetUserSerializer
+from user.serializers import UserSerializer, AuthTokenSerializer, UpdateUserSerializer ,GetUserSerializer, UserLicenceImageSerializer
 from api import serializers
 
 class CreateUserView(generics.CreateAPIView):
@@ -247,14 +247,20 @@ class UpdateUserService(generics.UpdateAPIView):
         serializer = self.get_serializer(services,many=True)
         return Response(serializer.data)
 
-class UpdateUserLicenseImage(viewsets.GenericViewSet,
-                            generics.UpdateAPIView,
-                        mixins.ListModelMixin,
-                        mixins.CreateModelMixin):
-    queryset = UserLicenseShipImage.objects.all()
-    serializer_class = serializers.LicenseSerializer
+class UserLicenseImageViewSet(viewsets.GenericViewSet,
+                                mixins.ListModelMixin,
+                                mixins.RetrieveModelMixin,
+                                mixins.CreateModelMixin,
+                                mixins.UpdateModelMixin):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
+    queryset = UserLicenseShipImage.objects.all()
+    serializer_class = UserLicenceImageSerializer
+
+    # def get_queryset(self):
+    #     queryset = self.queryset.filter(user=self.request.user)
+    #     return queryset
 
     def update(self, request, *args, **kwargs):
         user = self.request.user

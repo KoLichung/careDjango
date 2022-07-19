@@ -98,6 +98,13 @@ UpdateUserInfoImage 的修改
 body form-data: info: Test   background_image: file
 http://localhost:8000/api/user/update_user_info_images
 
+20220719
+1.UserLanguage 要做一個 UserLanguageSerializer 要傳回 remark
+2.UserLicenseImageView 改成 APIView, 有兩個方法 GET, PUT, GET 要取得 license list, Put 就是要比對更新或產生新資料
+3.UserServiceWeekTime, User Language, User Service, User Location 改成 ViewSet 同上做法
+4.Chatroom 跟 User 之間做一個 ChatroomUserShip 解決 20220714 的 5
+(2,3 不要用 router, 用 path, 只是分成 GET 跟 PUT 兩種不同方法去處理)
+
 20220718
 1.在 MessageViewSet Create response 時, 會回傳 Case, 如果該 Case 有 Order, 則傳回最近的 order
 2.檢查修正 User 的 ATM Data
