@@ -98,6 +98,28 @@ UpdateUserInfoImage 的修改
 body form-data: info: Test   background_image: file
 http://localhost:8000/api/user/update_user_info_images
 
+!暫定：
+a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
+
+要做：
+1.建店 API => 建立”服務者”商店(每一個服務者, 就是一家商店)
+2.幕前支付 API => 需求者付款
+3.扣款 API => 在某一個服務者商店扣錢給平台
+4.撥款 API => 把服務者商店的錢, 撥給服務者商店的 ATM 帳戶
+
+藍新測試網址
+https://cwww.newebpay.com/
+42779071
+jasonko2022
+vCRQtf77UZ6vCie
+
+20220720
+1.把 Chatroom Model 的 memebers 拿掉, 統一用 ChatroomUserShip 來做
+2.建店 API
+a.startapp newebpayApi
+b.把沒必要的檔案先砍掉 ex. test.py, models.py ...等
+c.把 api 寫在 views.py
+
 20220719
 1.UserLanguage 要做一個 UserLanguageSerializer 要傳回 remark
 2.UserLicenseImageView 改成 APIView, 有兩個方法 GET, PUT, GET 要取得 license list, Put 就是要比對更新或產生新資料
