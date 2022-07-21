@@ -93,7 +93,7 @@ class PayInfoAdmin(admin.ModelAdmin):
 
 @admin.register(ChatRoom)
 class ChatRoomAdmin(admin.ModelAdmin):
-    list_display = ('id', 'members', 'update_at')
+    list_display = ('id', 'update_at')
 
 @admin.register(ChatroomUserShip)
 class ChatroomUserShipAdmin(admin.ModelAdmin):

@@ -53,10 +53,10 @@ body form-data: case_offender_rating : 5 , case_offender_comment : Test
 http://localhost:8000/api/servant_put_review/1
 
 ChatRoomViewSet 的列表, 新增
-body form-data: members : 2,4
+body form-data: users : 2,4
 http://localhost:8000/api/chatroom
 
-SystemMessageViewSet 的列表, 新增
+MessageViewSet 的列表, 新增
 body form-data: case : 1 , content : Ok
 http://localhost:8000/api/messages/?chatroom=1
 

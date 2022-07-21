@@ -111,10 +111,16 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
 
     def create(self, request, *args, **kwargs):
         user = self.request.user
-        members = request.data.get('members')
-        members_list = [int(i) for i in members.split(',')]
-        if user.id in members_list:
-            ChatRoom.objects.create(members=members)
+        users = request.data.get('users')
+        users_list = [int(i) for i in users.split(',')]
+        if user.id in users_list:
+            chatroom = ChatRoom()
+            chatroom.save()
+            for user_id in users_list:
+                chatroomusership = ChatroomUserShip()
+                chatroomusership.user = User.objects.get(id=user_id)
+                chatroomusership.chatroom = chatroom
+                chatroomusership.save()
             return Response({'message': "Successfully create"})
         else:
             return Response({'message': "have no authority"})
@@ -130,8 +136,8 @@ class MessageViewSet(viewsets.GenericViewSet,
     def get_queryset(self):
         user = self.request.user
         chatroom= self.request.query_params.get('chatroom')
-        members_list = [int(i) for i in ChatRoom.objects.get(id=chatroom).members.split(',')]
-        if user.id in members_list:
+        user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
+        if user.id in user_ids:
             queryset = self.queryset.filter(chatroom=chatroom).order_by('-id')
 
             for i in range(len(queryset)):
@@ -146,10 +152,10 @@ class MessageViewSet(viewsets.GenericViewSet,
         user = self.request.user
         chatroom_id = self.request.query_params.get('chatroom')
         chatroom = ChatRoom.objects.get(id=chatroom_id)
-        members_list = [int(i) for i in chatroom.members.split(',')]
+        user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
         case = request.data.get('case')
         content = request.data.get('content')
-        if user.id in members_list:
+        if user.id in user_ids:
             message = Message()
             message.chatroom = chatroom
             message.user = user
