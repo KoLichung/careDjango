@@ -408,7 +408,6 @@ class PayInfo(models.Model):
     CardInfoCard4No = models.CharField(max_length=20, default='', blank = True, null=True)
 
 class ChatRoom(models.Model):
-    members = models.CharField(max_length= 30, blank=True, null=True)
     update_at = models.DateTimeField(auto_now=True, blank = True, null=True) 
 
 class ChatroomUserShip(models.Model):

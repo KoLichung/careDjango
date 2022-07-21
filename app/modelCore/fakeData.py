@@ -409,8 +409,8 @@ def fakeData():
         order.platform_money = order.total_money * (order.platform_percent/100)
         order.save()
 
-    ChatRoom.objects.create(members='2,3',update_at=datetime.datetime.now())
-    ChatRoom.objects.create(members='3,4',update_at=datetime.datetime.now())
+    ChatRoom.objects.create(update_at=datetime.datetime.now())
+    ChatRoom.objects.create(update_at=datetime.datetime.now())
 
     ChatroomUserShip.objects.create(user=User.objects.get(id=2),chatroom=ChatRoom.objects.get(id=1))
     ChatroomUserShip.objects.create(user=User.objects.get(id=3),chatroom=ChatRoom.objects.get(id=1))
