@@ -107,11 +107,23 @@ a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可�
 3.扣款 API => 在某一個服務者商店扣錢給平台
 4.撥款 API => 把服務者商店的錢, 撥給服務者商店的 ATM 帳戶
 
-藍新測試網址
+藍新測試後台網址
 https://cwww.newebpay.com/
 42779071
 jasonko2022
 vCRQtf77UZ6vCie
+
+HashKey: SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH
+HashIV: C6RhZZ45pflwEoSP
+
+測試 API 網址：https://ccore.Newebpay.com/API/AddMerchant
+
+
+20220721
+1.寫建店 API：
+a.Post data 格式 => PartnerID_ , PostData_
+b.加密 => if 傳 xxxx, 加密結果是 oooo
+c.測試 Post 到 藍新 api server
 
 20220720
 1.把 Chatroom Model 的 memebers 拿掉, 統一用 ChatroomUserShip 來做
