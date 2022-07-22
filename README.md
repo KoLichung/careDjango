@@ -116,13 +116,22 @@ vCRQtf77UZ6vCie
 HashKey: SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH
 HashIV: C6RhZZ45pflwEoSP
 
+平台商代號：CARE168
+平台商名稱：杏心股份有限公司
+HashKey：Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q
+HashIV：CeYa8zoA0mX4qBpP
+
 測試 API 網址：https://ccore.Newebpay.com/API/AddMerchant
 
+20220722
+1.做產生需求單(Case)的 API, 把資料先都塞到一支 Create(POST) 的 api 試試
+2.更新 UpdateUserSerializer 把 User 需要的前端資料回傳
+3.CaseSearchViewSet 有 bug, 再檢查 retrieve 是否正常
 
 20220721
 1.寫建店 API：
 a.Post data 格式 => PartnerID_ , PostData_
-b.加密 => if 傳 xxxx, 加密結果是 oooo
+v b.加密 => if 傳 xxxx, 加密結果是 oooo
 c.測試 Post 到 藍新 api server
 
 20220720

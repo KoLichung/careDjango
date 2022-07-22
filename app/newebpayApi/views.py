@@ -7,30 +7,13 @@ from django.http import HttpResponse
 import requests
 import time
 import altapay
-import base64
-import binascii
 import hashlib
 from Crypto.Cipher import AES
+from newebpayApi.aesCipher import AESCipher
 from modelCore.models import Order 
 
-def cbc_encrypt(plaintext: str, key: str,iv: str):
-
-    block_size = len(key)
-    padding = (block_size - len(plaintext) % block_size) or block_size  # 填充位元組
-    iv = iv
-    mode = AES.new(key.encode(), AES.MODE_CBC, iv.encode())
-    ciphertext = mode.encrypt((plaintext + padding * chr(padding)).encode())
-    return binascii.b2a_hex(ciphertext)
-    # return base64.b64encode(iv.encode() + ciphertext).decode()
-
-def cbc_decrypt(ciphertext: str, key: str):
-    ciphertext = base64.b64decode(ciphertext)
-    mode = AES.new(key.encode(), AES.MODE_CBC, ciphertext[:AES.block_size])
-    plaintext = mode.decrypt(ciphertext[AES.block_size:]).decode()
-    return plaintext[:-ord(plaintext[-1])]
-
-
 class CreateMerchant(APIView):
+    
     def get(self, request, format=None):
         order_id = self.request.query_params.get('order_id')
         order = Order.objects.get(id=order_id)
@@ -70,44 +53,42 @@ class CreateMerchant(APIView):
                 "SubBankCode": order.user.ATMInfoBranchBankCode,
                 "BankAccount": order.user.ATMInfoAccount,
                 "AccountName": order.user.name,
-
-                
         }
 
         extend_params_personal = {
-        "MemberUnified": "D123456789",
-        "IDCardDate": "1110330",
-        "IDCardPlace": "台南市",
-        "IDPic": 1,
-        "IDFrom": 3,
-        "Date": "1000101",
-        "MemberName": "林小華",
+            "MemberUnified": "D123456789",
+            "IDCardDate": "1110330",
+            "IDCardPlace": "台南市",
+            "IDPic": 1,
+            "IDFrom": 3,
+            "Date": "1000101",
+            "MemberName": "林小華",
         }
 
         extend_params_company = {
-        "MemberUnified": "22803842",
-        "RepresentName": "王小明",
-        "ManagerID": "M123321123",
-        "CapitalAmount": "10000000",
-        "IncorporationDate": "202020202",
-        "CompanyAddress": "台南市中西區民族路27號",
-
+            "MemberUnified": "22803842",
+            "RepresentName": "王小明",
+            "ManagerID": "M123321123",
+            "CapitalAmount": "10000000",
+            "IncorporationDate": "202020202",
+            "CompanyAddress": "台南市中西區民族路27號",
         }
 
         data.update(extend_params_personal)
         # data.update(extend_params_company)
         query_string = altapay.utils.http_build_query(data)
 
-        # aes = Cryptor(key=HashKey.encode("utf8"),iv=HashIV.encode("utf8"))
-        # data = aes.encrypt(str(query_string))
+        aes = AESCipher()
+        postData = aes.encrypt(str(query_string))
 
-        encrypted = cbc_encrypt(query_string, HashKey, HashIV)
-        print(int(encrypted, 16))
-        PostData_ = str(encrypted)
-        resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":PostData_})
+        # encrypted = cbc_encrypt(query_string, HashKey, HashIV)
+        # print(int(encrypted, 16))
+        # PostData_ = str(encrypted)
+        resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":postData})
         return Response(resp)
 
 class MpgTrade(APIView):
+    
     def get(self, request, format=None):
         order_id = self.request.query_params.get('order_id')
         order = Order.objects.get(id=order_id)
@@ -127,17 +108,20 @@ class MpgTrade(APIView):
                 "Amt": order.total_money,
                 "ItemDesc": "test",       
                 "ReturnURL": ""
-            }
+        }
 
         query_string = altapay.utils.http_build_query(data)
-        encrypted = cbc_encrypt(query_string, HashKey, HashIV)
-        # aes = Cryptor(HashKey,HashIV)
-        # data = aes.encrypt(str(query_string))
-        hash_object = hashlib.sha256(str(HashKey + encrypted + HashIV).encode('utf-8'))
-        print(hash_object)
+        # encrypted = cbc_encrypt(query_string, HashKey, HashIV)
+
+        aes = AESCipher()
+        data = aes.encrypt(str(query_string))
+
+        hash_object = hashlib.sha256(str(HashKey + data + HashIV).encode('utf-8'))
+        # print(hash_object)
         TradeSha = hash_object.hexdigest().upper()
-        print(TradeSha)
-        TradeInfo = encrypted
+        # print(TradeSha)
+        TradeInfo = data
+
         resp = requests.post(post_url, data ={"MerchantID":MerchantID,"TradeInfo":TradeInfo,"TradeSha":TradeSha, "Version":Version})
         # decrypt_text = cbc_decrypt(resp.text,HashKey)
         # the_data = urllib.parse.unquote(decrypt_text)

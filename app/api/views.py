@@ -332,7 +332,7 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
     def retrieve(self, request, *args, **kwargs):
         case = self.get_object()
         case.rated_num = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(rated_num=Count('servant_rating'))['rated_num']
-        case.servant_rating = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating ']
+        case.servant_rating = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
         if case.is_taken == True:
             case.status = '案件已關閉'
         else:
