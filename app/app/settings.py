@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'user',
     'api',
     'web',
+    'newebpayApi'
 ]
 
 MIDDLEWARE = [
