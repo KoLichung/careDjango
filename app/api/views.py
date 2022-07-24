@@ -9,6 +9,8 @@ from django.db.models import Q
 from django.db.models import Avg , Count
 from django.shortcuts import get_object_or_404
 import datetime
+import operator
+from functools import reduce
 from datetime import date ,timedelta
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom ,ChatroomUserShip
@@ -531,4 +533,181 @@ class ServantPutReviewView(APIView):
             return Response({'message': "have no authority"})
 
 
-    
+class CreateCase(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    queryset = Case.objects.all()
+    serializer_class = serializers.CaseSerializer
+
+    def post(self, request, format=None):
+        user = self.request.user
+        county = self.request.query_params.get('county')
+        city = County.objects.get(id=county).city
+        start_datetime = self.request.query_params.get('start_datetime')
+        start_date = start_datetime.split('T')[0].split('-')
+        start_datetime = start_datetime.split('T')[1].split(':')
+        end_datetime = self.request.query_params.get('end_datetime')
+        end_date = end_datetime.split('T')[0].split('-')
+        end_datetime = end_datetime.split('T')[1].split(':')
+        weekday = self.request.query_params.get('weekday')
+        start_time = self.request.query_params.get('start_time')
+        start_time = start_time.split(':')
+        end_time = self.request.query_params.get('end_time')
+        end_time = end_time.split(':')
+
+        care_type = request.data.get('care_type')
+        is_continuous_time = request.data.get('is_continuous_time')
+        name = request.data.get('name')
+        gender = request.data.get('gender')
+        age = request.data.get('age')
+        weight = request.data.get('weight')
+        disease = request.data.get('disease')
+        disease_remark = request.data.get('disease_remark')
+        body_condition = request.data.get('body_condition')
+        conditions_remark = request.data.get('conditions_remark')
+        service = request.data.get('service')
+        emergencycontact_name = request.data.get('emergencycontact_name')
+        emergencycontact_relation = request.data.get('emergencycontact_relation')
+        emergencycontact_phone = request.data.get('emergencycontact_phone')
+
+        case = Case()
+        case.user = user
+        case.city = city
+        case.county = County.objects.get(id=county)
+        case.start_datetime = datetime.datetime(int(start_date[0]), int(start_date[1]), int(start_date[2]), int(start_datetime[0]), int(start_datetime[1]),int(start_datetime[2].split('Z')[0]))
+        case.end_datetime = datetime.datetime(int(end_date[0]), int(end_date[1]), int(end_date[2]), int(end_datetime[0]), int(end_datetime[1]), int(end_datetime[2].split('Z')[0]))
+        case.weekday = weekday
+        case.start_time = int(start_time[0]) + float(int(start_time[1])/60)
+        case.end_time = int(end_time[0]) + float(int(end_time[1])/60)
+        if name != None:
+            case.name = name
+        if care_type != None:
+            case.care_type = care_type
+        if is_continuous_time == "True":
+            case.is_continuous_time = True
+        else:
+            case.is_continuous_time = False
+        if gender != None:
+            case.gender = gender
+        if age != None:
+            case.age = age
+        if weight != None:
+            case.weight = weight
+        if disease_remark != None:
+            case.disease_remark = disease_remark
+        if conditions_remark != None:
+            case.conditions_remark = conditions_remark
+        if emergencycontact_name != None:
+            case.emergencycontact_name = emergencycontact_name
+        if emergencycontact_relation != None:
+            case.emergencycontact_relation = emergencycontact_relation
+        if emergencycontact_phone != None:
+            case.emergencycontact_phone = emergencycontact_phone
+        case.save()
+        if disease != None:
+            disease_ids = disease.split(',')
+            for disease_id in disease_ids:
+                casediseaseship = CaseDiseaseShip()
+                casediseaseship.disease = DiseaseCondition.objects.get(id=disease_id)
+                casediseaseship.case = case
+                casediseaseship.save()
+        if body_condition != None:
+            body_condition_ids = body_condition.split(',')
+            for body_condition_id in body_condition_ids:
+                casebodyconditionship = CaseBodyConditionShip()
+                casebodyconditionship.body_condition = BodyCondition.objects.get(id=body_condition_id)
+                casebodyconditionship.case = case
+                casebodyconditionship.save()
+
+        if service != None:
+            service_ids = service.split(',')
+            for service_id in service_ids:
+                caseserviceship = CaseServiceShip()
+                caseserviceship.service = Service.objects.get(id=service_id)
+                caseserviceship.case = case
+                caseserviceship.save()
+
+        disease_idList = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
+        case.disease = DiseaseCondition.objects.filter(id__in=disease_idList)
+        body_condition_idList = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
+        case.body_condition = BodyCondition.objects.filter(id__in=body_condition_idList)
+        service_idList = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True))
+        case.services = Service.objects.filter(id__in=service_idList)
+
+        serializer = self.serializer_class(case)
+        return Response(serializer.data)
+
+class ChooseServantViewSet(viewsets.GenericViewSet,
+                    mixins.UpdateModelMixin,
+                    mixins.RetrieveModelMixin,):
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    queryset = Case.objects.all()
+    serializer_class = serializers.CaseSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        case = self.get_object()
+        user = self.request.user
+        case.user_detail = user
+        queryset = User.objects.filter(is_servant=True)
+        if case.care_type == 'home':
+            queryset = queryset.filter(is_home=True)
+        if case.care_type == 'hospital':
+            queryset = queryset.filter(is_hospital=True)
+        #以下兩個情形只會有其中一個發生
+        # start_datetime = case.start_datetime
+        # end_datetime = case.end_datetime
+        if case.is_continuous_time == 'True':
+            queryset = queryset.filter(is_continuous_time=True)
+
+        #所選擇的周間跟時段 要符合 servant 的服務時段
+        if case.weekday != None:
+            start_date = str(case.start_datetime).split('T')[0]
+            end_date = str(case.end_datetime).split('T')[0]
+            start_time_int = case.start_time
+            end_time_int = case.end_time
+            weekdays_num_list = case.weekday.split(',')
+            service_time_condition_1 = Q(is_continuous_time=True)
+            for weekdays_num in weekdays_num_list:
+                service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+                queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
+
+        # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
+        # 2022-07-10
+       
+
+        #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
+        #1.取出日期期間有交集的訂單
+        condition1 = Q(start_datetime__range=[start_date, end_date])
+        condition2 = Q(end_datetime__range=[start_date, end_date])
+        condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
+        orders = Order.objects.filter(condition1 | condition2 | condition3)
+        #2.再從 1 取出週間有交集的訂單
+        #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
+        if case.weekday != None:
+            weekdays_num_list = case.weekday.split(',')
+            orders = orders.filter(order_weekday__weekday__in=weekdays_num_list).distinct()
+        #3.再從 2 取出時段有交集的訂單
+        print(start_time_int,end_time_int)
+        time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
+        time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
+        time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
+        orders = orders.filter(time_condition_1 | time_condition_2 | time_condition3)
+        order_conflict_servants_id = list(orders.values_list('servant', flat=True))
+        print(order_conflict_servants_id)
+        queryset = queryset.filter(~Q(id__in=order_conflict_servants_id))
+        queryset = queryset.filter(user_locations__county=case.county)
+        case.servant_candidate = queryset
+        serializer = self.serializer_class(case)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        case = self.get_object()
+        servant = request.data.get('servant')
+        if servant != None:
+            case.servant = User.objects.get(id=servant)
+        else:
+            case.delete()
+        serializer = self.serializer_class(case)
+        return Response(serializer.data)

@@ -22,12 +22,12 @@ router.register('recommend_servants', views.RecommendServantViewSet)
 router.register('servant_cases', views.ServantCaseViewSet)
 router.register('need_cases', views.NeedCaseViewSet)
 router.register('reviews', views.ReviewViewSet)
-
-
+router.register('choose_servant', views.ChooseServantViewSet)
 
 app_name = 'api'
 
 urlpatterns = [
     path('', include(router.urls)),
     path('servant_put_review/<int:pk>', views.ServantPutReviewView.as_view()),
+    path('create_case', views.CreateCase.as_view()),
 ]

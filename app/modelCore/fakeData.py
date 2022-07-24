@@ -327,6 +327,7 @@ def fakeData():
     order = Order()
     order.case = Case.objects.get(id=1)
     order.user = order.case.user
+    order.servant = order.case.servant
     order.state = 'unPaid'
     order.start_time = order.case.start_time
     order.end_time = order.case.end_time
@@ -346,6 +347,7 @@ def fakeData():
     order = Order()
     order.case = Case.objects.get(id=2)
     order.user = order.case.user
+    order.servant = order.case.servant
     order.state = 'paid'
     order.start_datetime = Case.objects.get(id=2).start_datetime
     order.end_datetime = Case.objects.get(id=2).end_datetime

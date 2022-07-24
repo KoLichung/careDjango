@@ -7,6 +7,12 @@ from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServ
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderIncreaseService
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+        read_only_fields = ('id',)
+
 class LicenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = License
@@ -123,6 +129,8 @@ class CaseSerializer(serializers.ModelSerializer):
     platform_money = serializers.IntegerField(default=0)
     total_money = serializers.IntegerField(default=0)
     increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
+    user_detail = UserSerializer(read_only=True)
+    servant_candidate = UserSerializer(read_only=True, many=True)
     class Meta:
         model = Case
         fields = '__all__'

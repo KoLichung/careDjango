@@ -98,6 +98,12 @@ UpdateUserInfoImage 的修改
 body form-data: info: Test   background_image: file
 http://localhost:8000/api/user/update_user_info_images
 
+CreateCase 的新增
+http://localhost:8000/api/create_case?county=57&start_datetime=2022-07-21T00:00:00Z&end_datetime=2022-08-11T00:00:00Z&weekday=1,3,5&start_time=08:30&end_time=17:30
+
+ChooseServantViewSet 的 查詢 修改
+http://localhost:8000/api/choose_servant
+
 !暫定：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 
@@ -127,6 +133,8 @@ HashIV：CeYa8zoA0mX4qBpP
 1.做產生需求單(Case)的 API, 把資料先都塞到一支 Create(POST) 的 api 試試
 2.更新 UpdateUserSerializer 把 User 需要的前端資料回傳
 3.CaseSearchViewSet 有 bug, 再檢查 retrieve 是否正常
+# weekdays_num_list 需要寫 for 迴圈去 filter
+# order_conflict_servants_id 的 value 應該是 servant
 
 20220721
 1.寫建店 API：

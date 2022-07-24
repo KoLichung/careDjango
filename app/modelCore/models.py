@@ -249,6 +249,10 @@ class Case(models.Model):
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
+    emergencycontact_name = models.CharField(max_length=100, blank=True, null=True)
+    emergencycontact_relation = models.CharField(max_length=100, blank=True, null=True)
+    emergencycontact_phone = models.CharField(max_length=10, blank=True, null=True)
+
 class DiseaseCondition(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
@@ -262,31 +266,31 @@ class BodyCondition(models.Model):
 class CaseDiseaseShip(models.Model):
     case = models.ForeignKey(
         Case,
-        on_delete=models.RESTRICT
+        on_delete = models.CASCADE
     )
     disease = models.ForeignKey(
         DiseaseCondition,
-        on_delete=models.RESTRICT
+        on_delete = models.CASCADE
     )
 
 class CaseBodyConditionShip(models.Model):
     case = models.ForeignKey(
         Case,
-        on_delete=models.RESTRICT
+        on_delete = models.CASCADE
     )
     body_condition = models.ForeignKey(
         BodyCondition,
-        on_delete=models.RESTRICT
+        on_delete = models.CASCADE
     )
 
 class CaseServiceShip(models.Model):
     case = models.ForeignKey(
         Case,
-        on_delete=models.RESTRICT
+        on_delete = models.CASCADE
     )
     service = models.ForeignKey(
         Service,
-        on_delete=models.RESTRICT
+        on_delete = models.CASCADE
     )
 
 class Order(models.Model):
@@ -300,6 +304,13 @@ class Order(models.Model):
         on_delete=models.RESTRICT,
         null=True,
         blank=True,
+    )
+    servant = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        null=True,
+        blank=True,
+        related_name='servant_orders'
     )
     UNPAID = 'unPaid'
     PAID = 'paid'
