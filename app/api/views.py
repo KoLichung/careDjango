@@ -72,7 +72,7 @@ class OrderViewSet(viewsets.GenericViewSet,
         if order.case.user == user:
             order.cases = order.case
             order.servants = order.case.servant
-            order.cases.rated_num= Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(rated_num=Count('servant_rating'))['rated_num']
+            order.cases.rating_nums= Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
             order.cases.servant_rating = Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
             disease_ids = list(CaseDiseaseShip.objects.filter(case=order.case).values_list('disease', flat=True))
             order.cases.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
@@ -206,6 +206,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         weekdays = self.request.query_params.get('weekdays')
         #8:22
         start_end_time = self.request.query_params.get('start_end_time')
+        order = self.request.query_params.get('order')
 
         queryset = User.objects.filter(is_servant=True)
         if care_type == 'home':
@@ -221,20 +222,22 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         #以下兩個情形只會有其中一個發生
         if is_continuous_time == 'True':
             queryset = queryset.filter(is_continuous_time=True)
-
+        
         #所選擇的周間跟時段 要符合 servant 的服務時段
         if weekdays != None:
+            start_date = start_datetime.split('T')[0]
+            end_date = end_datetime.split('T')[0]
+            start_time_int = int(start_end_time.split(':')[0])
+            end_time_int = int(start_end_time.split(':')[1])
             weekdays_num_list = weekdays.split(',')
             service_time_condition_1 = Q(is_continuous_time=True)
-            service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
-            queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
-
+            # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+            # queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
+            for weekdays_num in weekdays_num_list:
+                service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+                queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
         # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
         # 2022-07-10
-        start_date = start_datetime.split('T')[0]
-        end_date = end_datetime.split('T')[0]
-        start_time_int = int(start_end_time.split(':')[0])
-        end_time_int = int(start_end_time.split(':')[1])
 
         #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
         #1.取出日期期間有交集的訂單
@@ -252,9 +255,24 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
         time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
         orders = orders.filter(time_condition_1 | time_condition_2 | time_condition3)
-        order_conflict_servants_id = list(orders.values_list('user', flat=True))
+        order_conflict_servants_id = list(orders.values_list('servant', flat=True))
         queryset = queryset.filter(~Q(id__in=order_conflict_servants_id))
 
+        if order == 'rating':
+            queryset = queryset.order_by('-rating')
+        elif order == 'rating_nums':
+            queryset = queryset.filter(servant_reviews__servant_rating__gte=1).annotate(rating_nums=Count('servant_reviews__servant_rating')).order_by('-rating_nums')
+        elif order == 'price_low':
+            if care_type == 'home':
+                queryset = queryset.order_by('home_hour_wage')
+                print('low')
+            else:
+                queryset = queryset.order_by('hospital_hour_wage')
+        elif order == 'price_high':
+            if care_type == 'home':
+                queryset = queryset.order_by('-home_hour_wage')
+            else:
+                queryset = queryset.order_by('-hospital_hour_wage')
         for i in range(len(queryset)):
             queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
             queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
@@ -299,7 +317,7 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
         for i in range(len(queryset)):
             queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
-            queryset[i].rated_num = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rated_num=Count('servant_rating'))['rated_num']
+            queryset[i].rating_nums = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
 
         return queryset
 
@@ -333,7 +351,7 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
 
     def retrieve(self, request, *args, **kwargs):
         case = self.get_object()
-        case.rated_num = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(rated_num=Count('servant_rating'))['rated_num']
+        case.rating_nums = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
         case.servant_rating = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
         if case.is_taken == True:
             case.status = '案件已關閉'
@@ -482,7 +500,7 @@ class ReviewViewSet(viewsets.GenericViewSet,
             queryset[i].start_datetime = queryset[i].case.start_datetime
             queryset[i].end_datetime = queryset[i].case.end_datetime
             queryset[i].user_avg_rate = queryset.filter(case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
-            queryset[i].user_rated_num = queryset.filter(case_offender_rating__gte=1).aggregate(Count('case_offender_rating'))['case_offender_rating__count']
+            queryset[i].user_rating_nums = queryset.filter(case_offender_rating__gte=1).aggregate(Count('case_offender_rating'))['case_offender_rating__count']
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -543,12 +561,8 @@ class CreateCase(APIView):
         user = self.request.user
         county = self.request.query_params.get('county')
         city = County.objects.get(id=county).city
-        start_datetime = self.request.query_params.get('start_datetime')
-        start_date = start_datetime.split('T')[0].split('-')
-        start_datetime = start_datetime.split('T')[1].split(':')
-        end_datetime = self.request.query_params.get('end_datetime')
-        end_date = end_datetime.split('T')[0].split('-')
-        end_datetime = end_datetime.split('T')[1].split(':')
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
         weekday = self.request.query_params.get('weekday')
         start_time = self.request.query_params.get('start_time')
         start_time = start_time.split(':')
@@ -571,7 +585,7 @@ class CreateCase(APIView):
         emergencycontact_phone = request.data.get('emergencycontact_phone')
 
         #searvant_ids=1,4,7
-        searvant_ids = request.data.get('sarvant_ids')
+        servant_ids = request.data.get('servant_ids')
 
         case = Case()
         case.user = user
@@ -581,8 +595,8 @@ class CreateCase(APIView):
         #start_datetime=2022-07-21
         #s = "2014-04-07"
         #datetime.datetime.strptime(s, "%Y-%m-%d").date()
-        case.start_datetime = datetime.datetime(int(start_date[0]), int(start_date[1]), int(start_date[2]), int(start_datetime[0]), int(start_datetime[1]),int(start_datetime[2].split('Z')[0]))
-        case.end_datetime = datetime.datetime(int(end_date[0]), int(end_date[1]), int(end_date[2]), int(end_datetime[0]), int(end_datetime[1]), int(end_datetime[2].split('Z')[0]))
+        case.start_datetime = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+        case.end_datetime = datetime.datetime.strptime(end_date, "%Y-%m-%d")
         
         case.weekday = weekday
         case.start_time = int(start_time[0]) + float(int(start_time[1])/60)

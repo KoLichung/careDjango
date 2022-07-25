@@ -99,8 +99,8 @@ body form-data: info: Test   background_image: file
 http://localhost:8000/api/user/update_user_info_images
 
 CreateCase 的新增
-http://localhost:8000/api/create_case?county=57&start_datetime=2022-07-21&end_datetime=2022-08-11&weekday=1,3,5&start_time=08:30&end_time=17:30
-
+http://localhost:8000/api/create_case?county=57&start_date=2022-07-22&end_date=2022-08-15&weekday=1,3,5&start_time=08:30&end_time=17:30
+body form-data: care_type: home name: 王老明 gender: M  age: 69  weight: 79  disease: 1711  disease_remark: test  body_condition: 2,8,10  conditions_remark: test  service: 1,4,7  emergencycontact_name: 王大明  emergencycontact_relation: 父  emergencycontact_phone: 0987654321
 ChooseServantViewSet 的 查詢 修改
 http://localhost:8000/api/choose_servant
 
@@ -130,10 +130,10 @@ HashIV：CeYa8zoA0mX4qBpP
 
 測試 API 網址：https://ccore.Newebpay.com/API/AddMerchant
 
-20220723
+20220725
 1.Home 的 api 拿來 case choose searvant, home 的 api 做一個 order param
 order=rating, rating_nums, price_low, price_high
-2.CreateCase 修正 searvant_ids, datetime 格式
+2.CreateCase 修正 servant_ids, datetime 格式
 3.
 import module
 module.aes256_cbc_encrypt(query_str, key, iv)

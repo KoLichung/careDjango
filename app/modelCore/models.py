@@ -382,7 +382,8 @@ class Review(models.Model):
         User,
         on_delete=models.RESTRICT,
         null=True,
-        blank=True
+        blank=True,
+        related_name='servant_reviews'
     )
 
     case_offender_rating =  models.FloatField(default=0, blank = True, null=True)
@@ -473,3 +474,11 @@ class SystemMessage(models.Model):
     content = models.TextField(default='', blank = True, null=True)
     create_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
     
+class UserStore(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        )
+    MerchantID = models.CharField(max_length = 255, blank = True, null=True)
+    MerchantHashKey = models.CharField(max_length = 255, blank = True, null=True)
+    MerchantIvKey = models.CharField(max_length = 255, blank = True, null=True)

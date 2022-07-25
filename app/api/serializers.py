@@ -86,7 +86,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     start_datetime = serializers.CharField(default='')
     end_datetime = serializers.CharField(default='')
     user_avg_rate = serializers.IntegerField(default=0)
-    user_rated_num = serializers.IntegerField(default=0)
+    user_rating_nums= serializers.IntegerField(default=0)
     class Meta:
         model = Review
         fields = '__all__'
@@ -100,11 +100,11 @@ class ServantSerializer(serializers.ModelSerializer):
     licences = LicenseSerializer(read_only=True, many=True)
     about_me = serializers.CharField(default='')
     reviews = ReviewSerializer(read_only=True, many=True)
-    rated_num = serializers.IntegerField(default=0)
+    rating_nums = serializers.IntegerField(default=0)
     
     class Meta:
         model = User
-        fields = ('id', 'name', 'image', 'rating', 'is_home', 'home_hour_wage', 'home_half_day_wage', 'home_one_day_wage', 'is_hospital', 'hospital_hour_wage', 'hospital_half_day_wage', 'hospital_one_day_wage', 'locations', 'rated_num', 'background_image_url', 'services', 'licences', 'about_me', 'reviews','avg_rate')
+        fields = ('id', 'name', 'image', 'rating', 'is_home', 'home_hour_wage', 'home_half_day_wage', 'home_one_day_wage', 'is_hospital', 'hospital_hour_wage', 'hospital_half_day_wage', 'hospital_one_day_wage', 'locations', 'rating_nums', 'background_image_url', 'services', 'licences', 'about_me', 'reviews','avg_rate')
         read_only_fields = ('id',)
 
 class OrderIncreaseServiceSerializer(serializers.ModelSerializer):
@@ -118,7 +118,7 @@ class CaseSerializer(serializers.ModelSerializer):
     disease = DiseaseConditionSerializer(read_only=True, many=True)
     body_condition = BodyConditionSerializer(read_only=True, many=True)
     review = ReviewSerializer(read_only=True, many=False)
-    rated_num = serializers.FloatField(default=0)
+    rating_nums = serializers.FloatField(default=0)
     servant_rating = serializers.IntegerField(default=0)
     case_offender_rating = serializers.IntegerField(default=0)
     status = serializers.CharField(default='')

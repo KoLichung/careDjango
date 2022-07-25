@@ -1,12 +1,15 @@
 from __future__ import absolute_import, division, unicode_literals
+from urllib import response
 from django.shortcuts import render 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpResponse
 
+from newebpayApi import module
 import requests
 import time
-import altapay
+import urllib.parse
+import webbrowser
 import hashlib
 from Crypto.Cipher import AES
 from newebpayApi.aesCipher import AESCipher
@@ -22,8 +25,8 @@ class CreateMerchant(APIView):
         timeStamp = int( time.time() )
         MerchantID = "MS336989148"
         PartnerID_ = "CARE168"
-        HashKey = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        HashIV = "CeYa8zoA0mX4qBpP"
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
         data = {
                 "Version" : "1.8",
                 "TimeStamp": timeStamp,
@@ -76,15 +79,18 @@ class CreateMerchant(APIView):
 
         data.update(extend_params_personal)
         # data.update(extend_params_company)
-        query_string = altapay.utils.http_build_query(data)
 
-        aes = AESCipher()
-        postData = aes.encrypt(str(query_string))
+        query_str = urllib.parse.urlencode(data)
+        encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
+        
+        # query_string = altapay.utils.http_build_query(data)
+        # aes = AESCipher()
+        # postData = aes.encrypt(str(query_string))
 
         # encrypted = cbc_encrypt(query_string, HashKey, HashIV)
         # print(int(encrypted, 16))
         # PostData_ = str(encrypted)
-        resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":postData})
+        resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
         return Response(resp)
 
 class MpgTrade(APIView):
@@ -93,12 +99,12 @@ class MpgTrade(APIView):
         order_id = self.request.query_params.get('order_id')
         order = Order.objects.get(id=order_id)
 
-        post_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
+        api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         timeStamp = int( time.time() )
-        MerchantID = "MS336989148"
+        merchant_id = "MS336989148"
         Version = "2.0"
-        HashKey = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        HashIV = "CeYa8zoA0mX4qBpP"
+        key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
+        iv = "C6RhZZ45pflwEoSP"
         data = {
                 "Version": "2.0",
                 "MerchantID" : "MS336989148",
@@ -110,19 +116,32 @@ class MpgTrade(APIView):
                 "ReturnURL": ""
         }
 
-        query_string = altapay.utils.http_build_query(data)
-        # encrypted = cbc_encrypt(query_string, HashKey, HashIV)
-
-        aes = AESCipher()
-        data = aes.encrypt(str(query_string))
-
-        hash_object = hashlib.sha256(str(HashKey + data + HashIV).encode('utf-8'))
+        query_str = urllib.parse.urlencode(data)
+        encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
+        hashs = module.sha256_hash(encrypt_data, key, iv)
+        
+        params = {
+        "MerchantID": merchant_id,
+        "TradeInfo": encrypt_data,
+        "TradeSha": hashs,
+        "Version": data["Version"],
+        }               
+        with open("MPG.html", 'w', encoding="utf-8") as f:
+            html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
+            f.write(html_string)
+        webbrowser.open("MPG.html", "r")
+        return response('ok')
+        # query_string = altapay.utils.http_build_query(data)
+        # # encrypted = cbc_encrypt(query_string, HashKey, HashIV)
+        # aes = AESCipher()
+        # data = aes.encrypt(str(query_string))
+        # hash_object = hashlib.sha256(str(HashKey + data + HashIV).encode('utf-8'))
         # print(hash_object)
-        TradeSha = hash_object.hexdigest().upper()
+        # TradeSha = hash_object.hexdigest().upper()
         # print(TradeSha)
-        TradeInfo = data
+        # TradeInfo = data
 
-        resp = requests.post(post_url, data ={"MerchantID":MerchantID,"TradeInfo":TradeInfo,"TradeSha":TradeSha, "Version":Version})
+        resp = requests.post(api_url, data =params)
         # decrypt_text = cbc_decrypt(resp.text,HashKey)
         # the_data = urllib.parse.unquote(decrypt_text)
         return HttpResponse(resp)
