@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import hashlib
 import binascii
 from Crypto.Cipher import AES

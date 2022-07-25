@@ -99,7 +99,7 @@ body form-data: info: Test   background_image: file
 http://localhost:8000/api/user/update_user_info_images
 
 CreateCase 的新增
-http://localhost:8000/api/create_case?county=57&start_datetime=2022-07-21T00:00:00Z&end_datetime=2022-08-11T00:00:00Z&weekday=1,3,5&start_time=08:30&end_time=17:30
+http://localhost:8000/api/create_case?county=57&start_datetime=2022-07-21&end_datetime=2022-08-11&weekday=1,3,5&start_time=08:30&end_time=17:30
 
 ChooseServantViewSet 的 查詢 修改
 http://localhost:8000/api/choose_servant
@@ -119,6 +119,7 @@ https://cwww.newebpay.com/
 jasonko2022
 vCRQtf77UZ6vCie
 
+代號：MS336989148
 HashKey: SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH
 HashIV: C6RhZZ45pflwEoSP
 
@@ -128,6 +129,17 @@ HashKey：Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q
 HashIV：CeYa8zoA0mX4qBpP
 
 測試 API 網址：https://ccore.Newebpay.com/API/AddMerchant
+
+20220723
+1.Home 的 api 拿來 case choose searvant, home 的 api 做一個 order param
+order=rating, rating_nums, price_low, price_high
+2.CreateCase 修正 searvant_ids, datetime 格式
+3.
+import module
+module.aes256_cbc_encrypt(query_str, key, iv)
+先測試建店 API
+解析回傳參數, 寫一個 UserStore class 把必要參數 MerchantID, MerchantHashKey, MerchantIvKey 存下來
+
 
 20220722
 1.做產生需求單(Case)的 API, 把資料先都塞到一支 Create(POST) 的 api 試試
