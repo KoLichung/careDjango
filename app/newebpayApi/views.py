@@ -18,8 +18,8 @@ from modelCore.models import Order
 class CreateMerchant(APIView):
     
     def get(self, request, format=None):
-        order_id = self.request.query_params.get('order_id')
-        order = Order.objects.get(id=order_id)
+        # order_id = self.request.query_params.get('order_id')
+        # order = Order.objects.get(id=order_id)
 
         post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
         timeStamp = int( time.time() )
@@ -54,10 +54,10 @@ class CreateMerchant(APIView):
                 "MerchantType": 2,
                 "BusinessType": "8999",
                 "MerchantDesc": "test",
-                "BankCode": order.user.ATMInfoBankCode,
-                "SubBankCode": order.user.ATMInfoBranchBankCode,
-                "BankAccount": order.user.ATMInfoAccount,
-                "AccountName": order.user.name,
+                "BankCode": "013",
+                "SubBankCode": "1379",
+                "BankAccount": "137030000175",
+                "AccountName": "齊家科技股份有限公司",
         }
 
         extend_params_personal = {
