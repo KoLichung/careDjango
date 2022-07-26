@@ -94,7 +94,7 @@ class CreateMerchant(APIView):
         # print(int(encrypted, 16))
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
-        return Response(json.loads(resp))
+        return Response(json.loads(resp.text))
 
 class MpgTrade(APIView):
     
