@@ -131,13 +131,14 @@ class CaseSerializer(serializers.ModelSerializer):
     increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
     user_detail = UserSerializer(read_only=True)
     servant_candidate = UserSerializer(read_only=True, many=True)
+
     class Meta:
         model = Case
         fields = '__all__'
         read_only_fields = ('id',)
 
 class OrderSerializer(serializers.ModelSerializer):
-    cases = CaseSerializer(read_only=True)
+    related_case = CaseSerializer(read_only=True)
     servants = ServantSerializer(read_only=True)
     class Meta:
         model = Order

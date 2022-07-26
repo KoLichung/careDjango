@@ -6,7 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from django.db.models import Q
-from django.db.models import Avg , Count
+from django.db.models import Avg , Count ,Sum
 from django.shortcuts import get_object_or_404
 import datetime
 import operator
@@ -70,14 +70,14 @@ class OrderViewSet(viewsets.GenericViewSet,
         order = self.get_object()
         user = self.request.user
         if order.case.user == user:
-            order.cases = order.case
+            order.related_case = order.case
             order.servants = order.case.servant
-            order.cases.rating_nums= Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
-            order.cases.servant_rating = Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
+            order.related_case.rating_nums= Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
+            order.related_case.servant_rating = Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
             disease_ids = list(CaseDiseaseShip.objects.filter(case=order.case).values_list('disease', flat=True))
-            order.cases.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
+            order.related_case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
             body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=order.case).values_list('body_condition', flat=True))
-            order.cases.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
+            order.related_case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
             serializer = self.get_serializer(order)
             return Response(serializer.data)
         else:
@@ -737,3 +737,165 @@ class CreateCase(APIView):
 #             case.delete()
 #         serializer = self.serializer_class(case)
 #         return Response(serializer.data)
+class CreateServantOrder(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    queryset = Order.objects.all()
+    serializer_class = serializers.OrderSerializer
+
+    def post(self, request, format=None):
+        user = self.request.user
+        servant_id = self.request.query_params.get('servant_id')
+        servant = User.objects.get(id=servant_id)
+        county = self.request.query_params.get('county')
+        city = County.objects.get(id=county).city
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+        weekday = self.request.query_params.get('weekday')
+        start_time = self.request.query_params.get('start_time')
+        start_time = start_time.split(':')
+        end_time = self.request.query_params.get('end_time')
+        end_time = end_time.split(':')
+
+        care_type = request.data.get('care_type')
+        is_continuous_time = request.data.get('is_continuous_time')
+        name = request.data.get('name')
+        gender = request.data.get('gender')
+        age = request.data.get('age')
+        weight = request.data.get('weight')
+        disease = request.data.get('disease')
+        disease_remark = request.data.get('disease_remark')
+        body_condition = request.data.get('body_condition')
+        conditions_remark = request.data.get('conditions_remark')
+        service = request.data.get('service')
+        emergencycontact_name = request.data.get('emergencycontact_name')
+        emergencycontact_relation = request.data.get('emergencycontact_relation')
+        emergencycontact_phone = request.data.get('emergencycontact_phone')
+        is_open_for_search = request.data.get('is_open_for_search')
+
+        case = Case()
+        case.user = user
+        case.servant = servant
+        case.city = city
+        case.county = County.objects.get(id=county)
+
+        #start_datetime=2022-07-21
+        #s = "2014-04-07"
+        #datetime.datetime.strptime(s, "%Y-%m-%d").date()
+        case.start_datetime = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+        case.end_datetime = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+        
+        case.weekday = weekday
+        case.start_time = int(start_time[0]) + float(int(start_time[1])/60)
+        case.end_time = int(end_time[0]) + float(int(end_time[1])/60)
+        if name != None:
+            case.name = name
+        if care_type != None:
+            case.care_type = care_type
+        if is_continuous_time == "True":
+            case.is_continuous_time = True
+        else:
+            case.is_continuous_time = False
+        if gender != None:
+            case.gender = gender
+        if age != None:
+            case.age = age
+        if weight != None:
+            case.weight = weight
+        if disease_remark != None:
+            case.disease_remark = disease_remark
+        if conditions_remark != None:
+            case.conditions_remark = conditions_remark
+        if emergencycontact_name != None:
+            case.emergencycontact_name = emergencycontact_name
+        if emergencycontact_relation != None:
+            case.emergencycontact_relation = emergencycontact_relation
+        if emergencycontact_phone != None:
+            case.emergencycontact_phone = emergencycontact_phone
+        if is_open_for_search == "True":
+            case.is_open_for_search = True
+        else:
+            case.is_open_for_search = False
+        case.save()
+
+        if disease != None:
+            disease_ids = disease.split(',')
+            for disease_id in disease_ids:
+                casediseaseship = CaseDiseaseShip()
+                casediseaseship.disease = DiseaseCondition.objects.get(id=disease_id)
+                casediseaseship.case = case
+                casediseaseship.save()
+
+        if body_condition != None:
+            body_condition_ids = body_condition.split(',')
+            for body_condition_id in body_condition_ids:
+                casebodyconditionship = CaseBodyConditionShip()
+                casebodyconditionship.body_condition = BodyCondition.objects.get(id=body_condition_id)
+                casebodyconditionship.case = case
+                casebodyconditionship.save()
+
+        if service != None:
+            service_ids = service.split(',')
+            for service_id in service_ids:
+                caseserviceship = CaseServiceShip()
+                caseserviceship.service = Service.objects.get(id=service_id)
+                caseserviceship.case = case
+                caseserviceship.save()
+
+        disease_idList = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
+        case.disease = DiseaseCondition.objects.filter(id__in=disease_idList)
+        body_condition_idList = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
+        case.body_condition = BodyCondition.objects.filter(id__in=body_condition_idList)
+        service_idList = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True))
+        case.services = Service.objects.filter(id__in=service_idList)
+
+        order = Order()
+        order.case = case
+        order.user = case.user
+        order.servant = case.servant
+        order.state = 'unPaid'
+        order.start_datetime = case.start_datetime
+        order.end_datetime = case.end_datetime
+        order.start_time = order.case.start_time
+        order.end_time = order.case.end_time
+        order.save()
+        weekdays = order.case.weekday.split(',')
+        for weekday in weekdays:
+            orderWeekday = OrderWeekDay()
+            orderWeekday.order = order
+            orderWeekday.weekday = weekday
+            orderWeekday.save()
+        weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+        total_hours = 0
+        for i in weekday_list:
+            total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+        order.work_hours = total_hours
+        if order.case.care_type == 'home':
+            order.base_money = order.work_hours * order.case.servant.home_hour_wage
+        elif order.case.care_type == 'hospital':
+            order.base_money = order.work_hours * order.case.servant.hospital_hour_wage
+        order.platform_percent = 15
+        order.save()
+        Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+
+        for service_id in service_idList:
+            if int(service_id) <= 4:
+                orderIncreaseService = OrderIncreaseService()
+                orderIncreaseService.order = order
+                orderIncreaseService.service = Service.objects.get(id=service_id)
+                orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                orderIncreaseService.save()
+
+        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+        order.platform_money = order.total_money * (order.platform_percent/100)
+        order.save()
+        order.related_case = case
+        # for weekday in 
+        serializer = self.serializer_class(order)
+        return Response(serializer.data)
+
+def days_count(weekdays: list, start: date, end: date):
+    dates_diff = end-start
+    days = [start + timedelta(days=i) for i in range(dates_diff.days)]
+    return len([day for day in days if day.weekday() in weekdays])

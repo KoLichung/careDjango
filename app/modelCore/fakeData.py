@@ -171,6 +171,18 @@ def fakeData():
 
     userServiceShip = UserServiceShip()
     userServiceShip.user = User.objects.get(id=3)
+    userServiceShip.service = Service.objects.get(id=1)
+    userServiceShip.increase_percent = 15
+    userServiceShip.save()
+
+    userServiceShip = UserServiceShip()
+    userServiceShip.user = User.objects.get(id=3)
+    userServiceShip.service = Service.objects.get(id=4)
+    userServiceShip.increase_percent = 20
+    userServiceShip.save()
+
+    userServiceShip = UserServiceShip()
+    userServiceShip.user = User.objects.get(id=3)
     userServiceShip.service = Service.objects.get(id=5)
     userServiceShip.save()
 
@@ -353,6 +365,13 @@ def fakeData():
     order.end_datetime = Case.objects.get(id=2).end_datetime
     order.start_time = order.case.start_time
     order.end_time = order.case.end_time
+    order.save()
+    weekdays = order.case.weekday.split(',')
+    for weekday in weekdays:
+        orderWeekday = OrderWeekDay()
+        orderWeekday.order = order
+        orderWeekday.weekday = weekday
+        orderWeekday.save()
     weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
     total_hours = 0
     for i in weekday_list:
@@ -390,21 +409,6 @@ def fakeData():
     orderIncreaseService.increase_percent = 30
     orderIncreaseService.increase_money = (Order.objects.get(id=1).base_money) * (orderIncreaseService.increase_percent)/100
     orderIncreaseService.save()
-
-    orderWeekday = OrderWeekDay()
-    orderWeekday.order = Order.objects.get(id=2)
-    orderWeekday.weekday = '2'
-    orderWeekday.save()
-
-    orderWeekday = OrderWeekDay()
-    orderWeekday.order = Order.objects.get(id=2)
-    orderWeekday.weekday = '4'
-    orderWeekday.save()
-
-    orderWeekday = OrderWeekDay()
-    orderWeekday.order = Order.objects.get(id=2)
-    orderWeekday.weekday = '5'
-    orderWeekday.save()
 
     for order in Order.objects.all():
         order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)

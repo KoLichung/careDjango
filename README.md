@@ -105,6 +105,9 @@ body form-data: care_type: home name: 王老明 gender: M  age: 69  weight: 79  
 ChooseServantViewSet 的 查詢 修改
 http://localhost:8000/api/choose_servant
 
+CreateServantOrder 的新增
+http://localhost:8000/api/create_servant_order?county=57&start_date=2022-07-22&end_date=2022-08-15&weekday=1,3,5&start_time=08:30&end_time=17:30&servant_id=3
+body form-data: care_type: home name: 王老明 gender: M  age: 69  weight: 79  disease: 1,7,11  disease_remark: test  body_condition: 2,8,10  conditions_remark: test  service: 1,4,7  emergencycontact_name: 王大明  emergencycontact_relation: 父  emergencycontact_phone: 0987654321
 !暫定, 未處理：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播
@@ -134,6 +137,7 @@ HashIV：CeYa8zoA0mX4qBpP
 
 20220726
 1.照顧者預訂單的 api => 產生 case, 產生 order, 跳轉付款頁面~
+!? 選擇時間時，如不符合servant的服務時間，是否需要提示？
 
 20220725
 1.Home 的 api 拿來 case choose searvant, home 的 api 做一個 order param

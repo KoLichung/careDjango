@@ -30,4 +30,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('servant_put_review/<int:pk>', views.ServantPutReviewView.as_view()),
     path('create_case', views.CreateCase.as_view()),
+    path('create_servant_order', views.CreateServantOrder.as_view()),
 ]
