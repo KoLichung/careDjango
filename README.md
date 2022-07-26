@@ -27,6 +27,7 @@ Message 的列表, 新增,
 http://localhost:8000/api/messages/
 SystemMessage 的列表, 新增,
 http://localhost:8000/api/systemMessages/
+
 Search Servant 的列表, 查詢 用於首頁
 http://localhost:8000/api/search_servants/?care_type=home&city=3&county=35&is_continuous_time=True&weekdays=1,3,5&start_end_time=6:9&start_datetime=2022-07-21T00:00:00Z&end_datetime=2022-08-20T00:00:00Z
 RecommendServantViewSet 的列表
@@ -104,8 +105,9 @@ body form-data: care_type: home name: 王老明 gender: M  age: 69  weight: 79  
 ChooseServantViewSet 的 查詢 修改
 http://localhost:8000/api/choose_servant
 
-!暫定：
+!暫定, 未處理：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
+b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播
 
 要做：
 1.建店 API => 建立”服務者”商店(每一個服務者, 就是一家商店)
@@ -129,6 +131,9 @@ HashKey：Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q
 HashIV：CeYa8zoA0mX4qBpP
 
 測試 API 網址：https://ccore.Newebpay.com/API/AddMerchant
+
+20220726
+1.照顧者預訂單的 api => 產生 case, 產生 order, 跳轉付款頁面~
 
 20220725
 1.Home 的 api 拿來 case choose searvant, home 的 api 做一個 order param

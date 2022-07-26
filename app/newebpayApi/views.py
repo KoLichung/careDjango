@@ -106,14 +106,14 @@ class MpgTrade(APIView):
         key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
         iv = "C6RhZZ45pflwEoSP"
         data = {
-                "Version": "2.0",
-                "MerchantID" : "MS336989148",
-                "RespondType": "JSON",
-                "TimeStamp": timeStamp,
-                "MerchantOrderNo":"202207300001",
-                "Amt": order.total_money,
-                "ItemDesc": "test",       
-                "ReturnURL": ""
+            "Version": "2.0",
+            "MerchantID" : "MS336989148",
+            "RespondType": "JSON",
+            "TimeStamp": timeStamp,
+            "MerchantOrderNo":"202207300001",
+            "Amt": order.total_money,
+            "ItemDesc": "test",       
+            "ReturnURL": ""
         }
 
         query_str = urllib.parse.urlencode(data)
@@ -121,10 +121,10 @@ class MpgTrade(APIView):
         hashs = module.sha256_hash(encrypt_data, key, iv)
         
         params = {
-        "MerchantID": merchant_id,
-        "TradeInfo": encrypt_data,
-        "TradeSha": hashs,
-        "Version": data["Version"],
+            "MerchantID": merchant_id,
+            "TradeInfo": encrypt_data,
+            "TradeSha": hashs,
+            "Version": data["Version"],
         }               
         with open("MPG.html", 'w', encoding="utf-8") as f:
             html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
