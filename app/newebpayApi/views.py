@@ -21,7 +21,7 @@ class CreateMerchant(APIView):
         order_id = self.request.query_params.get('order_id')
         order = Order.objects.get(id=order_id)
 
-        post_url = 'https://ccore.NewebPay.com/API/AddMerchant/modify'
+        post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
         timeStamp = int( time.time() )
         MerchantID = "MS336989148"
         PartnerID_ = "CARE168"
