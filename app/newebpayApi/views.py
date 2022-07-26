@@ -37,7 +37,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman778@gmail.com",
                 "DisputeMail": "scottman778@gmail.com",
                 "MerchantEmail": "happy777@gmail.com",
-                "MerchantID": "AAA123456",
+                "MerchantID": "ACE123456",
                 "MCType": 1,
                 "MerchantName": "杏心一股份有限公司",
                 "MerchantNameE": "XinshingOne",
