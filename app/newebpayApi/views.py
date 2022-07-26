@@ -33,7 +33,7 @@ class CreateMerchant(APIView):
                 "MemberPhone": "0987654321",
                 "MemberAddress": "台南市中西區民族路27號",
                 "LoginAccount": "Scottman0815",
-                "ManagerMobile": "0987654321",
+                "ManagerMobile": "0987-654321",
                 "ManagerEmail": "scottman778@gmail.com",
                 "DisputeMail": "scottman778@gmail.com",
                 "MerchantEmail": "happy777@gmail.com",
