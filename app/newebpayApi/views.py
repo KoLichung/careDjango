@@ -39,8 +39,8 @@ class CreateMerchant(APIView):
                 "MerchantEmail": "happy777@gmail.com",
                 "MerchantID": "AAA123456",
                 "MCType": 1,
-                "MerchantName": "杏心股份有限公司",
-                "MerchantNameE": "Xinshing",
+                "MerchantName": "杏心一股份有限公司",
+                "MerchantNameE": "XinshingOne",
                 "MerchantWebURL": "http://test.com",
                 "MerchantAddrCity": "台南市",
                 "MerchantAddrArea": "中西區",
@@ -59,13 +59,13 @@ class CreateMerchant(APIView):
         }
 
         extend_params_personal = {
-            "MemberUnified": "D123456789",
-            "IDCardDate": "1110330",
-            "IDCardPlace": "台南市",
-            "IDPic": 1,
-            "IDFrom": 3,
-            "Date": "1000101",
-            "MemberName": "林小華",
+            "MemberUnified": "N124596345",
+            "IDCardDate": "1070124",
+            "IDCardPlace": "桃市",
+            "IDPic": 0,
+            "IDFrom": 2,
+            "Date": "19850911",
+            "MemberName": "柯力中",
         }
 
         extend_params_company = {
