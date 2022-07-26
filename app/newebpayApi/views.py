@@ -10,6 +10,7 @@ import requests
 import time
 import urllib.parse
 import webbrowser
+import json
 import hashlib
 from Crypto.Cipher import AES
 from newebpayApi.aesCipher import AESCipher
@@ -18,8 +19,8 @@ from modelCore.models import Order
 class CreateMerchant(APIView):
     
     def get(self, request, format=None):
-        order_id = self.request.query_params.get('order_id')
-        order = Order.objects.get(id=order_id)
+        # order_id = self.request.query_params.get('order_id')
+        # order = Order.objects.get(id=order_id)
 
         post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
         timeStamp = int( time.time() )
@@ -30,14 +31,16 @@ class CreateMerchant(APIView):
         data = {
                 "Version" : "1.8",
                 "TimeStamp": timeStamp,
-                "MemberPhone": "0987654321",
+                "MemberPhone": "0987-654321",
                 "MemberAddress": "台南市中西區民族路27號",
-                "LoginAccount": "Scottman0815",
-                "ManagerMobile": "0987654321",
-                "ManagerEmail": "scottman778@gmail.com",
-                "DisputeMail": "scottman778@gmail.com",
-                "MerchantEmail": "happy777@gmail.com",
-                "MerchantID": "AAA123456",
+                "ManagerName": "柯力中",
+                "ManagerNameE": "Li Chung,Ko",
+                "LoginAccount": "jasonko2022",
+                "ManagerMobile": "0912585506",
+                "ManagerEmail": "jason@kosbrother.com",
+                "DisputeMail": "jason@kosbrother.com",
+                "MerchantEmail": "jason@kosbrother.com",
+                "MerchantID": "ACE123456",
                 "MCType": 1,
                 "MerchantName": "杏心一股份有限公司",
                 "MerchantNameE": "XinshingOne",
@@ -52,10 +55,10 @@ class CreateMerchant(APIView):
                 "MerchantType": 2,
                 "BusinessType": "8999",
                 "MerchantDesc": "test",
-                "BankCode": order.user.ATMInfoBankCode,
-                "SubBankCode": order.user.ATMInfoBranchBankCode,
-                "BankAccount": order.user.ATMInfoAccount,
-                "AccountName": order.user.name,
+                "BankCode": "013",
+                "SubBankCode": "1379",
+                "BankAccount": "137030000175",
+                "AccountName": "齊家科技股份有限公司",
         }
 
         extend_params_personal = {
@@ -91,7 +94,7 @@ class CreateMerchant(APIView):
         # print(int(encrypted, 16))
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
-        return Response(resp)
+        return Response(json.loads(resp.text))
 
 class MpgTrade(APIView):
     
