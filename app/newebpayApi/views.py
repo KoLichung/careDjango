@@ -10,6 +10,7 @@ import requests
 import time
 import urllib.parse
 import webbrowser
+import json
 import hashlib
 from Crypto.Cipher import AES
 from newebpayApi.aesCipher import AESCipher
@@ -93,7 +94,7 @@ class CreateMerchant(APIView):
         # print(int(encrypted, 16))
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
-        return Response(resp)
+        return Response(json.loads(resp))
 
 class MpgTrade(APIView):
     
