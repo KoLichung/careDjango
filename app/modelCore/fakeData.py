@@ -20,6 +20,7 @@ def importCityCounty():
             if City.objects.filter(name=row[0]).count()==0:
                 city = City()
                 city.name = row[0]
+                city.newebpay_cityname = row[6]
                 city.save()
             else:
                 city = City.objects.get(name=row[0])
