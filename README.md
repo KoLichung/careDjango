@@ -135,6 +135,9 @@ HashIV：CeYa8zoA0mX4qBpP
 
 測試 API 網址：https://ccore.Newebpay.com/API/AddMerchant
 
+vultr:
+8k-TPf]CT964,--R
+
 20220727
 1.City model add newebpay_value
 2.修正 county.csv, 修正 importCityCounty, 重新 set_sand_box_data
