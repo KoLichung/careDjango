@@ -132,11 +132,11 @@ class MpgTrade(APIView):
             "TradeSha": hashs,
             "Version": data["Version"],
         }               
-        with open("MPG.html", 'w', encoding="utf-8") as f:
-            html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
-            f.write(html_string)
-        webbrowser.open("MPG.html", "r")
-        return Response('ok')
+        # with open("MPG.html", 'w', encoding="utf-8") as f:
+        #     html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
+        #     f.write(html_string)
+        # webbrowser.open("MPG.html", "r")
+        # return response('ok')
         # query_string = altapay.utils.http_build_query(data)
         # # encrypted = cbc_encrypt(query_string, HashKey, HashIV)
         # aes = AESCipher()
