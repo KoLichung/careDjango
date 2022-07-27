@@ -8,25 +8,25 @@ import webbrowser
 
 
 # 設定api網址、建立商店代號.key.iv
-api_url = "https://ccore.newebpay.com/MPG/mpg_gateway"
-merchant_id = "TEK1656560395"
-key = "UbeH372MUkjIwmHEpHDvlULoJrv0HeBZ"
-iv = "CGBifDtHUOAqoYwP"
+api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
+timeStamp = int( time.time() )
+merchant_id = "MS336989148"
+Version = "2.0"
+key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
+iv = "C6RhZZ45pflwEoSP"
 
 
 # 建立MPG交易時要填入的資料、設定版本號(以信用卡一次付清為例)
 test_data = {
-    "MerchantID": merchant_id,
-    "Version": "2.0",
-    "TimeStamp": int(time.time()),
-    "MerchantOrderNo": f"No{int(time.time())}",
-    "Amt": 40,
-    "CREDIT": 1,
-    "ItemDesc": "test",
-    "LoginType": "0",
-    "Email": "",
-    "RespondType": "JSON",
-}
+            "Version": "2.0",
+            "MerchantID" : "MS336989148",
+            "RespondType": "JSON",
+            "TimeStamp": timeStamp,
+            "MerchantOrderNo":"202207300001",
+            "Amt": 3000,
+            "ItemDesc": "test",       
+            
+        }
 
 
 # 將資料編成搜尋字串，並依照不同加密模式進行加密及SHA256壓碼
