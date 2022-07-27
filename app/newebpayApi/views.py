@@ -40,10 +40,10 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
                 "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE123456",
+                "MerchantID": "ACE002",
                 "MCType": 1,
-                "MerchantName": "杏心一股份有限公司",
-                "MerchantNameE": "XinshingOne",
+                "MerchantName": "杏心測試二",
+                "MerchantNameE": "XinshingTest2",
                 "MerchantWebURL": "http://test.com",
                 "MerchantAddrCity": "台南市",
                 "MerchantAddrArea": "中西區",
@@ -99,8 +99,8 @@ class CreateMerchant(APIView):
 class MpgTrade(APIView):
     
     def get(self, request, format=None):
-        order_id = self.request.query_params.get('order_id')
-        order = Order.objects.get(id=order_id)
+        # order_id = self.request.query_params.get('order_id')
+        # order = Order.objects.get(id=order_id)
 
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         timeStamp = int( time.time() )
@@ -114,7 +114,7 @@ class MpgTrade(APIView):
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
             "MerchantOrderNo":"202207300001",
-            "Amt": order.total_money,
+            "Amt": 3000,
             "ItemDesc": "test",       
             "ReturnURL": ""
         }

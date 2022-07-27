@@ -135,6 +135,11 @@ HashIV：CeYa8zoA0mX4qBpP
 
 測試 API 網址：https://ccore.Newebpay.com/API/AddMerchant
 
+20220727
+1.City model add newebpay_value
+2.修正 county.csv, 修正 importCityCounty, 重新 set_sand_box_data
+3.把幕前交易 api 測通
+
 20220726
 1.照顧者預訂單的 api => 產生 case, 產生 order, 跳轉付款頁面~
 !? 選擇時間時，如不符合servant的服務時間，是否需要提示？

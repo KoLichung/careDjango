@@ -737,6 +737,7 @@ class CreateCase(APIView):
 #             case.delete()
 #         serializer = self.serializer_class(case)
 #         return Response(serializer.data)
+
 class CreateServantOrder(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -874,6 +875,8 @@ class CreateServantOrder(APIView):
             order.base_money = order.work_hours * order.case.servant.home_hour_wage
         elif order.case.care_type == 'hospital':
             order.base_money = order.work_hours * order.case.servant.hospital_hour_wage
+
+        # need to change in the future
         order.platform_percent = 15
         order.save()
         Review.objects.create(order=order,case=order.case,servant=order.case.servant)
