@@ -136,8 +136,8 @@ class MpgTrade(APIView):
         #     f.write(html_string)
         #     return HttpResponse(f)
         # webbrowser.open("MPG.html", "r")
-
-        resp = requests.post(api_url, data =params)
+        html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
+        resp = requests.post(api_url, data =html_string)
         # decrypt_text = cbc_decrypt(resp.text,HashKey)
         # the_data = urllib.parse.unquote(decrypt_text)
         return HttpResponse(resp)
