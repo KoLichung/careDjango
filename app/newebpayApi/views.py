@@ -9,7 +9,7 @@ from newebpayApi import module
 import requests
 import time
 import urllib.parse
-import webbrowser
+import webbrowser   
 import json
 from Crypto.Cipher import AES
 from newebpayApi.aesCipher import AESCipher
@@ -99,7 +99,7 @@ class CreateMerchant(APIView):
         return Response(json.loads(resp.text))
 
 class MpgTrade(APIView):
-    
+
     def get(self, request, format=None):
         # order_id = self.request.query_params.get('order_id')
         # order = Order.objects.get(id=order_id)
@@ -135,8 +135,7 @@ class MpgTrade(APIView):
             html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
             f.write(html_string)
         
-        webbrowser.open("MPG.html", "r")
-        return Response(webbrowser.get())
+        return Response(webbrowser.get('chrome').open("MPG.html"))
         # html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
         # resp = requests.post(api_url, data =html_string)
         # decrypt_text = cbc_decrypt(resp.text,HashKey)
