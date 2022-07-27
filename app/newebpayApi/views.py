@@ -11,7 +11,6 @@ import time
 import urllib.parse
 import webbrowser
 import json
-import hashlib
 from Crypto.Cipher import AES
 from newebpayApi.aesCipher import AESCipher
 from modelCore.models import Order 
@@ -119,7 +118,7 @@ class MpgTrade(APIView):
             "MerchantOrderNo":"202207300001",
             "Amt": 3000,
             "ItemDesc": "test",       
-            "ReturnURL": ""
+            
         }
 
         query_str = urllib.parse.urlencode(data)
@@ -135,17 +134,8 @@ class MpgTrade(APIView):
         # with open("MPG.html", 'w', encoding="utf-8") as f:
         #     html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
         #     f.write(html_string)
+        #     return HttpResponse(f)
         # webbrowser.open("MPG.html", "r")
-        # return response('ok')
-        # query_string = altapay.utils.http_build_query(data)
-        # # encrypted = cbc_encrypt(query_string, HashKey, HashIV)
-        # aes = AESCipher()
-        # data = aes.encrypt(str(query_string))
-        # hash_object = hashlib.sha256(str(HashKey + data + HashIV).encode('utf-8'))
-        # print(hash_object)
-        # TradeSha = hash_object.hexdigest().upper()
-        # print(TradeSha)
-        # TradeInfo = data
 
         resp = requests.post(api_url, data =params)
         # decrypt_text = cbc_decrypt(resp.text,HashKey)
