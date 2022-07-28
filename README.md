@@ -145,6 +145,11 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220728
+1.大頭貼 api 
+2.web/index 的地點資料
+3.search_list 資料串接
+
 20220727
 1.City model add newebpay_value
 2.修正 county.csv, 修正 importCityCounty, 重新 set_sand_box_data
