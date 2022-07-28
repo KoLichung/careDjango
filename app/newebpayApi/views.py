@@ -116,7 +116,7 @@ class MpgTrade(APIView):
             "MerchantID" : "MS336989148",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202207300001",
+            "MerchantOrderNo":"202207300002",
             "Amt": 3000,
             "ItemDesc": "test",       
         }
@@ -131,13 +131,20 @@ class MpgTrade(APIView):
             "TradeSha": hashs,
             "Version": data["Version"],
         }               
-        with open("MPG.html", 'w', encoding="utf-8") as f:
-            html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
-            f.write(html_string)
-        html = codecs.open("MPG.html", 'r', 'utf-8')
-        f.close()
-        return HttpResponse(html)
+        
+        # with open("MPG.html", 'w', encoding="utf-8") as f:
+        #     html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
+        #     f.write(html_string)
+        # html = codecs.open("MPG.html", 'r', 'utf-8')
+        # f.close()
+        # return HttpResponse(html)
         # html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
-        # resp = requests.post(api_url, data =params)
-        # return HttpResponse(resp)
+       
+        resp = requests.post(api_url, data =params)
+        print(resp.text)
+        
+        html = codecs.open(resp.text, 'r', 'utf-8')
+
+        return HttpResponse(html)
+        # return Response(resp.text)
         
