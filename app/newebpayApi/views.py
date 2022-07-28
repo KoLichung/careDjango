@@ -119,6 +119,7 @@ class MpgTrade(APIView):
             "MerchantOrderNo":"202207300001",
             "Amt": 3000,
             "ItemDesc": "test",       
+            "CREDIT": 1,
             
         }
 
