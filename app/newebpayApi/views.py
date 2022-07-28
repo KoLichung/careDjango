@@ -116,7 +116,7 @@ class MpgTrade(APIView):
             "MerchantID" : "MS336989148",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202207300002",
+            "MerchantOrderNo":"202207300003",
             "Amt": 3000,
             "ItemDesc": "test",       
         }
@@ -141,10 +141,10 @@ class MpgTrade(APIView):
         # html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
        
         resp = requests.post(api_url, data =params)
-        print(resp.text)
+        # print(resp.text)
         
-        html = codecs.open(resp.text, 'r', 'utf-8')
-
-        return HttpResponse(html)
+        # html = codecs.open(resp.text, 'r', 'utf-8')
+        
+        return HttpResponse(resp.text)
         # return Response(resp.text)
         
