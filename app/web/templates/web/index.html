@@ -5,6 +5,7 @@
       
   <!-- main content -->
   <section class="bg-frontpage-cover">
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
     <div class="bg-text container-fluid col-11 col-sm-10  col-md-7  col-xl-5 my-4 row" >
       
           <span  class="mt-4 mx-3" style="color: white; font-size:30px;"><strong>照護 168 | slogan slogan</strong></span> 
@@ -12,7 +13,7 @@
           <!-- form content -->
           
             <div class="card bg-white">
-              <form method="post" enctype="multipart/form-data">{% csrf_token %}
+              
               <!-- care type segment -->
               <div class="mt-4  mb-3" style="margin: 0; display: flex;">
 
@@ -104,18 +105,19 @@
               </div>
 
               <br>  
-              </form>
+              
             </div>
-            <form method="post" enctype="multipart/form-data">{% csrf_token %}
+            
             <!-- <a href="{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county.id}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}"> -->
             <!-- <button class="mt-4 full-purple-button" type="submit">搜尋</button> -->
             <!-- </a> -->
             <button class="mt-4 full-purple-button" type="submit" name="submit"  onclick="location.href='{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county.id}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}'">
               搜尋
             </button>
-          </form>
+          
           
     </div>  
+    </form>
   </section>
        
 </main>
