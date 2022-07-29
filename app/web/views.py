@@ -11,18 +11,16 @@ from modelCore.models import City, County
 def index(request):
     citys = City.objects.all()
     counties = County.objects.all()
+
     county_id = request.GET.get('county_id')
-    if request.GET.get("city_id") != None:
-        city_id = request.GET.get("city_id")
-    else:
-        if county_id != None:
-            city_id = County.objects.get(id=county_id).city.id
-        else:
-            city_id = '8'
-    counties = counties.filter(city=City.objects.get(id=city_id))
-    dict = {}
+    city_id = request.GET.get("city_id")
+
+    if city_id == None:
+        city_id = '8'
     city = City.objects.get(id=city_id)
-    citys = citys.exclude(name=city) 
+
+    counties = counties.filter(city=City.objects.get(id=city_id))
+
     if county_id == None:
         county = '全區'
     else:
@@ -30,52 +28,23 @@ def index(request):
             county = County.objects.get(id=county_id)
         else:
             county = '全區'
-    counties = counties.exclude(name=county)
+
     if request.method == 'POST':
-        dict = {}
         care_type = request.POST.get('care_type')
-        city_new = request.POST.get('city_id')
-        county_new = request.POST.get('county_id')
         is_continuous_time = request.POST.get('is_continuous_time')
         start_date = request.POST.get('datetimepicker_start')
         end_date = request.POST.get('datetimepicker_end')
-        print(care_type)
-        if city_new != None:
-            city = City.objects.get(id=city_new).id
-            citys = citys.exclude(name=city_new) 
-        if county_new == None:
-            county = '全區'
-        else:
-            if county_new != 'all':
-                county = County.objects.get(id=county_new).id
-            else:
-                county = '全區'
-        counties = counties.exclude(name=county)
         
-        if care_type != None:
-            care_type = request.POST.get('care_type')
-        if is_continuous_time != None:
-            dict['is_continuous_time'] = is_continuous_time
-        if start_date != None:
-            dict['start_date'] = start_date
-        if end_date != None:
-            dict['end_date'] = end_date
-        
+        return redirect_params('search_list',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_date':start_date,'end_date':end_date})
+
+    else:
+        dict = {}
         dict['citys'] = citys
         dict['city'] = city
         dict['counties'] = counties
         dict['county'] = county
-        
-        # return redirect_params('web/search_list.html',{'dict':dict})
-        return redirect_params('search_list',{'city':city,'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_date':start_date,'end_date':end_date,})
-    
-    
-    dict['citys'] = citys
-    dict['city'] = city
-    dict['counties'] = counties
-    dict['county'] = county
-    # print(data_list)
-    return render(request, 'web/index.html',{'dict':dict})
+
+        return render(request, 'web/index.html',{'dict':dict})
 
 def login(request):
     return render(request, 'web/login.html')
@@ -87,6 +56,7 @@ def register_phone(request):
     return render(request, 'web/register_phone.html')
 
 def search_list(request):
+    s
     return render(request, 'web/search_list.html')
 
 def search_carer_detail(request):
