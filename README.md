@@ -123,6 +123,7 @@ http://202.182.105.11/newebpayApi/mpg_trade
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播
 c.交易的 NotifyURL, 把交易結果記錄下來
+d.幕前交易 api 要用 javascript 直接 post
 
 要做：
 1.建店 API => 建立”服務者”商店(每一個服務者, 就是一家商店)
