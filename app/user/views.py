@@ -305,3 +305,16 @@ class UpdateUserInfoImage(APIView):
         user.save()
         serializer = GetUserSerializer(user)
         return Response(serializer.data)
+
+class UpdateUserImage(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def put(self, request, format=None):
+        user = self.request.user
+        image = request.data.get('image')
+        if image != None:
+            user.image = image
+        user.save()
+        serializer = GetUserSerializer(user)
+        return Response(serializer.data)

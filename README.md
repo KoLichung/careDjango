@@ -97,6 +97,10 @@ http://localhost:8000/api/user/update_user_license_images
 
 UpdateUserInfoImage 的修改
 body form-data: info: Test   background_image: file
+http://localhost:8000/api/user/update_user_images
+
+UpdateUserInfoImage 的修改
+body form-data: image: file
 http://localhost:8000/api/user/update_user_info_images
 
 CreateCase 的新增
