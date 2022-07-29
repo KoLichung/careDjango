@@ -122,6 +122,7 @@ http://202.182.105.11/newebpayApi/mpg_trade
 !暫定, 未處理：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播
+c.交易的 NotifyURL, 把交易結果記錄下來
 
 要做：
 1.建店 API => 建立”服務者”商店(每一個服務者, 就是一家商店)
@@ -139,6 +140,8 @@ vCRQtf77UZ6vCie
 HashKey: SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH
 HashIV: C6RhZZ45pflwEoSP
 
+測試卡號：4000-2211-1111-1111
+
 平台商代號：CARE168
 平台商名稱：杏心股份有限公司
 HashKey：Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q
@@ -150,7 +153,11 @@ vultr:
 8k-TPf]CT964,--R
 
 20220729
-1.
+0.發動 合作商店 的信用卡交易(幕前交易API), 要把 $ 存到 服務者 的帳戶
+1.金流扣款指示 api (扣金流手續費 3%), 從 服務者 的帳戶扣錢
+(是否能指示扣款金額為多少?還是只能%?)
+2.金流撥款指示 api (扣平台手續費 10%), 從 服務者 的帳戶扣錢
+a.用平台商代號：CARE168 去發動撥款指示, 將合作商店的 $ 撥到 我們的藍新帳戶
 
 20220728
 1.大頭貼 api 
