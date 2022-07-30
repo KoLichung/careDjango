@@ -149,8 +149,8 @@ class Debit(APIView):
         post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+        key = "7bltt8Kcsuf8oMTFcblMpAVeRy9rpySQ"
+        iv = "C34JwMZSp7wp1beP"
 
         data = {
                 "Version": "1.1",
