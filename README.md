@@ -119,6 +119,9 @@ http://202.182.105.11/newebpayApi/create_merchant
 MpgTrade
 http://202.182.105.11/newebpayApi/mpg_trade
 
+Debit
+http://202.182.105.11/newebpayApi/debit
+
 !暫定, 未處理：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播
