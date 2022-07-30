@@ -119,6 +119,9 @@ http://202.182.105.11/newebpayApi/create_merchant
 MpgTrade
 http://202.182.105.11/newebpayApi/mpg_trade
 
+Appropriation
+http://202.182.105.11/newebpayApi/appropriation
+
 Debit
 http://202.182.105.11/newebpayApi/debit
 

@@ -143,14 +143,41 @@ class MpgTrade(APIView):
         # resp = requests.post(api_url, data =params)
         # return HttpResponse(resp.text)
 
+class Appropriation(APIView):
+
+    def get(self, request, format=None):
+        post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
+        PartnerID_ = "CARE168"
+        timeStamp = int( time.time() )
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
+
+        data = {
+                "Version": "1.0",
+                "MerchantID" : "MS336989148",
+                "MerTrade": "DebitTest001",
+                "TimeStamp": timeStamp,
+                "FeeType": 1,
+                "BalanceType": 0,
+                "MerchantOrderNo":"202207300003",
+                "Amount": 3000,     
+            }
+
+        query_str = urllib.parse.urlencode(data)
+        encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
+
+        resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
+
+        return Response(json.loads(resp.text))
+
 class Debit(APIView):
 
     def get(self, request, format=None):
         post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "7bltt8Kcsuf8oMTFcblMpAVeRy9rpySQ"
-        iv = "C34JwMZSp7wp1beP"
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
 
         data = {
                 "Version": "1.1",
