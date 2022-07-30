@@ -154,7 +154,7 @@ class Appropriation(APIView):
 
         data = {
                 "Version": "1.0",
-                "MerchantID" : "MS336989148",
+                "MerchantID" : "ACE123456",
                 "MerTrade": "DebitTest001",
                 "TimeStamp": timeStamp,
                 "FeeType": 1,
