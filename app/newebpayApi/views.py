@@ -152,7 +152,7 @@ class SearchTradeInfo(APIView):
         RespondType = "JSON"
         data = {
             "MerchantID" : MerchantID,
-            "Amt": 3000,
+            "Amt": '3000',
             "MerchantOrderNo":"202207300003",
             "TradeNo" : "22072910201485051",
             }
@@ -160,18 +160,21 @@ class SearchTradeInfo(APIView):
         for key in sorted(data):
             sorted_data[str(key)] = data[key]
         check_string = urllib.parse.urlencode(sorted_data)
-        check_code = module.sha256_hash2(check_string, iv, key)
-        CheckValue = check_code
+        CheckValue = module.sha256_hash2(check_string, iv, key)
         TimeStamp = int( time.time() )
         MerchantOrderNo = "202207300003"
         Amt = 3000
 
-        with open("SearchTradeInfo.html", 'w', encoding="utf-8") as f:
-            html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={post_url}>測試URL: {post_url}<p>MerchantID:<input type='text' name='MerchantID' readonly='readonly' value={MerchantID} ><br><br>Version:<input type='text' name='Version' readonly='readonly' value={Version} ><br><br>RespondType:<input type='text' name='RespondType' readonly='readonly' value={RespondType}><br><br>CheckValue:<input type='text' name='CheckValue' readonly='readonly' value={CheckValue}><br><br><br>TimeStamp:<input type='text' name='TimeStamp' readonly='readonly' value={TimeStamp}><br><br>MerchantOrderNo:<input type='text' name='MerchantOrderNo' readonly='readonly' value={MerchantOrderNo}><br><br>Amt:<input type='text' name='Amt' readonly='readonly' value={Amt}><br><input type='submit' value='Submit'></form></body></html>"
-            f.write(html_string)
-        html = codecs.open("SearchTradeInfo.html", 'r', 'utf-8')
-        f.close()
-        return HttpResponse(html)
+        # with open("SearchTradeInfo.html", 'w', encoding="utf-8") as f:
+        #     html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={post_url}>測試URL: {post_url}<p>MerchantID:<input type='text' name='MerchantID' readonly='readonly' value={MerchantID} ><br><br>Version:<input type='text' name='Version' readonly='readonly' value={Version} ><br><br>RespondType:<input type='text' name='RespondType' readonly='readonly' value={RespondType}><br><br>CheckValue:<input type='text' name='CheckValue' readonly='readonly' value={CheckValue}><br><br><br>TimeStamp:<input type='text' name='TimeStamp' readonly='readonly' value={TimeStamp}><br><br>MerchantOrderNo:<input type='text' name='MerchantOrderNo' readonly='readonly' value={MerchantOrderNo}><br><br>Amt:<input type='text' name='Amt' readonly='readonly' value={Amt}><br><input type='submit' value='Submit'></form></body></html>"
+        #     f.write(html_string)
+        # html = codecs.open("SearchTradeInfo.html", 'r', 'utf-8')
+        # f.close()
+        # return HttpResponse(html)
+
+        resp = requests.post(post_url, data ={"MerchantID":MerchantID, "Version":Version,"RespondType":RespondType, "CheckValue":CheckValue, "TimeStamp":TimeStamp,"MerchantOrderNo":MerchantOrderNo, "Amt":Amt})
+
+        return Response(json.loads(resp.text))
 
 class Invoice(APIView):
     def get(self, request, format=None):
