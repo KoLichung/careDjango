@@ -122,6 +122,9 @@ http://202.182.105.11/newebpayApi/mpg_trade
 SearchTradeInfo
 http://202.182.105.11/newebpayApi/search_tradeinfo
 
+CancelAuthorization
+http://202.182.105.11/newebpayApi/cancel_authorization
+
 Invoice
 http://202.182.105.11/newebpayApi/invoice
 

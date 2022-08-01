@@ -9,7 +9,7 @@ from newebpayApi import module
 import requests
 import time
 import urllib.parse
-import webbrowser   
+import hashlib
 import codecs
 import json
 from Crypto.Cipher import AES
@@ -115,8 +115,8 @@ class MpgTrade(APIView):
             "MerchantID" : "MS336989148",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202207300003",
-            "Amt": 3000,
+            "MerchantOrderNo":"202208020001",
+            "Amt": 2000,
             "ItemDesc": "test",       
         }
 
@@ -150,17 +150,19 @@ class SearchTradeInfo(APIView):
         iv = "C6RhZZ45pflwEoSP"
         Version = "1.3"
         RespondType = "JSON"
-        data = {
+        check_data = {
+            "Amt": 3000,
             "MerchantID" : MerchantID,
-            "Amt": '3000',
             "MerchantOrderNo":"202207300003",
-            "TradeNo" : "22072910201485051",
             }
-        sorted_data = {}
-        for key in sorted(data):
-            sorted_data[str(key)] = data[key]
-        check_string = urllib.parse.urlencode(sorted_data)
-        CheckValue = module.sha256_hash2(check_string, iv, key)
+        # sorted_check_data = {}
+        # for key in sorted(check_data):
+        #     sorted_check_data[str(key)] = check_data[key]
+        check_string = urllib.parse.urlencode(check_data)
+        hashs = 'IV=' + iv + '&' + check_string + '&Key=' + key
+        hashs = hashlib.sha256(hashs.encode("utf-8")).hexdigest()
+        hash = str.upper(hashs)
+        CheckValue = hash
         TimeStamp = int( time.time() )
         MerchantOrderNo = "202207300003"
         Amt = 3000
@@ -176,14 +178,37 @@ class SearchTradeInfo(APIView):
 
         return Response(json.loads(resp.text))
 
+class CancelAuthorization(APIView):
+    def get(self, request, format=None):
+        post_url = 'https://ccore.newebpay.com/API/CreditCard/Cancel'
+        MerchantID_ = "MS336989148"
+        timeStamp = int( time.time() )
+        key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
+        iv = "C6RhZZ45pflwEoSP"
+        data = {
+            "RespondType": "JSON",
+            "Version": "1.0",
+            "Amt": 2000,
+            "MerchantOrderNo": "202208020001",
+            "IndexType": 1,
+            "TimeStamp": timeStamp,
+        } 
+
+        query_str = urllib.parse.urlencode(data)
+        encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
+
+        resp = requests.post(post_url, data ={"MerchantID_":MerchantID_, "PostData_":encrypt_data})
+
+        return Response(json.loads(resp.text))
+
 class Invoice(APIView):
     def get(self, request, format=None):
         post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
         PartnerID_ = "CARE168"
         MerchantID = "MS336989148"
         timeStamp = int( time.time() )
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+        key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
+        iv = "C6RhZZ45pflwEoSP"
 
         data = {
                 "RespondType": "JSON",
@@ -199,7 +224,7 @@ class Invoice(APIView):
         query_str = urllib.parse.urlencode(data)
         encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
 
-        resp = requests.post(post_url, data ={"MerchantID":MerchantID, "PostData_":encrypt_data})
+        resp = requests.post(post_url, data ={"MerchantID_":MerchantID, "PostData_":encrypt_data})
 
         return Response(json.loads(resp.text))
 
