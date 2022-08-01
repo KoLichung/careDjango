@@ -156,7 +156,9 @@ class SearchTradeInfo(APIView):
             "MerchantOrderNo":"202207300003",
             "TradeNo" : "22072910201485051",
             }
-        check_string = urllib.parse.urlencode(data)
+        sorted_data = sorted(data)
+        print(sorted_data)
+        check_string = urllib.parse.urlencode(sorted_data)
         check_code = module.sha256_hash2(check_string, iv, key)
         CheckValue = check_code
         TimeStamp = int( time.time() )
