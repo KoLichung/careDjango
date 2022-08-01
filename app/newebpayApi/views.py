@@ -156,8 +156,9 @@ class SearchTradeInfo(APIView):
             "MerchantOrderNo":"202207300003",
             "TradeNo" : "22072910201485051",
             }
-        sorted_data = sorted(data)
-        print(sorted_data)
+        sorted_data = {}
+        for key in sorted(data):
+            sorted_data[str(key)] = data[key]
         check_string = urllib.parse.urlencode(sorted_data)
         check_code = module.sha256_hash2(check_string, iv, key)
         CheckValue = check_code
