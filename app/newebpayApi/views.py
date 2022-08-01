@@ -24,7 +24,6 @@ class CreateMerchant(APIView):
 
         post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
         timeStamp = int( time.time() )
-        MerchantID = "MS336989148"
         PartnerID_ = "CARE168"
         key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
         iv = "CeYa8zoA0mX4qBpP"
@@ -142,6 +141,61 @@ class MpgTrade(APIView):
        
         # resp = requests.post(api_url, data =params)
         # return HttpResponse(resp.text)
+
+class SearchTradeInfo(APIView):
+    def get(self, request, format=None):
+        post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 
+        MerchantID = "MS336989148"
+        key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
+        iv = "C6RhZZ45pflwEoSP"
+        Version = "1.3"
+        RespondType = "JSON"
+        data = {
+            "MerchantID" : MerchantID,
+            "Amt": 3000,
+            "MerchantOrderNo":"202207300003",
+            "TradeNo" : "22072910201485051",
+            }
+        check_string = urllib.parse.urlencode(data)
+        check_code = module.sha256_hash2(check_string, iv, key)
+        CheckValue = check_code
+        TimeStamp = int( time.time() )
+        MerchantOrderNo = "202207300003"
+        Amt = 3000
+
+        with open("SearchTradeInfo.html", 'w', encoding="utf-8") as f:
+            html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={post_url}>測試URL: {post_url}<p>MerchantID:<input type='text' name='MerchantID' value={MerchantID} readonly><br><br>Version:<input type='text' name='Version' value={Version}readonly readonly><br><br>RespondType:<input type='text' name='RespondType' value={RespondType}readonly><br><br>CheckValue:<input type='text' name='CheckValue' value={CheckValue}readonly><br><br><br>TimeStamp:<input type='text' name='TimeStamp' value={TimeStamp}readonly><br><br>MerchantOrderNo:<input type='text' name='MerchantOrderNo' value={MerchantOrderNo}readonly><br><br>Amt:<input type='text' name='Amt' value={Amt}readonly><br><input type='submit' value='Submit'></form></body></html>"
+            f.write(html_string)
+        html = codecs.open("SearchTradeInfo.html", 'r', 'utf-8')
+        f.close()
+        return HttpResponse(html)
+
+class Invoice(APIView):
+    def get(self, request, format=None):
+        post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
+        PartnerID_ = "CARE168"
+        MerchantID = "MS336989148"
+        timeStamp = int( time.time() )
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
+
+        data = {
+                "RespondType": "JSON",
+                "Version": "1.1",
+                "Amt": 3000,   
+                "MerchantOrderNo":"202207300003",
+                "TimeStamp": timeStamp,
+                "IndexType" : 1,
+                "TradeNo": "22072910201485051",
+                "CloseType": 1,
+            }
+
+        query_str = urllib.parse.urlencode(data)
+        encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
+
+        resp = requests.post(post_url, data ={"MerchantID":MerchantID, "PostData_":encrypt_data})
+
+        return Response(json.loads(resp.text))
 
 class Appropriation(APIView):
 

@@ -30,3 +30,9 @@ def sha256_hash(TradeInfo, key, iv):
     hashs = hashlib.sha256(TradeValue.encode("utf-8")).hexdigest()
     hashs = str.upper(hashs)
     return hashs
+
+def sha256_hash2(TradeInfo, key, iv):
+    TradeValue =  "HashIV=" + iv +"&" + TradeInfo + "&" + "HashKey=" + key
+    hashs = hashlib.sha256(TradeValue.encode("utf-8")).hexdigest()
+    hashs = str.upper(hashs)
+    return hashs
