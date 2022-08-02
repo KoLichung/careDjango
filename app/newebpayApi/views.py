@@ -14,7 +14,7 @@ import codecs
 import json
 from Crypto.Cipher import AES
 from newebpayApi.aesCipher import AESCipher
-from modelCore.models import Order 
+from modelCore.models import Order ,UserStore
 
 class CreateMerchant(APIView):
     
@@ -32,14 +32,14 @@ class CreateMerchant(APIView):
                 "TimeStamp": timeStamp,
                 "MemberPhone": "0987-654321",
                 "MemberAddress": "台南市中西區民族路27號",
-                "ManagerName": "柯力中",
-                "ManagerNameE": "Li Chung,Ko",
-                "LoginAccount": "jasonko2022",
-                "ManagerMobile": "0912585506",
-                "ManagerEmail": "jason@kosbrother.com",
-                "DisputeMail": "jason@kosbrother.com",
-                "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE003",
+                "ManagerName": "方聖傑",
+                "ManagerNameE": "Sheng Jie,Fang",
+                "LoginAccount": "scottfang2022",
+                "ManagerMobile": "0981352308",
+                "ManagerEmail": "scottman608@gmail.com",
+                "DisputeMail": "scottman608@gmail.com",
+                "MerchantEmail": "scottman608@gmail.com",
+                "MerchantID": "Test001",
                 "MCType": 1,
                 "MerchantName": "杏心測試三",
                 "MerchantNameE": "XinshingTest3",
@@ -61,13 +61,13 @@ class CreateMerchant(APIView):
         }
 
         extend_params_personal = {
-            "MemberUnified": "N124596345",
+            "MemberUnified": "D122776930",
             "IDCardDate": "1070124",
-            "IDCardPlace": "桃市",
+            "IDCardPlace": "南市",
             "IDPic": 0,
             "IDFrom": 2,
             "Date": "19850911",
-            "MemberName": "柯力中",
+            "MemberName": "方聖傑",
         }
 
         extend_params_company = {
