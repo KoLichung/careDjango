@@ -114,24 +114,32 @@ http://localhost:8000/api/create_servant_order?county=57&start_date=2022-07-22&e
 body form-data: care_type: home name: 王老明 gender: M  age: 69  weight: 79  disease: 1,7,11  disease_remark: test  body_condition: 2,8,10  conditions_remark: test  service: 1,4,7  emergencycontact_name: 王大明  emergencycontact_relation: 父  emergencycontact_phone: 0987654321
 
 CreateMerchant 
+http://127.0.0.1:8000/newebpayApi/create_merchant
 http://202.182.105.11/newebpayApi/create_merchant
 
 MpgTrade
+http://127.0.0.1:8000/newebpayApi/mpg_trade
 http://202.182.105.11/newebpayApi/mpg_trade
 
 SearchTradeInfo
+http://127.0.0.1:8000/newebpayApi/search_tradeinfo
 http://202.182.105.11/newebpayApi/search_tradeinfo
 
 CancelAuthorization
+http://127.0.0.1:8000/newebpayApi/cancel_authorization
 http://202.182.105.11/newebpayApi/cancel_authorization
 
 Invoice
+http://127.0.0.1:8000/newebpayApi/invoice
 http://202.182.105.11/newebpayApi/invoice
 
 Appropriation
+http://127.0.0.1:8000/newebpayApi/appropriation
 http://202.182.105.11/newebpayApi/appropriation
 
+
 Debit
+http://127.0.0.1:8000/newebpayApi/debit
 http://202.182.105.11/newebpayApi/debit
 
 !暫定, 未處理：

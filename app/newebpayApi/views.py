@@ -115,8 +115,8 @@ class MpgTrade(APIView):
             "MerchantID" : "MS336989148",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202208020001",
-            "Amt": 2000,
+            "MerchantOrderNo":"202208020003",
+            "Amt": 3500,
             "ItemDesc": "test",       
         }
 
@@ -151,9 +151,9 @@ class SearchTradeInfo(APIView):
         Version = "1.3"
         RespondType = "JSON"
         check_data = {
-            "Amt": 3000,
+            "Amt": 2500,
             "MerchantID" : MerchantID,
-            "MerchantOrderNo":"202207300003",
+            "MerchantOrderNo":"202208020002",
             }
         # sorted_check_data = {}
         # for key in sorted(check_data):
@@ -164,7 +164,7 @@ class SearchTradeInfo(APIView):
         hash = str.upper(hashs)
         CheckValue = hash
         TimeStamp = int( time.time() )
-        MerchantOrderNo = "202207300003"
+        MerchantOrderNo = "202208020002"
         Amt = 3000
 
         # with open("SearchTradeInfo.html", 'w', encoding="utf-8") as f:
@@ -188,8 +188,8 @@ class CancelAuthorization(APIView):
         data = {
             "RespondType": "JSON",
             "Version": "1.0",
-            "Amt": 2000,
-            "MerchantOrderNo": "202208020001",
+            "Amt": 2500,
+            "MerchantOrderNo": "202208020002",
             "IndexType": 1,
             "TimeStamp": timeStamp,
         } 
@@ -213,11 +213,11 @@ class Invoice(APIView):
         data = {
                 "RespondType": "JSON",
                 "Version": "1.1",
-                "Amt": 3000,   
-                "MerchantOrderNo":"202207300003",
+                "Amt": 3500,   
+                "MerchantOrderNo":"202208020003",
                 "TimeStamp": timeStamp,
                 "IndexType" : 1,
-                "TradeNo": "22072910201485051",
+                "TradeNo": "22080207362527794",
                 "CloseType": 1,
             }
 
