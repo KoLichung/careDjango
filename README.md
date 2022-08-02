@@ -176,6 +176,19 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220802
+0.建立新商店, 把回傳資訊存在 UserStore, 然後要能從藍新後台登入該商店
+https://cwww.newebpay.com/
+1.MPG 的跳轉頁的部分, 如果不要 submit, 寫 javascript 直接 submit
+http://mh-resource.blogspot.com/2015/03/javascript-submitform.html
+
+2.撥款 => 請款完成後, 從藍新帳戶撥款到 合作商店 的藍新帳戶
+3.扣款 => 撥款完成後, 從合作商店 扣款到 我們的 藍新帳戶
+v a.發動 合作商店 的信用卡交易(幕前交易API), 要把 $ 存到 服務者 的帳戶(5筆)
+v b.用查詢 api 查詢狀態
+c.if 請款狀態是成功, 用撥款 api 撥款到合作商店的藍新帳戶 (合作商店的藍新帳戶怎麼登入)
+d.if 已經撥款, 發動扣款, 扣 10% 到我們的藍新帳戶
+
 20220801
 1.請款 api (22072910201485051)
 2.查詢 api (22072910201485051)
