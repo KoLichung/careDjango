@@ -117,17 +117,17 @@ class MpgTrade(APIView):
 
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         timeStamp = int( time.time() )
-        merchant_id = "ACE00003"
+        merchant_id = "ACE00004"
         Version = "2.0"
-        key = "CJFOlZALaurgFg45A9931tsj16sKc1Ms"
-        iv = "C7AZybm0dZkw4aPP"
+        key = "ZsaGSvba0vO3OP0pyu1hsUiqhhpdJL2m"
+        iv = "CQtj19eestVGIjeP"
         data = {
             "Version": "2.0",
-            "MerchantID" : "ACE00003",
+            "MerchantID" : "ACE00004",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202208020000",
-            "Amt": 3500,
+            "MerchantOrderNo":"202208020004",
+            "Amt": 2000,
             "ItemDesc": "test",       
         }
 
@@ -156,15 +156,15 @@ class MpgTrade(APIView):
 class SearchTradeInfo(APIView):
     def get(self, request, format=None):
         post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 
-        MerchantID = "MS336989148"
-        key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
-        iv = "C6RhZZ45pflwEoSP"
+        MerchantID = "ACE00004"
+        key = "ZsaGSvba0vO3OP0pyu1hsUiqhhpdJL2m"
+        iv = "CQtj19eestVGIjeP"
         Version = "1.3"
         RespondType = "JSON"
         check_data = {
-            "Amt": 2500,
+            "Amt": 3500,
             "MerchantID" : MerchantID,
-            "MerchantOrderNo":"202208020002",
+            "MerchantOrderNo":"202208020000",
             }
         # sorted_check_data = {}
         # for key in sorted(check_data):
@@ -175,8 +175,8 @@ class SearchTradeInfo(APIView):
         hash = str.upper(hashs)
         CheckValue = hash
         TimeStamp = int( time.time() )
-        MerchantOrderNo = "202208020002"
-        Amt = 3000
+        MerchantOrderNo = "202208020000"
+        Amt = 3500
 
         # with open("SearchTradeInfo.html", 'w', encoding="utf-8") as f:
         #     html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={post_url}>測試URL: {post_url}<p>MerchantID:<input type='text' name='MerchantID' readonly='readonly' value={MerchantID} ><br><br>Version:<input type='text' name='Version' readonly='readonly' value={Version} ><br><br>RespondType:<input type='text' name='RespondType' readonly='readonly' value={RespondType}><br><br>CheckValue:<input type='text' name='CheckValue' readonly='readonly' value={CheckValue}><br><br><br>TimeStamp:<input type='text' name='TimeStamp' readonly='readonly' value={TimeStamp}><br><br>MerchantOrderNo:<input type='text' name='MerchantOrderNo' readonly='readonly' value={MerchantOrderNo}><br><br>Amt:<input type='text' name='Amt' readonly='readonly' value={Amt}><br><input type='submit' value='Submit'></form></body></html>"
