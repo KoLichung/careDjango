@@ -3,6 +3,8 @@ from urllib import response
 from django.shortcuts import render 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
 
 from newebpayApi import module
@@ -17,7 +19,8 @@ from newebpayApi.aesCipher import AESCipher
 from modelCore.models import Order ,UserStore
 
 class CreateMerchant(APIView):
-    
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     def get(self, request, format=None):
         # order_id = self.request.query_params.get('order_id')
         # order = Order.objects.get(id=order_id)
@@ -39,7 +42,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE0001",
+                "MerchantID": "ACE0002",
                 "MCType": 1,
                 "MerchantName": "杏心測試三",
                 "MerchantNameE": "XinshingTest3",
@@ -93,7 +96,7 @@ class CreateMerchant(APIView):
         # print(int(encrypted, 16))
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
-
+        UserStore.objects.create(user=self.request.user,MerchantID=resp.text.MerchantID,MerchantHashKey=resp.text.MerchantHashKey,MerchantIvKey=resp.text.MerchantIvKey)
         # save merchant_id, hash_key, hash_iv to UserStore
 
         return Response(json.loads(resp.text))
