@@ -42,7 +42,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE00003",
+                "MerchantID": "ACE00004",
                 "MCType": 1,
                 "MerchantName": "杏心測試三",
                 "MerchantNameE": "XinshingTest3",
@@ -54,6 +54,7 @@ class CreateMerchant(APIView):
                 "MerchantEnAddr": "test",
                 "NationalE": "Taiwan",
                 "CityE": "Tainan City",
+                "PaymentType": "CREDIT:1",
                 "MerchantType": 2,
                 "BusinessType": "8999",
                 "MerchantDesc": "test",
@@ -116,16 +117,16 @@ class MpgTrade(APIView):
 
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         timeStamp = int( time.time() )
-        merchant_id = "MS336989148"
+        merchant_id = "ACE00003"
         Version = "2.0"
-        key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
-        iv = "C6RhZZ45pflwEoSP"
+        key = "CJFOlZALaurgFg45A9931tsj16sKc1Ms"
+        iv = "C7AZybm0dZkw4aPP"
         data = {
             "Version": "2.0",
-            "MerchantID" : "MS336989148",
+            "MerchantID" : "ACE00003",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202208020003",
+            "MerchantOrderNo":"202208020000",
             "Amt": 3500,
             "ItemDesc": "test",       
         }
@@ -140,9 +141,9 @@ class MpgTrade(APIView):
             "TradeSha": hashs,
             "Version": data["Version"],
         }               
-        
+        # <form id='form1' action={api_url} method='post'></form><script type='text/javascript'>form1.submit();</script>
         with open("MPG.html", 'w', encoding="utf-8") as f:
-            html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html>"
+            html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={api_url}>測試URL: {api_url}<p>MerchantID:<input type='text' name='MerchantID' value={params['MerchantID']}><br><br>TradeInfo:<input type='text' name='TradeInfo' value={params['TradeInfo']}><br><br>TradeSha:<input type='text' name='TradeSha' value={params['TradeSha']}><br><br>Version:<input type='text' name='Version' value={params['Version']}><br><br><input type='submit' value='Submit'></form></body></html><script type='text/javascript'>Newebpay.submit();</script>"
             f.write(html_string)
         html = codecs.open("MPG.html", 'r', 'utf-8')
         f.close()
