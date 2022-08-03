@@ -123,8 +123,8 @@ class MpgTrade(APIView):
         timeStamp = int( time.time() )
         merchant_id = "ACE00005"
         Version = "2.0"
-        key = "ZsaGSvba0vO3OP0pyu1hsUiqhhpdJL2m"
-        iv = "CQtj19eestVGIjeP"
+        key = "If7VxDNCTuMvtVryP3ogAwuAHiNZCnAF"
+        iv = "CDAE1F1MJVo8u11P"
         data = {
             "Version": "2.0",
             "MerchantID" : "ACE00005",
