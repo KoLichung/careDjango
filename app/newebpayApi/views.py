@@ -45,7 +45,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE00006",
+                "MerchantID": "ACE00007",
                 "MCType": 1,
                 "MerchantName": "杏心測試三",
                 "MerchantNameE": "XinshingTest3",
@@ -65,7 +65,7 @@ class CreateMerchant(APIView):
                 "SubBankCode": "1379",
                 "BankAccount": "137030000175",
                 "AccountName": "齊家科技股份有限公司",
-                "NotifyURL": "http://127.0.0.1:80/newebpayApi/notifyurl_callback"
+                "NotifyURL": "http://localhost:80/newebpayApi/notifyurl_callback"
         }
 
         extend_params_personal = {
@@ -121,19 +121,19 @@ class MpgTrade(APIView):
 
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         timeStamp = int( time.time() )
-        merchant_id = "ACE00006"
+        merchant_id = "ACE00007"
         Version = "2.0"
-        key = "If7VxDNCTuMvtVryP3ogAwuAHiNZCnAF"
-        iv = "CDAE1F1MJVo8u11P"
+        key = "rXmNKS4XiXneP64rV9ERRDFtbmDVXr2D"
+        iv = "CkTMcqoHwYZqFFLP"
         data = {
             "Version": "2.0",
             "MerchantID" : "ACE00006",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202208030006",
+            "MerchantOrderNo":"202208030007",
             "Amt": 2000,
             "ItemDesc": "test",       
-            "NotifyURL": "http://127.0.0.1:80/newebpayApi/notifyurl_callback"
+            "NotifyURL": "http://localhost:80/newebpayApi/notifyurl_callback"
         }
 
         query_str = urllib.parse.urlencode(data)
