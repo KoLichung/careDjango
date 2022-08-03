@@ -80,6 +80,28 @@ TEMPLATES = [
     },
 ]
 
+LOGGING = {
+    # 日志版本
+    'version': 1,
+    # 是否禁用已有的其他logger
+    'disable_existing_loggers': False,
+    # 配置handlers处理器
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 WSGI_APPLICATION = 'app.wsgi.application'
 
 
