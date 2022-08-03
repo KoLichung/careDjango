@@ -142,7 +142,7 @@ http://127.0.0.1:8000/newebpayApi/debit
 http://202.182.105.11/newebpayApi/debit
 
 NotifyUrlCallback
-http://127.0.0.1:8000/newebpayApi/notifyurl_callback
+http://127.0.0.1:80/newebpayApi/notifyurl_callback
 http://202.182.105.11/newebpayApi/notifyurl_callback
 
 !暫定, 未處理：
