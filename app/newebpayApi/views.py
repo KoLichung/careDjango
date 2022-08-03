@@ -45,7 +45,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE00004",
+                "MerchantID": "ACE00005",
                 "MCType": 1,
                 "MerchantName": "杏心測試三",
                 "MerchantNameE": "XinshingTest3",
@@ -65,6 +65,7 @@ class CreateMerchant(APIView):
                 "SubBankCode": "1379",
                 "BankAccount": "137030000175",
                 "AccountName": "齊家科技股份有限公司",
+                "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
         }
 
         extend_params_personal = {
