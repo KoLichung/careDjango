@@ -130,7 +130,7 @@ class MpgTrade(APIView):
             "MerchantID" : "ACE00005",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202208030001",
+            "MerchantOrderNo":"202208030002",
             "Amt": 2000,
             "ItemDesc": "test",       
             "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
