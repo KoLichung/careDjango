@@ -141,6 +141,10 @@ Debit
 http://127.0.0.1:8000/newebpayApi/debit
 http://202.182.105.11/newebpayApi/debit
 
+NotifyUrlCallback
+http://127.0.0.1:8000/newebpayApi/notifyurl_callback
+http://202.182.105.11/newebpayApi/notifyurl_callback
+
 !暫定, 未處理：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播

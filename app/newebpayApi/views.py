@@ -10,14 +10,17 @@ from django.http import HttpResponse
 from newebpayApi import module
 import requests
 import time
+from datetime import datetime, timedelta
 import urllib.parse
 import hashlib
 import codecs
+import logging
 import json
 from Crypto.Cipher import AES
 from newebpayApi.aesCipher import AESCipher
-from modelCore.models import Order ,UserStore
+from modelCore.models import Order ,UserStore ,PayInfo
 
+logger = logging.getLogger(__file__)
 class CreateMerchant(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -126,9 +129,10 @@ class MpgTrade(APIView):
             "MerchantID" : "ACE00004",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202208020004",
+            "MerchantOrderNo":"202208030000",
             "Amt": 2000,
             "ItemDesc": "test",       
+            "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
         }
 
         query_str = urllib.parse.urlencode(data)
@@ -292,3 +296,79 @@ class Debit(APIView):
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
 
         return Response(json.loads(resp.text))
+
+class NotifyUrlCallback(APIView):
+
+    def post(self, request, format=None):
+        # body_unicode = request.body.decode('utf-8')
+        body = json.loads(request.body)
+        # print(body)
+        key = "ZsaGSvba0vO3OP0pyu1hsUiqhhpdJL2m"
+        iv = "CQtj19eestVGIjeP"
+        TradeInfo = body['TradeInfo']
+        decrypt_text = module.aes256_cbc_decrypt(TradeInfo, key, iv)
+        the_data = urllib.parse.unquote(decrypt_text)
+
+        data_json = json.loads(the_data)
+        
+        print(data_json)
+        logger.info(body)
+        logger.info(data_json)
+
+        if(PayInfo.objects.filter(OrderInfoMerchantTradeNo=data_json['MerchantTradeNo']).count()==0 ):
+            payInfo = PayInfo()
+            payInfo.MerchantID = data_json['MerchantID']
+
+            if data_json['Status'] == 'SUCCESS' :
+                payInfo.OrderInfoMerchantTradeNo = data_json['MerchantTradeNo']
+                payInfo.OrderInfoTradeNo = data_json['TradeNo']
+                payInfo.OrderInfoTradeAmt = data_json['Amt']
+                payInfo.OrderInfoPaymentType = data_json['PaymentType']
+                payInfo.OrderInfoPayTime = data_json['PayTime']
+                try:
+                    payInfo.OrderInfoTradeStatus = data_json['TradeStatus']
+                except:
+                    logger.info("no trade status")
+            
+
+            if data_json['CardInfo']!= None:
+                payInfo.PaymentType = "信用卡"
+                payInfo.EscrowBank = data_json['EscrowBank']
+                payInfo.AuthBank = data_json['AuthBank']
+                payInfo.Auth = data_json['Auth']
+                payInfo.CardInfoCard6No = data_json['Card6No']
+                payInfo.CardInfoCard4No = data_json['Card4No']
+
+            payInfo.save()
+            # if('ATMInfo' in data_json and data_json['ATMInfo']!= None):
+            #     print("atm info")
+            #     # 3碼
+            #     payInfo.ATMInfoBankCode = data_json['ATMInfo']['ATMAccBank']
+            #     # 後 5 碼
+            #     payInfo.ATMInfovAccount = data_json['ATMInfo']['ATMAccNo']
+            # else:
+            #     print("no atm info")
+
+            # if('CustomField' in data_json and data_json['CustomField']!= None):
+            #     try:
+            #         order = Order.objects.get(id= int(data_json['CustomField']))
+            #         order.state = 'ownerWillContact'
+            #         order.save()
+            #         payInfo.order = order
+            #         payInfo.save()
+            #     except:
+            #         print("can't find order custom field error")
+            # else:
+            #     order = Order.objects.get(id=1)
+            #     order.state = 'ownerWillContact'
+            #     order.save()
+            #     payInfo.order = Order.objects.get(id=1)
+                # payInfo.save()
+            
+            
+        # print(the_data)
+
+        # content = body['content']
+        # print(content)
+
+        return Response("1|OK")

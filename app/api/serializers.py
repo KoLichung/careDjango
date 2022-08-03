@@ -118,9 +118,9 @@ class CaseSerializer(serializers.ModelSerializer):
     disease = DiseaseConditionSerializer(read_only=True, many=True)
     body_condition = BodyConditionSerializer(read_only=True, many=True)
     review = ReviewSerializer(read_only=True, many=False)
-    rating_nums = serializers.FloatField(default=0)
+    rating_nums = serializers.IntegerField(default=0)
     servant_rating = serializers.IntegerField(default=0)
-    case_offender_rating = serializers.IntegerField(default=0)
+    avg_offender_rating = serializers.IntegerField(default=0)
     status = serializers.CharField(default='')
     hour_wage = serializers.IntegerField(default=0)
     work_hours = serializers.IntegerField(default=0)
@@ -131,6 +131,8 @@ class CaseSerializer(serializers.ModelSerializer):
     increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
     user_detail = UserSerializer(read_only=True)
     servant_candidate = UserSerializer(read_only=True, many=True)
+    num_offender_rating = serializers.IntegerField(default=0)
+    servant_name = serializers.CharField(default='')
 
     class Meta:
         model = Case

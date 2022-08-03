@@ -351,8 +351,8 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
 
     def retrieve(self, request, *args, **kwargs):
         case = self.get_object()
-        case.rating_nums = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
-        case.servant_rating = Review.objects.filter(order__case=case,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
+        case.num_offender_rating = Review.objects.filter(order__case=case,case_offender_rating__gte=1).aggregate(num_offender_rating=Count('case_offender_rating'))['num_offender_rating']
+        case.avg_offender_rating  = Review.objects.filter(order__case=case,case_offender_rating__gte=1).aggregate(case_offender_rating =Avg('case_offender_rating'))['case_offender_rating']
         if case.is_taken == True:
             case.status = '案件已關閉'
         else:
@@ -453,7 +453,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
 
             service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True)) 
             case.services  = Service.objects.filter(id__in=service_ids)
-
+            case.servant_name = case.servant.name
             # 以下做 order 相關欄位
             order = Order.objects.get(case=case)
             case.work_hours = order.work_hours

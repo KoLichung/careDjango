@@ -59,6 +59,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     line_id = models.CharField(max_length= 100, blank = True, null=True, unique=True)
 
     is_servant = models.BooleanField(default=False)
+    is_passed = models.BooleanField(default=False)
+    is_servant_passed = models.BooleanField(default=False)
     rating = models.FloatField(default=0, blank = True, null=True)
 
     is_home = models.BooleanField(default=False)
@@ -410,8 +412,12 @@ class PayInfo(models.Model):
     OrderInfoTradeNo = models.CharField(max_length=100, default='', blank = True, null=True)
     OrderInfoTradeAmt = models.IntegerField(default=0, null=True)
     OrderInfoPaymentType = models.CharField(max_length=20, default='', blank = True, null=True)
-    OrderInfoChargeFee = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    OrderInfoPayTime = models.DateTimeField(auto_now=False,null=True)
     OrderInfoTradeStatus = models.CharField(max_length=20, default='', blank = True, null=True)
+
+    EscrowBank = models.CharField(max_length=10, default='', blank = True, null=True)
+    AuthBank = models.CharField(max_length=10, default='', blank = True, null=True)
+    Auth = models.CharField(max_length=6, default='', blank = True, null=True)
 
     CardInfoAuthCode = models.CharField(max_length=100, default='', blank = True, null=True)
     CardInfoGwsr = models.IntegerField(default=0, null=True)
