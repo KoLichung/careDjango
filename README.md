@@ -144,8 +144,10 @@ http://202.182.105.11/newebpayApi/debit
 !暫定, 未處理：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播
-c.交易的 NotifyURL, 把交易結果記錄下來
-d.幕前交易 api 要用 javascript 直接 post
+
+e.if 請款狀態是成功, 用撥款 api 撥款到合作商店的藍新帳戶 (合作商店的藍新帳戶怎麼登入)
+f.if 已經撥款, 發動扣款, 扣 10% 到我們的藍新帳戶
+
 
 要做：
 1.建店 API => 建立”服務者”商店(每一個服務者, 就是一家商店)
@@ -174,6 +176,18 @@ HashIV：CeYa8zoA0mX4qBpP
 
 vultr:
 8k-TPf]CT964,--R
+
+20220803
+1.NotifyUrl 的回傳資訊紀錄：
+MerchantID, Amt, TradeNo, MerchantOrderNo, PaymentType, PayTime, EscrowBank, AuthBank, Auth, Card6No, Card4No, PaymentMethod
+
+2.http://202.182.105.11/api/search_cases/1/
+a.avg_offender_rating 
+b.num_offender_rating 要是整數 (rating_nums 的型態要是 integer)
+3.http://202.182.105.11/api/need_cases/
+a.應該要回傳 照顧者名稱, 如果已經確認照顧者的話~
+servant_name
+4.Model User 多一個欄位 is_passed, is_servant_passed
 
 20220802
 0.建立新商店, 把回傳資訊存在 UserStore, 然後要能從藍新後台登入該商店
