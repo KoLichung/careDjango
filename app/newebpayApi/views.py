@@ -132,7 +132,7 @@ class MpgTrade(APIView):
             "MerchantID" : merchant_id,
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"010",
+            "MerchantOrderNo":"011",
             "Amt": 2000,
             "ItemDesc": "test",       
             "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
@@ -312,17 +312,16 @@ class NotifyUrlCallback(APIView):
         data = urllib.parse.parse_qs(request.body.decode('utf-8'))
         logger.info(data)
         # print(body)
-        key = "ZsaGSvba0vO3OP0pyu1hsUiqhhpdJL2m"
-        iv = "CQtj19eestVGIjeP"
-        TradeInfo = data['TradeInfo']
+        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
+        iv = "Cv96xp11VikUNhRP"
+        TradeInfo = data['TradeInfo'][0]
+        logger.info(TradeInfo)
         decrypt_text = module.aes256_cbc_decrypt(TradeInfo, key, iv)
         the_data = urllib.parse.unquote(decrypt_text)
 
         data_json = json.loads(the_data)
         
-        # print(data_json)
-        # logger.info(body)
-        # logger.info(data_json)
+        logger.info(decrypt_text)
 
         if(PayInfo.objects.filter(OrderInfoMerchantTradeNo=data_json['MerchantTradeNo']).count()==0 ):
             payInfo = PayInfo()
