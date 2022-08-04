@@ -102,12 +102,12 @@ class CreateMerchant(APIView):
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
         # print(type(json.loads(resp.text)['status']))
-        userstore = UserStore()
-        userstore.user = self.request.user
-        userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
-        userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
-        userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
-        userstore.save()
+        # userstore = UserStore()
+        # userstore.user = self.request.user
+        # userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
+        # userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
+        # userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
+        # userstore.save()
         # UserStore.objects.create(user=self.request.user,MerchantID=json.loads(resp.text)['MerchantID'],MerchantHashKey=json.loads(resp.text)['MerchantHashKey'],MerchantIvKey=json.loads(resp.text)['MerchantIvKey'])
         # save merchant_id, hash_key, hash_iv to UserStore
 
@@ -124,7 +124,7 @@ class MpgTrade(APIView):
 
         Version = "2.0"
 
-        merchant_id = "ACE00005"
+        merchant_id = "ACE00008"
         key = "If7VxDNCTuMvtVryP3ogAwuAHiNZCnAF"
         iv = "CDAE1F1MJVo8u11P"
 
