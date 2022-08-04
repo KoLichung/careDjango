@@ -130,10 +130,10 @@ class MpgTrade(APIView):
             "MerchantID" : "ACE00006",
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"202208030007",
+            "MerchantOrderNo":"8",
             "Amt": 2000,
             "ItemDesc": "test",       
-            "NotifyURL": "http://localhost:80/newebpayApi/notifyurl_callback"
+            "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
         }
 
         query_str = urllib.parse.urlencode(data)
@@ -302,6 +302,9 @@ class NotifyUrlCallback(APIView):
 
     def post(self, request, format=None):
         # body_unicode = request.body.decode('utf-8')
+        logger.info(request)
+        logger.info(request.body)
+
         body = json.loads(request.body)
         # print(body)
         key = "ZsaGSvba0vO3OP0pyu1hsUiqhhpdJL2m"
