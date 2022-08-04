@@ -57,7 +57,7 @@ class CreateMerchant(APIView):
                 "MerchantEnAddr": "test",
                 "NationalE": "Taiwan",
                 "CityE": "Tainan City",
-                "PaymentType": "CREDIT:1|WEBATM:0|VACC:0|CVS:0|BARCODE:0|EsunWallet:0|TaiwanPay:0|CVSCOM:0",
+                "PaymentType": "CREDIT:1|WEBATM:0|VACC:0|CVS:0|BARCODE:0|EsunWallet:0|TaiwanPay:0",
                 "MerchantType": 2,
                 "BusinessType": "8999",
                 "MerchantDesc": "test",
@@ -102,13 +102,12 @@ class CreateMerchant(APIView):
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
         # print(type(json.loads(resp.text)['status']))
-        # userstore = UserStore()
-        # userstore.user = self.request.user
-        # userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
-        # userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
-        # userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
-        # userstore.save()
-        # UserStore.objects.create(user=self.request.user,MerchantID=json.loads(resp.text)['MerchantID'],MerchantHashKey=json.loads(resp.text)['MerchantHashKey'],MerchantIvKey=json.loads(resp.text)['MerchantIvKey'])
+        userstore = UserStore()
+        userstore.user = self.request.user
+        userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
+        userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
+        userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
+        userstore.save()
         # save merchant_id, hash_key, hash_iv to UserStore
 
         return Response(json.loads(resp.text))
