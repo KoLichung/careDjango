@@ -501,6 +501,7 @@ class ReviewViewSet(viewsets.GenericViewSet,
             queryset[i].end_datetime = queryset[i].case.end_datetime
             queryset[i].user_avg_rate = queryset.filter(case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
             queryset[i].user_rating_nums = queryset.filter(case_offender_rating__gte=1).aggregate(Count('case_offender_rating'))['case_offender_rating__count']
+            queryset[i].servant_name = queryset[i].servant.name
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -511,6 +512,7 @@ class ReviewViewSet(viewsets.GenericViewSet,
             review.is_continuous_time = review.case.is_continuous_time
             review.start_datetime = review.case.start_datetime
             review.end_datetime = review.case.end_datetime
+            review.servant_name = review.servant.name
             serializer = self.get_serializer(review)
             return Response(serializer.data)
         else:

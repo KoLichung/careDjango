@@ -45,10 +45,10 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE00007",
+                "MerchantID": "ACE00008",
                 "MCType": 1,
-                "MerchantName": "杏心測試七",
-                "MerchantNameE": "XinshingTest7",
+                "MerchantName": "杏心測試八",
+                "MerchantNameE": "XinshingTest8",
                 "MerchantWebURL": "http://test.com",
                 "MerchantAddrCity": "台南市",
                 "MerchantAddrArea": "中西區",
@@ -57,7 +57,7 @@ class CreateMerchant(APIView):
                 "MerchantEnAddr": "test",
                 "NationalE": "Taiwan",
                 "CityE": "Tainan City",
-                "PaymentType": "CREDIT:1",
+                "PaymentType": "CREDIT:1|WEBATM:0|VACC:0|CVS:0|BARCODE:0|EsunWallet:0|TaiwanPay:0|CVSCOM:0",
                 "MerchantType": 2,
                 "BusinessType": "8999",
                 "MerchantDesc": "test",
@@ -65,7 +65,7 @@ class CreateMerchant(APIView):
                 "SubBankCode": "1379",
                 "BankAccount": "137030000175",
                 "AccountName": "齊家科技股份有限公司",
-                "NotifyURL": "http://127.0.0.1:80/newebpayApi/notifyurl_callback"
+                "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
         }
 
         extend_params_personal = {
@@ -133,7 +133,7 @@ class MpgTrade(APIView):
             "MerchantID" : merchant_id,
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"9",
+            "MerchantOrderNo":"010",
             "Amt": 2000,
             "ItemDesc": "test",       
             "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
@@ -305,24 +305,25 @@ class NotifyUrlCallback(APIView):
 
     def post(self, request, format=None):
         # body_unicode = request.body.decode('utf-8')
-        logger.info(request)
-        logger.info(request.body)
+        # logger.info(request)
+        # logger.info(request.body)
 
-        logger.info(request.body.decode('utf-8'))
+        # logger.info(request.body.decode('utf-8'))
 
-        body = json.loads(request.body.decode('utf-8'))
+        data = urllib.parse.parse_qs(request.body.decode('utf-8'))
+        logger.info(data)
         # print(body)
         key = "ZsaGSvba0vO3OP0pyu1hsUiqhhpdJL2m"
         iv = "CQtj19eestVGIjeP"
-        TradeInfo = body['TradeInfo']
+        TradeInfo = data['TradeInfo']
         decrypt_text = module.aes256_cbc_decrypt(TradeInfo, key, iv)
         the_data = urllib.parse.unquote(decrypt_text)
 
         data_json = json.loads(the_data)
         
-        print(data_json)
-        logger.info(body)
-        logger.info(data_json)
+        # print(data_json)
+        # logger.info(body)
+        # logger.info(data_json)
 
         if(PayInfo.objects.filter(OrderInfoMerchantTradeNo=data_json['MerchantTradeNo']).count()==0 ):
             payInfo = PayInfo()
