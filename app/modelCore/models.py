@@ -407,7 +407,7 @@ class PayInfo(models.Model):
     PaymentType = models.CharField(max_length=100, default='', blank = True, null=True)
     MerchantID = models.CharField(max_length=100, default='', blank = True, null=True)
     
-    OrderInfoMerchantTradeNo = models.CharField(max_length=100, default='', blank = True, null=True)
+    OrderInfoMerchantOrderNo = models.CharField(max_length=100, default='', blank = True, null=True)
     OrderInfoTradeDate = models.DateTimeField(auto_now=False,null=True)
     OrderInfoTradeNo = models.CharField(max_length=100, default='', blank = True, null=True)
     OrderInfoTradeAmt = models.IntegerField(default=0, null=True)

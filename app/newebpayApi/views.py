@@ -132,7 +132,7 @@ class MpgTrade(APIView):
             "MerchantID" : merchant_id,
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"012",
+            "MerchantOrderNo":"013",
             "Amt": 2000,
             "ItemDesc": "test",       
             "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
@@ -322,12 +322,12 @@ class NotifyUrlCallback(APIView):
         
         logger.info(data_json)
 
-        if(PayInfo.objects.filter(OrderInfoMerchantTradeNo=data_json['Result']['MerchantTradeNo']).count()==0 ):
+        if(PayInfo.objects.filter(OrderInfoMerchantOrderNo=data_json['Result']['MerchantOrderNo']).count()==0 ):
             payInfo = PayInfo()
             payInfo.MerchantID = data_json['Result']['MerchantID']
 
             if data_json['Result']['Status'] == 'SUCCESS' :
-                payInfo.OrderInfoMerchantTradeNo = data_json['Result']['MerchantTradeNo']
+                payInfo.OrderInfoMerchantOrderNo = data_json['Result']['MerchantOrderNo']
                 payInfo.OrderInfoTradeNo = data_json['Result']['TradeNo']
                 payInfo.OrderInfoTradeAmt = data_json['Result']['Amt']
                 payInfo.OrderInfoPaymentType = data_json['Result']['PaymentType']
