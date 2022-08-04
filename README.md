@@ -181,6 +181,10 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220804
+1.avg_offender_rating 要是 floating
+2.
+
 20220803
 1.NotifyUrl 的回傳資訊紀錄：
 MerchantID, Amt, TradeNo, MerchantOrderNo, PaymentType, PayTime, EscrowBank, AuthBank, Auth, Card6No, Card4No, PaymentMethod

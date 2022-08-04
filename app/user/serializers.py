@@ -33,7 +33,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id','phone','name','gender','email','address','image','is_servant','rating','is_home','home_hour_wage','home_half_day_wage','home_one_day_wage','is_hospital','hospital_hour_wage','hospital_half_day_wage','hospital_one_day_wage','about_me','ATMInfoBankCode','ATMInfoBranchBankCode','ATMInfoAccount')
+        fields = ('id','phone','name','gender','email','address','image','is_servant','is_passed','is_servant_passed','rating','is_home','home_hour_wage','home_half_day_wage','home_one_day_wage','is_hospital','hospital_hour_wage','hospital_half_day_wage','hospital_one_day_wage','about_me','ATMInfoBankCode','ATMInfoBranchBankCode','ATMInfoAccount')
         # read_only_fields = ('id')
 
 class AuthTokenSerializer(serializers.Serializer):
