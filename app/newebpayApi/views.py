@@ -132,7 +132,7 @@ class MpgTrade(APIView):
             "MerchantID" : merchant_id,
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"014",
+            "MerchantOrderNo":"015",
             "Amt": 2000,
             "ItemDesc": "test",       
             "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
@@ -338,7 +338,7 @@ class NotifyUrlCallback(APIView):
                     logger.info("no trade status")
             
 
-            if data_json['Result']['CardInfo']!= None:
+            if data_json['Result']['PaymentType'] == 'CREDIT':
                 payInfo.PaymentType = "信用卡"
                 payInfo.EscrowBank = data_json['Result']['EscrowBank']
                 payInfo.AuthBank = data_json['Result']['AuthBank']
