@@ -124,8 +124,8 @@ class MpgTrade(APIView):
         Version = "2.0"
 
         merchant_id = "ACE00008"
-        key = "If7VxDNCTuMvtVryP3ogAwuAHiNZCnAF"
-        iv = "CDAE1F1MJVo8u11P"
+        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
+        iv = "Cv96xp11VikUNhRP"
 
         data = {
             "Version": Version,
