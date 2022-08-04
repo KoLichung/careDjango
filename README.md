@@ -91,9 +91,9 @@ UpdateUserService 的修改
 body form-data:services: 2,4,6,8  increase_prices: 20,25
 http://localhost:8000/api/user/update_user_services
 
-UpdateUserLicenseImage 的修改
-body form-data:license_id_4: image: file  
-http://localhost:8000/api/user/update_user_license_images
+UserLicenseImage 的修改
+body form-data:licence_id:1 image: file  
+http://localhost:8000/api/user/user_license_images
 
 UpdateUserInfoImage 的修改
 body form-data: info: Test   background_image: file
@@ -182,8 +182,16 @@ vultr:
 8k-TPf]CT964,--R
 
 20220804
-1.avg_offender_rating 要是 floating
+1.
+*.avg_offender_rating 要是 floating
+*.http://202.182.105.11/api/reviews/?review_type=unrated
+回傳 servant_name
+
 2.開店的時候, 要只有信用卡交易, 其他不需要
+3.處理 notify 的 api 
+4.查一下 20220802 的交易是否已請款(正常要自動請款)
+5.if 4 ok, 則測試 撥款 跟 扣款 api
+
 
 20220803
 1.NotifyUrl 的回傳資訊紀錄：
