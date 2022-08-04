@@ -183,7 +183,7 @@ vultr:
 
 20220804
 1.avg_offender_rating 要是 floating
-2.
+2.開店的時候, 要只有信用卡交易, 其他不需要
 
 20220803
 1.NotifyUrl 的回傳資訊紀錄：

@@ -121,13 +121,16 @@ class MpgTrade(APIView):
 
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         timeStamp = int( time.time() )
-        merchant_id = "ACE00007"
+
         Version = "2.0"
-        key = "rXmNKS4XiXneP64rV9ERRDFtbmDVXr2D"
-        iv = "CkTMcqoHwYZqFFLP"
+
+        merchant_id = "ACE00005"
+        key = "If7VxDNCTuMvtVryP3ogAwuAHiNZCnAF"
+        iv = "CDAE1F1MJVo8u11P"
+
         data = {
-            "Version": "2.0",
-            "MerchantID" : "ACE00006",
+            "Version": Version,
+            "MerchantID" : merchant_id,
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
             "MerchantOrderNo":"8",
