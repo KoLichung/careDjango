@@ -132,7 +132,7 @@ class MpgTrade(APIView):
             "MerchantID" : merchant_id,
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
-            "MerchantOrderNo":"011",
+            "MerchantOrderNo":"012",
             "Amt": 2000,
             "ItemDesc": "test",       
             "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
@@ -315,37 +315,36 @@ class NotifyUrlCallback(APIView):
         key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
         iv = "Cv96xp11VikUNhRP"
         TradeInfo = data['TradeInfo'][0]
-        logger.info(TradeInfo)
         decrypt_text = module.aes256_cbc_decrypt(TradeInfo, key, iv)
-        the_data = urllib.parse.unquote(decrypt_text)
+        # the_data = urllib.parse.unquote(decrypt_text)
 
-        data_json = json.loads(the_data)
+        data_json = json.loads(decrypt_text)
         
-        logger.info(decrypt_text)
+        logger.info(data_json)
 
-        if(PayInfo.objects.filter(OrderInfoMerchantTradeNo=data_json['MerchantTradeNo']).count()==0 ):
+        if(PayInfo.objects.filter(OrderInfoMerchantTradeNo=data_json['Result']['MerchantTradeNo']).count()==0 ):
             payInfo = PayInfo()
-            payInfo.MerchantID = data_json['MerchantID']
+            payInfo.MerchantID = data_json['Result']['MerchantID']
 
-            if data_json['Status'] == 'SUCCESS' :
-                payInfo.OrderInfoMerchantTradeNo = data_json['MerchantTradeNo']
-                payInfo.OrderInfoTradeNo = data_json['TradeNo']
-                payInfo.OrderInfoTradeAmt = data_json['Amt']
-                payInfo.OrderInfoPaymentType = data_json['PaymentType']
-                payInfo.OrderInfoPayTime = data_json['PayTime']
+            if data_json['Result']['Status'] == 'SUCCESS' :
+                payInfo.OrderInfoMerchantTradeNo = data_json['Result']['MerchantTradeNo']
+                payInfo.OrderInfoTradeNo = data_json['Result']['TradeNo']
+                payInfo.OrderInfoTradeAmt = data_json['Result']['Amt']
+                payInfo.OrderInfoPaymentType = data_json['Result']['PaymentType']
+                payInfo.OrderInfoPayTime = data_json['Result']['PayTime']
                 try:
-                    payInfo.OrderInfoTradeStatus = data_json['TradeStatus']
+                    payInfo.OrderInfoTradeStatus = data_json['Result']['TradeStatus']
                 except:
                     logger.info("no trade status")
             
 
-            if data_json['CardInfo']!= None:
+            if data_json['Result']['CardInfo']!= None:
                 payInfo.PaymentType = "信用卡"
-                payInfo.EscrowBank = data_json['EscrowBank']
-                payInfo.AuthBank = data_json['AuthBank']
-                payInfo.Auth = data_json['Auth']
-                payInfo.CardInfoCard6No = data_json['Card6No']
-                payInfo.CardInfoCard4No = data_json['Card4No']
+                payInfo.EscrowBank = data_json['Result']['EscrowBank']
+                payInfo.AuthBank = data_json['Result']['AuthBank']
+                payInfo.Auth = data_json['Result']['Auth']
+                payInfo.CardInfoCard6No = data_json['Result']['Card6No']
+                payInfo.CardInfoCard4No = data_json['Result']['Card4No']
 
             payInfo.save()
             # if('ATMInfo' in data_json and data_json['ATMInfo']!= None):
