@@ -250,18 +250,18 @@ class Appropriation(APIView):
         post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
+        iv = "Cv96xp11VikUNhRP"
 
         data = {
                 "Version": "1.0",
-                "MerchantID" : "ACE123456",
+                "MerchantID" : "ACE00008",
                 "MerTrade": "DebitTest001",
                 "TimeStamp": timeStamp,
                 "FeeType": 1,
                 "BalanceType": 0,
-                "MerchantOrderNo":"202207300003",
-                "Amount": 3000,     
+                "MerchantOrderNo":"1",
+                "Amount": 2000,     
             }
 
         query_str = urllib.parse.urlencode(data)
@@ -278,18 +278,18 @@ class Debit(APIView):
         post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
+        iv = "Cv96xp11VikUNhRP"
 
         data = {
                 "Version": "1.1",
-                "MerchantID" : "ACE123456",
+                "MerchantID" : "ACE00008",
                 "MerTrade": "DebitTest001",
                 "TimeStamp": timeStamp,
                 "FeeType": 1,
                 "BalanceType": 0,
-                "AppointMerID":"202207300003",
-                "Amount": 3000,     
+                "AppointMerID":"MS336989148",
+                "Amount": 2000,     
             }
 
         query_str = urllib.parse.urlencode(data)
