@@ -163,15 +163,15 @@ class MpgTrade(APIView):
 class SearchTradeInfo(APIView):
     def get(self, request, format=None):
         post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 
-        MerchantID = "ACE00004"
-        key = "ZsaGSvba0vO3OP0pyu1hsUiqhhpdJL2m"
-        iv = "CQtj19eestVGIjeP"
+        MerchantID = "ACE00008"
+        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
+        iv = "Cv96xp11VikUNhRP"
         Version = "1.3"
         RespondType = "JSON"
         check_data = {
-            "Amt": 3500,
+            "Amt": 2000,
             "MerchantID" : MerchantID,
-            "MerchantOrderNo":"202208020000",
+            "MerchantOrderNo":"1",
             }
         # sorted_check_data = {}
         # for key in sorted(check_data):
@@ -182,8 +182,8 @@ class SearchTradeInfo(APIView):
         hash = str.upper(hashs)
         CheckValue = hash
         TimeStamp = int( time.time() )
-        MerchantOrderNo = "202208020000"
-        Amt = 3500
+        MerchantOrderNo = "1"
+        Amt = 2000
 
         # with open("SearchTradeInfo.html", 'w', encoding="utf-8") as f:
         #     html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={post_url}>測試URL: {post_url}<p>MerchantID:<input type='text' name='MerchantID' readonly='readonly' value={MerchantID} ><br><br>Version:<input type='text' name='Version' readonly='readonly' value={Version} ><br><br>RespondType:<input type='text' name='RespondType' readonly='readonly' value={RespondType}><br><br>CheckValue:<input type='text' name='CheckValue' readonly='readonly' value={CheckValue}><br><br><br>TimeStamp:<input type='text' name='TimeStamp' readonly='readonly' value={TimeStamp}><br><br>MerchantOrderNo:<input type='text' name='MerchantOrderNo' readonly='readonly' value={MerchantOrderNo}><br><br>Amt:<input type='text' name='Amt' readonly='readonly' value={Amt}><br><input type='submit' value='Submit'></form></body></html>"
