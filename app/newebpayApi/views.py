@@ -10,14 +10,11 @@ from django.http import HttpResponse
 from newebpayApi import module
 import requests
 import time
-from datetime import datetime, timedelta
 import urllib.parse
 import hashlib
 import codecs
 import logging
 import json
-from Crypto.Cipher import AES
-from newebpayApi.aesCipher import AESCipher
 from modelCore.models import Order ,UserStore ,PayInfo
 
 logger = logging.getLogger(__file__)
@@ -219,6 +216,7 @@ class CancelAuthorization(APIView):
 
         return Response(json.loads(resp.text))
 
+# 請款
 class Invoice(APIView):
     def get(self, request, format=None):
         post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
@@ -245,6 +243,7 @@ class Invoice(APIView):
 
         return Response(json.loads(resp.text))
 
+# 撥款
 class Appropriation(APIView):
 
     def get(self, request, format=None):
@@ -272,6 +271,7 @@ class Appropriation(APIView):
 
         return Response(json.loads(resp.text))
 
+# 扣款
 class Debit(APIView):
 
     def get(self, request, format=None):
@@ -337,7 +337,6 @@ class NotifyUrlCallback(APIView):
                 except:
                     logger.info("no trade status")
             
-
             if data_json['Result']['PaymentType'] == 'CREDIT':
                 payInfo.PaymentType = "信用卡"
                 payInfo.EscrowBank = data_json['Result']['EscrowBank']

@@ -71,38 +71,6 @@ UpdateATMInfo 的修改
 body form-data:ATMInfoBankCode : xxx  ATMInfoBranchBankCode: xxx accounts: xxx
 http://localhost:8000/api/user/update_ATM_info
 
-UpdateUserWeekDayTime 的修改
-body form-data:weekday: 1,3,6 weektime: 0900:2100,1000:1900,1100:2000
-http://localhost:8000/api/user/update_user_weekdaytimes
-
-UpdateUserLanguage 的修改
-body form-data: language: 1,3,5,6,7,8  remark_original:排灣族語  remark_others: 法語
-http://localhost:8000/api/user/update_user_languages
-
-UpdateUserCareType 的修改
-body form-data: home: 300,1650,3350 hospital: 330,1700,3450
-http://localhost:8000/api/user/update_user_caretype
-
-UpdateUserLocations的修改
-body form-data: locations: 39,57 tranfer_fee: 300,500
-http://localhost:8000/api/user/update_user_locations
-
-UpdateUserService 的修改
-body form-data:services: 2,4,6,8  increase_prices: 20,25
-http://localhost:8000/api/user/update_user_services
-
-UserLicenseImage 的修改
-body form-data:licence_id:1 image: file  
-http://localhost:8000/api/user/user_license_images
-
-UpdateUserInfoImage 的修改
-body form-data: info: Test   background_image: file
-http://localhost:8000/api/user/update_user_images
-
-UpdateUserInfoImage 的修改
-body form-data: image: file
-http://localhost:8000/api/user/update_user_info_images
-
 CreateCase 的新增
 http://localhost:8000/api/create_case?county=57&start_date=2022-07-22&end_date=2022-08-15&weekday=1,3,5&start_time=08:30&end_time=17:30
 body form-data: care_type: home name: 王老明 gender: M  age: 69  weight: 79  disease: 1711  disease_remark: test  body_condition: 2,8,10  conditions_remark: test  service: 1,4,7  emergencycontact_name: 王大明  emergencycontact_relation: 父  emergencycontact_phone: 0987654321
@@ -149,16 +117,6 @@ http://202.182.105.11/newebpayApi/notifyurl_callback
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播
 
-e.if 請款狀態是成功, 用撥款 api 撥款到合作商店的藍新帳戶 (合作商店的藍新帳戶怎麼登入)
-f.if 已經撥款, 發動扣款, 扣 10% 到我們的藍新帳戶
-
-
-要做：
-1.建店 API => 建立”服務者”商店(每一個服務者, 就是一家商店)
-2.幕前支付 API => 需求者付款
-3.扣款 API => 在某一個服務者商店扣錢給平台
-4.撥款 API => 把服務者商店的錢, 撥給服務者商店的 ATM 帳戶
-
 藍新測試後台網址
 https://cwww.newebpay.com/
 42779071
@@ -181,6 +139,10 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220805
+1.撥款 => 請款完成後, 從藍新帳戶撥款到 合作商店 的藍新帳戶
+2.扣款 => 撥款完成後, 從合作商店 扣款到 我們的 藍新帳戶
+
 20220804
 1.
 *.avg_offender_rating 要是 floating
@@ -191,7 +153,6 @@ vultr:
 3.處理 notify 的 api 
 4.查一下 20220802 的交易是否已請款(正常要自動請款)
 5.if 4 ok, 則測試 撥款 跟 扣款 api
-
 
 20220803
 1.NotifyUrl 的回傳資訊紀錄：
