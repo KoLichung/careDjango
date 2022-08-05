@@ -250,8 +250,8 @@ class Appropriation(APIView):
         post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
-        iv = "Cv96xp11VikUNhRP"
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
 
         data = {
                 "Version": "1.0",
@@ -278,8 +278,8 @@ class Debit(APIView):
         post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
-        iv = "Cv96xp11VikUNhRP"
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
 
         data = {
                 "Version": "1.1",
