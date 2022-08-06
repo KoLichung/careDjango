@@ -42,10 +42,10 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE00009",
+                "MerchantID": "ACE00010",
                 "MCType": 1,
-                "MerchantName": "杏心測試九",
-                "MerchantNameE": "XinshingTest9",
+                "MerchantName": "杏心測試十",
+                "MerchantNameE": "XinshingTest10",
                 "MerchantWebURL": "http://test.com",
                 "MerchantAddrCity": "台南市",
                 "MerchantAddrArea": "中西區",
@@ -64,6 +64,8 @@ class CreateMerchant(APIView):
                 "AccountName": "齊家科技股份有限公司",
                 "CreditAutoType": 1,
                 "AgreedDay": "CREDIT:0",
+                "Withdraw": "9",
+                "WithdrawMer": "1",
                 "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback",
                 
         }
@@ -122,8 +124,8 @@ class MpgTrade(APIView):
         timeStamp = int( time.time() )
 
         Version = "2.0"
-        order_id = '3'
-        merchant_id = "ACE00009"
+        order_id = '4'
+        merchant_id = "ACE00010"
         key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
         iv = "C3RqE64KeXb3RPqP"
 
@@ -133,7 +135,7 @@ class MpgTrade(APIView):
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
             "MerchantOrderNo": order_id,
-            "Amt": 2000,
+            "Amt": 3000,
             "ItemDesc": "test",       
             "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
         }
@@ -291,7 +293,6 @@ class Debit(APIView):
                 "TimeStamp": timeStamp,
                 "FeeType": 1,
                 "BalanceType": 0,
-                "AppointMerID":"MS336989148",
                 "Amount": 2000,     
             }
 
