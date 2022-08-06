@@ -123,9 +123,9 @@ class MpgTrade(APIView):
 
         Version = "2.0"
         order_id = '3'
-        merchant_id = "ACE00003"
-        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
-        iv = "Cv96xp11VikUNhRP"
+        merchant_id = "ACE00009"
+        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
+        iv = "C3RqE64KeXb3RPqP"
 
         data = {
             "Version": Version,
@@ -163,15 +163,15 @@ class MpgTrade(APIView):
 class SearchTradeInfo(APIView):
     def get(self, request, format=None):
         post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 
-        MerchantID = "ACE00008"
-        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
-        iv = "Cv96xp11VikUNhRP"
+        MerchantID = "ACE00009"
+        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
+        iv = "C3RqE64KeXb3RPqP"
         Version = "1.3"
         RespondType = "JSON"
         check_data = {
             "Amt": 2000,
             "MerchantID" : MerchantID,
-            "MerchantOrderNo":"1",
+            "MerchantOrderNo":"3",
             }
         # sorted_check_data = {}
         # for key in sorted(check_data):
@@ -182,7 +182,7 @@ class SearchTradeInfo(APIView):
         hash = str.upper(hashs)
         CheckValue = hash
         TimeStamp = int( time.time() )
-        MerchantOrderNo = "1"
+        MerchantOrderNo = "3"
         Amt = 2000
 
         # with open("SearchTradeInfo.html", 'w', encoding="utf-8") as f:
@@ -225,8 +225,8 @@ class Invoice(APIView):
         post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
         MerchantID = "ACE00008"
         timeStamp = int( time.time() )
-        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
-        iv = "Cv96xp11VikUNhRP"
+        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
+        iv = "C3RqE64KeXb3RPqP"
 
         data = {
                 "RespondType": "JSON",
@@ -253,17 +253,17 @@ class Appropriation(APIView):
         post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
+        iv = "C3RqE64KeXb3RPqP"
 
         data = {
                 "Version": "1.0",
-                "MerchantID" : "ACE00008",
+                "MerchantID" : "ACE00009",
                 "MerTrade": "DebitTest001",
                 "TimeStamp": timeStamp,
                 "FeeType": 1,
                 "BalanceType": 0,
-                "MerchantOrderNo":"1",
+                "MerchantOrderNo":"2",
                 "Amount": 2000,     
             }
 
@@ -281,12 +281,12 @@ class Debit(APIView):
         post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
+        iv = "C3RqE64KeXb3RPqP"
 
         data = {
                 "Version": "1.1",
-                "MerchantID" : "ACE00008",
+                "MerchantID" : "ACE00009",
                 "MerTrade": "DebitTest001",
                 "TimeStamp": timeStamp,
                 "FeeType": 1,
@@ -314,8 +314,8 @@ class NotifyUrlCallback(APIView):
         data = urllib.parse.parse_qs(request.body.decode('utf-8'))
         logger.info(data)
         # print(body)
-        key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
-        iv = "Cv96xp11VikUNhRP"
+        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
+        iv = "C3RqE64KeXb3RPqP"
         TradeInfo = data['TradeInfo'][0]
         decrypt_text = module.aes256_cbc_decrypt(TradeInfo, key, iv)
         # the_data = urllib.parse.unquote(decrypt_text)
@@ -326,7 +326,7 @@ class NotifyUrlCallback(APIView):
 
         if(PayInfo.objects.filter(OrderInfoMerchantOrderNo=data_json['Result']['MerchantOrderNo']).count()==0 ):
             payInfo = PayInfo()
-            payInfo.order = Order.objects.get(id=data_json['Result']['MerchantOrderNo'])
+            payInfo.order = Order.objects.get(id='1')
             payInfo.MerchantID = data_json['Result']['MerchantID']
             
             if data_json['Status'] == 'SUCCESS' :
