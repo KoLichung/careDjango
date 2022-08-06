@@ -223,7 +223,7 @@ class CancelAuthorization(APIView):
 class Invoice(APIView):
     def get(self, request, format=None):
         post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
-        MerchantID = "ACE00008"
+        MerchantID = "ACE00009"
         timeStamp = int( time.time() )
         key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
         iv = "C3RqE64KeXb3RPqP"
@@ -232,10 +232,10 @@ class Invoice(APIView):
                 "RespondType": "JSON",
                 "Version": "1.1",
                 "Amt": 2000,   
-                "MerchantOrderNo":"1",
+                "MerchantOrderNo":"3",
                 "TimeStamp": timeStamp,
                 "IndexType" : 1,
-                "TradeNo": "22080414340064438",
+                "TradeNo": "22080613222748822",
                 "CloseType": 1,
             }
 
@@ -253,8 +253,8 @@ class Appropriation(APIView):
         post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
-        iv = "C3RqE64KeXb3RPqP"
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
 
         data = {
                 "Version": "1.0",
@@ -281,8 +281,8 @@ class Debit(APIView):
         post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
-        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
-        iv = "C3RqE64KeXb3RPqP"
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
 
         data = {
                 "Version": "1.1",
