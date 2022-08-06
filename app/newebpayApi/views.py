@@ -263,7 +263,7 @@ class Appropriation(APIView):
                 "TimeStamp": timeStamp,
                 "FeeType": 1,
                 "BalanceType": 0,
-                "MerchantOrderNo":"2",
+                "MerchantOrderNo":"3",
                 "Amount": 2000,     
             }
 
