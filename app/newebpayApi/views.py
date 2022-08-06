@@ -42,10 +42,10 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE00008",
+                "MerchantID": "ACE00009",
                 "MCType": 1,
-                "MerchantName": "杏心測試八",
-                "MerchantNameE": "XinshingTest8",
+                "MerchantName": "杏心測試九",
+                "MerchantNameE": "XinshingTest9",
                 "MerchantWebURL": "http://test.com",
                 "MerchantAddrCity": "台南市",
                 "MerchantAddrArea": "中西區",
@@ -62,7 +62,10 @@ class CreateMerchant(APIView):
                 "SubBankCode": "1379",
                 "BankAccount": "137030000175",
                 "AccountName": "齊家科技股份有限公司",
-                "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
+                "CreditAutoType": 1,
+                "AgreedDay": "CREDIT:0",
+                "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback",
+                
         }
 
         extend_params_personal = {
@@ -119,8 +122,8 @@ class MpgTrade(APIView):
         timeStamp = int( time.time() )
 
         Version = "2.0"
-        order_id = '2'
-        merchant_id = "ACE00008"
+        order_id = '3'
+        merchant_id = "ACE00003"
         key = "Tog7hkxjtJcq9PeIX0qXx9GnIGAn6W9F"
         iv = "Cv96xp11VikUNhRP"
 
