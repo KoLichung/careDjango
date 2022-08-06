@@ -104,12 +104,12 @@ class CreateMerchant(APIView):
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
         # print(type(json.loads(resp.text)['status']))
-        userstore = UserStore()
-        userstore.user = self.request.user
-        userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
-        userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
-        userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
-        userstore.save()
+        # userstore = UserStore()
+        # userstore.user = self.request.user
+        # userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
+        # userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
+        # userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
+        # userstore.save()
         # save merchant_id, hash_key, hash_iv to UserStore
 
         return Response(json.loads(resp.text))
