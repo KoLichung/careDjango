@@ -176,9 +176,11 @@ class SearchTradeInfo(APIView):
             "MerchantID" : MerchantID,
             "MerchantOrderNo":"3",
             }
+
         # sorted_check_data = {}
         # for key in sorted(check_data):
         #     sorted_check_data[str(key)] = check_data[key]
+        
         check_string = urllib.parse.urlencode(check_data)
         hashs = 'IV=' + iv + '&' + check_string + '&Key=' + key
         hashs = hashlib.sha256(hashs.encode("utf-8")).hexdigest()
