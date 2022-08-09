@@ -148,6 +148,18 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220809
+0.index 頁的 縣市 跟 區域 關係, 寫成 javascript
+///
+a.在 index 頁上面隨意地方, 加一個按鈕, 加一個 文字欄位
+b.當按鈕按下去時, 到 views 去取資料
+c.將取得資料顯示在 文字欄位上
+///
+
+1.index 進入搜索列表頁, bug 要修整
+2.search 頁 的 filter 資料要帶入, 改成統一按搜索鍵才送出資料重新搜索
+3.星星問題
+
 20220808
 1.搜索列表
 2.照護者 detail

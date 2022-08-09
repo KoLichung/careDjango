@@ -403,6 +403,16 @@ class Review(models.Model):
     servant_comment = models.CharField(max_length = 255, blank = True, null=True)
     servant_rating_created_at = models.DateTimeField(auto_now=False, blank = True,null=True) 
 
+    @property
+    def servant_rating_range(self):
+        return range(6)
+        return range(int(self.servant_rating))
+    
+    @property
+    def servant_rating_is_half_star(self):
+        # 判斷
+        return True
+
 class PayInfo(models.Model):
     order = models.ForeignKey(
         Order,

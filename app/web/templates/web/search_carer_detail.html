@@ -96,6 +96,9 @@
                   <span class="fas fa-star"></span>
                   <span class="fas fa-star-half-alt"></span>
                 </div>
+                {% for i in review.servant_rating_range %}
+                    {{ forloop.counter }}
+                {% endfor %}
               </div>
               <div class="case-info-font">{{review.servant_comment}}</div>
             </div>
