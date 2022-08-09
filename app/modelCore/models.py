@@ -11,6 +11,12 @@ def image_upload_handler(instance,filename):
     new_fname = str(uuid.uuid1()) #uuid1 -> uuid + timestamp
     return f'images/{new_fname}{fpath.suffix}'
 
+@property
+def get_photo_url(self):
+    if self.photo and hasattr(self.photo, 'url'):
+        return self.photo.url
+    else:
+        return "/static/web/assets/img/generic/2.jpg"
 class UserManager(BaseUserManager):
 
     def create_user(self, phone, password=None, **extra_fields):

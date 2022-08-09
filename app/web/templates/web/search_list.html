@@ -9,156 +9,162 @@
         <button class="custom-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
           <span class="fas fa-plus-circle"></span> 展開篩選條件
         </button>
+        <form method="post" enctype="multipart/form-data">{% csrf_token %}
+          <div class="accordion-collapse collapse show" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+            <div class="row mx-3" >
+              <!-- 開始&結束日期 -->
+              <div class="col-xl-3 col-lg-5 col-md-6 row mt-3 ">
+                      <div class="col my-3">
+                        <!-- picker -->
+                        <label class="h5 mb-2" for="datepicker_startDate">開始日期</label>
+                        <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" name="datepicker_startDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' href="{% url 'search_list' %}?city={{dict.city.id}}&county={{dict.county}}&care_type={{dict.care_type}}&startDate={{datepicker_startDate}}"/>
+                      </div>
+                      <div class="col my-3">
+                        <!-- picker -->
+                        <label class="h5 mb-2" for="datepicker_endDate">結束日期</label>
+                        <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" name="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
+                      </div>
+              </div>
+              <!-- 開始&結束時間 -->
+              <div class="col-xl-3 col-lg-5 col-md-6 row mt-3  ">
+
+                      <div class="col my-3">
+                        <!-- picker -->
+                        <label class="h5 mb-2" for="timepicker_startTime">開始時間</label>
+                        <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" name="timepicker_startTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                      </div>
+
+                      <div class="col my-3">
+                        <!-- picker -->
+                        <label class="h5 mb-2" for="timepicker_endTime">結束時間</label>
+                        <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" name="timepicker_endTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                      </div>
+
+              </div>
             
-        <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
-          <div class="row mx-3" >
-            <!-- 開始&結束日期 -->
-            <div class="col-xl-3 col-lg-5 col-md-6 row mt-3 ">
-                    <div class="col my-3">
-                      <!-- picker -->
-                      <label class="h5 mb-2" for="datepicker_startDate">開始日期</label>
-                      <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
-                    </div>
-                    <div class="col my-3">
-                      <!-- picker -->
-                      <label class="h5 mb-2" for="datepicker_endDate">結束日期</label>
-                      <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
-                    </div>
-            </div>
-            <!-- 開始&結束時間 -->
-            <div class="col-xl-3 col-lg-5 col-md-6 row mt-3  ">
-
-                    <div class="col my-3">
-                      <!-- picker -->
-                      <label class="h5 mb-2" for="timepicker_startTime">開始時間</label>
-                      <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                    </div>
-
-                    <div class="col my-3">
-                      <!-- picker -->
-                      <label class="h5 mb-2" for="timepicker_endTime">結束時間</label>
-                      <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                    </div>
-
-            </div>
-          
-            <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
-                    
-                    <!-- 照護類型 -->
-                    <div class="col-sm-4 my-3">
-                      <h5 class="mb-2">照護類型</h5>
-                      <div class="dropdown font-sans-serif d-inline-block mb-2">
-                        <div class="">
-                          <button class="dropdown-button dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">居家照護</button>
-                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">醫院看護</span></a>
-                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">居家照護</span></a>
+              <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
+                      
+                      <!-- 照護類型 -->
+                      <div class="col-sm-4 my-3">
+                        <h5 class="mb-2">照護類型</h5>
+                        <div class="dropdown font-sans-serif d-inline-block mb-2">
+                          <div class="">
+                            <button class="dropdown-button dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{dict.care_type}}</button>
+                            <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" >
+                              <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county={{dict.county}}&care_type=醫院看護"><span class="dropdown-item-font">醫院看護</span></a>
+                              <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county={{dict.county}}&care_type=居家照護"><span class="dropdown-item-font">居家照護</span></a>
+                            </div>
+                          </div> 
+                        </div>
+                      </div>
+            
+                      <!-- 照護地點 -->
+                      <div class="col-sm-4 my-3">
+                        <h5 class=" mb-2">照護地點</h5>
+                        <div class="btn-group mb-2">
+                          <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" name="city_id" value="{{dict.city.id}}">
+                            {{dict.city}}
+                          </button>
+                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="city_id" value="{{dict.city.id}}">
+                            {% for cityName in dict.citys %}
+                              <a class="dropdown-item" href="{% url 'search_list' %}?city={{cityName.id}}&county=全區&care_type={{dict.care_type}}"><span class="dropdown-item-font">{{cityName}}</span></a>
+                            {% endfor %}
                           </div>
-                        </div> 
-                      </div>
-                    </div>
-          
-                    <!-- 照護地點 -->
-                    <div class="col-sm-4 my-3">
-                      <h5 class=" mb-2">照護地點</h5>
-                      <div class="btn-group mb-2">
-                        <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          台中市
-                        </button>
-                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
+                        </div>
+                        <div class="btn-group mb-2">
+                          <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" name="county_id" value="{{dict.county}}">
+                            {{dict.county}}
+                          </button>
+                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="county_id" value="{{dict.county}}">
+                            <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county=全區&care_type={{dict.care_type}}"><span class="dropdown-item-font">全區</span></a>
+                            {% for countyName in dict.counties %}
+                              <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county={{countyName}}&care_type={{dict.care_type}}"><span class="dropdown-item-font">{{countyName}}</span></a>
+                            {% endfor %}
+                          </div>
                         </div>
                       </div>
-                      <div class="btn-group mb-2">
-                        <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          全區
-                        </button>
-                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
-                        </div>
-                      </div>
-                    </div>
-          
-                    <!-- 時間類型 -->
-                    <div class="col-sm-4 my-3">
-                      <h5 class="mb-2">時間類型</h5>
-                    
-                        <!-- dropdown form -->
-                        <div class="btn-group">
-                          <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false">連續時間</button>
-                          
-                          <div class="dropdown-menu py-0">
-                            <div class="card shadow-none border-0" style="width: 15rem;">
-          
-                              <div class="card-body">
-          
-                                <div class="row text-start justify-content-between align-items-center mb-2">
-                                  <div class="col-auto">
-                                    <h6 class="mb-0">時間類型</h6>
+            
+                      <!-- 時間類型 -->
+                      <div class="col-sm-4 my-3">
+                        <h5 class="mb-2">時間類型</h5>
+                      
+                          <!-- dropdown form -->
+                          <div class="btn-group">
+                            <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"  aria-expanded="false">{{dict.time_type}}</button>
+                            
+                            <div class="dropdown-menu py-0">
+                              <div class="card shadow-none border-0" style="width: 15rem;">
+            
+                                <div class="card-body">
+            
+                                  <div class="row text-start justify-content-between align-items-center mb-2">
+                                    <div class="col-auto">
+                                      <h6 class="mb-0">時間類型</h6>
+                                    </div>
                                   </div>
+                                  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                                    <!-- 時間類型選項 radio -->
+                                    <div class="col-auto">
+              
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="True" />
+                                        <label class="h6" for="inlineRadio2">  連續時間</label>
+                                      </div>
+              
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="False" />
+                                        <label class="h6" for="inlineRadio2">  每週固定</label>
+                                      </div>
+              
+                                    </div>
+              
+                                    <!-- 週間星期 checkbox -->
+                                    <div class="col-auto">
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="1" />
+                                        <label class="h6" for="weekdays[]">星期一</label>
+                                      </div>
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="2" checked="" />
+                                        <label class="h6" for="weekdays[]">星期二</label>
+                                      </div>
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="3" />
+                                        <label class="h6" for="weekdays[]">星期三</label>
+                                      </div>
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="4" checked="" />
+                                        <label class="h6" for="weekdays[]">星期四</label>
+                                      </div>
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="5" checked="" />
+                                        <label class="h6" for="weekdays[]">星期五</label>
+                                      </div>
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="6" />
+                                        <label class="h6" for="weekdays[]">星期六</label>
+                                      </div>
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="0" checked="" />
+                                        <label class="h6" for="weekdays[]">星期日</label>
+                                      </div>
+                                    </div>
+                                  </form>
                                 </div>
-          
-                                <!-- 時間類型選項 radio -->
-                                <div class="col-auto">
-          
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="inlineRadio2" type="radio" name="inlineRadioOptions" value="option2" />
-                                    <label class="h6" for="inlineRadio2">  連續時間</label>
-                                  </div>
-          
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="inlineRadio2" type="radio" name="inlineRadioOptions" value="option2" />
-                                    <label class="h6" for="inlineRadio2">  每週固定</label>
-                                  </div>
-          
-                                </div>
-          
-                                <!-- 週間星期 checkbox -->
-                                <div class="col-auto">
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="flexCheckDefault" type="checkbox" value="" />
-                                    <label class="h6" for="flexCheckDefault">星期一</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" checked="" />
-                                    <label class="h6" for="flexCheckChecked">星期二</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="flexCheckDefault" type="checkbox" value="" />
-                                    <label class="h6" for="flexCheckDefault">星期三</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" checked="" />
-                                    <label class="h6" for="flexCheckChecked">星期四</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" checked="" />
-                                    <label class="h6" for="flexCheckChecked">星期五</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="flexCheckDefault" type="checkbox" value="" />
-                                    <label class="h6" for="flexCheckDefault">星期六</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" checked="" />
-                                    <label class="h6" for="flexCheckChecked">星期日</label>
-                                  </div>
-                                </div>
-                                
                               </div>
                             </div>
                           </div>
-                        </div>
-                     
-                    </div>
-            </div>
                       
-                  
+                      </div>
+              </div>
+              <button class="col-xl-4 col-md-6 mt-4 mx-auto full-purple-button" type="submit" name="submit"  onclick="location.href='{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}'">
+                搜尋
+              </button> 
+                    
+            </div>
+            <hr>
           </div>
-          <hr>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -168,143 +174,59 @@
   </div>
       
   <!-- 搜尋結果 -->
+  
   <div class="row g-3 mx-5 d-flex" >
-        
-    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="border border-600" style="border-radius: 6px;">
-        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
-          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖">
-          <div class="card-body">
-            <div class="d-flex">
-              <div class="avatar avatar-xl" style="margin-right: 5px;">
-                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+      {% for list in forlooplist %}
+      <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
+        <div class="border border-600" style="border-radius: 6px;">
+          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{list.servant}}">
+            {% if list.servant.background_image.url != None %}
+              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{list.servant.background_image.url}}" alt="照顧者背景圖">
+            {% else %}
+              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖"> 
+            {% endif %}
+            <div class="card-body">
+              <div class="d-flex">
+                <div class="avatar avatar-xl" style="margin-right: 5px;">
+                  <!-- <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >   -->
+                  {% if list.servant.image.url != None %}
+                    <img class="rounded-circle" src="{{list.servant.image.url}}" alt="" > 
+                  {% else %}
+                    <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >
+                  {% endif %}
+                </div>
+                  <span class="carer-name" style="margin-right: 5px;">{{list.servant.name}}</span >
+                  <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                  <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                  <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                  <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                  <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                  <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價{{list.servant_rate_nums}}</span>
               </div>
-                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
-            </div>
 
-            <div class="mt-2">
-              <span class="purple-border-tag">居家照顧</span>
-              <span class="purple-border-tag">醫院看護</span>
-            </div>
-  
-            <div class="mt-3">
-              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6 text-800">服務地區：</p>
-              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
-            </div>
-                    
-          </div>
-        </a>   
-      </div>
-    </div>
-
-    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="border border-600" style="border-radius: 6px;">
-        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
-          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
-          <div class="card-body">
-            <div class="d-flex">
-              <div class="avatar avatar-xl" style="margin-right: 5px;">
-                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+              <div class="mt-2">
+                {% for care_type in list.servant_care_type %}
+                  <span class="purple-border-tag">{{care_type}}</span>
+                {% endfor %}
               </div>
-                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
-            </div>
-
-            <div class="mt-2">
-              <span class="purple-border-tag">居家照顧</span>
-              <span class="purple-border-tag">醫院看護</span>
-            </div>
-  
-            <div class="mt-3">
-              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6 text-800">服務地區：</p>
-              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
-            </div>
-                    
-          </div>
-        </a>   
-      </div>
-    </div>
-
-    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="border border-600" style="border-radius: 6px;">
-        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
-          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
-          <div class="card-body">
-            <div class="d-flex">
-              <div class="avatar avatar-xl" style="margin-right: 5px;">
-                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+    
+              <div class="mt-3">
+                <p class="h6 text-800">時薪 ${{list.hour_wage}} | 半天 ${{list.half_day_wage}} | 一天 ${{list.one_day_wage}}</p>
+                <p class="h6 text-800">服務地區：</p>
+                <p class="h6 text-800">
+                  {% for city in list.service_citys  %}
+                    {{city}}
+                  {% endfor %}
+                </p>
               </div>
-                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
+                      
             </div>
-
-            <div class="mt-2">
-              <span class="purple-border-tag">居家照顧</span>
-              <span class="purple-border-tag">醫院看護</span>
-            </div>
-  
-            <div class="mt-3">
-              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6 text-800">服務地區：</p>
-              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
-            </div>
-                    
-          </div>
-        </a>   
+          </a>   
+        </div>
       </div>
-    </div>
+    {% endfor %}
 
-    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="border border-600" style="border-radius: 6px;">
-        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
-          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
-          <div class="card-body">
-            <div class="d-flex">
-              <div class="avatar avatar-xl" style="margin-right: 5px;">
-                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
-              </div>
-                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
-            </div>
-
-            <div class="mt-2">
-              <span class="purple-border-tag">居家照顧</span>
-              <span class="purple-border-tag">醫院看護</span>
-            </div>
-  
-            <div class="mt-3">
-              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6 text-800">服務地區：</p>
-              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
-            </div>
-                    
-          </div>
-        </a>   
-      </div>
-    </div>
+ 
 
   </div>
 

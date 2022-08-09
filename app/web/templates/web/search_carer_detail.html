@@ -9,20 +9,29 @@
           <div class="col-12 col-md-7 col-lg-8 mb-5 ">
 
             <div>
-              <img class="carer-cover-img" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="">
+              {% if dict.servant.background_image.url != None %}
+                <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{dict.servant.background_image.url}}" alt="照顧者背景圖">
+              {% else %}
+                <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖"> 
+              {% endif %}
             </div>
 
             <div class="container mt-4" style="display: flex; padding-left: 0;" >
                   
               <div class="avatar avatar-4xl" >
-                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
+                {% if dict.servant.image.url != None %}
+                  <img class="rounded-circle" src="{{dict.servant.image.url}}" alt="" > 
+                {% else %}
+                  <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >
+                {% endif %}
               </div>
 
               <div class="mx-3 align-self-center">
-                <span class="h5">林瑜婷</span>
+                <span class="h5">{{dict.servant.name}}</span>
                   <div class="mt-2">
-                    <span class="purple-border-tag">居家照顧</span>
-                    <span class="purple-border-tag">醫院看護</span>
+                    {% for care_type in dict.care_type %}
+                    <span class="purple-border-tag">{{care_type}}</span>
+                    {% endfor %}
                   </div>
               </div>
 
@@ -30,14 +39,12 @@
 
             <div class="case-info-font mt-4">
               <span class="sub-purple-text">語言能力</span>
-              &emsp;國語、台語、客家話 <br>
+              &emsp;{% for language in dict.languages %} {{language}} {% endfor %} <br>
               <p class="text-indent-5 mt-2">
                 <span class="sub-purple-text">服務地區</span>
-                &emsp;台中市全區&emsp;<span class="sub-font">交通費 $500/趟</span><br>
-                &ensp;彰化市&emsp;<span class="sub-font">交通費 $0/趟</span><br>
-                &ensp;彰化縣和美鎮&emsp;<span class="sub-font">  交通費 $300/趟</span><br>
-                &ensp;南投縣南投市&emsp;<span class="sub-font">交通費 $500/趟</span><br>
-                &ensp;苗栗縣全區&emsp;<span class="sub-font">交通費 $500/趟</span><br>
+                {% for list in dict.location_list %}
+                &emsp;{{list.city}}{{list.county}}&emsp;<span class="sub-font">交通費 ${{list.tranfer_fee}}/趟</span><br>
+                {% endfor %}
               </p>
             </div>
 
@@ -45,43 +52,32 @@
 
             <p class="small-section-title-purple mt-5">服務項目</p>
             <div class="case-info-font mb-5 text-indent-28px">
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;安全維護 (預防跌倒、陪同散步、推輪椅、心靈陪伴)</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;協助進食</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;協助如廁</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;陪同就醫</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;代購物品</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;簡易備餐</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;身體清潔</p>
+              {% for service in dict.services %}
+              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{service}}</p>
+              {% endfor %}
             </div>
 
             <p class="small-section-title-purple mt-5">相關資格文件</p>
             <div class="case-info-font mb-5 text-indent-28px">
-              <p><span class="fas fa-times-circle fs-1" style="color: red;"></span>&ensp;未提供 COVID-19 疫苗接種記錄卡</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;良民證-警察刑事紀錄證明書</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;一年內體檢表(含B肝表面抗原＆胸部X光)</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;照服員結業證書</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;照服員單一級證照</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;護理師證書</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;護理相關畢業證書</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;長照證明卡</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;失智症 20 小時課程</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;身心障礙 20 小時課程</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;物理治療師證照</p>
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;職能治療師證照</p>
-              
-
-
-                 
+              <!-- <p><span class="fas fa-times-circle fs-1" style="color: red;"></span>&ensp;未提供 COVID-19 疫苗接種記錄卡</p> -->
+              {% for license in dict.license_not_provide %}
+              <p><span class="fas fa-times-circle fs-1" style="color: red;"></span>&ensp;未提供 {{license}}</p>
+              {% endfor %}
+              {% for license in dict.licences %}
+              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{license}}</p>
+              {% endfor %}
+       
             </div>
 
             <p class="small-section-title-purple mt-5">關於我</p>
             <div class="case-info-font mb-5 ">
-              我是職能治療師證照職能治療師證照職能治療師證照職能治療師職能治療師證照職能治療師證照職能治療師證照職能治療師證照職能治療師證照職能治療師證照職能治療師證照證照職能治療師證照職能治療師證照職能治療師證照職能治療師證照職能治療師證照
+              {{dict.servant.about_me}}
             </div>
 
             <hr>
 
-            <p class="small-section-title-purple mt-5"><strong> 15 </strong>則評價</p>
+            <p class="small-section-title-purple mt-5"><strong> {{dict.servant_rate_nums}} </strong>則評價</p>
+            {% for review in dict.reviews %}
             <div class="section-bg-grey my-3">
               <div class="row">
                 <div class="col align-self-center" style="display: flex;">
@@ -89,8 +85,8 @@
                     <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
                   </div>
                   <div class="mx-3 mt-1">
-                    <span class="case-info-font">林瑜婷</span>
-                    <p class="case-info-font">2022 年 04 月</p>
+                    <span class="case-info-font">{{review.case.user.name}}</span>
+                    <p class="case-info-font">{{review.servant_rating_created_at.year}} 年 {{review.servant_rating_created_at.month}} 月</p>
                   </div>
                 </div>
                 <div class="col align-self-center text-end" style="color: yellow;">
@@ -101,34 +97,16 @@
                   <span class="fas fa-star-half-alt"></span>
                 </div>
               </div>
-              <div class="case-info-font">“ 人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧人很好很親切耐心的照顧 ”</div>
+              <div class="case-info-font">{{review.servant_comment}}</div>
             </div>
-            <div class="section-bg-grey my-3">
-              <div class="row">
-                <div class="col align-self-center" style="display: flex;">
-                  <div class="avatar avatar-3xl" >
-                    <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
-                  </div>
-                  <div class="mx-3 mt-1">
-                    <span class="case-info-font">林瑜婷</span>
-                    <p class="case-info-font">2022 年 04 月</p>
-                  </div>
-                </div>
-                <div class="col align-self-center text-end" style="color: yellow;">
-                  <span class="fas fa-star"></span>
-                  <span class="fas fa-star"></span>
-                  <span class="fas fa-star"></span>
-                  <span class="fas fa-star"></span>
-                  <span class="fas fa-star-half-alt"></span>
-                </div>
-              </div>
-              <div class="case-info-font">“ 耐心的照顧 ”</div>
-            </div>
-            <p class=" text-center" style="color: black;"><u>看所有評價</u></p>
+            {% endfor %}
+            
+            <p class=" text-center" style="color: black;" type="button" onclick="location.href='{% url 'search_carer_detail' %}?servant={{dict.servant}}&reviews=all'"><u>看所有評價</u></p>
 
           </div>
 
           <!-- 右側 預定欄位 -->
+          
           <div class="col-12 col-md-5 col-lg-4 mb-5">
             <div class="booking-box px-4">
               <div class="row">
@@ -144,19 +122,19 @@
                     <span class="case-info-font">&ensp;7評價</span>
                 </div>
               </div>             
-
+              <form method="post" enctype="multipart/form-data">{% csrf_token %}
               <div class="mb-3" style="margin: 0; display: flex;">
 
                 <div class="segment__item">
-                  <input type="radio" class="segment__input" name="segment-a" checked>
-                  <div class="segment__button">居家照顧</div>
+                  <input type="submit" class="segment__input"  id="care_type" name="care_type" value="居家照顧" checked>
+                  <div class="segment__button" ></div>
                 </div>
           
                 <div class="segment__item">
-                  <input type="radio" class="segment__input" name="segment-a">
-                  <div class="segment__button">醫院看護</div>
+                  <input type="submit" class="segment__input"  id="care_type" name="care_type" value="醫院看護">
+                  <div class="segment__button"></div>
                 </div>
-                
+                <!-- onclick="location.href='{% url 'search_carer_detail' %}?servant={{dict.servant}}&care_type=居家照顧'" -->
               </div>
               
               <div class="case-info-font">
@@ -246,15 +224,15 @@
                     <button class="full-green-button">申請預訂</button>
                   </a>
                 </div>
-                
+              
               </div>
-
+              </form>
 
             </div>
             
             
           </div>
-
+          
     </div>
   </div>
      

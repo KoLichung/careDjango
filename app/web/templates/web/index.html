@@ -18,12 +18,12 @@
               <div class="mt-4  mb-3" style="margin: 0; display: flex;">
 
                 <div class="segment__item">
-                  <input type="radio" class="segment__input" name="care_type" id="care_type" value="home" checked>
+                  <input type="radio" class="segment__input" name="care_type" id="care_type" value="居家照顧" checked>
                   <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">居家照顧</div>
                 </div>
           
                 <div class="segment__item">
-                  <input type="radio" class="segment__input" name="care_type" id="care_type" value="hospital">
+                  <input type="radio" class="segment__input" name="care_type" id="care_type" value="醫院看護">
                   <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">醫院看護</div>
                 </div>
                 
@@ -38,7 +38,7 @@
                     <button class="dropdown-button dropdown-toggle" type="submit" data-bs-toggle="dropdown" aria-expanded="false" name="city_id" value="{{dict.city.id}}">
                       {{dict.city}}
                     </button>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" type="submit" name="city_id" value="{{dict.city.id}}">
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"  name="city_id" value="{{dict.city.id}}">
                         {% for cityName in dict.citys %}
                           <a class="dropdown-item" href="{% url 'index' %}?city_id={{cityName.id}}"><span class="dropdown-item-font">{{cityName}}</span></a>
                         {% endfor %}
@@ -54,7 +54,7 @@
                         {{dict.county}}
                       </button>
                       <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="county_id" value="{{dict.county.id}}">
-                        <a class="dropdown-item" href="{% url 'index' %}?city_id={{dict.city.id}}&county_id=all"><span class="dropdown-item-font">全區</span></a>
+                        <a class="dropdown-item" href="{% url 'index' %}?city_id={{dict.city.id}}&county_id=全區"><span class="dropdown-item-font">全區</span></a>
                         {% for countyName in dict.counties %}
                           <a class="dropdown-item" href="{% url 'index' %}?city_id={{dict.city.id}}&county_id={{countyName.id}}"><span class="dropdown-item-font">{{countyName}}</span></a>
                         {% endfor %}
@@ -110,7 +110,7 @@
             <!-- <a href="{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county.id}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}"> -->
             <!-- <button class="mt-4 full-purple-button" type="submit">搜尋</button> -->
             <!-- </a> -->
-            <button class="mt-4 full-purple-button" type="submit" name="submit"  onclick="location.href='{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county.id}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}'">
+            <button class="mt-4 full-purple-button" type="submit" name="submit"  onclick="location.href='{% url 'search_carer_detail' %}?city_id={{dict.city.id}}&county_id={{dict.county}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_datetime={{dict.start_date}}&end_datetime={{dict.end_date}}'">
               搜尋
             </button>
           
