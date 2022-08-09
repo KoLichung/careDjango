@@ -48,6 +48,11 @@ def index(request):
 
         return render(request, 'web/index.html',{'dict':dict})
 
+def ajax_call_backend(request):
+    print("This is ajax")
+    obj = {"test": "test"}
+    return HttpResponse(json.dumps(obj))
+
 def login(request):
     return render(request, 'web/login.html')
 

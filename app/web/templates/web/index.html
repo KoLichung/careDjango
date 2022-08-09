@@ -14,6 +14,11 @@
           
             <div class="card bg-white">
               
+              <!-- 一個 button -->
+              <button class="btn btn-success rounded-pill" type="cancel" onclick="call.call_backend()" id="pop_button"> 測試 javascript </button>
+              <!-- 一個 文字欄位 -->
+              <p id='string_column'> </p>
+
               <!-- care type segment -->
               <div class="mt-4  mb-3" style="margin: 0; display: flex;">
 
@@ -120,5 +125,25 @@
   </section>
        
 </main>
+
+<script>
+  var call = {
+    call_backend: function(){
+      var data = {
+        a: 'data to back end'
+      }
+    
+      $.ajax({
+        url: "{% url 'ajax_call_backend' %}",
+        data: data,
+        type: "GET",
+    
+        success: function (response) {
+          console.log("ajax success");
+        },
+      })
+    }
+  }
+</script>
 
 {% endblock %}
