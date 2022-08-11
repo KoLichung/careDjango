@@ -2,9 +2,10 @@ import csv
 import os
 import datetime
 from datetime import date ,timedelta
-from pytz import timezone
+from django.utils import timezone
 import pytz
-from django.db.models import Sum
+from pytz import tzinfo
+from django.db.models import Avg ,Sum 
 from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService
@@ -124,6 +125,8 @@ def fakeData():
     user.home_half_day_wage = 1600
     user.home_one_day_wage = 2900
     user.is_continuous_time = True
+    user.is_continuous_start_time = 9
+    user.is_continuous_end_time = 21
     user.save()
 
     user = User()
@@ -463,6 +466,38 @@ def fakeData():
     systemMessage.case = Case.objects.get(id=2)
     systemMessage.content = 'SystemTest02'
     systemMessage.save()
+
+    review = Review()
+    review.order = Order.objects.get(id=1)
+    review.case = Case.objects.get(id=1)
+    review.servant = Case.objects.get(id=1).servant
+    review.case_offender_rating = 4.8
+    review.case_offender_comment = 'test'
+    review.case_offender_rating_created_at = timezone.now()
+    review.servant_rating = 4.5
+    review.servant_comment = 'test'
+    review.servant_rating_created_at = timezone.now()
+    review.save()
+
+    review = Review()
+    review.order = Order.objects.get(id=2)
+    review.case = Case.objects.get(id=2)
+    review.servant = Case.objects.get(id=2).servant
+    review.case_offender_rating = 4.3
+    review.case_offender_comment = 'test'
+    review.case_offender_rating_created_at = timezone.now()
+    review.servant_rating = 4.2
+    review.servant_comment = 'test'
+    review.servant_rating_created_at = timezone.now()
+    review.save()
+
+    for user in User.objects.all():
+        user.avg_rating = Review.objects.filter(case__user=user,case_offender_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        user.save()
+
+    for servant in User.objects.filter(is_servant=True):
+        servant.servant_avg_rating = Review.objects.filter(servant=servant,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        servant.save()
 
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start

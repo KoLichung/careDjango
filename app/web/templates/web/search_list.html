@@ -48,120 +48,124 @@
                       <div class="col-sm-4 my-3">
                         <h5 class="mb-2">照護類型</h5>
                         <div class="dropdown font-sans-serif d-inline-block mb-2">
-                          <div class="">
-                            <button class="dropdown-button dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{dict.care_type}}</button>
-                            <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" >
-                              <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county={{dict.county}}&care_type=醫院看護"><span class="dropdown-item-font">醫院看護</span></a>
-                              <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county={{dict.county}}&care_type=居家照護"><span class="dropdown-item-font">居家照護</span></a>
-                            </div>
-                          </div> 
-                        </div>
+                          <input type="button" id="care-type" Class="form-control datebox"></input>
+                          <div class="input-group-btn">
+                            <button class="dropdown-button dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{dict.care_type}}<span class="caret"></span></button>
+                            <ul class="dropdown-menu " id="carelist" aria-labelledby="dropdownMenuButton" >
+                              <li><a class="dropdown-item" href="#"><span class="dropdown-item-font">醫院看護</span></a></li>
+                              <li><a class="dropdown-item" href="#"><span class="dropdown-item-font">居家照護</span></a></li>
+                            </ul>
+                          </div>  
+                          
+                        </div> 
                       </div>
-            
-                      <!-- 照護地點 -->
-                      <div class="col-sm-4 my-3">
-                        <h5 class=" mb-2">照護地點</h5>
-                        <div class="btn-group mb-2">
-                          <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" name="city_id" value="{{dict.city.id}}">
-                            {{dict.city}}
-                          </button>
-                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="city_id" value="{{dict.city.id}}">
-                            {% for cityName in dict.citys %}
-                              <a class="dropdown-item" href="{% url 'search_list' %}?city={{cityName.id}}&county=全區&care_type={{dict.care_type}}"><span class="dropdown-item-font">{{cityName}}</span></a>
-                            {% endfor %}
-                          </div>
-                        </div>
-                        <div class="btn-group mb-2">
-                          <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" name="county_id" value="{{dict.county}}">
-                            {{dict.county}}
-                          </button>
-                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="county_id" value="{{dict.county}}">
-                            <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county=全區&care_type={{dict.care_type}}"><span class="dropdown-item-font">全區</span></a>
-                            {% for countyName in dict.counties %}
-                              <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county={{countyName}}&care_type={{dict.care_type}}"><span class="dropdown-item-font">{{countyName}}</span></a>
-                            {% endfor %}
-                          </div>
-                        </div>
-                      </div>
-            
-                      <!-- 時間類型 -->
-                      <div class="col-sm-4 my-3">
-                        <h5 class="mb-2">時間類型</h5>
+              
+                        
+                        
+                          
+                               
+                <!-- 照護地點 -->
+                <div class="col-sm-4 my-3">
+                  <h5 class=" mb-2">照護地點</h5>
+                  <div class="btn-group mb-2">
+                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" name="city_id" value="{{dict.city.id}}">
+                      {{dict.city}}
+                    </button>
+                    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="city_id" value="{{dict.city.id}}">
+                      {% for cityName in dict.citys %}
+                        <a class="dropdown-item" href="{% url 'search_list' %}?city={{cityName.id}}&county=全區&care_type={{dict.care_type}}"><span class="dropdown-item-font">{{cityName}}</span></a>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="btn-group mb-2">
+                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" name="county_id" value="{{dict.county}}">
+                      {{dict.county}}
+                    </button>
+                    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="county_id" value="{{dict.county}}">
+                      <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county=全區&care_type={{dict.care_type}}"><span class="dropdown-item-font">全區</span></a>
+                      {% for countyName in dict.counties %}
+                        <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county={{countyName}}&care_type={{dict.care_type}}"><span class="dropdown-item-font">{{countyName}}</span></a>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+      
+                <!-- 時間類型 -->
+                <div class="col-sm-4 my-3">
+                  <h5 class="mb-2">時間類型</h5>
+                
+                    <!-- dropdown form -->
+                    <div class="btn-group">
+                      <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"  aria-expanded="false">{{dict.time_type}}</button>
                       
-                          <!-- dropdown form -->
-                          <div class="btn-group">
-                            <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"  aria-expanded="false">{{dict.time_type}}</button>
-                            
-                            <div class="dropdown-menu py-0">
-                              <div class="card shadow-none border-0" style="width: 15rem;">
-            
-                                <div class="card-body">
-            
-                                  <div class="row text-start justify-content-between align-items-center mb-2">
-                                    <div class="col-auto">
-                                      <h6 class="mb-0">時間類型</h6>
-                                    </div>
-                                  </div>
-                                  <form method="post" enctype="multipart/form-data">{% csrf_token %}
-                                    <!-- 時間類型選項 radio -->
-                                    <div class="col-auto">
-              
-                                      <div class="form-check form-check-inline">
-                                        <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="True" />
-                                        <label class="h6" for="inlineRadio2">  連續時間</label>
-                                      </div>
-              
-                                      <div class="form-check form-check-inline">
-                                        <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="False" />
-                                        <label class="h6" for="inlineRadio2">  每週固定</label>
-                                      </div>
-              
-                                    </div>
-              
-                                    <!-- 週間星期 checkbox -->
-                                    <div class="col-auto">
-                                      <div class="form-check form-check-inline">
-                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="1" />
-                                        <label class="h6" for="weekdays[]">星期一</label>
-                                      </div>
-                                      <div class="form-check form-check-inline">
-                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="2" checked="" />
-                                        <label class="h6" for="weekdays[]">星期二</label>
-                                      </div>
-                                      <div class="form-check form-check-inline">
-                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="3" />
-                                        <label class="h6" for="weekdays[]">星期三</label>
-                                      </div>
-                                      <div class="form-check form-check-inline">
-                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="4" checked="" />
-                                        <label class="h6" for="weekdays[]">星期四</label>
-                                      </div>
-                                      <div class="form-check form-check-inline">
-                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="5" checked="" />
-                                        <label class="h6" for="weekdays[]">星期五</label>
-                                      </div>
-                                      <div class="form-check form-check-inline">
-                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="6" />
-                                        <label class="h6" for="weekdays[]">星期六</label>
-                                      </div>
-                                      <div class="form-check form-check-inline">
-                                        <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="0" checked="" />
-                                        <label class="h6" for="weekdays[]">星期日</label>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
+                      <div class="dropdown-menu py-0">
+                        <div class="card shadow-none border-0" style="width: 15rem;">
+      
+                          <div class="card-body">
+      
+                            <div class="row text-start justify-content-between align-items-center mb-2">
+                              <div class="col-auto">
+                                <h6 class="mb-0">時間類型</h6>
                               </div>
                             </div>
+                            <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                              <!-- 時間類型選項 radio -->
+                              <div class="col-auto">
+        
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="True" />
+                                  <label class="h6" for="inlineRadio2">  連續時間</label>
+                                </div>
+        
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="False" />
+                                  <label class="h6" for="inlineRadio2">  每週固定</label>
+                                </div>
+        
+                              </div>
+        
+                              <!-- 週間星期 checkbox -->
+                              <div class="col-auto">
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="1" />
+                                  <label class="h6" for="weekdays[]">星期一</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="2" checked="" />
+                                  <label class="h6" for="weekdays[]">星期二</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="3" />
+                                  <label class="h6" for="weekdays[]">星期三</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="4" checked="" />
+                                  <label class="h6" for="weekdays[]">星期四</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="5" checked="" />
+                                  <label class="h6" for="weekdays[]">星期五</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="6" />
+                                  <label class="h6" for="weekdays[]">星期六</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="0" checked="" />
+                                  <label class="h6" for="weekdays[]">星期日</label>
+                                </div>
+                              </div>
+                            </form>
                           </div>
-                      
+                        </div>
                       </div>
+                    </div>
+                
+                </div>
               </div>
-              <button class="col-xl-4 col-md-6 mt-4 mx-auto full-purple-button" type="submit" name="submit"  onclick="location.href='{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}'">
-                搜尋
-              </button> 
-                    
-            </div>
+                <button class="col-xl-4 col-md-6 mt-4 mx-auto full-purple-button" type="submit" name="submit"  onclick="location.href='{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}'">
+                  搜尋
+                </button> 
             <hr>
           </div>
         </form>
@@ -197,12 +201,20 @@
                 </div>
                   <!-- 4.8, 對 4 做 for loop, 對 0.8 做判斷, if > 0.5 給 1 顆星, <= 0.5, 就給 半顆星 -->
                   <span class="carer-name" style="margin-right: 5px;">{{list.servant.name}}</span >
+                    <div class="col align-self-center " style="color: yellow;">
+                      {% for i in list.servant.servant_avg_rate_range %}
+                        <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                      {% endfor %}
+                      {% if list.servant.servant_avg_rating_is_half_star == True %}
+                        <span class="fas fa-star-half-alt"></span>
+                      {% endif %}
+                      <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價{{list.servant_rate_nums}}</span>
+                    </div>
+                  <!-- <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
                   <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
                   <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                  <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                  <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                  <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                  <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價{{list.servant_rate_nums}}</span>
+                  <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span> -->
+                  
               </div>
 
               <div class="mt-2">
@@ -238,6 +250,14 @@
         <a href="{% url 'request_form_service_type' %}" class="section-title-purple custom-card-link" style="font-weight: 600;"><span class="far fa-edit"></span>填寫需求單</a>
 
   </div>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#carelist a').on('click', function () {
+        var txt= ($(this).text());
+        alert("Your Favourite Sports is "+txt);
+      });
+    });
+  </script>
 </main>
 {% endblock %}

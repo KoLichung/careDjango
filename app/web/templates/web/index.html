@@ -125,25 +125,25 @@
   </section>
        
 </main>
-
 <script>
   var call = {
     call_backend: function(){
       var data = {
         a: 'data to back end'
       }
-    
+   
       $.ajax({
         url: "{% url 'ajax_call_backend' %}",
         data: data,
         type: "GET",
-    
-        success: function (response) {
-          console.log("ajax success");
-        },
-      })
+   
+        success: function () {
+        $('#pop_button').html(data)
+      }
+    });
     }
   }
-</script>
+ </script>
+ 
 
 {% endblock %}

@@ -67,7 +67,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_servant = models.BooleanField(default=False)
     is_passed = models.BooleanField(default=False)
     is_servant_passed = models.BooleanField(default=False)
-    rating = models.FloatField(default=0, blank = True, null=True)
+    avg_rating = models.FloatField(default=0, blank = True, null=True)
+    servant_avg_rating = models.FloatField(default=0, blank = True, null=True)
 
     is_home = models.BooleanField(default=False)
     home_hour_wage = models.IntegerField(default=0, blank = True, null=True)
@@ -81,6 +82,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     about_me = models.TextField(default='', blank = True, null=True)
     is_continuous_time = models.BooleanField(default=True)
+    is_continuous_start_time = models.FloatField(default=0, blank=True, null=True)
+    is_continuous_end_time = models.FloatField(default=24, blank=True, null=True)
 
     background_image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
 
@@ -89,6 +92,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     ATMInfoAccount = models.CharField(max_length=20, default='', blank = True, null=True)
 
     USERNAME_FIELD = 'phone'
+    @property
+    def servant_avg_rate_range(self):
+        return range(int(self.servant_avg_rating))
+    @property
+    def servant_avg_rating_is_half_star(self):
+        if (self.servant_avg_rating -int(self.servant_avg_rating)) >= 0.5:
+        # 判斷
+            return True
+        else:
+            return False
 
 class Service(models.Model):
     name = models.CharField(max_length= 100, unique=True)
@@ -405,13 +418,17 @@ class Review(models.Model):
 
     @property
     def servant_rating_range(self):
-        return range(6)
+        # return range(6)
         return range(int(self.servant_rating))
     
     @property
     def servant_rating_is_half_star(self):
+        if round(self.servant_rating,2) >= 0.5:
         # 判斷
-        return True
+            return True
+        else:
+            return False
+    
 
 class PayInfo(models.Model):
     order = models.ForeignKey(
