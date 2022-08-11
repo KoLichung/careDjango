@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'user',
     'api',
     'web',
-    'newebpayApi'
+    'newebpayApi',
+    'backboard',
 ]
 
 MIDDLEWARE = [

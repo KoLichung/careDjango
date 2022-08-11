@@ -9,6 +9,7 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path('web/', include('web.urls')),
     path('newebpayApi/', include('newebpayApi.urls')),
+    path('backboard/', include('backboard.urls')),
 ]
 
 if settings.DEBUG:

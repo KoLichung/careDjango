@@ -1,0 +1,87 @@
+{% extends 'backboard/base.html' %} {% block content %}
+{% load static %}
+
+<!-- 內容 -->
+  <div class="mb-3">
+    <div class="col-lg-12 ps-lg-2 mb-3">
+      <div class="card h-lg-100">
+        <div class="card-header">
+  
+          <div class="mb-3">
+            <a href="#" class="custom-purple-btn btn-sm" role="button">所有案件</a>
+            <a href="#" class="custom-purple-border-btn btn-sm" role="button">未承接</a>
+            <a href="#" class="custom-purple-border-btn btn-sm" role="button">已承接</a>
+          </div>
+                    
+          <div id="tableExample2" data-list='{"valueNames":["name","email","age"],"page":10,"pagination":true}'>
+            <div class="table-responsive scrollbar">
+              <table class="table  table-striped fs--1 mb-0">
+                <div class="border border-1"></div>
+                <thead>
+                  <tr>
+                    <th scope="col">案件狀態</th>
+                    <th scope="col">建立日期</th>
+                    <th scope="col">服務日期</th>
+                    <th scope="col">服務者</th>
+                    <th scope="col">案件地點</th>
+                    <th scope="col">案件金額</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  <tr>
+                    <td >
+                      <button type="button" class="custom-grey-border-btn btn-sm" disabled>未承接</button>
+                    </td>
+                    <td>2022/4/6</td>
+                    <td>2022/5/1~2022/5/12</td>
+                    <td>劉金發</td>
+                    <td>桃園市楊梅區</td>
+                    <td></td>
+                    <td>                    
+                      <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td >
+                      <button type="button" class="custom-grey-border-btn btn-sm" disabled>未承接</button>
+                    </td>
+                    <td>2022/4/6</td>
+                    <td>2022/5/1~2022/5/12</td>
+                    <td>劉金發</td>
+                    <td>桃園市楊梅區</td>
+                    <td></td>
+                    <td>                    
+                      <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td >
+                      <button type="button" class="custom-grey-border-btn btn-sm" disabled>未承接</button>
+                    </td>
+                    <td>2022/4/6</td>
+                    <td>2022/5/1~2022/5/12</td>
+                    <td>劉金發</td>
+                    <td>桃園市楊梅區</td>
+                    <td>$12300</td>
+                    <td>                    
+                      <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
+                    </td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+              <button class="btn btn-sm btn-chijia-default me-1" type="button" title="Previous" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+              <ul class="pagination mb-0"></ul>
+              <button class="btn btn-sm btn-chijia-default ms-1" type="button" title="Next" data-list-pagination="next"><span class="fas fa-chevron-right"> </span></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div> 
+        
+{% endblock %}
