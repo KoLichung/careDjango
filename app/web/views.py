@@ -237,6 +237,8 @@ def search_list(request):
 
     return render(request, 'web/search_list.html',{'dict':dict,'forlooplist':forlooplist})
 
+    # return render(request, 'web/search_list.html',{'fiter_condition':filter_condition,'searvants':sarvants})
+
 def search_carer_detail(request):
     servant_phone = request.GET.get('servant')
     reviews_all = request.GET.get('reviews')

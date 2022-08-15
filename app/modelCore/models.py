@@ -93,7 +93,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     ATMInfoAccount = models.CharField(max_length=20, default='', blank = True, null=True)
 
     USERNAME_FIELD = 'phone'
-
+    
     @property
     def servant_avg_rate_range(self):
         # print(Review.objects.filter(servant=self,servant_rating__gte=1).count())
