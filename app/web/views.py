@@ -36,6 +36,7 @@ def index(request):
     
 
     if request.method == 'POST':
+        s
         city = request.POST.get('city')
         county = request.POST.get('county')
         care_type = request.POST.get('care_type')
@@ -102,6 +103,7 @@ def search_list(request):
     is_continuous_time = request.GET.get('is_continuous_time')
 
     if request.method == 'POST':
+        s
         if request.POST.get('county') != None:
             county_name = request.POST.get('county')
         if request.POST.get('city') != None:
@@ -185,6 +187,7 @@ def search_list(request):
     dict['county'] = countyName
     dict['care_type'] = care_type
     forlooplist = []
+    
     if county_name != None:
         if county_name != '全區':
             user_ids = list(UserServiceLocation.objects.filter(county=county).values_list('user', flat=True))
@@ -201,7 +204,7 @@ def search_list(request):
         service_city_ids = list(UserServiceLocation.objects.filter(user=servant).values_list('city', flat=True))
         service_citys = City.objects.filter(id__in=service_city_ids)
         servant_avg_rate= Review.objects.filter(servant=servant,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
-        servant_rate_nums = Review.objects.filter(servant=servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
+        servant_rate_nums = Review.objects.filter(servant=servant,servant_rating__gte=1).count()
         
         if care_type == '醫院看護':
             if servant.hospital_hour_wage > 0 :

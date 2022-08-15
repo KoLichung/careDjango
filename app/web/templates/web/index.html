@@ -11,26 +11,22 @@
           <span  class="mt-4 mx-3" style="color: white; font-size:30px;"><strong>照護 168 | slogan slogan</strong></span> 
           
           <!-- form content -->
-          
+          <form method="post" enctype="multipart/form-data">{% csrf_token %}
             <div class="card bg-white">
-              <form method="post" enctype="multipart/form-data">{% csrf_token %}
               
-              <div class="mt-4  mb-3" style="margin: 0; display: flex;">
-
-                <div class="segment__item">
-                  <input type="radio" class="segment__input"  id="home" value="居家照顧" checked>
-                  <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">居家照顧</div>
+                <div class="mt-4  mb-3" style="margin: 10px; display: flex;">
+                  <div class="segment__item">
+                    <input type="radio" class="segment__input"  id="care_type" name="care_type" value="居家照顧" checked>
+                    <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">居家照顧</div>
+                  </div>
+            
+                  <div class="segment__item">
+                    <input type="radio" class="segment__input"  id="care_type" name="care_type" value="醫院看護">
+                    <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">醫院看護</div>
+                  </div>
                 </div>
-          
-                <div class="segment__item">
-                  <input type="radio" class="segment__input"  id="hospital" value="醫院看護">
-                  <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">醫院看護</div>
-                </div>
-                
-              </div>
 
-              <!-- 照護地點 -->
-              <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                <!-- 照護地點 -->
                 <div class="row">
                   <div class="col-12 col-sm-3 inner title-font">&emsp;照護地點</div>
                   
@@ -76,139 +72,141 @@
                   </div>
   
                 </div>
-              </form>
               
+                  <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
 
-              <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+                  <!-- 時間類型 -->
+                  <div class="row justify-content-start">
+                    <div class="col-12 col-sm-3  inner title-font" >&emsp;時間類型</div>
+                    <div class="col-12 col-sm-4">
+                      <label class="custom-radio-parent align-self-center" style="margin: 0px;">連續時間
+                        <input type="radio" checked="checked" name="is_continuous_time" id="is_continuous_time" value=True>
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                      <label class="custom-radio-parent align-self-center" style="margin: 0px;">每週時段預定
+                        <input type="radio" name="is_continuous_time" id="is_continuous_time" value=False >
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
 
-              <!-- 時間類型 -->
-
-              <div class="row justify-content-start">
-                <div class="col-12 col-sm-3  inner title-font" >&emsp;時間類型</div>
-                <div class="col-12 col-sm-4">
-                  <label class="custom-radio-parent align-self-center" style="margin: 0px;">連續時間
-                    <input type="radio" checked="checked" name="is_continuous_time" id="is_continuous_time" value=True>
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div class="col-12 col-sm-4">
-                  <label class="custom-radio-parent align-self-center" style="margin: 0px;">每週時段預定
-                    <input type="radio" name="is_continuous_time" id="is_continuous_time" value=False >
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-              </div>
-
-              <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+                  <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+                      
+                  <!-- 開始時間 -->
+                  <div class="row">
+                    <div class="col-12 col-sm-3 inner title-font">&emsp;開始時間</div>
+                    <div class="col-12 col-sm-5" >
+                      <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_start" name="datetimepicker_start" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />         
+                    </div> 
+                  </div>
                   
-              <!-- 開始時間 -->
-              <div class="row">
-                <div class="col-12 col-sm-3 inner title-font">&emsp;開始時間</div>
-                <div class="col-12 col-sm-5" >
-                  <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_start" name="datetimepicker_start" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />         
-                </div> 
-              </div>
+                  <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+                      
+                  <!-- 結束時間 -->
+                  <div class="row">
+                    <div class="col-12 col-sm-3 title-font inner">&emsp;結束時間</div>
+                    <div class="col-12 col-sm-5" >
+                      <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_end" name="datetimepicker_end" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />         
+                    </div>
+                  </div>
+                
+                  <br>  
+                </div>
               
-              <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
-                  
-              <!-- 結束時間 -->
-              <div class="row">
-                <div class="col-12 col-sm-3 title-font inner">&emsp;結束時間</div>
-                <div class="col-12 col-sm-5" >
-                  <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_end" name="datetimepicker_end" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />         
-                </div>
-              </div>
-            
-              <br>  
+                <!-- <a href="{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county.id}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}"> -->
+                <!-- <button class="mt-4 full-purple-button" type="submit">搜尋</button> -->
+                <!-- </a> -->
 
-            </div>
-            
-            <!-- <a href="{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county.id}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}"> -->
-            <!-- <button class="mt-4 full-purple-button" type="submit">搜尋</button> -->
-            <!-- </a> -->
-            <button class="mt-4 full-purple-button"  id="submit"  onclick="call.call_frontend()" >
-              搜尋
-            </button>
-            </form>
+                <button class="mt-4 full-purple-button"
+                  type="submit"
+                  name="submit"
+                  value="ok"
+                >
+                  <b>搜索</b>
+                </button>
+
+                {% comment %} <button class="mt-4 full-purple-button"  id="submit"  onclick="call.call_frontend()" >
+                  搜尋
+                </button> {% endcomment %}
+          </form>
     </div>  
     
   </section>
-  <body>
-    <script type="text/javascript">
-      function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-                    }
-                }
+
+  <script type="text/javascript">
+    function getCookie(name){
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+
+      function listCities(){
+        var cityid = $("[name='city']").val();
+        $('#countylist').html('');
+        $.ajax({
+          type: "POST",
+          data: {'city_id':cityid,
+                  'action':'refresh_county'},
+          headers: {'X-CSRFToken': csrftoken},
+          url: "{% url 'ajax_refresh_county' %}",
+          success: function(response)
+            {
+              const data = response.data
+              console.log(data)
+              // var resultObj = JSON.parse(response);
+              var dataHandler = $("#countylist");
+              var county_all = `<option style="text-align: center" value="全區">全區</option>`
+              dataHandler.append(county_all);
+              data.forEach(el =>
+              {
+                  var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+                  dataHandler.append(newRow);
+              });
             }
-            return cookieValue;
-        }
-        const csrftoken = getCookie('csrftoken');
-  
-        function listCities(){
-          var cityid = $("[name='city']").val();
-          $('#countylist').html('');
-          $.ajax({
-      type: "POST",
-      data: {'city_id':cityid,
-              'action':'refresh_county'},
-      headers: {'X-CSRFToken': csrftoken},
-      url: "{% url 'ajax_refresh_county' %}",
-      success: function(response)
-      {
-        const data = response.data
-        console.log(data)
-        // var resultObj = JSON.parse(response);
-        var dataHandler = $("#countylist");
-        var county_all = `<option style="text-align: center" value="全區">全區</option>`
-        dataHandler.append(county_all);
-        data.forEach(el =>
-        {
-            var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-            dataHandler.append(newRow);
-        });
-
+          });
       }
-    });
-        }
-      var call = {
-        call_frontend: function(){
-          var city = $("[name='city']").val();
-          var county = $("[name='county']").val();
-          // var care_type = $("[name='care_type']").val();
-          var is_continuous_time = $("[name='is_continuous_time']").val();
-          var start_datetime = $("[name='start_datetime']").val();
-          var end_datetime = $("[name='end_datetime']").val();
-          console.log(care_type)
-          location.href = 'search_list?city='+city+'&county='+county+'&care_type='+care_type+'&is_continuous_time='+is_continuous_time+'&start_datetime='+start_datetime+'&end_datetime='+end_datetime;
 
-        }
+    var call = {
+      call_frontend: function(){
+        var city = $("[name='city']").val();
+        var county = $("[name='county']").val();
+        // var care_type = $("[name='care_type']").val();
+        var is_continuous_time = $("[name='is_continuous_time']").val();
+        var start_datetime = $("[name='start_datetime']").val();
+        var end_datetime = $("[name='end_datetime']").val();
+        console.log(care_type)
+        location.href = 'search_list?city='+city+'&county='+county+'&care_type='+care_type+'&is_continuous_time='+is_continuous_time+'&start_datetime='+start_datetime+'&end_datetime='+end_datetime;
       }
-      document.getElementById("home").onclick = function () {  
-        care_type = '居家照顧';
-        document.getElementById("home").checked = true;
-        document.getElementById("hospital").checked = false;
-        console.log(care_type);
-        };  
-      document.getElementById("hospital").onclick = function () {  
+    }
+
+    document.getElementById("home").onclick = function (){  
+      care_type = '居家照顧';
+      document.getElementById("home").checked = true;
+      document.getElementById("hospital").checked = false;
+      console.log(care_type);
+    }; 
+
+    document.getElementById("hospital").onclick = function (){  
       care_type = '醫院看護';
       document.getElementById("home").checked = false;
       document.getElementById("hospital").checked = true;
       console.log(care_type)
-      };  
-    </script>
-      
+    };
 
-  
-    
-  </body>
+  </script>
        
 </main>
  

@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.forms import FloatField
 from django.urls import reverse
+from django.db.models import Avg ,Sum 
 
 def image_upload_handler(instance,filename):
     fpath = pathlib.Path(filename)
@@ -92,9 +93,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     ATMInfoAccount = models.CharField(max_length=20, default='', blank = True, null=True)
 
     USERNAME_FIELD = 'phone'
+
     @property
     def servant_avg_rate_range(self):
-        return range(int(self.servant_avg_rating))
+        # print(Review.objects.filter(servant=self,servant_rating__gte=1).count())
+
+        if Review.objects.filter(servant=self,servant_rating__gte=1).count() > 0:
+            avg_rating = Review.objects.filter(servant=self,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+            # print(avg_rating)
+            return range(int(avg_rating))
+        else:
+            return range(0)
+
     @property
     def servant_avg_rating_is_half_star(self):
         if (self.servant_avg_rating -int(self.servant_avg_rating)) >= 0.5:
