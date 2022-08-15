@@ -47,17 +47,11 @@
                       <!-- 照護類型 -->
                       <div class="col-sm-4 my-3">
                         <h5 class="mb-2">照護類型</h5>
-                        <div class="dropdown font-sans-serif d-inline-block mb-2">
-                          <input type="button" id="care-type" Class="form-control datebox"></input>
-                          <div class="input-group-btn">
-                            <button class="dropdown-button dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{dict.care_type}}<span class="caret"></span></button>
-                            <ul class="dropdown-menu " id="carelist" aria-labelledby="dropdownMenuButton" >
-                              <li><a class="dropdown-item" href="#"><span class="dropdown-item-font">醫院看護</span></a></li>
-                              <li><a class="dropdown-item" href="#"><span class="dropdown-item-font">居家照護</span></a></li>
-                            </ul>
-                          </div>  
-                          
-                        </div> 
+                        <select class="dropdown-button" id="care_type" name="care_type">
+                          <option style="text-align: center" value="居家照顧" {% if dict.care_type == "居家照顧" %} selected="selected" {% endif %}>居家照顧</option>
+                           <option style="text-align: center" value="醫院看護" {% if dict.care_type == "醫院看護"  %} selected="selected" {% endif %}>醫院看護</option>
+                        </select>
+  
                       </div>
               
                         
@@ -68,25 +62,22 @@
                 <div class="col-sm-4 my-3">
                   <h5 class=" mb-2">照護地點</h5>
                   <div class="btn-group mb-2">
-                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" name="city_id" value="{{dict.city.id}}">
-                      {{dict.city}}
-                    </button>
-                    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="city_id" value="{{dict.city.id}}">
-                      {% for cityName in dict.citys %}
-                        <a class="dropdown-item" href="{% url 'search_list' %}?city={{cityName.id}}&county=全區&care_type={{dict.care_type}}"><span class="dropdown-item-font">{{cityName}}</span></a>
+                    <select class="dropdown-button" name="city" onchange="listCities()">
+                      {% for city in dict.citys %}
+                        <option style="text-align: center" value="{{city.id}}" {% if city == dict.city %} selected="selected" {% endif %}>{{city}}</option>
+                        <!-- <option value="醫院看護">醫院看護</option> -->
                       {% endfor %}
-                    </div>
+                    </select>
+
+
                   </div>
                   <div class="btn-group mb-2">
-                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" name="county_id" value="{{dict.county}}">
-                      {{dict.county}}
-                    </button>
-                    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="county_id" value="{{dict.county}}">
-                      <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county=全區&care_type={{dict.care_type}}"><span class="dropdown-item-font">全區</span></a>
-                      {% for countyName in dict.counties %}
-                        <a class="dropdown-item" href="{% url 'search_list' %}?city={{dict.city.id}}&county={{countyName}}&care_type={{dict.care_type}}"><span class="dropdown-item-font">{{countyName}}</span></a>
+                    <select class="dropdown-button" id="countylist" name="county">
+                      {% for county in dict.counties %}
+                        <option style="text-align: center" value="全區">全區</option>
+                        <option style="text-align: center" value="{{county.id}}">{{county}}</option>
                       {% endfor %}
-                    </div>
+                    </select>
                   </div>
                 </div>
       
@@ -163,7 +154,7 @@
                 
                 </div>
               </div>
-                <button class="col-xl-4 col-md-6 mt-4 mx-auto full-purple-button" type="submit" name="submit"  onclick="location.href='{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}'">
+                <button class="col-xl-4 col-md-6 mt-4 mx-auto full-purple-button" type="submit" name="submit" >
                   搜尋
                 </button> 
             <hr>
@@ -250,14 +241,51 @@
         <a href="{% url 'request_form_service_type' %}" class="section-title-purple custom-card-link" style="font-weight: 600;"><span class="far fa-edit"></span>填寫需求單</a>
 
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
   <script>
-    $(document).ready(function () {
-      $('#carelist a').on('click', function () {
-        var txt= ($(this).text());
-        alert("Your Favourite Sports is "+txt);
-      });
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+  
+        function listCities(){
+          var cityid = $("[name='city']").val();
+          $('#countylist').html('');
+          $.ajax({
+      type: "POST",
+      data: {'city_id':cityid,
+              'action':'refresh_county'},
+      headers: {'X-CSRFToken': csrftoken},
+      url: "{% url 'ajax_refresh_county' %}",
+      success: function(response)
+      {
+        const data = response.data
+        console.log(data)
+        // var resultObj = JSON.parse(response);
+        var dataHandler = $("#countylist");
+        var county_all = `<option style="text-align: center" value="全區">全區</option>`
+        dataHandler.append(county_all);
+        data.forEach(el =>
+        {
+            var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+            dataHandler.append(newRow);
+        });
+
+      }
     });
+        }
   </script>
 </main>
 {% endblock %}

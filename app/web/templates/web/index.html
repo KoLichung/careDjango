@@ -5,7 +5,7 @@
       
   <!-- main content -->
   <section class="bg-frontpage-cover">
-    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    
     <div class="bg-text container-fluid col-11 col-sm-10  col-md-7  col-xl-5 my-4 row" >
       
           <span  class="mt-4 mx-3" style="color: white; font-size:30px;"><strong>照護 168 | slogan slogan</strong></span> 
@@ -13,65 +13,76 @@
           <!-- form content -->
           
             <div class="card bg-white">
+              <form method="post" enctype="multipart/form-data">{% csrf_token %}
               
-              <!-- 一個 button -->
-              <button class="btn btn-success rounded-pill" type="cancel" onclick="call.call_backend()" id="pop_button"> 測試 javascript </button>
-              <!-- 一個 文字欄位 -->
-              <p id='string_column'> </p>
-
-              <!-- care type segment -->
               <div class="mt-4  mb-3" style="margin: 0; display: flex;">
 
                 <div class="segment__item">
-                  <input type="radio" class="segment__input" name="care_type" id="care_type" value="居家照顧" checked>
+                  <input type="radio" class="segment__input"  id="home" value="居家照顧" checked>
                   <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">居家照顧</div>
                 </div>
           
                 <div class="segment__item">
-                  <input type="radio" class="segment__input" name="care_type" id="care_type" value="醫院看護">
+                  <input type="radio" class="segment__input"  id="hospital" value="醫院看護">
                   <div class="segment__button" style="font-size: 18px; height: 50px; padding-top: 6px;">醫院看護</div>
                 </div>
                 
               </div>
 
               <!-- 照護地點 -->
-              <div class="row">
-                <div class="col-12 col-sm-3 inner title-font">&emsp;照護地點</div>
-                
-                <div class="col-12 col-sm-3 mt-2" style="margin-right: 20px;">
-                  <div class="btn-group" >
-                    <button class="dropdown-button dropdown-toggle" type="submit" data-bs-toggle="dropdown" aria-expanded="false" name="city_id" value="{{dict.city.id}}">
-                      {{dict.city}}
-                    </button>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"  name="city_id" value="{{dict.city.id}}">
-                        {% for cityName in dict.citys %}
-                          <a class="dropdown-item" href="{% url 'index' %}?city_id={{cityName.id}}"><span class="dropdown-item-font">{{cityName}}</span></a>
+              <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                <div class="row">
+                  <div class="col-12 col-sm-3 inner title-font">&emsp;照護地點</div>
+                  
+                  <div class="col-12 col-sm-3 mt-2" style="margin-right: 20px;">
+                    <div class="btn-group" >
+                      <select class="dropdown-button" name="city" onchange="listCities()">
+                        {% for city in dict.citys %}
+                          <option style="text-align: center" value="{{city.id}}">{{city}}</option>
+                          <!-- <option value="醫院看護">醫院看護</option> -->
                         {% endfor %}
+                      </select>
+                      <!-- <button class="dropdown-button dropdown-toggle" type="submit" data-bs-toggle="dropdown" aria-expanded="false" name="city_id" value="{{dict.city.id}}">
+                        {{dict.city}}
+                      </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"  name="city_id" value="{{dict.city.id}}">
+                          {% for cityName in dict.citys %}
+                            <a class="dropdown-item" href="{% url 'index' %}?city_id={{cityName.id}}"><span class="dropdown-item-font">{{cityName}}</span></a>
+                          {% endfor %}
+                        </div> -->
+                    </div>
+                  </div>
+                  
+                  <!-- <div  class="col-1 inner" style="color: #BB6BD9;font-size:20px;">|</div> -->
+      
+                  <div class="col-sm-3 mt-2">
+                      <div class="btn-group">
+                        <select class="dropdown-button" id="countylist" name="county">
+                          {% for county in dict.counties %}
+                            <option style="text-align: center" value="全區">全區</option>
+                            <option style="text-align: center" value="{{county.id}}">{{county}}</option>
+                          {% endfor %}
+                        </select>
+                        <!-- <button class="dropdown-button dropdown-toggle" type="submit" data-bs-toggle="dropdown" aria-expanded="false" name="county_id" value="{{dict.county.id}}">
+                          {{dict.county}}
+                        </button>
+                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="county_id" value="{{dict.county.id}}">
+                          <a class="dropdown-item" href="{% url 'index' %}?city_id={{dict.city.id}}&county_id=全區"><span class="dropdown-item-font">全區</span></a>
+                          {% for countyName in dict.counties %}
+                            <a class="dropdown-item" href="{% url 'index' %}?city_id={{dict.city.id}}&county_id={{countyName.id}}"><span class="dropdown-item-font">{{countyName}}</span></a>
+                          {% endfor %}
+                        </div> -->
                       </div>
                   </div>
+  
                 </div>
-                
-                <!-- <div  class="col-1 inner" style="color: #BB6BD9;font-size:20px;">|</div> -->
-    
-                <div class="col-sm-3 mt-2">
-                    <div class="btn-group">
-                      <button class="dropdown-button dropdown-toggle" type="submit" data-bs-toggle="dropdown" aria-expanded="false" name="county_id" value="{{dict.county.id}}">
-                        {{dict.county}}
-                      </button>
-                      <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="county_id" value="{{dict.county.id}}">
-                        <a class="dropdown-item" href="{% url 'index' %}?city_id={{dict.city.id}}&county_id=全區"><span class="dropdown-item-font">全區</span></a>
-                        {% for countyName in dict.counties %}
-                          <a class="dropdown-item" href="{% url 'index' %}?city_id={{dict.city.id}}&county_id={{countyName.id}}"><span class="dropdown-item-font">{{countyName}}</span></a>
-                        {% endfor %}
-                      </div>
-                    </div>
-                </div>
-
-              </div>
+              </form>
+              
 
               <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
 
               <!-- 時間類型 -->
+
               <div class="row justify-content-start">
                 <div class="col-12 col-sm-3  inner title-font" >&emsp;時間類型</div>
                 <div class="col-12 col-sm-4">
@@ -107,43 +118,101 @@
                   <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_end" name="datetimepicker_end" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />         
                 </div>
               </div>
-
+            
               <br>  
-              
+
             </div>
             
             <!-- <a href="{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county.id}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}"> -->
             <!-- <button class="mt-4 full-purple-button" type="submit">搜尋</button> -->
             <!-- </a> -->
-            <button class="mt-4 full-purple-button" type="submit" name="submit"  onclick="location.href='{% url 'search_carer_detail' %}?city_id={{dict.city.id}}&county_id={{dict.county}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_datetime={{dict.start_date}}&end_datetime={{dict.end_date}}'">
+            <button class="mt-4 full-purple-button"  id="submit"  onclick="call.call_frontend()" >
               搜尋
             </button>
-          
-          
+            </form>
     </div>  
-    </form>
+    
   </section>
-       
-</main>
-<script>
-  var call = {
-    call_backend: function(){
-      var data = {
-        a: 'data to back end'
-      }
-   
-      $.ajax({
-        url: "{% url 'ajax_call_backend' %}",
-        data: data,
-        type: "GET",
-   
-        success: function () {
-        $('#pop_button').html(data)
+  <body>
+    <script type="text/javascript">
+      function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+  
+        function listCities(){
+          var cityid = $("[name='city']").val();
+          $('#countylist').html('');
+          $.ajax({
+      type: "POST",
+      data: {'city_id':cityid,
+              'action':'refresh_county'},
+      headers: {'X-CSRFToken': csrftoken},
+      url: "{% url 'ajax_refresh_county' %}",
+      success: function(response)
+      {
+        const data = response.data
+        console.log(data)
+        // var resultObj = JSON.parse(response);
+        var dataHandler = $("#countylist");
+        var county_all = `<option style="text-align: center" value="全區">全區</option>`
+        dataHandler.append(county_all);
+        data.forEach(el =>
+        {
+            var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+            dataHandler.append(newRow);
+        });
+
       }
     });
-    }
-  }
- </script>
+        }
+      var call = {
+        call_frontend: function(){
+          var city = $("[name='city']").val();
+          var county = $("[name='county']").val();
+          // var care_type = $("[name='care_type']").val();
+          var is_continuous_time = $("[name='is_continuous_time']").val();
+          var start_datetime = $("[name='start_datetime']").val();
+          var end_datetime = $("[name='end_datetime']").val();
+          console.log(care_type)
+          location.href = 'search_list?city='+city+'&county='+county+'&care_type='+care_type+'&is_continuous_time='+is_continuous_time+'&start_datetime='+start_datetime+'&end_datetime='+end_datetime;
+
+        }
+      }
+      document.getElementById("home").onclick = function () {  
+        care_type = '居家照顧';
+        document.getElementById("home").checked = true;
+        document.getElementById("hospital").checked = false;
+        console.log(care_type);
+        };  
+      document.getElementById("hospital").onclick = function () {  
+      care_type = '醫院看護';
+      document.getElementById("home").checked = false;
+      document.getElementById("hospital").checked = true;
+      console.log(care_type)
+      };  
+    </script>
+      
+
+  
+    
+  </body>
+       
+</main>
+ 
+
  
 
 {% endblock %}

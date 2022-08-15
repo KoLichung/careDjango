@@ -423,7 +423,7 @@ class Review(models.Model):
     
     @property
     def servant_rating_is_half_star(self):
-        if round(self.servant_rating,2) >= 0.5:
+        if (self.servant_rating -int(self.servant_rating)) >= 0.5:
         # 判斷
             return True
         else:

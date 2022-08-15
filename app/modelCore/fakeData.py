@@ -492,11 +492,15 @@ def fakeData():
     review.save()
 
     for user in User.objects.all():
-        user.avg_rating = Review.objects.filter(case__user=user,case_offender_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        avg_rating = Review.objects.filter(case__user=user,case_offender_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        if avg_rating != None:
+            user.avg_rating = round(avg_rating,1)
         user.save()
 
     for servant in User.objects.filter(is_servant=True):
-        servant.servant_avg_rating = Review.objects.filter(servant=servant,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        servant_avg_rating = Review.objects.filter(servant=servant,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        if servant_avg_rating != None:
+            servant.servant_avg_rating = round(servant_avg_rating,1)
         servant.save()
 
 def days_count(weekdays: list, start: date, end: date):
