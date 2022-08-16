@@ -149,6 +149,11 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220816
+1.整理 search_carer_detail 程式碼
+2.search_carer_detail 的 dialog 資料帶入
+3.index 頁, 插入 每週時段 選擇~
+
 20220815
 1.刪掉 user model, 把 avg_rating, servant_avg_rating
 2.整理一下 index, search_list, search_carer_detail (程式碼整理, 對齊)

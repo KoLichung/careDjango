@@ -288,8 +288,9 @@ def search_carer_detail(request):
 
     return render(request, 'web/search_carer_detail.html',{'dict':dict,})
 
+    # return render(request, 'web/search_carer_detail.html',{'servant':servant,'xx':xx}'')
+
 def booking_patient_info(request):
-    s
     return render(request, 'web/booking/patient_info.html')
 
 def booking_location(request):
