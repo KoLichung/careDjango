@@ -47,8 +47,8 @@ urlpatterns = [
     path('request_form_confirm', views.request_form_confirm, name = 'request_form_confirm'),
 
     path('recommend_carer', views.recommend_carer, name = 'recommend_carer'),
-    path('', views.ajax_refresh_county, name = 'ajax_refresh_county'),
-    # path('', views.ajax_call_backend, name   = 'ajax_call_backend'),
+    path('ajax_refresh_county', views.ajax_refresh_county, name = 'ajax_refresh_county'),
+    path('ajax_return_wage', views.ajax_return_wage, name   = 'ajax_return_wage'),
   
 ]
 

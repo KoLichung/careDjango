@@ -68,8 +68,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_servant = models.BooleanField(default=False)
     is_passed = models.BooleanField(default=False)
     is_servant_passed = models.BooleanField(default=False)
-    avg_rating = models.FloatField(default=0, blank = True, null=True)
-    servant_avg_rating = models.FloatField(default=0, blank = True, null=True)
 
     is_home = models.BooleanField(default=False)
     home_hour_wage = models.IntegerField(default=0, blank = True, null=True)
@@ -93,25 +91,56 @@ class User(AbstractBaseUser, PermissionsMixin):
     ATMInfoAccount = models.CharField(max_length=20, default='', blank = True, null=True)
 
     USERNAME_FIELD = 'phone'
+
+    @property
+    def needer_avg_rating(self):
+        avg_rating = Review.objects.filter(case__user=self,case_offender_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        if avg_rating != None:
+            return round(avg_rating,1)
+        else:
+            return 0
+
+    @property
+    def servant_avg_rating(self):
+        servant_avg_rating = Review.objects.filter(servant=self,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        if servant_avg_rating != None:
+            return round(servant_avg_rating,1)
+        else:
+            return 0
     
     @property
     def servant_avg_rate_range(self):
-        # print(Review.objects.filter(servant=self,servant_rating__gte=1).count())
-
         if Review.objects.filter(servant=self,servant_rating__gte=1).count() > 0:
             avg_rating = Review.objects.filter(servant=self,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
-            # print(avg_rating)
             return range(int(avg_rating))
         else:
             return range(0)
 
     @property
     def servant_avg_rating_is_half_star(self):
-        if (self.servant_avg_rating -int(self.servant_avg_rating)) >= 0.5:
-        # 判斷
-            return True
+        if Review.objects.filter(servant=self,servant_rating__gte=1).count() > 0:
+            avg_rating = Review.objects.filter(servant=self,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+            if (avg_rating -int(avg_rating)) >= 0.5:
+            # 判斷
+                return True
+            else:
+                return False
         else:
             return False
+
+    @property
+    def servant_avg_rating_empty_star_range(self):
+        if Review.objects.filter(servant=self,servant_rating__gte=1).count() > 0:
+            avg_rating = Review.objects.filter(servant=self,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+            if (avg_rating -int(avg_rating)) >= 0.5:
+                return range(4-int(avg_rating))
+            else:
+                return range(5-int(avg_rating))
+        else:
+            return range(5)
+    @property
+    def servant_rate_nums(self):
+        return Review.objects.filter(servant=self,servant_rating__gte=1).count()
 
 class Service(models.Model):
     name = models.CharField(max_length= 100, unique=True)
@@ -438,8 +467,14 @@ class Review(models.Model):
             return True
         else:
             return False
-    
 
+    @property
+    def servant_rating_empty_star_range(self):
+        if (self.servant_rating -int(self.servant_rating)) >= 0.5:
+            return range(4-int(self.servant_rating))
+        else:
+            return range(5-int(self.servant_rating))
+    
 class PayInfo(models.Model):
     order = models.ForeignKey(
         Order,

@@ -96,6 +96,9 @@
                   {% if review.servant_rating_is_half_star == True %}
                     <span class="fas fa-star-half-alt"></span>
                   {% endif %}
+                  {% for i in review.servant_rating_empty_star_range %}
+                    <i class="fa-regular fa-star"></i>  
+                  {% endfor %}
                 </div>
                 
               </div>
@@ -123,6 +126,9 @@
                     {% if dict.servant.servant_avg_rating_is_half_star == True %}
                       <span class="fas fa-star-half-alt"></span>
                     {% endif %}
+                    {% for i in dict.servant.servant_avg_rating_empty_star_range %}
+                      <i class="fa-regular fa-star"></i>  
+                    {% endfor %}
                   </div>
                     <span class="case-info-font">&ensp;{{dict.servant_rate_nums}}評價</span>
                 </div>
@@ -131,12 +137,12 @@
               <div class="mb-3" style="margin: 0; display: flex;">
 
                 <div class="segment__item">
-                  <input type="radio" class="segment__input"  id="care_type" name="care_type" value="居家照顧" checked>
+                  <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="home.call_backend()" value="居家照顧" checked>
                   <div class="segment__button" >居家照顧</div>
                 </div>
           
                 <div class="segment__item">
-                  <input type="radio" class="segment__input"  id="care_type" name="care_type" value="醫院看護">
+                  <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="hospital.call_backend()" value="醫院看護">
                   <div class="segment__button">醫院看護</div>
                 </div>
                 <!-- onclick="location.href='{% url 'search_carer_detail' %}?servant={{dict.servant}}&care_type=居家照顧'" -->
@@ -147,42 +153,105 @@
                 <span class="news-subtitle">照護地點</span><br>
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
-                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      台中市
-                    </button>
-                    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
-                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
-                    </div>
+                    <select class="dropdown-button" name="city" onchange="listCities()">
+                      {% for city in dict.citys %}
+                        <option style="text-align: center" value="{{city.id}}" {% if city == dict.city %} selected="selected" {% endif %}>{{city}}</option>
+                        <!-- <option value="醫院看護">醫院看護</option> -->
+                      {% endfor %}
+                    </select>
                 </div>
                 <div class="mt-1 btn-group">
-                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      全區
-                    </button>
-                    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
-                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
-                    </div>
+                  <select class="dropdown-button" id="countylist" name="county">
+                    {% for county in dict.counties %}
+                      <option style="text-align: center" value="全區">全區</option>
+                      <option style="text-align: center" value="{{county.id}}">{{county}}</option>
+                    {% endfor %}
+                  </select>
                 </div>
 
                 </div>
 
                 <span class="news-subtitle mt-2">日期</span><br>
                 <div class="mt-2 mb-3">
-                  <input class="modal-timePicker-button datetimepicker" style="width: 200px;" id="timepicker2" type="text" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
+                  <input class="modal-timePicker-button datetimepicker" style="width: 200px;" id="timepicker2" name="strat_end_date" type="text" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
                 </div>
 
                 <span class="news-subtitle mt-2">時間類型</span><br>
                 <div class="my-2 " style="display: flex;">
+                  <div class="btn-group">
+                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"  aria-expanded="false">{{dict.time_type}}</button>
+                    
+                    <div class="dropdown-menu py-0">
+                      <div class="card shadow-none border-0" style="width: 15rem;">
+    
+                        <div class="card-body">
+    
+                          <div class="row text-start justify-content-between align-items-center mb-2">
+                            <div class="col-auto">
+                              <h6 class="mb-0">時間類型</h6>
+                            </div>
+                          </div>
+                          <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                            <!-- 時間類型選項 radio -->
+                            <div class="col-auto">
+      
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="True" />
+                                <label class="h6" for="inlineRadio2">  連續時間</label>
+                              </div>
+      
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="False" />
+                                <label class="h6" for="inlineRadio2">  每週固定</label>
+                              </div>
+      
+                            </div>
+      
+                            <!-- 週間星期 checkbox -->
+                            <div class="col-auto">
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="1" />
+                                <label class="h6" for="weekdays[]">星期一</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="2" checked="" />
+                                <label class="h6" for="weekdays[]">星期二</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="3" />
+                                <label class="h6" for="weekdays[]">星期三</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="4" checked="" />
+                                <label class="h6" for="weekdays[]">星期四</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="5" checked="" />
+                                <label class="h6" for="weekdays[]">星期五</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="6" />
+                                <label class="h6" for="weekdays[]">星期六</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="0" checked="" />
+                                <label class="h6" for="weekdays[]">星期日</label>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-                  <label class="custom-radio-parent">連續時間
-                    <input type="radio" checked="checked" name="radio">
+                  <!-- <label class="custom-radio-parent">連續時間
+                    <input type="radio" checked="checked" name="time_type">
                     <span class="checkmark"></span>
                   </label>
                   <label class="custom-radio-parent">每週時段預定
-                    <input type="radio" name="radio">
+                    <input type="radio" name="time_t">
                     <span class="checkmark"></span>
-                  </label>
+                  </label> -->
 
                 </div>
                 
@@ -190,29 +259,17 @@
                 <span class="news-subtitle">開始時間 & 結束時間</span><br>
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
-                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      台中市
-                    </button>
-                    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
-                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
-                    </div>
+                    <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" name="timepicker_startTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                 </div>
                 <div class="mt-1 btn-group">
-                    <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      全區
-                    </button>
-                    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
-                      <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
-                    </div>
+                  <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" name="timepicker_endTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                 </div>
 
                 </div>
                 
                 <span class="news-subtitle mt-2">費率</span><br>
                 <div class="mt-2 mb-3">
-                  每小時 $350｜半天 $2500｜全天 $4000 
+                  每小時 $<span id="hour_wage" name="hour_wage"></span>｜半天 $<span id="half_day_wage" name="half_day_wage"></span>｜全天 $<span id="one_day_wage" name="one_day_wage"></span>
                 </div>
                 
                 <div class="row case-info-font mt-3">
@@ -240,6 +297,112 @@
           
     </div>
   </div>
-     
+  <script type="text/javascript">
+    
+    function getCookie(name){
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+    const csrftoken = getCookie('csrftoken');
+    function listCities(){
+      var cityid = $("[name='city']").val();
+      $('#countylist').html('');
+      $.ajax({
+        type: "POST",
+        data: {'city_id':cityid,
+                'action':'refresh_county'},
+        headers: {'X-CSRFToken': csrftoken},
+        url: "{% url 'ajax_refresh_county' %}",
+        success: function(response)
+        {
+          const data = response.data
+          console.log(data)
+          // var resultObj = JSON.parse(response);
+          var dataHandler = $("#countylist");
+          var county_all = `<option style="text-align: center" value="全區">全區</option>`
+          dataHandler.append(county_all);
+          data.forEach(el =>
+          {
+              var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+              dataHandler.append(newRow);
+          });
+
+        }
+      });
+    }
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const servant = urlParams.get('servant')
+    $(document).ready(function(){ 
+      $.ajax({
+        type: "GET",
+        data: {'servant':servant,},
+        // headers: {'X-CSRFToken': csrftoken},
+        url: "{% url 'search_carer_detail' %}",
+        success: function(response)
+          {
+            const data = response.data
+            $('#hour_wage').html(data.hour_wage);
+            $('#half_day_wage').html(data.half_day_wage);
+            $('#one_day_wage').html(data.one_day_wage);
+          }
+        })
+      });
+    
+    var home = {
+      call_backend : function (){
+      var care_type = 'home'
+      $.ajax({
+        type: "POST",
+        data: {'care_type':care_type,
+                'servant':servant,
+                'action':'return_wage'},
+        headers: {'X-CSRFToken': csrftoken},
+        url: "{% url 'ajax_return_wage' %}",
+        success: function(response)
+          {
+            const data = response.data
+            $('#hour_wage').html(data.hour_wage);
+            $('#half_day_wage').html(data.half_day_wage);
+            $('#one_day_wage').html(data.one_day_wage);
+          }
+        });
+      }
+    }
+    var hospital = {
+      call_backend : function (){
+      var care_type = 'hospital'
+      console.log(care_type,servant)
+      $.ajax({
+        type: "POST",
+        data: {'care_type':care_type,
+                'servant':servant,
+                'action':'return_wage'},
+        headers: {'X-CSRFToken': csrftoken},
+        url: "{% url 'ajax_return_wage' %}",
+        success: function(response)
+          {
+            const data = response.data
+            $('#hour_wage').html(data.hour_wage);
+            $('#half_day_wage').html(data.half_day_wage);
+            $('#one_day_wage').html(data.one_day_wage);
+          }
+        });
+      }
+    }
+      
+
+  </script>
 </main>
 {% endblock %}

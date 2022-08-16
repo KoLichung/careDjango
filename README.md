@@ -151,7 +151,7 @@ vultr:
 
 20220815
 1.刪掉 user model, 把 avg_rating, servant_avg_rating
-2.整理一下 index, serach_list, search_carer_detail (程式碼整理, 對齊)
+2.整理一下 index, search_list, search_carer_detail (程式碼整理, 對齊)
 3.試試 servant.service_locations 
 
 20220809

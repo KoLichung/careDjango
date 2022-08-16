@@ -171,12 +171,12 @@
   <!-- 搜尋結果 -->
   
   <div class="row g-3 mx-5 d-flex" >
-      {% for list in forlooplist %}
+      {% for servant in servants %}
       <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
         <div class="border border-600" style="border-radius: 6px;">
-          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{list.servant}}">
-            {% if list.servant.background_image.url != None %}
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{list.servant.background_image.url}}" alt="照顧者背景圖">
+          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant}}">
+            {% if servant.background_image.url != None %}
+              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖"> 
             {% endif %}
@@ -184,22 +184,25 @@
               <div class="d-flex">
                 <div class="avatar avatar-xl" style="margin-right: 5px;">
                   <!-- <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >   -->
-                  {% if list.servant.image.url != None %}
-                    <img class="rounded-circle" src="{{list.servant.image.url}}" alt="" > 
+                  {% if servant.image.url != None %}
+                    <img class="rounded-circle" src="{{servant.image.url}}" alt="" > 
                   {% else %}
                     <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >
                   {% endif %}
                 </div>
                   <!-- 4.8, 對 4 做 for loop, 對 0.8 做判斷, if > 0.5 給 1 顆星, <= 0.5, 就給 半顆星 -->
-                  <span class="carer-name" style="margin-right: 5px;">{{list.servant.name}}</span >
+                  <span class="carer-name" style="margin-right: 5px;">{{servant.name}}</span >
                     <div class="col align-self-center " style="color: yellow;">
-                      {% for i in list.servant.servant_avg_rate_range %}
+                      {% for i in servant.servant_avg_rate_range %}
                         <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
                       {% endfor %}
-                      {% if list.servant.servant_avg_rating_is_half_star == True %}
+                      {% if servant.servant_avg_rating_is_half_star == True %}
                         <span class="fas fa-star-half-alt"></span>
                       {% endif %}
-                      <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價{{list.servant_rate_nums}}</span>
+                      {% for i in servant.servant_avg_rating_empty_star_range%}
+                        <i class="fa-regular fa-star"></i>  
+                      {% endfor %}
+                      <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價{{servant.servant_rate_nums}}</span>
                     </div>
                   <!-- <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
                   <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
@@ -209,17 +212,25 @@
               </div>
 
               <div class="mt-2">
-                {% for care_type in list.servant_care_type %}
-                  <span class="purple-border-tag">{{care_type}}</span>
-                {% endfor %}
+                {% if servant.is_home == True %}
+                  <span class="purple-border-tag">居家照顧</span>
+                {% endif %}
+                {% if servant.is_hospital == True %}
+                  <span class="purple-border-tag">醫院照護</span>
+                {% endif %}
               </div>
     
               <div class="mt-3">
-                <p class="h6 text-800">時薪 ${{list.hour_wage}} | 半天 ${{list.half_day_wage}} | 一天 ${{list.one_day_wage}}</p>
+                {% if dict.care_type == '居家照顧' %}
+                <p class="h6 text-800">時薪 ${{servant.home_hour_wage}} | 半天 ${{servant.home_half_day_wage}} | 一天 ${{servant.home_one_day_wage}}</p>
+                {% endif %}
+                {% if dict.care_type == '醫院看護' %}
+                <p class="h6 text-800">時薪 ${{servant.hospital_hour_wage}} | 半天 ${{servant.hospital_half_day_wage}} | 一天 ${{servant.hospital_one_day_wage}}</p>
+                {% endif %}
                 <p class="h6 text-800">服務地區：</p>
                 <p class="h6 text-800">
-                  {% for city in list.service_citys  %}
-                    {{city}}
+                  {% for location in servant.user_locations.all  %}
+                    {{location.city}}
                   {% endfor %}
                 </p>
               </div>
@@ -258,34 +269,34 @@
             }
             return cookieValue;
         }
-        const csrftoken = getCookie('csrftoken');
-  
-        function listCities(){
-          var cityid = $("[name='city']").val();
-          $('#countylist').html('');
-          $.ajax({
-      type: "POST",
-      data: {'city_id':cityid,
-              'action':'refresh_county'},
-      headers: {'X-CSRFToken': csrftoken},
-      url: "{% url 'ajax_refresh_county' %}",
-      success: function(response)
-      {
-        const data = response.data
-        console.log(data)
-        // var resultObj = JSON.parse(response);
-        var dataHandler = $("#countylist");
-        var county_all = `<option style="text-align: center" value="全區">全區</option>`
-        dataHandler.append(county_all);
-        data.forEach(el =>
-        {
-            var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-            dataHandler.append(newRow);
-        });
+    const csrftoken = getCookie('csrftoken');
 
-      }
-    });
+    function listCities(){
+      var cityid = $("[name='city']").val();
+      $('#countylist').html('');
+      $.ajax({
+        type: "POST",
+        data: {'city_id':cityid,
+                'action':'refresh_county'},
+        headers: {'X-CSRFToken': csrftoken},
+        url: "{% url 'ajax_refresh_county' %}",
+        success: function(response)
+        {
+          const data = response.data
+          console.log(data)
+          // var resultObj = JSON.parse(response);
+          var dataHandler = $("#countylist");
+          var county_all = `<option style="text-align: center" value="全區">全區</option>`
+          dataHandler.append(county_all);
+          data.forEach(el =>
+          {
+              var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+              dataHandler.append(newRow);
+          });
+
         }
+      });
+    }
   </script>
 </main>
 {% endblock %}

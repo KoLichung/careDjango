@@ -15,46 +15,23 @@ def index(request):
     citys = City.objects.all()
     counties = County.objects.all()
 
-    county_id = request.GET.get('county_id')
-    city_id = request.GET.get("city_id")
-
-    
-
-    if city_id == None:
-        city_id = '8'
-    city = City.objects.get(id=city_id)
-
-    counties = counties.filter(city=City.objects.get(id=city_id))
-
-    if county_id == None:
-        county = '全區'
-    else:
-        if county_id != 'all':
-            county = County.objects.get(id=county_id)
-        else:
-            county = '全區'
-    
-
     if request.method == 'POST':
-        s
+        
         city = request.POST.get('city')
         county = request.POST.get('county')
         care_type = request.POST.get('care_type')
         is_continuous_time = request.POST.get('is_continuous_time')
         start_datetime = request.POST.get('datetimepicker_start')
         end_datetime = request.POST.get('datetimepicker_end')
-        print(city,county)
-        print('post')
+        print(start_datetime,end_datetime)
         return redirect_params('search_list',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_datetime':start_datetime,'end_datetime':end_datetime})
     
     else:
         dict = {}
         dict['citys'] = citys
-        dict['city'] = city
+        dict['city'] = citys.get(id=8)
         dict['counties'] = counties
-        dict['county'] = county
-
-        
+        dict['county'] = '全區'
 
         return render(request, 'web/index.html',{'dict':dict})
 
@@ -76,11 +53,34 @@ def ajax_refresh_county(request):
                 data.append(item)
             return JsonResponse({'data':data})
 
-# def ajax_call_backend(request):
-#     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'index_submit':
-#         submitdata = urllib.parse.parse_qs(request.body.decode('utf-8'))
-#         print('call_back')
-#         return JsonResponse({'submitdata':submitdata})
+def ajax_return_wage(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'return_wage':
+        updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
+        care_type = updatedData['care_type'][0]
+        servant =updatedData['servant'][0]
+        servant = User.objects.get(phone=servant)
+        print(care_type)
+        data={}
+        if care_type == 'home':
+            if servant.home_hour_wage > 0:
+                data['hour_wage'] = servant.home_hour_wage
+                data['half_day_wage'] = servant.home_half_day_wage
+                data['one_day_wage'] = servant.home_one_day_wage
+            else:
+                data['hour_wage'] = '尚未設定'
+                data['half_day_wage'] = '尚未設定'
+                data['one_day_wage'] = '尚未設定'
+        elif care_type == 'hospital':
+            if servant.hospital_hour_wage > 0:
+                data['hour_wage'] = servant.hospital_hour_wage
+                data['half_day_wage'] = servant.hospital_half_day_wage
+                data['one_day_wage'] = servant.hospital_one_day_wage
+            else:
+                data['hour_wage'] = '尚未設定'
+                data['half_day_wage'] = '尚未設定'
+                data['one_day_wage'] = '尚未設定'
+        return JsonResponse({'data':data})
+    
 
 def login(request):
     return render(request, 'web/login.html')
@@ -101,9 +101,12 @@ def search_list(request):
     city_id = request.GET.get("city")
     care_type = request.GET.get('care_type')
     is_continuous_time = request.GET.get('is_continuous_time')
+    start_datetime = request.GET.get('start_datetime')
+    end_datetime = request.GET.get('end_datetime')
+    print(start_datetime,end_datetime)
 
     if request.method == 'POST':
-        s
+        
         if request.POST.get('county') != None:
             county_name = request.POST.get('county')
         if request.POST.get('city') != None:
@@ -200,49 +203,28 @@ def search_list(request):
         time_type = '每週固定'
     dict['time_type'] = time_type
 
-    for servant in servants:
-        service_city_ids = list(UserServiceLocation.objects.filter(user=servant).values_list('city', flat=True))
-        service_citys = City.objects.filter(id__in=service_city_ids)
-        servant_avg_rate= Review.objects.filter(servant=servant,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
-        servant_rate_nums = Review.objects.filter(servant=servant,servant_rating__gte=1).count()
-        
-        if care_type == '醫院看護':
-            if servant.hospital_hour_wage > 0 :
-                hour_wage = servant.hospital_hour_wage
-                half_day_wage = servant.hospital_half_day_wage
-                one_day_wage = servant.hospital_one_day_wage
-            elif servant.home_hour_wage > 0 :
-                hour_wage = servant.home_hour_wage
-                half_day_wage = servant.home_half_day_wage
-                one_day_wage = servant.home_one_day_wage
-            
-        else:
-            if care_type == '居家照顧' :
-                if servant.home_hour_wage > 0 :
-                    hour_wage = servant.home_hour_wage
-                    half_day_wage = servant.home_half_day_wage
-                    one_day_wage = servant.home_one_day_wage
-                elif servant.hospital_hour_wage > 0 :
-                    hour_wage = servant.hospital_hour_wage
-                    half_day_wage = servant.hospital_half_day_wage
-                    one_day_wage = servant.hospital_one_day_wage
-
-        servant_care_type = []
-        if servant.is_home == True:
-            servant_care_type.append('居家照顧')
-        if servant.is_hospital == True:
-            servant_care_type.append('醫院看護')
-        data = {'servant':servant,'service_citys':service_citys,'servant_avg_rate':servant_avg_rate,'servant_rate_nums':servant_rate_nums,'hour_wage':hour_wage,'half_day_wage':half_day_wage,'one_day_wage':one_day_wage,'servant_care_type':servant_care_type}
-        forlooplist.append(data)
-
-    return render(request, 'web/search_list.html',{'dict':dict,'forlooplist':forlooplist})
+    return render(request, 'web/search_list.html',{'dict':dict,'servants':servants})
 
     # return render(request, 'web/search_list.html',{'fiter_condition':filter_condition,'searvants':sarvants})
 
 def search_carer_detail(request):
     servant_phone = request.GET.get('servant')
     reviews_all = request.GET.get('reviews')
+    citys = City.objects.all()
+    counties = County.objects.all()
+    is_continuous_time = 'True'
     servant = User.objects.get(phone=servant_phone)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data={}
+        if servant.home_hour_wage > 0:
+                data['hour_wage'] = servant.home_hour_wage
+                data['half_day_wage'] = servant.home_half_day_wage
+                data['one_day_wage'] = servant.home_one_day_wage
+        else:
+            data['hour_wage'] = '尚未設定'
+            data['half_day_wage'] = '尚未設定'
+            data['one_day_wage'] = '尚未設定'
+        return JsonResponse({'data':data})
     dict = {}
     servant_care_type = []
     if servant.is_home == True:
@@ -272,7 +254,28 @@ def search_carer_detail(request):
     location_list = []
     for user_location in user_locations:
         location_list.append({'city':user_location.city,'county':user_location.county,'tranfer_fee':user_location.tranfer_fee})
+    if request.method == 'POST':
+        care_type = request.POST.get('care_type')
+        city = request.POST.get('city')
+        county = request.POST.get('county')
+        strat_end_date = request.POST.get('strat_end_date')
+        is_continuous_time = request.POST.get('is_continuous_time')
+        start_time = request.POST.get('timepicker_startTime')
+        end_time = request.POST.get('timepicker_endTime')
+        return redirect_params('booking_patient_info',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'strat_end_date':strat_end_date,'start_time':start_time})
+
+    
+    if is_continuous_time == 'True':
+        time_type = '連續時間'
+    else:
+        time_type = '每週固定'
+    
+    dict['time_type'] = time_type
     dict['servant'] = servant
+    dict['citys'] = citys
+    dict['city'] = citys.get(id=8)
+    dict['counties'] = counties
+    dict['county'] = '全區'
     dict['care_type'] = servant_care_type
     dict['languages'] = languages
     dict['location_list'] = location_list
@@ -282,25 +285,11 @@ def search_carer_detail(request):
     dict['about_me'] = servant.about_me
     dict['servant_rate_nums'] = servant_rate_nums
     dict['reviews'] = reviews
-    if request.method == 'POST':
-        care_type = request.POST.get('care_type')
-        if care_type == '醫院看護':
-                hour_wage = servant.hospital_hour_wage
-                half_day_wage = servant.hospital_half_day_wage
-                one_day_wage = servant.hospital_one_day_wage
-        else:
-                hour_wage = servant.home_hour_wage
-                half_day_wage = servant.home_half_day_wage
-                one_day_wage = servant.home_one_day_wage
-        dict['hour_wage'] = hour_wage
-        dict['half_day_wage'] = half_day_wage
-        dict['one_day_wage'] = one_day_wage
-   
-        return render(request, 'web/search_carer_detail.html',{'dict':dict,})
 
     return render(request, 'web/search_carer_detail.html',{'dict':dict,})
 
 def booking_patient_info(request):
+    s
     return render(request, 'web/booking/patient_info.html')
 
 def booking_location(request):
