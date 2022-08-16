@@ -246,7 +246,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         condition1 = Q(start_datetime__range=[start_date, end_date])
         condition2 = Q(end_datetime__range=[start_date, end_date])
         condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
-        orders = Order.objects.filter(condition1 | condition2 | condition3)
+        orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
         #2.再從 1 取出週間有交集的訂單
         #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
         if weekdays != None:
@@ -261,7 +261,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
         order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
         order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
-        orders = Order.objects.filter(order_condition_1|order_condition_2).distinct()
+        orders = orders.filter(order_condition_1|order_condition_2).distinct()
         # orders = Order.objects.filter(order_condition_2)
         print(orders)
         order_conflict_servants_id = list(orders.values_list('servant', flat=True))

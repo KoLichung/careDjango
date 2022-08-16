@@ -75,7 +75,7 @@
                     <select class="dropdown-button" id="countylist" name="county">
                       {% for county in dict.counties %}
                         <option style="text-align: center" value="全區">全區</option>
-                        <option style="text-align: center" value="{{county.id}}">{{county}}</option>
+                        <option style="text-align: center" value="{{county.name}}">{{county}}</option>
                       {% endfor %}
                     </select>
                   </div>
@@ -174,7 +174,7 @@
       {% for servant in servants %}
       <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
         <div class="border border-600" style="border-radius: 6px;">
-          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant}}">
+          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant}}&care_type={{care_type}}">
             {% if servant.background_image.url != None %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
@@ -273,6 +273,7 @@
 
     function listCities(){
       var cityid = $("[name='city']").val();
+      
       $('#countylist').html('');
       $.ajax({
         type: "POST",
@@ -281,12 +282,11 @@
         headers: {'X-CSRFToken': csrftoken},
         url: "{% url 'ajax_refresh_county' %}",
         success: function(response)
-        {
+        { 
           const data = response.data
           console.log(data)
-          // var resultObj = JSON.parse(response);
           var dataHandler = $("#countylist");
-          var county_all = `<option style="text-align: center" value="全區">全區</option>`
+          var county_all = `<option style="text-align: center" value="全區">全區</option>`;
           dataHandler.append(county_all);
           data.forEach(el =>
           {

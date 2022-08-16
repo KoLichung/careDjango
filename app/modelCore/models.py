@@ -173,7 +173,8 @@ class UserWeekDayTime(models.Model):
 class UserServiceShip(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        related_name='services',
     )
     service = models.ForeignKey(
         Service,
@@ -208,7 +209,7 @@ class UserLicenseShipImage(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='images'
+        related_name='license_images'
         )
     license = models.ForeignKey(
         License,

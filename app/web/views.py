@@ -2,10 +2,11 @@ from django.shortcuts import render ,redirect
 from django.http import HttpResponse ,JsonResponse
 
 import urllib
+from datetime import date ,timedelta
+import datetime
 import json
 import os
 from time import time
-from django.core import serializers
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service
 from modelCore.models import UserLicenseShipImage ,License
@@ -81,6 +82,82 @@ def ajax_return_wage(request):
                 data['one_day_wage'] = '尚未設定'
         return JsonResponse({'data':data})
     
+def ajax_post(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'ajax_post' :
+        updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
+        servants = User.objects.filter(is_servant=True)
+        print(updatedData)
+        servant = updatedData['servant'][0]
+        servant = User.objects.get(phone=servant)
+        care_type = updatedData['care_type'][0]
+        start_end_date = updatedData['start_end_date'][0]
+        is_continuous_time = updatedData['is_continuous_time'][0]
+        startTime = updatedData['startTime'][0]
+        endTime = updatedData['endTime'][0]
+        start_date = '20' + start_end_date.split(' to ')[0].replace('/','-')
+        end_date = '20' +start_end_date.split(' to ')[1].replace('/','-')
+        weekdays = updatedData['weekdays[]']
+        if is_continuous_time == 'True':
+                servants = servants.filter(is_continuous_time=True)
+        if weekdays != None:
+            if (start_date != '') | (end_date != '') | (startTime != '') | (endTime != ''):
+                print('1')
+                start_time = startTime.split(':')
+                end_time = endTime.split(':')
+                start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
+                end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
+                weekdays_num_list = weekdays
+                service_time_condition_1 = Q(is_continuous_time=True)
+                # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+                # queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
+                for weekdays_num in weekdays_num_list:
+                    service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+                    servants = servants.filter(service_time_condition_1 | service_time_condition_2).distinct()
+                # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
+                # 2022-07-10
+
+                #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
+                #1.取出日期期間有交集的訂單
+                condition1 = Q(start_datetime__range=[start_date, end_date])
+                condition2 = Q(end_datetime__range=[start_date, end_date])
+                condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
+                orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
+
+                #2.再從 1 取出週間有交集的訂單
+                #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
+                weekdays_num_list = weekdays
+                weekday_condition_1 = Q(order_weekday__weekday__in=weekdays_num_list)
+                weedkay_condition_2 =  Q(case__is_continuous_time=True)
+                #3.再從 2 取出時段有交集的訂單
+                time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
+                time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
+                time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
+                order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
+                order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
+                orders = orders.filter(order_condition_1|order_condition_2).distinct()
+                order_conflict_servants_id = list(orders.values_list('servant', flat=True))
+                servants = servants.filter(~Q(id__in=order_conflict_servants_id))
+                if servant in servants:
+                    if care_type == '醫院看護':
+                        hour_wage = servant.hospital_hour_wage
+                    elif care_type == '居家照顧':
+                        hour_wage = servant.home_hour_wage
+                    print('calculate')
+                    start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+                    end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+                    print(start_date,end_date)
+                    total_hours = 0
+                    for i in weekdays_num_list:
+                        total_hours += (days_count([int(i)], start_date, end_date)) * (end_time_int - start_time_int)
+                    total_money = total_hours * hour_wage
+                    print(total_money,total_hours)
+                    data = {
+                        'total_hours':total_hours,
+                        'total_money':total_money,
+                        'hour_wage':hour_wage,
+                    }
+                    return JsonResponse({'data':data})
+
 
 def login(request):
     return render(request, 'web/login.html')
@@ -120,17 +197,16 @@ def search_list(request):
         is_continuous_time = request.POST.get('is_continuous_time')
         weekdays = request.POST.getlist('weekdays[]')
 
-        
-        if (start_date != '') and (end_date != '') and (start_time != '') and (end_time != ''):
-            start_time = start_time.split(':')
-            end_time = end_time.split(':')
-            start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
-            end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
-            if is_continuous_time == 'True':
+        if is_continuous_time == 'True':
                 servants = servants.filter(is_continuous_time=True)
-            
+
             #所選擇的周間跟時段 要符合 servant 的服務時段
-            elif weekdays != None:
+        if weekdays != None:
+            if (start_date != '') and (end_date != '') and (start_time != '') and (end_time != ''):
+                start_time = start_time.split(':')
+                end_time = end_time.split(':')
+                start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
+                end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
                 weekdays_num_list = weekdays
                 service_time_condition_1 = Q(is_continuous_time=True)
                 # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
@@ -138,45 +214,52 @@ def search_list(request):
                 for weekdays_num in weekdays_num_list:
                     service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
                     servants = servants.filter(service_time_condition_1 | service_time_condition_2).distinct()
-            # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
-            # 2022-07-10
+                # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
+                # 2022-07-10
 
-            #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
-            #1.取出日期期間有交集的訂單
-            condition1 = Q(start_datetime__range=[start_date, end_date])
-            condition2 = Q(end_datetime__range=[start_date, end_date])
-            condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
-            orders = Order.objects.filter(condition1 | condition2 | condition3)
-            #2.再從 1 取出週間有交集的訂單
-            #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
-            if weekdays != None:
+                #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
+                #1.取出日期期間有交集的訂單
+                condition1 = Q(start_datetime__range=[start_date, end_date])
+                condition2 = Q(end_datetime__range=[start_date, end_date])
+                condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
+                orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
+
+                #2.再從 1 取出週間有交集的訂單
+                #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
                 weekdays_num_list = weekdays
                 weekday_condition_1 = Q(order_weekday__weekday__in=weekdays_num_list)
                 weedkay_condition_2 =  Q(case__is_continuous_time=True)
-            #3.再從 2 取出時段有交集的訂單
-            time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
-            time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
-            time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
-            order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
-            order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
-            orders = Order.objects.filter(order_condition_1|order_condition_2).distinct()
-            order_conflict_servants_id = list(orders.values_list('servant', flat=True))
-            servants = servants.filter(~Q(id__in=order_conflict_servants_id))
-    print(care_type)
+                #3.再從 2 取出時段有交集的訂單
+                time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
+                time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
+                time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
+                order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
+                order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
+                orders = orders.filter(order_condition_1|order_condition_2).distinct()
+                order_conflict_servants_id = list(orders.values_list('servant', flat=True))
+                print(orders)
+                servants = servants.filter(~Q(id__in=order_conflict_servants_id))
+            else:
+                weekdays_num_list = weekdays
+                service_time_condition_1 = Q(is_continuous_time=True)
+                for weekdays_num in weekdays_num_list:
+                    service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num)
+                    servants = servants.filter(service_time_condition_1 | service_time_condition_2).distinct()
+    
     if city_id == None:
         city_id = '8'
     city = City.objects.get(id=city_id)
     counties = counties.filter(city=City.objects.get(id=city_id))
 
     if county_name == None:
-        countyName = '全區'
+        county_name = '全區'
     else:
         if county_name != '全區':
-            countyName = County.objects.get(city=city_id,name=county_name)
-            county = County.objects.get(city=city_id,name=county_name)
+            print(county_name)
+            county_name = County.objects.get(city=city_id,name=county_name)
             
         else:
-            countyName = '全區'
+            county_name = '全區'
     if care_type == '居家照顧':
             servants = servants.filter(is_home=True)
 
@@ -187,13 +270,12 @@ def search_list(request):
     dict['citys'] = citys
     dict['city'] = city
     dict['counties'] = counties
-    dict['county'] = countyName
+    dict['county'] = county_name
     dict['care_type'] = care_type
-    forlooplist = []
     
     if county_name != None:
         if county_name != '全區':
-            user_ids = list(UserServiceLocation.objects.filter(county=county).values_list('user', flat=True))
+            user_ids = list(UserServiceLocation.objects.filter(county=county_name).values_list('user', flat=True))
         else:
             user_ids = list(UserServiceLocation.objects.filter(city=city_id).values_list('user', flat=True))
         servants = servants.filter(id__in=user_ids)
@@ -203,46 +285,52 @@ def search_list(request):
         time_type = '每週固定'
     dict['time_type'] = time_type
 
-    return render(request, 'web/search_list.html',{'dict':dict,'servants':servants})
+    return render(request, 'web/search_list.html',{'dict':dict,'servants':servants,'care_type':care_type})
 
     # return render(request, 'web/search_list.html',{'fiter_condition':filter_condition,'searvants':sarvants})
 
 def search_carer_detail(request):
     servant_phone = request.GET.get('servant')
     reviews_all = request.GET.get('reviews')
+    care_type = request.GET.get('care_type')
+
     citys = City.objects.all()
     counties = County.objects.all()
     is_continuous_time = 'True'
     servant = User.objects.get(phone=servant_phone)
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data={}
-        if servant.home_hour_wage > 0:
+        if care_type == 'home':
+            if servant.home_hour_wage > 0:
                 data['hour_wage'] = servant.home_hour_wage
                 data['half_day_wage'] = servant.home_half_day_wage
                 data['one_day_wage'] = servant.home_one_day_wage
-        else:
-            data['hour_wage'] = '尚未設定'
-            data['half_day_wage'] = '尚未設定'
-            data['one_day_wage'] = '尚未設定'
+            else:
+                data['hour_wage'] = '尚未設定'
+                data['half_day_wage'] = '尚未設定'
+                data['one_day_wage'] = '尚未設定'
+
+        elif care_type == 'hospital':
+            if servant.hospital_hour_wage > 0:
+                data['hour_wage'] = servant.hospital_hour_wage
+                data['half_day_wage'] = servant.hospital_half_day_wage
+                data['one_day_wage'] = servant.hospital_one_day_wage
+            else:
+                data['hour_wage'] = '尚未設定'
+                data['half_day_wage'] = '尚未設定'
+                data['one_day_wage'] = '尚未設定'
+        
         return JsonResponse({'data':data})
-    dict = {}
     servant_care_type = []
     if servant.is_home == True:
             servant_care_type.append('居家照顧')
     if servant.is_hospital == True:
         servant_care_type.append('醫院看護')
-    language_ids = list(UserLanguage.objects.filter(user=servant).values_list('language', flat=True))
-    languages = Language.objects.filter(id__in=language_ids)
-    service_ids = list(UserServiceShip.objects.filter(user=servant).values_list('service', flat=True))
-    services = Service.objects.filter(id__in=service_ids)
-    license_ids = list(UserLicenseShipImage.objects.filter(user=servant).values_list('license', flat=True))
-    licences = License.objects.filter(id__in=license_ids,id__gt=3)
+
     license_not_provide = []
     for license_id in range(1,4):
         if UserLicenseShipImage.objects.filter(user=servant,license=license_id).exists() == False:
             license_not_provide.append(License.objects.get(id=license_id))
-
-    servant_rate_nums = Review.objects.filter(servant=servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
 
     if len(Review.objects.filter(servant=servant)) >= 2:
         reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')[:2]
@@ -250,10 +338,6 @@ def search_carer_detail(request):
             reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')
     else:
         reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')
-    user_locations = UserServiceLocation.objects.filter(user=servant)
-    location_list = []
-    for user_location in user_locations:
-        location_list.append({'city':user_location.city,'county':user_location.county,'tranfer_fee':user_location.tranfer_fee})
     if request.method == 'POST':
         care_type = request.POST.get('care_type')
         city = request.POST.get('city')
@@ -262,31 +346,17 @@ def search_carer_detail(request):
         is_continuous_time = request.POST.get('is_continuous_time')
         start_time = request.POST.get('timepicker_startTime')
         end_time = request.POST.get('timepicker_endTime')
-        return redirect_params('booking_patient_info',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'strat_end_date':strat_end_date,'start_time':start_time})
+        weekdays = request.POST.getlist('weekdays[]')
+        return redirect_params('booking_patient_info',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'strat_end_date':strat_end_date,'start_time':start_time,'servant_care_type':servant_care_type})
 
-    
     if is_continuous_time == 'True':
         time_type = '連續時間'
     else:
         time_type = '每週固定'
-    
-    dict['time_type'] = time_type
-    dict['servant'] = servant
-    dict['citys'] = citys
-    dict['city'] = citys.get(id=8)
-    dict['counties'] = counties
-    dict['county'] = '全區'
-    dict['care_type'] = servant_care_type
-    dict['languages'] = languages
-    dict['location_list'] = location_list
-    dict['services'] = services
-    dict['licences'] = licences
-    dict['license_not_provide'] = license_not_provide
-    dict['about_me'] = servant.about_me
-    dict['servant_rate_nums'] = servant_rate_nums
-    dict['reviews'] = reviews
+    city_default = servant.user_locations.all()[0].city
+    county_default = servant.user_locations.all()[0].county
 
-    return render(request, 'web/search_carer_detail.html',{'dict':dict,})
+    return render(request, 'web/search_carer_detail.html',{'servant':servant,'license_not_provide':license_not_provide,'reviews':reviews,'citys':citys,'counties':counties,'care_type':care_type,'city_default':city_default,'county_default':county_default})
 
     # return render(request, 'web/search_carer_detail.html',{'servant':servant,'xx':xx}'')
 
@@ -377,3 +447,8 @@ def redirect_params(url, params=None):
         query_string = urllib.parse.urlencode(params)
         response['Location'] += '?' + query_string
     return response
+
+def days_count(weekdays: list, start: date, end: date):
+    dates_diff = end-start
+    days = [start + timedelta(days=i) for i in range(dates_diff.days)]
+    return len([day for day in days if day.weekday() in weekdays])

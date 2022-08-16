@@ -153,6 +153,7 @@ vultr:
 1.整理 search_carer_detail 程式碼
 2.search_carer_detail 的 dialog 資料帶入
 3.index 頁, 插入 每週時段 選擇~
+# start_end_date': ['22/09/06 to 22/09/23'] 字串處理後22世紀不能用
 
 20220815
 1.刪掉 user model, 把 avg_rating, servant_avg_rating

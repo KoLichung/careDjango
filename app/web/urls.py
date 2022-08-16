@@ -49,6 +49,7 @@ urlpatterns = [
     path('recommend_carer', views.recommend_carer, name = 'recommend_carer'),
     path('ajax_refresh_county', views.ajax_refresh_county, name = 'ajax_refresh_county'),
     path('ajax_return_wage', views.ajax_return_wage, name   = 'ajax_return_wage'),
+    path('ajax_post', views.ajax_post, name = 'ajax_post'),
   
 ]
 
