@@ -325,6 +325,7 @@
     const servant = urlParams.get('servant')
     is_continuous_time = 'True';
     const post_html = document.getElementById('post_html')
+    
     $(document).ready(function(){ 
       var care_type = urlParams.get('care_type');
       if(care_type == '居家照顧' ){
@@ -345,7 +346,6 @@
             $('#hour_wage').html(data.hour_wage);
             $('#half_day_wage').html(data.half_day_wage);
             $('#one_day_wage').html(data.one_day_wage);
-            
           }
         })
       });
@@ -370,6 +370,7 @@
         });
       }
     }
+    
     var hospital = {
       call_backend : function (){
       var care_type = 'hospital'
@@ -391,82 +392,82 @@
         });
       }
     }
+
     document.getElementById('time_type').innerHTML = '連續時間' ;
     document.getElementById('continuous_time').addEventListener('click', function(e) {
       document.getElementById('time_type').innerHTML = '連續時間' ;
       $('#time').value = 'True';
     })
+
     document.getElementById('select_time').addEventListener('click', function(e) {
       document.getElementById('time_type').innerHTML = '每週固定' ;
       $('#time').value  = 'False';
       console.log($('#time').val())
     })
 
+    document.querySelector('.booking-box').addEventListener('change', event => {
+      event.preventDefault();
+      start_end_date = $('#start_end_date').val();
+      startTime = $('#timepicker_startTime').val();
+      endTime = $('#timepicker_endTime').val();
+      hour_wage = $('#hour_wage').val();
+      is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
+      care_type = document.querySelector('input[name="care_type"]:checked').value;
+      weekdays = []
+      checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
 
-      document.querySelector('.booking-box').addEventListener('change', event => {
-        event.preventDefault();
-        start_end_date = $('#start_end_date').val();
-        startTime = $('#timepicker_startTime').val();
-        endTime = $('#timepicker_endTime').val();
-        hour_wage = $('#hour_wage').val();
-        is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
-        care_type = document.querySelector('input[name="care_type"]:checked').value;
-        weekdays = []
-        checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+      for (var i = 0; i < checkboxes.length; i++) {
+        weekdays.push(checkboxes[i].value)
+      };
+      calculate_rate.call(start_end_date,is_continuous_time,weekdays,startTime,endTime);
+    })
 
-        for (var i = 0; i < checkboxes.length; i++) {
-          weekdays.push(checkboxes[i].value)
-        };
-        calculate_rate.call(start_end_date,is_continuous_time,weekdays,startTime,endTime);
-      })
-
-      function calculate_rate(){
-        console.log(start_end_date);
-        console.log(is_continuous_time);
-        console.log(weekdays);
-        console.log(startTime);
-        console.log(endTime);
-        console.log(care_type);
-        return $.ajax({
-          type: "POST",
-          data: { 'servant':servant,
-                  'care_type':care_type,
-                  'start_end_date':start_end_date,
-                  'is_continuous_time':is_continuous_time,
-                  'startTime':startTime,
-                  'endTime':endTime,
-                  'weekdays':weekdays,
-                  'action':'ajax_post'},
-          headers: {'X-CSRFToken': csrftoken},
-          url: "{% url 'ajax_post' %}",
-          success: function(response)
-            {
-              const data = response.data;
-              console.log(data.result);
-              if (data.result == '3'){post_html.innerHTML = `
-              <div class="col-12 align-self-center">
-                    $${data.hour_wage}x${data.total_hours}小時 
-                  </div>
-                  <div class="col text-end">
-                    <strong>$ </strong><span class="section-title-purple"><strong>${data.total_money}</strong></span><span class="h6"> 起</span> 
-                  </div>
-              `}else if (data.result == '1'){
-                post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`
-              }else if (data.result == '2'){
-                post_html.innerHTML = `<span>所選時段與該服務者已有訂單時間重複</span>`
-              }
-              
-            },
-            error: function (error) {
-              console.log(error);
-              post_html.innerHTML = `
-              <span>請輸入完整訂單資料</span>
-              `
+    function calculate_rate(){
+      console.log(start_end_date);
+      console.log(is_continuous_time);
+      console.log(weekdays);
+      console.log(startTime);
+      console.log(endTime);
+      console.log(care_type);
+      return $.ajax({
+        type: "POST",
+        data: { 'servant':servant,
+                'care_type':care_type,
+                'start_end_date':start_end_date,
+                'is_continuous_time':is_continuous_time,
+                'startTime':startTime,
+                'endTime':endTime,
+                'weekdays':weekdays,
+                'action':'ajax_post'},
+        headers: {'X-CSRFToken': csrftoken},
+        url: "{% url 'ajax_post' %}",
+        success: function(response)
+          {
+            const data = response.data;
+            console.log(data.result);
+            if (data.result == '3'){post_html.innerHTML = `
+            <div class="col-12 align-self-center">
+                  $${data.hour_wage}x${data.total_hours}小時 
+                </div>
+                <div class="col text-end">
+                  <strong>$ </strong><span class="section-title-purple"><strong>${data.total_money}</strong></span><span class="h6"> 起</span> 
+                </div>
+            `}else if (data.result == '1'){
+              post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`
+            }else if (data.result == '2'){
+              post_html.innerHTML = `<span>所選時段與該服務者已有訂單時間重複</span>`
             }
-        });
-      }
+            
+          },
+          error: function (error) {
+            console.log(error);
+            post_html.innerHTML = `
+            <span>請輸入完整訂單資料</span>
+            `
+          }
+      });
+    }
       
-
   </script>
 </main>
 {% endblock %}
