@@ -17,12 +17,12 @@
                       <div class="col my-3">
                         <!-- picker -->
                         <label class="h5 mb-2" for="datepicker_startDate">開始日期</label>
-                        <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" name="datepicker_startDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' href="{% url 'search_list' %}?city={{dict.city.id}}&county={{dict.county}}&care_type={{dict.care_type}}&startDate={{datepicker_startDate}}"/>
+                        <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" name="datepicker_startDate" type="text"  placeholder="年-月-日" data-options='{"disableMobile":true}' value="{{defaultStartDate}}" />
                       </div>
                       <div class="col my-3">
                         <!-- picker -->
                         <label class="h5 mb-2" for="datepicker_endDate">結束日期</label>
-                        <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" name="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
+                        <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" name="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' value="{{defaultEndDate}}"  />
                       </div>
               </div>
               <!-- 開始&結束時間 -->
@@ -31,13 +31,13 @@
                       <div class="col my-3">
                         <!-- picker -->
                         <label class="h5 mb-2" for="timepicker_startTime">開始時間</label>
-                        <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" name="timepicker_startTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                        <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" name="timepicker_startTime" type="text" placeholder="時:分" value="{{dict.start_time}}" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                       </div>
 
                       <div class="col my-3">
                         <!-- picker -->
                         <label class="h5 mb-2" for="timepicker_endTime">結束時間</label>
-                        <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" name="timepicker_endTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                        <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" name="timepicker_endTime" type="text" placeholder="時:分" value="{{dict.end_time}}" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                       </div>
 
               </div>
@@ -69,13 +69,12 @@
                       {% endfor %}
                     </select>
 
-
                   </div>
                   <div class="btn-group mb-2">
                     <select class="dropdown-button" id="countylist" name="county">
+                      <option style="text-align: center" value="全區">全區</option>
                       {% for county in dict.counties %}
-                        <option style="text-align: center" value="全區">全區</option>
-                        <option style="text-align: center" value="{{county.name}}">{{county}}</option>
+                        <option style="text-align: center" value="{{county.name}}" {% if county == dict.county %} selected="selected" {% endif %}>{{county}}</option>
                       {% endfor %}
                     </select>
                   </div>
@@ -104,12 +103,12 @@
                               <div class="col-auto">
         
                                 <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="True" />
+                                  <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="True" {% if is_continuous_time == 'True' %} checked {% endif %} />
                                   <label class="h6" for="inlineRadio2">  連續時間</label>
                                 </div>
         
                                 <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="False" />
+                                  <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="False" {% if is_continuous_time == 'False' %} checked {% endif %} />
                                   <label class="h6" for="inlineRadio2">  每週固定</label>
                                 </div>
         
@@ -118,31 +117,31 @@
                               <!-- 週間星期 checkbox -->
                               <div class="col-auto">
                                 <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="1" />
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="1" {% if "1" in weekday_list %} checked="" {% endif %} />
                                   <label class="h6" for="weekdays[]">星期一</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="2" checked="" />
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="2" {% if "2" in weekday_list %} checked="" {% endif %} />
                                   <label class="h6" for="weekdays[]">星期二</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="3" />
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="3" {% if "3" in weekday_list %} checked="" {% endif %} />
                                   <label class="h6" for="weekdays[]">星期三</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="4" checked="" />
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="4" {% if "4" in weekday_list %} checked="" {% endif %} />
                                   <label class="h6" for="weekdays[]">星期四</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="5" checked="" />
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="5" {% if "5" in weekday_list %} checked="" {% endif %} />
                                   <label class="h6" for="weekdays[]">星期五</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="6" />
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="6" {% if "6" in weekday_list %} checked="" {% endif %} />
                                   <label class="h6" for="weekdays[]">星期六</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="0" checked="" />
+                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="0" {% if "0" in weekday_list %} checked="" {% endif %} />
                                   <label class="h6" for="weekdays[]">星期日</label>
                                 </div>
                               </div>
@@ -174,7 +173,7 @@
       {% for servant in servants %}
       <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
         <div class="border border-600" style="border-radius: 6px;">
-          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant}}&care_type={{care_type}}">
+          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant}}&care_type={{care_type}}&is_continuous_time={{is_continuous_time}}&weekdays={{weekdays}}&StartDate={{defaultStartDate}}&EndDate={{defaultEndDate}}&start_time={{dict.start_time}}&end_time={{dict.end_time}}&city={{dict.city.id}}&county={{dict.county}}">
             {% if servant.background_image.url != None %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
@@ -194,10 +193,10 @@
                   <span class="carer-name" style="margin-right: 5px;">{{servant.name}}</span >
                     <div class="col align-self-center " style="color: yellow;">
                       {% for i in servant.servant_avg_rate_range %}
-                        <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                        <span class="fas fa-star"  style="stroke: gray;stroke-width: 20; margin-top: 4px;"></span>
                       {% endfor %}
                       {% if servant.servant_avg_rating_is_half_star == True %}
-                        <span class="fas fa-star-half-alt" style="stroke: gray;stroke-width: 20;"></span>
+                        <span class="fas fa-star-half-alt" ></span>
                       {% endif %}
                       {% for i in servant.servant_avg_rating_empty_star_range%}
                         <i class="fa-regular fa-star"></i>  
@@ -252,7 +251,6 @@
         <a href="{% url 'request_form_service_type' %}" class="section-title-purple custom-card-link" style="font-weight: 600;"><span class="far fa-edit"></span>填寫需求單</a>
 
   </div>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
   <script>
     function getCookie(name) {
       let cookieValue = null;
@@ -270,7 +268,7 @@
             return cookieValue;
         }
     const csrftoken = getCookie('csrftoken');
-
+    
     function listCities(){
       var cityid = $("[name='city']").val();
       

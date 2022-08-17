@@ -24,8 +24,18 @@ def index(request):
         is_continuous_time = request.POST.get('is_continuous_time')
         start_datetime = request.POST.get('datetimepicker_start')
         end_datetime = request.POST.get('datetimepicker_end')
-        print(start_datetime,end_datetime)
-        return redirect_params('search_list',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_datetime':start_datetime,'end_datetime':end_datetime})
+        weekdays = request.POST.getlist('weekdays[]')
+        weekday_list = weekdays
+        print(weekday_list)
+        weekday_str = ''
+        count = 0
+        for weekday in weekdays:
+            count += 1
+            weekday_str += weekday 
+            if count < len(weekdays):
+                weekday_str += ','
+        print(weekday_str)
+        return redirect_params('search_list',{'weekday_list':weekday_list, 'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'weekdays':weekday_str,'start_datetime':start_datetime,'end_datetime':end_datetime})
     
     else:
         dict = {}
@@ -60,7 +70,7 @@ def ajax_return_wage(request):
         care_type = updatedData['care_type'][0]
         servant =updatedData['servant'][0]
         servant = User.objects.get(phone=servant)
-        print(care_type)
+        print('ajax_return_wage')
         data={}
         if care_type == 'home':
             if servant.home_hour_wage > 0:
@@ -82,8 +92,8 @@ def ajax_return_wage(request):
                 data['one_day_wage'] = '尚未設定'
         return JsonResponse({'data':data})
     
-def ajax_post(request):
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'ajax_post' :
+def ajax_cal_rate(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'ajax_cal_rate' :
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
         servants = User.objects.filter(is_servant=True)
         print(updatedData)
@@ -92,14 +102,56 @@ def ajax_post(request):
         care_type = updatedData['care_type'][0]
         start_end_date = updatedData['start_end_date'][0]
         is_continuous_time = updatedData['is_continuous_time'][0]
+        print(is_continuous_time)
         startTime = updatedData['startTime'][0]
         endTime = updatedData['endTime'][0]
         start_date = '20' + start_end_date.split(' to ')[0].replace('/','-')
         end_date = '20' +start_end_date.split(' to ')[1].replace('/','-')
-        weekdays = updatedData['weekdays[]']
+        
         if is_continuous_time == 'True':
-                servants = servants.filter(is_continuous_time=True)
-        if weekdays != None:
+            # print('is_continuous_time')
+            servants = servants.filter(is_continuous_time=True)
+            start_time = startTime.split(':')
+            end_time = endTime.split(':')
+            start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
+            end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
+            condition1 = Q(start_datetime__range=[start_date, end_date])
+            condition2 = Q(end_datetime__range=[start_date, end_date])
+            condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
+            orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
+            time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
+            time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
+            time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
+            order_condition = Q((time_condition_1 | time_condition_2 | time_condition3))
+            orders = orders.filter(order_condition).distinct()
+            order_conflict_servants_id = list(orders.values_list('servant', flat=True))
+            servants = servants.filter(~Q(id__in=order_conflict_servants_id))
+            if servant in servants:
+                if care_type == '醫院看護':
+                    hour_wage = servant.hospital_hour_wage
+                elif care_type == '居家照顧':
+                    hour_wage = servant.home_hour_wage
+                print('calculate')
+                start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+                end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+                print(start_date,end_date)
+                total_hours = 0
+                for i in range(7):
+                    total_hours += (days_count([int(i)], start_date, end_date)) * (end_time_int - start_time_int)                    
+                total_money = total_hours * hour_wage
+                print(total_money,total_hours)
+                data = {
+                    'result':'3',
+                    'total_hours':total_hours,
+                    'total_money':total_money,
+                    'hour_wage':hour_wage,
+                }
+                return JsonResponse({'data':data})
+            else:
+                data = {'result':'2'}
+                return JsonResponse({'data':data})
+        else:
+            weekdays = updatedData['weekdays[]']
             if (start_date != '') | (end_date != '') | (startTime != '') | (endTime != ''):
                 print('1')
                 start_time = startTime.split(':')
@@ -187,8 +239,18 @@ def search_list(request):
     is_continuous_time = request.GET.get('is_continuous_time')
     start_datetime = request.GET.get('start_datetime')
     end_datetime = request.GET.get('end_datetime')
-    print(start_datetime,end_datetime)
-
+    weekdays = request.GET.get('weekdays')
+    if start_datetime != '':
+        defaultStartDate = '20' + start_datetime.split(' ')[0].replace('/','-')
+    else:
+        defaultStartDate = ''
+    if end_datetime != '':
+        defaultEndDate = '20' + end_datetime.split(' ')[0].replace('/','-')
+    else:
+        defaultEndDate = ''
+    weekday_list = weekdays.split(',')
+    start_time = ''
+    end_time = ''
     if request.method == 'POST':
         
         if request.POST.get('county') != None:
@@ -203,6 +265,11 @@ def search_list(request):
         end_time = request.POST.get('timepicker_endTime')
         is_continuous_time = request.POST.get('is_continuous_time')
         weekdays = request.POST.getlist('weekdays[]')
+        weekday_list = weekdays
+        defaultStartDate = start_date
+        defaultEndDate = end_date
+        defaultStartTime = start_time
+        defaultEndTime = end_time
 
         if is_continuous_time == 'True':
                 servants = servants.filter(is_continuous_time=True)
@@ -279,6 +346,11 @@ def search_list(request):
     dict['counties'] = counties
     dict['county'] = county_name
     dict['care_type'] = care_type
+    if start_time != None and start_time != '':
+        dict['start_time'] = defaultStartTime
+        print(dict['start_time'])
+    if end_time != None and end_time != '' :
+        dict['end_time'] = defaultEndTime
     
     if county_name != None:
         if county_name != '全區':
@@ -291,44 +363,54 @@ def search_list(request):
     else:
         time_type = '每週固定'
     dict['time_type'] = time_type
+    weekday_str = ''
+    count = 0
+    for weekday in weekdays:
+        count += 1
+        weekday_str += weekday 
+        if count < len(weekdays):
+            weekday_str += ','
 
-    return render(request, 'web/search_list.html',{'dict':dict,'servants':servants,'care_type':care_type})
-
-    # return render(request, 'web/search_list.html',{'fiter_condition':filter_condition,'searvants':sarvants})
+    return render(request, 'web/search_list.html',{'dict':dict,'servants':servants,'care_type':care_type,'defaultStartDate':defaultStartDate,'defaultEndDate':defaultEndDate,'weekdays':weekday_str,'weekday_list':weekday_list,'is_continuous_time':is_continuous_time})
 
 def search_carer_detail(request):
+    citys = City.objects.all()
+    counties = County.objects.all()
+    county_name = request.GET.get('county')
+    city_id = request.GET.get("city")
+    if city_id == None:
+        city_id = '8'
+    city = City.objects.get(id=city_id)
+    counties = counties.filter(city=City.objects.get(id=city_id))
+
+    if county_name == None:
+        county_name = '全區'
+    else:
+        if county_name != '全區':
+            county_name = County.objects.get(city=city_id,name=county_name)
+            
+        else:
+            county_name = '全區'
+    start_date = ''
+    end_date = ''
     servant_phone = request.GET.get('servant')
     reviews_all = request.GET.get('reviews')
     care_type = request.GET.get('care_type')
-
-    citys = City.objects.all()
-    counties = County.objects.all()
-    is_continuous_time = 'True'
+    is_continuous_time = request.GET.get('is_continuous_time')
+    weekdays = request.GET.get('weekdays')
+    start_date = request.GET.get('StartDate')
+    end_date = request.GET.get('EndDate')
+    start_time = request.GET.get('start_time')
+    end_time = request.GET.get('end_time')
+    if (start_date != None and start_date != '') & (end_date != None and end_date != ''):
+        start_date_str = start_date.split('-')[0][2:4] + '/' + start_date.split('-')[1] + '/' +start_date.split('-')[2]
+        end_date_str = end_date.split('-')[0][2:4] + '/' +end_date.split('-')[1] + '/' +end_date.split('-')[2]
+        defaultStartEndDate = start_date_str + ' to ' + end_date_str
+    else:
+        defaultStartEndDate = ''
+    weekday_list = weekdays.split(',')
+    
     servant = User.objects.get(phone=servant_phone)
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        data={}
-        if care_type == 'home':
-            if servant.home_hour_wage > 0:
-                data['hour_wage'] = servant.home_hour_wage
-                data['half_day_wage'] = servant.home_half_day_wage
-                data['one_day_wage'] = servant.home_one_day_wage
-            else:
-                data['hour_wage'] = '尚未設定'
-                data['half_day_wage'] = '尚未設定'
-                data['one_day_wage'] = '尚未設定'
-
-        elif care_type == 'hospital':
-            if servant.hospital_hour_wage > 0:
-                data['hour_wage'] = servant.hospital_hour_wage
-                data['half_day_wage'] = servant.hospital_half_day_wage
-                data['one_day_wage'] = servant.hospital_one_day_wage
-            else:
-                data['hour_wage'] = '尚未設定'
-                data['half_day_wage'] = '尚未設定'
-                data['one_day_wage'] = '尚未設定'
-        
-        return JsonResponse({'data':data})
         
     servant_care_type = []
     if servant.is_home == True:
@@ -352,23 +434,19 @@ def search_carer_detail(request):
         care_type = request.POST.get('care_type')
         city = request.POST.get('city')
         county = request.POST.get('county')
-        strat_end_date = request.POST.get('strat_end_date')
+        start_end_date = request.POST.get('strat_end_date')
         is_continuous_time = request.POST.get('is_continuous_time')
         start_time = request.POST.get('timepicker_startTime')
         end_time = request.POST.get('timepicker_endTime')
         weekdays = request.POST.getlist('weekdays[]')
+        defaultStartEndDate = start_end_date
         return redirect_params('booking_patient_info',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'strat_end_date':strat_end_date,'start_time':start_time,'servant_care_type':servant_care_type})
+    
+    
+    defaultStartTime = start_time
+    defaultEndTime = end_time
+    return render(request, 'web/search_carer_detail.html',{'weekdays':weekdays, 'cityName':city,'citys':citys,'countyName':county_name,'counties':counties, 'is_continuous_time':is_continuous_time, 'defaultStartTime':defaultStartTime,'defaultEndTime':defaultEndTime,'defaultStartEndDate':defaultStartEndDate,'weekday_list':weekday_list, 'servant':servant,'license_not_provide':license_not_provide,'reviews':reviews,'citys':citys,'counties':counties,'care_type':care_type})
 
-    if is_continuous_time == 'True':
-        time_type = '連續時間'
-    else:
-        time_type = '每週固定'
-    city_default = servant.user_locations.all()[0].city
-    county_default = servant.user_locations.all()[0].county
-
-    return render(request, 'web/search_carer_detail.html',{'servant':servant,'license_not_provide':license_not_provide,'reviews':reviews,'citys':citys,'counties':counties,'care_type':care_type,'city_default':city_default,'county_default':county_default})
-
-    # return render(request, 'web/search_carer_detail.html',{'servant':servant,'xx':xx}'')
 
 def booking_patient_info(request):
     return render(request, 'web/booking/patient_info.html')

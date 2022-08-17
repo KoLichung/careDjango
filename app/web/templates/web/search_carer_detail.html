@@ -91,10 +91,10 @@
                 </div>
                 <div class="col align-self-center text-end" style="color: yellow;">
                   {% for i in review.servant_rating_range %}
-                    <span class="fas fa-star"></span>
+                    <span class="fas fa-star" style="stroke: gray;stroke-width: 20">></span>
                   {% endfor %}
                   {% if review.servant_rating_is_half_star == True %}
-                    <span class="fas fa-star-half-alt" style="stroke: gray;stroke-width: 20;"></span>
+                    <span class="fas fa-star-half-alt" ></span>
                   {% endif %}
                   {% for i in review.servant_rating_empty_star_range %}
                     <i class="fa-regular fa-star"></i>  
@@ -121,10 +121,10 @@
                 <div class="col mx-0" style="color: yellow;">
                   <div class="col align-self-center " >
                     {% for i in servant.servant_avg_rate_range %}
-                      <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                      <span class="fas fa-star" style="stroke: gray;stroke-width: 20; margin-top: 4px;">></span>
                     {% endfor %}
                     {% if servant.servant_avg_rating_is_half_star == True %}
-                      <span class="fas fa-star-half-alt" style="stroke: gray;stroke-width: 20;"></span>
+                      <span class="fas fa-star-half-alt" ></span>
                     {% endif %}
                     {% for i in servant.servant_avg_rating_empty_star_range %}
                       <i class="fa-regular fa-star"  ></i>  
@@ -156,30 +156,29 @@
                     <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
                       
                       {% for city in citys %}
-                        <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == city_default %} selected="selected" {% endif %}>{{city}}</option>
+                        <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
                         <!-- <option value="醫院看護">醫院看護</option> -->
                       {% endfor %}
                     </select>
                 </div>
                 <div class="mt-1 btn-group">
                   <select class="dropdown-button" id="county_select" name="county" >
-                    
+                    <option style="text-align: center" value="全區">全區</option>
                     {% for county in counties %}
-                      <option style="text-align: center" value="全區">全區</option>
-                      <option style="text-align: center" name="county_option" value="{{county.id}}" {% if county == county_default %} selected="selected" {% endif %}>{{county}}</option>
+                      <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
                     {% endfor %}
                   </select>
                 </div>
                 </div>
                 <span class="news-subtitle mt-2">日期</span><br>
                 <div class="mt-2 mb-3">
-                  <input class="modal-timePicker-button datetimepicker " style="width: 200px;" id="start_end_date" name="start_end_date" type="text" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
+                  <input class="modal-timePicker-button datetimepicker " style="width: 200px;" id="start_end_date" name="start_end_date" type="text" value="{{defaultStartEndDate}}" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
                 </div>
 
                 <span class="news-subtitle mt-2">時間類型</span><br>
                 <div class="my-2 " style="display: flex;">
                   <div class="btn-group">
-                    <button class="dropdown-button dropdown-toggle " type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true" id="time_type" aria-expanded="false"></button>
+                    <button class="dropdown-button dropdown-toggle " type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"  id="time_type" aria-expanded="false">{% if is_continuous_time == 'True' %}連續時間{% else %}每週固定{% endif %}</button>
                     
                     <div class="dropdown-menu py-0">
                       <div class="card shadow-none border-0" style="width: 15rem;">
@@ -196,45 +195,45 @@
                             <div class="col-auto">
       
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input " id="continuous_time" type="radio" name="is_continuous_time" value="True" checked/>
+                                <input class="form-check-input " id="continuous_time" type="radio" name="is_continuous_time" value="True" {% if is_continuous_time == 'True' %} checked {% endif %}/>
                                 <label class="h6" for="inlineRadio2">  連續時間</label>
                               </div>
       
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input "  id="select_time" type="radio" name="is_continuous_time" value="False" />
+                                <input class="form-check-input "  id="select_time" type="radio" name="is_continuous_time" value="False" {% if is_continuous_time == 'False' %} checked {% endif %}/>
                                 <label class="h6" for="inlineRadio2">  每週固定</label>
                               </div>
       
                             </div>
       
                             <!-- 週間星期 checkbox -->
-                            <div class="col-auto">
+                            <div class="col-auto weekdayCheck">
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="1" />
+                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="1" {% if "1" in weekday_list %} checked="" {% endif %} />
                                 <label class="h6" for="weekdays[]">星期一</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="2" checked="" />
+                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="2" {% if "2" in weekday_list %} checked="" {% endif %} />
                                 <label class="h6" for="weekdays[]">星期二</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="3" />
+                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="3" {% if "3" in weekday_list %} checked="" {% endif %}/>
                                 <label class="h6" for="weekdays[]">星期三</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="4" checked="" />
+                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="4" {% if "4" in weekday_list %} checked="" {% endif %} />
                                 <label class="h6" for="weekdays[]">星期四</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="5" checked="" />
+                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="5" {% if "5" in weekday_list %} checked="" {% endif %} />
                                 <label class="h6" for="weekdays[]">星期五</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="6" />
+                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="6" {% if "6" in weekday_list %} checked="" {% endif %}/>
                                 <label class="h6" for="weekdays[]">星期六</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="0" checked="" />
+                                <input class="form-check-input " id="weekdays[]" name="weekdays[]" type="checkbox" value="0" {% if "0" in weekday_list %} checked="" {% endif %} />
                                 <label class="h6" for="weekdays[]">星期日</label>
                               </div>
                             </div>
@@ -248,17 +247,21 @@
                 <span class="news-subtitle">開始時間 & 結束時間</span><br>
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
-                    <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{defaultStartTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                 </div>
                 <div class="mt-1 btn-group">
-                  <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                 </div>
 
                 </div>
                 
                 <span class="news-subtitle mt-2">費率</span><br>
                 <div class="mt-2 mb-3">
-                  每小時 $<span id="hour_wage" name="hour_wage"></span>｜半天 $<span id="half_day_wage" name="half_day_wage"></span>｜全天 $<span id="one_day_wage" name="one_day_wage"></span>
+                  {% if care_type == '居家照顧' %}
+                    每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
+                  {% else %}
+                    每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
+                  {% endif %}
                 </div>
                 
                 <div class="row case-info-font mt-3" id="post_html"> 
@@ -322,33 +325,9 @@
     }
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const servant = urlParams.get('servant')
-    is_continuous_time = 'True';
-    const post_html = document.getElementById('post_html')
-    
-    $(document).ready(function(){ 
-      var care_type = urlParams.get('care_type');
-      if(care_type == '居家照顧' ){
-        care_type = 'home';
-      }else if (care_type == '醫院看護') {
-        care_type = 'hospital';
-      };
-  
-      console.log(care_type);
-      $.ajax({
-        type: "GET",
-        data:{'care_type':care_type,
-              'servant':servant},
-        url: "{% url 'search_carer_detail' %}",
-        success: function(response)
-          {
-            const data = response.data
-            $('#hour_wage').html(data.hour_wage);
-            $('#half_day_wage').html(data.half_day_wage);
-            $('#one_day_wage').html(data.one_day_wage);
-          }
-        })
-      });
+    const servant = urlParams.get('servant');
+    const post_html = document.getElementById('post_html');
+    is_continuous_time = urlParams.get('is_continuous_time');
     
     var home = {
       call_backend : function (){
@@ -374,7 +353,7 @@
     var hospital = {
       call_backend : function (){
       var care_type = 'hospital'
-      console.log(care_type,servant)
+
       $.ajax({
         type: "POST",
         data: {'care_type':care_type,
@@ -393,7 +372,6 @@
       }
     }
 
-    document.getElementById('time_type').innerHTML = '連續時間' ;
     document.getElementById('continuous_time').addEventListener('click', function(e) {
       document.getElementById('time_type').innerHTML = '連續時間' ;
       $('#time').value = 'True';
@@ -405,30 +383,45 @@
       console.log($('#time').val())
     })
 
-    document.querySelector('.booking-box').addEventListener('change', event => {
+    document.getElementById('start_end_date').addEventListener('change', event => {
       event.preventDefault();
       start_end_date = $('#start_end_date').val();
+
+      calculate_rate.call();
+    })
+    document.getElementById('timepicker_startTime').addEventListener('change', event => {
+      event.preventDefault();
       startTime = $('#timepicker_startTime').val();
+      
+      calculate_rate.call();
+    })
+    document.getElementById('timepicker_endTime').addEventListener('change', event => {
+      event.preventDefault();
       endTime = $('#timepicker_endTime').val();
-      hour_wage = $('#hour_wage').val();
+      
+      calculate_rate.call();
+    })
+    document.querySelector('input[name="is_continuous_time"]:checked').addEventListener('change', event => {
+      event.preventDefault();
       is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
-      care_type = document.querySelector('input[name="care_type"]:checked').value;
+      
+      calculate_rate.call();
+    })
+
+    document.querySelector('.weekdayCheck').addEventListener('change', event => {
+      is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
       weekdays = []
       checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
 
       for (var i = 0; i < checkboxes.length; i++) {
         weekdays.push(checkboxes[i].value)
       };
-      calculate_rate.call(start_end_date,is_continuous_time,weekdays,startTime,endTime);
-    })
-
+      console.log('weekdayCheck')
+      calculate_rate.call();
+    });
+    
     function calculate_rate(){
-      console.log(start_end_date);
-      console.log(is_continuous_time);
-      console.log(weekdays);
-      console.log(startTime);
-      console.log(endTime);
-      console.log(care_type);
+      care_type = document.querySelector('input[name="care_type"]:checked').value;
       return $.ajax({
         type: "POST",
         data: { 'servant':servant,
@@ -437,10 +430,10 @@
                 'is_continuous_time':is_continuous_time,
                 'startTime':startTime,
                 'endTime':endTime,
-                'weekdays':weekdays,
-                'action':'ajax_post'},
+                'weekdays[]':weekdays,
+                'action':'ajax_cal_rate'},
         headers: {'X-CSRFToken': csrftoken},
-        url: "{% url 'ajax_post' %}",
+        url: "{% url 'ajax_cal_rate' %}",
         success: function(response)
           {
             const data = response.data;
@@ -467,6 +460,13 @@
           }
       });
     }
+    start_end_date = "{{defaultStartEndDate}}";
+    weekdays = "{{weekdays}}".split(',');
+    startTime = "{{defaultStartTime}}";
+    endTime = "{{defaultEndTime}}";
+    calculate_rate.call();
+    console.log(start_end_date,is_continuous_time,weekdays,startTime,endTime)
+    
       
   </script>
 </main>

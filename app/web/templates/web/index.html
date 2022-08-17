@@ -38,14 +38,6 @@
                           <!-- <option value="醫院看護">醫院看護</option> -->
                         {% endfor %}
                       </select>
-                      <!-- <button class="dropdown-button dropdown-toggle" type="submit" data-bs-toggle="dropdown" aria-expanded="false" name="city_id" value="{{dict.city.id}}">
-                        {{dict.city}}
-                      </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"  name="city_id" value="{{dict.city.id}}">
-                          {% for cityName in dict.citys %}
-                            <a class="dropdown-item" href="{% url 'index' %}?city_id={{cityName.id}}"><span class="dropdown-item-font">{{cityName}}</span></a>
-                          {% endfor %}
-                        </div> -->
                     </div>
                   </div>
                   
@@ -59,15 +51,6 @@
                             <option style="text-align: center" value="{{county.id}}">{{county}}</option>
                           {% endfor %}
                         </select>
-                        <!-- <button class="dropdown-button dropdown-toggle" type="submit" data-bs-toggle="dropdown" aria-expanded="false" name="county_id" value="{{dict.county.id}}">
-                          {{dict.county}}
-                        </button>
-                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" type="submit" name="county_id" value="{{dict.county.id}}">
-                          <a class="dropdown-item" href="{% url 'index' %}?city_id={{dict.city.id}}&county_id=全區"><span class="dropdown-item-font">全區</span></a>
-                          {% for countyName in dict.counties %}
-                            <a class="dropdown-item" href="{% url 'index' %}?city_id={{dict.city.id}}&county_id={{countyName.id}}"><span class="dropdown-item-font">{{countyName}}</span></a>
-                          {% endfor %}
-                        </div> -->
                       </div>
                   </div>
   
@@ -80,19 +63,22 @@
                     <div class="col-12 col-sm-3  inner title-font" >&emsp;時間類型</div>
                     <div class="col-12 col-sm-4">
                       <label class="custom-radio-parent align-self-center" style="margin: 0px;">連續時間
-                        <input type="radio" checked="checked" name="is_continuous_time" id="is_continuous_time" value=True>
+                        <input type="radio" checked="checked" name="is_continuous_time" id="is_continuous_time" value=True onchange="continuous_timeSelect()">
                         <span class="checkmark"></span>
                       </label>
                     </div>
                     <div class="col-12 col-sm-4">
                       <label class="custom-radio-parent align-self-center" style="margin: 0px;">每週時段預定
-                        <input type="radio" name="is_continuous_time" id="is_continuous_time" value=False >
+                        <input type="radio" name="is_continuous_time" id="is_continuous_time" value=False onchange="WeekdaySelect()">
                         <span class="checkmark"></span>
                       </label>
                     </div>
                   </div>
-
                   <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+
+                  <!-- 每週時段 -->
+                  <div id="time_type_select"></div>
+                  
                       
                   <!-- 開始時間 -->
                   <div class="row">
@@ -178,7 +164,67 @@
             }
           });
       }
+      
+      const weekday_select = document.getElementById('time_type_select')
+      const select_continuous_time = document.getElementById('time_type_select')
+      function continuous_timeSelect(){
+        console.log('delete')
+        select_continuous_time.innerHTML = ``
+      }
+      function WeekdaySelect(){
+          weekday_select.innerHTML = ` 
+                  <div class="row justify-content-start">
+                    <div class="col-12 col-sm-3  inner title-font" >&emsp;每週時段</div>
+                    <div class="col-12 col-sm-9 weekdayCheck">
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="1" name="weekdays[]" type="checkbox" value="1" {% if "1" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期一</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="2" name="weekdays[]" type="checkbox" value="2" {% if "2" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期二</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="3" name="weekdays[]" type="checkbox" value="3" {% if "3" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期三</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="4" name="weekdays[]" type="checkbox" value="4" {% if "4" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期四</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="5" name="weekdays[]" type="checkbox" value="5" {% if "5" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期五</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="6" name="weekdays[]" type="checkbox" value="6" {% if "6" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期六</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="0" name="weekdays[]" type="checkbox" value="0" {% if "0" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期日</label>
+                      </div>
+                    </div>
+                  </div>
+                  <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+                   `
+          document.querySelector('.weekdayCheck').addEventListener('change', event => {
+            event.preventDefault();
+            weekdays = []
+            checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
 
+            for (var i = 0; i < checkboxes.length; i++) {
+              weekdays.push(checkboxes[i].value)
+                };
+                console.log(weekdays)
+          })
+          weekdays.forEach(e =>{
+            var element = document.getElementById(e)
+            element.checked = true;
+            console.log(element)
+          })
+          
+          }
 
   </script>
        
