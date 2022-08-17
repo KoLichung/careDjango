@@ -113,50 +113,57 @@ def ajax_post(request):
                 for weekdays_num in weekdays_num_list:
                     service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
                     servants = servants.filter(service_time_condition_1 | service_time_condition_2).distinct()
+                if servant not in servants:
+                    data = {'result':'1'}
+                    return JsonResponse({'data':data})
                 # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
                 # 2022-07-10
+                else:
+                    #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
+                    #1.取出日期期間有交集的訂單
+                    condition1 = Q(start_datetime__range=[start_date, end_date])
+                    condition2 = Q(end_datetime__range=[start_date, end_date])
+                    condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
+                    orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
 
-                #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
-                #1.取出日期期間有交集的訂單
-                condition1 = Q(start_datetime__range=[start_date, end_date])
-                condition2 = Q(end_datetime__range=[start_date, end_date])
-                condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
-                orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
-
-                #2.再從 1 取出週間有交集的訂單
-                #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
-                weekdays_num_list = weekdays
-                weekday_condition_1 = Q(order_weekday__weekday__in=weekdays_num_list)
-                weedkay_condition_2 =  Q(case__is_continuous_time=True)
-                #3.再從 2 取出時段有交集的訂單
-                time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
-                time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
-                time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
-                order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
-                order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
-                orders = orders.filter(order_condition_1|order_condition_2).distinct()
-                order_conflict_servants_id = list(orders.values_list('servant', flat=True))
-                servants = servants.filter(~Q(id__in=order_conflict_servants_id))
-                if servant in servants:
-                    if care_type == '醫院看護':
-                        hour_wage = servant.hospital_hour_wage
-                    elif care_type == '居家照顧':
-                        hour_wage = servant.home_hour_wage
-                    print('calculate')
-                    start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
-                    end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
-                    print(start_date,end_date)
-                    total_hours = 0
-                    for i in weekdays_num_list:
-                        total_hours += (days_count([int(i)], start_date, end_date)) * (end_time_int - start_time_int)
-                    total_money = total_hours * hour_wage
-                    print(total_money,total_hours)
-                    data = {
-                        'total_hours':total_hours,
-                        'total_money':total_money,
-                        'hour_wage':hour_wage,
-                    }
-                    return JsonResponse({'data':data})
+                    #2.再從 1 取出週間有交集的訂單
+                    #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
+                    weekdays_num_list = weekdays
+                    weekday_condition_1 = Q(order_weekday__weekday__in=weekdays_num_list)
+                    weedkay_condition_2 =  Q(case__is_continuous_time=True)
+                    #3.再從 2 取出時段有交集的訂單
+                    time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
+                    time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
+                    time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
+                    order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
+                    order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
+                    orders = orders.filter(order_condition_1|order_condition_2).distinct()
+                    order_conflict_servants_id = list(orders.values_list('servant', flat=True))
+                    servants = servants.filter(~Q(id__in=order_conflict_servants_id))
+                    if servant in servants:
+                        if care_type == '醫院看護':
+                            hour_wage = servant.hospital_hour_wage
+                        elif care_type == '居家照顧':
+                            hour_wage = servant.home_hour_wage
+                        print('calculate')
+                        start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+                        end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+                        print(start_date,end_date)
+                        total_hours = 0
+                        for i in weekdays_num_list:
+                            total_hours += (days_count([int(i)], start_date, end_date)) * (end_time_int - start_time_int)
+                        total_money = total_hours * hour_wage
+                        print(total_money,total_hours)
+                        data = {
+                            'result':'3',
+                            'total_hours':total_hours,
+                            'total_money':total_money,
+                            'hour_wage':hour_wage,
+                        }
+                        return JsonResponse({'data':data})
+                    else:
+                        data = {'result':'2'}
+                        return JsonResponse({'data':data})
 
 
 def login(request):

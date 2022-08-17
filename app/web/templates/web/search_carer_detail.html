@@ -94,7 +94,7 @@
                     <span class="fas fa-star"></span>
                   {% endfor %}
                   {% if review.servant_rating_is_half_star == True %}
-                    <span class="fas fa-star-half-alt"></span>
+                    <span class="fas fa-star-half-alt" style="stroke: gray;stroke-width: 20;"></span>
                   {% endif %}
                   {% for i in review.servant_rating_empty_star_range %}
                     <i class="fa-regular fa-star"></i>  
@@ -119,15 +119,15 @@
                   <p class="small-section-title-purple" style="font-weight: 700;">{{servant.servant_avg_rating}}</p>
                 </div>
                 <div class="col mx-0" style="color: yellow;">
-                  <div class="col align-self-center " style="color: yellow;">
+                  <div class="col align-self-center " >
                     {% for i in servant.servant_avg_rate_range %}
                       <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
                     {% endfor %}
                     {% if servant.servant_avg_rating_is_half_star == True %}
-                      <span class="fas fa-star-half-alt"></span>
+                      <span class="fas fa-star-half-alt" style="border-color:black"></span>
                     {% endif %}
                     {% for i in servant.servant_avg_rating_empty_star_range %}
-                      <i class="fa-regular fa-star"></i>  
+                      <i class="fa-regular fa-star"  ></i>  
                     {% endfor %}
                     <span class="case-info-font">&ensp;{{servant.servant_rate_nums}}評價</span>
                   </div>
@@ -442,20 +442,25 @@
           success: function(response)
             {
               const data = response.data;
-              console.log(data);
-              post_html.innerHTML = `
+              console.log(data.result);
+              if (data.result == '3'){post_html.innerHTML = `
               <div class="col-12 align-self-center">
                     $${data.hour_wage}x${data.total_hours}小時 
                   </div>
                   <div class="col text-end">
                     <strong>$ </strong><span class="section-title-purple"><strong>${data.total_money}</strong></span><span class="h6"> 起</span> 
                   </div>
-              `
+              `}else if (data.result == '1'){
+                post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`
+              }else if (data.result == '2'){
+                post_html.innerHTML = `<span>所選時段與該服務者已有訂單時間重複</span>`
+              }
+              
             },
             error: function (error) {
               console.log(error);
               post_html.innerHTML = `
-              <span>請重新輸入資料</span>
+              <span>請輸入完整訂單資料</span>
               `
             }
         });
