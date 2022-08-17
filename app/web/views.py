@@ -305,6 +305,7 @@ def search_carer_detail(request):
     counties = County.objects.all()
     is_continuous_time = 'True'
     servant = User.objects.get(phone=servant_phone)
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data={}
         if care_type == 'home':
@@ -328,6 +329,7 @@ def search_carer_detail(request):
                 data['one_day_wage'] = '尚未設定'
         
         return JsonResponse({'data':data})
+        
     servant_care_type = []
     if servant.is_home == True:
             servant_care_type.append('居家照顧')
@@ -345,6 +347,7 @@ def search_carer_detail(request):
             reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')
     else:
         reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')
+
     if request.method == 'POST':
         care_type = request.POST.get('care_type')
         city = request.POST.get('city')

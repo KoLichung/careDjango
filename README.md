@@ -149,6 +149,12 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220817
+1.index 頁, 插入 每週時段 選擇~
+2.index 頁帶時間到 search_list 頁
+3.search_list 帶資料到 search_carer_detail
+4.星星單層 border 就好了
+
 20220816
 1.整理 search_carer_detail 程式碼
 2.search_carer_detail 的 dialog 資料帶入
