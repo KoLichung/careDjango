@@ -22,14 +22,22 @@
                     </div>
 
                     <div class="mx-3">
-                      <span class="h5">林瑜婷</span>
+                      <span class="h5">{{case.user.name}}</span>
                       <div>
+                        {% for i in case.user.needer_avg_rate_range %}
+                          <span class="fas fa-star" style="color: yellow;"></span>
+                        {% endfor %}
+                        {% if case.user.needer_avg_rating_is_half_star == True %}
+                          <span class="fas fa-star-half-alt" style="color: yellow;"></span>
+                        {% endif %}
+                        {% for i in case.user.needer_avg_rating_empty_star_range %}
+                          <i class="fa-regular fa-star" style="color: yellow;"></i>  
+                        {% endfor %}
+                      <!-- <span class="fas fa-star" style="color: yellow;"></span>
                       <span class="fas fa-star" style="color: yellow;"></span>
                       <span class="fas fa-star" style="color: yellow;"></span>
-                      <span class="fas fa-star" style="color: yellow;"></span>
-                      <span class="fas fa-star" style="color: yellow;"></span>
-                      <span class="fas fa-star" style="color: yellow;"></span>
-                      <span class="h6">評價7</span>
+                      <span class="fas fa-star" style="color: yellow;"></span> -->
+                      <span class="h6">評價{{case.user.needer_rate_nums}}</span>
                       </div>
                     </div>
 
@@ -37,42 +45,23 @@
 
                 <p class="small-section-title-purple mt-3">被照顧者資訊</p>
                 <div class="case-info-font">
-                  <p>性別：男</p>
-                  <p>體重：70</p>
-                  <p>年齡：70</p>
-                  <p>疾病：阿茲海默症</p>
-                  <p>補充說明：補充說明補充說明</p>
-                  <p>身體狀況：使用輔具</p>
-                  <p class="text-indent-5">補充說明：補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明</p>
+                  <p>性別：{{case.gender}}</p>
+                  <p>體重：{{case.weight}}</p>
+                  <p>年齡：{{case.age}}</p>
+                  <p>疾病：{% for casedisease in case.case_diseases.all %} {{casedisease.disease}} {% endfor %}</p>
+                  <p>補充說明：{{case.disease_remark}}</p>
+                  <p>身體狀況：{% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}</p>
+                  <p class="text-indent-5">補充說明：{{case.conditions_remark}}</p>
                 </div>
 
                 <p class="small-section-title-purple mt-5">需求服務項目</p>
                 <div class="case-info-font mb-5">
+                  {% for caseservice in case.case_services.all %}
                   <p>
                     <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    安全維護 (預防跌倒、陪同散步、推輪椅、心靈陪伴)
+                    {{caseservice.service}}
                   </p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    協助進食</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    協助如廁</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    陪同就醫</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    代購物品</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    簡易備餐</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    身體清潔
-                  </p>
-
-
+                  {% endfor %}
                  
                 </div>
 
@@ -81,12 +70,12 @@
           <div class="col-12 col-md-6 ">
             <p class="small-section-title-purple mt-2">案件資訊</p>
             <div class="case-info-font">
-                  <p>照顧類型：<span style="color: #BB6BD9;">居家照護</span></p>
-                  <p>地點：桃園市 楊梅區</p>
-                  <p class="text-indent-3">時間：<span style="color: red;">每週預定</span><br>
-                    2022/04/18 ~ 2022/04/28<br>
-                    星期一、星期三、星期五<br>
-                    早上 8:00 ~ 晚上 8:00  
+                  <p>照顧類型：<span style="color: #BB6BD9;">{% if case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</span></p>
+                  <p>地點：{{case.city}} {{case.county}}</p>
+                  <p class="text-indent-3">時間：<span style="color: red;">{% if case.is_continuous_time == True %}連續時間{% else %} 每週預定{% endif %}</span><br>
+                    {{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}}<br>
+                    {{weekday_str}}<br>
+                    {{case.startTimeformat}} ~ {{endTimeformat}} 
                   </p>
             </div>
             <button class="full-purple-button mt-3 mb-5">我可以接案</button>

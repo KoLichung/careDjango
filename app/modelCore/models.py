@@ -94,11 +94,46 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def needer_avg_rating(self):
-        avg_rating = Review.objects.filter(case__user=self,case_offender_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        avg_rating = Review.objects.filter(case__user=self,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
         if avg_rating != None:
             return round(avg_rating,1)
         else:
             return 0
+
+    @property
+    def needer_avg_rate_range(self):
+        if Review.objects.filter(case__user=self,servant_rating__gte=1).count() > 0:
+            avg_rating = Review.objects.filter(case__user=self,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
+            return range(int(avg_rating))
+        else:
+            return range(0)
+
+    @property
+    def needer_avg_rating_is_half_star(self):
+        if Review.objects.filter(case__user=self,case_offender_rating__gte=1).count() > 0:
+            avg_rating = Review.objects.filter(case__user=self,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
+            if (avg_rating -int(avg_rating)) >= 0.5:
+            # 判斷
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    @property
+    def needer_avg_rating_empty_star_range(self):
+        if Review.objects.filter(case__user=self,case_offender_rating__gte=1).count() > 0:
+            avg_rating = Review.objects.filter(case__user=self,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
+            if (avg_rating -int(avg_rating)) >= 0.5:
+                return range(4-int(avg_rating))
+            else:
+                return range(5-int(avg_rating))
+        else:
+            return range(5)
+
+    @property
+    def needer_rate_nums(self):
+        return Review.objects.filter(case__user=self,case_offender_rating__gte=1).count()
 
     @property
     def servant_avg_rating(self):
@@ -315,6 +350,56 @@ class Case(models.Model):
     emergencycontact_relation = models.CharField(max_length=100, blank=True, null=True)
     emergencycontact_phone = models.CharField(max_length=10, blank=True, null=True)
 
+    @property
+    def startTimeformat(self):
+        hour = int(self.start_time)
+        min = int((self.start_time - int(self.start_time))*60)
+        if hour > 12:
+            if hour < 10:
+                hour_str = '0' + str(hour)
+            else:
+                hour_str = str(hour)
+            if min <10 :
+                min_str = '0' + str(min)
+            else:
+                min_str = str(min)
+            return ('晚上 ' + hour_str + ':' + min_str)
+        else:
+            if hour < 10:
+                hour_str = '0' + str(hour)
+            else:
+                hour_str = str(hour)
+            if min <10 :
+                min_str = '0' + str(min)
+            else:
+                min_str = str(min)
+            return ('早上 ' + hour_str + ':' + min_str)
+    
+    @property
+    def endTimeformat(self):
+        hour = int(self.end_time)
+        min = int((self.end_time - int(self.end_time))*60)
+        if hour > 12:
+            if hour < 10:
+                hour_str = '0' + str(hour)
+            else:
+                hour_str = str(hour)
+            if min <10 :
+                min_str = '0' + str(min)
+            else:
+                min_str = str(min)
+            return ('晚上 ' + hour_str + ':' + min_str)
+        else:
+            if hour < 10:
+                hour_str = '0' + str(hour)
+            else:
+                hour_str = str(hour)
+            if min <10 :
+                min_str = '0' + str(min)
+            else:
+                min_str = str(min)
+            return ('早上 ' + hour_str + ':' + min_str)
+
 class DiseaseCondition(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
@@ -328,7 +413,8 @@ class BodyCondition(models.Model):
 class CaseDiseaseShip(models.Model):
     case = models.ForeignKey(
         Case,
-        on_delete = models.CASCADE
+        on_delete = models.CASCADE,
+        related_name='case_diseases'
     )
     disease = models.ForeignKey(
         DiseaseCondition,
@@ -338,7 +424,8 @@ class CaseDiseaseShip(models.Model):
 class CaseBodyConditionShip(models.Model):
     case = models.ForeignKey(
         Case,
-        on_delete = models.CASCADE
+        on_delete = models.CASCADE,
+        related_name='case_body_conditions'
     )
     body_condition = models.ForeignKey(
         BodyCondition,
@@ -348,7 +435,8 @@ class CaseBodyConditionShip(models.Model):
 class CaseServiceShip(models.Model):
     case = models.ForeignKey(
         Case,
-        on_delete = models.CASCADE
+        on_delete = models.CASCADE,
+        related_name='case_services'
     )
     service = models.ForeignKey(
         Service,
@@ -535,13 +623,7 @@ class Message(models.Model):
         blank=True,
         null=True,
     )
-    # SERVNAT = 'servant'
-    # NEEDER = 'needer'
-    # ID_TYPE_CHOICES = [
-    #     (SERVNAT, 'servant'),
-    #     (NEEDER, 'needer'),
-    # ]
-    # id_type = models.CharField(choices=ID_TYPE_CHOICES)
+
     is_this_message_only_case = models.BooleanField(default=False)
     content = models.TextField(default='', blank = True, null=True)
     create_at = models.DateTimeField(auto_now=True, blank = True,null=True) 

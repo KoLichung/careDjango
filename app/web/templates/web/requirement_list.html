@@ -10,69 +10,67 @@
         <button class="custom-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
           <span class="fas fa-plus-circle"></span> 展開篩選條件
         </button>
-            
-        <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
-          <div class="row mx-3" >
-    
-            <div class="row col-11 mt-3">
-              <!-- 照護類型&地點 -->
-              <div class="col-lg-6 col-xl-4 row ">
-                <div class="col-sm-10 col-lg-6">
-                  <p class="h5">照護類型</p>
-                  <div class="btn-group my-2">
-                        <button class="dropdown-button dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">居家照護</button>
-                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">醫院看護</span></a>
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">居家照護</span></a>
+        <form method="post" enctype="multipart/form-data">{% csrf_token %}
+          <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+            <div class="row mx-3" >
+      
+              <div class="row col-11 mt-3">
+                <!-- 照護類型&地點 -->
+                <div class="col-lg-6 col-xl-4 row ">
+                  <div class="col-sm-10 col-lg-6">
+                    <p class="h5">照護類型</p>
+                    <div class="btn-group my-2">
+                      <select class="dropdown-button" id="care_type" name="care_type">
+                        <option style="text-align: center" value="home" {% if care_type == "home" %} selected="selected" {% endif %}>居家照顧</option>
+                        <option style="text-align: center" value="hospital" {% if care_type == "hospital"  %} selected="selected" {% endif %}>醫院看護</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-10 col-lg-6">
+                        <p class="h5">照護地點</p>
+                        <div class=" btn-group my-2">
+                          <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
+                            {% for city in citys %}
+                              <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                              <!-- <option value="醫院看護">醫院看護</option> -->
+                            {% endfor %}
+                          </select>
                         </div>
+                        <div class=" btn-group my-2">
+                          <select class="dropdown-button" id="county_select" name="county" >
+                            <option style="text-align: center" value="全區">全區</option>
+                            {% for county in counties %}
+                              <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>  
+                  </div>
+                </div> 
+
+                <!-- 開始&結束日期 -->
+                <div class="col-lg-6 col-xl-4 row">
+                  <div class="col-sm-10 col-lg-6 ">
+                    <label class="h5" for="datepicker_startDate">開始日期</label>
+                    <input class="modal-timePicker-button datetimepicker my-2" id="datepicker_startDate" name="datepicker_startDate" value="{{start_date}}" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
+                  </div>
+                  <div class="col-sm-10 col-lg-6 ">
+                    <label class="h5" for="datepicker_endDate">結束日期</label>
+                    <input class="modal-timePicker-button datetimepicker my-2" id="datepicker_endDate" name="datepicker_endDate" value="{{end_date}}" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
                   </div>
                 </div>
-                <div class="col-sm-10 col-lg-6">
-                      <p class="h5">照護地點</p>
-                      <div class=" btn-group my-2">
-                          <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            台中市
-                          </button>
-                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
-                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
-                          </div>
-                      </div>
-                      <div class=" btn-group my-2">
-                        <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          全區
-                        </button>
-                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
-                        </div>
-                      </div>  
-                </div>
-              </div> 
-
-              <!-- 開始&結束日期 -->
-              <div class="col-lg-6 col-xl-4 row">
-                <div class="col-sm-10 col-lg-6 ">
-                  <label class="h5" for="datepicker_startDate">開始日期</label>
-                  <input class="modal-timePicker-button datetimepicker my-2" id="datepicker_startDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
-                </div>
-                <div class="col-sm-10 col-lg-6 ">
-                  <label class="h5" for="datepicker_endDate">結束日期</label>
-                  <input class="modal-timePicker-button datetimepicker my-2" id="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
-                </div>
               </div>
+          
+              <!-- 篩選button -->
+              <div class="col-1 mt-3 align-self-end" >
+                    <a href="">
+                      <button class="small-purple-button align-bottom" type="submit">篩選</button>
+                    </a>
+              </div> 
+      
             </div>
-        
-            <!-- 篩選button -->
-            <div class="col-1 mt-3 align-self-end" >
-                  <a href="">
-                    <button class="small-purple-button align-bottom">篩選</button>
-                  </a>
-            </div> 
-    
+            <hr>
           </div>
-          <hr>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -83,97 +81,86 @@
   </div>
 
   <div class="row g-3 mx-5" >
-
-    <div class="mb-4 col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="mx-auto border border-600" style="height: 17rem; border-radius: 6px;">
-        <div class="card-body">
-          <div class="pb-2">
-            <span class="purple-border-tag">居家照顧</span>
-            <span class="purple-border-tag">連續時間</span>
-          </div>
-          <p class="require-info my-2">開始時間：<br> 2022/04/18 (晚上 20:00) </p>
-          <p class="require-info my-2">結束時間：<br> 2022/04/22 (晚上 20:00) </p>
-          <hr>
-          <p class="require-info my-2">地點： 台中市 中區 </p>
-          <div class="pt-3 row justify-content-between">
-            <div class="col-auto container">
-              <a href="{% url 'requirement_detail' %}">
-                <button class="small-purple-button">查看詳情</button>
-              </a>
+    {% for case in cases %}
+      <div class="mb-4 col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
+        <div class="mx-auto border border-600" style="height: 17rem; border-radius: 6px;">
+          <div class="card-body">
+            <div class="pb-2">
+              {% if case.care_type == 'home' %}
+              <span class="purple-border-tag">居家照顧</span>
+              {% endif %}
+              {% if case.care_type == 'hospital' %}
+              <span class="purple-border-tag">醫院看護</span>
+              {% endif %}
+              {% if case.is_continuous_time == True %}
+              <span class="purple-border-tag">連續時間</span>
+              {% endif %}
+              {% if case.is_continuous_time == False %}
+              <span class="purple-border-tag">每週固定</span>
+              {% endif %}
+            </div>
+            <p class="require-info my-2">開始時間：<br> {{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ({{case.startTimeformat}}) </p>
+            <p class="require-info my-2">結束時間：<br> {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}}) </p>
+            <hr>
+            <p class="require-info my-2">地點： {{case.city}} {{case.county}} </p>
+            <div class="pt-3 row justify-content-between">
+              <div class="col-auto container">
+                <a href="{% url 'requirement_detail' %}?case={{case.id}}">
+                  <button class="small-purple-button">查看詳情</button>
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="mb-4 col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="mx-auto border border-600" style="height: 17rem; border-radius: 6px;">
-        <div class="card-body">
-          <div class="pb-2">
-            <span class="purple-border-tag">居家照顧</span>
-            <span class="purple-border-tag">連續時間</span>
-          </div>
-          <p class="require-info my-2">開始時間：<br> 2022/04/18 (晚上 20:00) </p>
-          <p class="require-info my-2">結束時間：<br> 2022/04/22 (晚上 20:00) </p>
-          <hr>
-          <p class="require-info my-2">地點： 台中市 中區 </p>
-          <div class="pt-3 row justify-content-between">
-            <div class="col-auto container">
-              <a href="{% url 'requirement_detail' %}">
-                <button class="small-purple-button">查看詳情</button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mb-4 col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="mx-auto border border-600" style="height: 17rem; border-radius: 6px;">
-        <div class="card-body">
-          <div class="pb-2">
-            <span class="purple-border-tag">居家照顧</span>
-            <span class="purple-border-tag">連續時間</span>
-          </div>
-          <p class="require-info my-2">開始時間：<br> 2022/04/18 (晚上 20:00) </p>
-          <p class="require-info my-2">結束時間：<br> 2022/04/22 (晚上 20:00) </p>
-          <hr>
-          <p class="require-info my-2">地點： 台中市 中區 </p>
-          <div class="pt-3 row justify-content-between">
-            <div class="col-auto container">
-              <a href="{% url 'requirement_detail' %}">
-                <button class="small-purple-button">查看詳情</button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mb-4 col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="mx-auto border border-600" style="height: 17rem; border-radius: 6px;">
-        <div class="card-body">
-          <div class="pb-2">
-            <span class="purple-border-tag">居家照顧</span>
-            <span class="purple-border-tag">連續時間</span>
-          </div>
-          <p class="require-info my-2">開始時間：<br> 2022/04/18 (晚上 20:00) </p>
-          <p class="require-info my-2">結束時間：<br> 2022/04/22 (晚上 20:00) </p>
-          <hr>
-          <p class="require-info my-2">地點： 台中市 中區 </p>
-          <div class="pt-3 row justify-content-between">
-            <div class="col-auto container">
-              <a href="{% url 'requirement_detail' %}">
-                <button class="small-purple-button">查看詳情</button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    {% endfor %}
 
   </div>
-     
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    const csrftoken = getCookie('csrftoken');
+    
+    function listCities(){
+      var cityid = $("[name='city']").val();
+      $('#county_select').html('');
+      $.ajax({
+        type: "POST",
+        data: {'city_id':cityid,
+                'action':'refresh_county'},
+        headers: {'X-CSRFToken': csrftoken},
+        url: "{% url 'ajax_refresh_county' %}",
+        success: function(response)
+        {
+          const data = response.data
+          console.log(data)
+          // var resultObj = JSON.parse(response);
+          var dataHandler = $("#county_select");
+          var county_all = `<option style="text-align: center" value="全區">全區</option>`
+          dataHandler.append(county_all);
+          data.forEach(el =>
+          {
+              var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+              dataHandler.append(newRow);
+          });
+
+        }
+      });
+    }
+  </script>
 </main>
 
 {% endblock %}

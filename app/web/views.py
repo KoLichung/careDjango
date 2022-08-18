@@ -9,7 +9,7 @@ import os
 from time import time
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service
-from modelCore.models import UserLicenseShipImage ,License
+from modelCore.models import UserLicenseShipImage ,License ,Case
 # Create your views here.
 
 def index(request):
@@ -22,11 +22,13 @@ def index(request):
         county = request.POST.get('county')
         care_type = request.POST.get('care_type')
         is_continuous_time = request.POST.get('is_continuous_time')
-        start_datetime = request.POST.get('datetimepicker_start')
-        end_datetime = request.POST.get('datetimepicker_end')
+        start_date = request.POST.get('datepicker_startDate')
+        end_date = request.POST.get('datepicker_endDate')
+        start_time = request.POST.get('timepicker_startTime')
+        end_time = request.POST.get('timepicker_endTime')
         weekdays = request.POST.getlist('weekdays[]')
         weekday_list = weekdays
-        print(weekday_list)
+        print(start_date,start_time)
         weekday_str = ''
         count = 0
         for weekday in weekdays:
@@ -35,7 +37,7 @@ def index(request):
             if count < len(weekdays):
                 weekday_str += ','
         print(weekday_str)
-        return redirect_params('search_list',{'weekday_list':weekday_list, 'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'weekdays':weekday_str,'start_datetime':start_datetime,'end_datetime':end_datetime})
+        return redirect_params('search_list',{'weekday_list':weekday_list, 'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'weekdays':weekday_str,'start_date':start_date,'end_date':end_date,'start_time':start_time,'end_time':end_time})
     
     else:
         dict = {}
@@ -237,20 +239,46 @@ def search_list(request):
     city_id = request.GET.get("city")
     care_type = request.GET.get('care_type')
     is_continuous_time = request.GET.get('is_continuous_time')
-    start_datetime = request.GET.get('start_datetime')
-    end_datetime = request.GET.get('end_datetime')
+    start_date= request.GET.get('start_date')
+    end_date= request.GET.get('end_date')
+    start_time = request.GET.get('start_time')
+    end_time = request.GET.get('end_time')
     weekdays = request.GET.get('weekdays')
-    if start_datetime != '':
-        defaultStartDate = '20' + start_datetime.split(' ')[0].replace('/','-')
+
+    if start_date != '':
+        defaultStartDate = start_date
     else:
         defaultStartDate = ''
-    if end_datetime != '':
-        defaultEndDate = '20' + end_datetime.split(' ')[0].replace('/','-')
+
+    if end_date != '':
+        defaultEndDate = end_date
     else:
         defaultEndDate = ''
-    weekday_list = weekdays.split(',')
-    start_time = ''
-    end_time = ''
+    
+   
+
+    if start_time != '':
+        defaultStartTime = start_time
+    else:
+        defaultStartTime = ''
+        
+    if end_time != '':
+        defaultEndTime = end_time
+    else:
+        defaultEndTime = ''
+
+    weekday_str = ''
+    count = 0
+    if weekdays != None:
+        weekday_list = weekdays.split(',')
+        
+        for weekday in weekdays:
+            count += 1
+            weekday_str += weekday 
+            if count < len(weekdays):
+                weekday_str += ','
+    else:
+        weekday_list = []
     if request.method == 'POST':
         
         if request.POST.get('county') != None:
@@ -363,14 +391,10 @@ def search_list(request):
     else:
         time_type = '每週固定'
     dict['time_type'] = time_type
-    weekday_str = ''
-    count = 0
-    for weekday in weekdays:
-        count += 1
-        weekday_str += weekday 
-        if count < len(weekdays):
-            weekday_str += ','
-
+    if defaultStartDate == None:
+        defaultStartDate = ''
+    if defaultEndDate == None:
+        defaultEndDate = ''
     return render(request, 'web/search_list.html',{'dict':dict,'servants':servants,'care_type':care_type,'defaultStartDate':defaultStartDate,'defaultEndDate':defaultEndDate,'weekdays':weekday_str,'weekday_list':weekday_list,'is_continuous_time':is_continuous_time})
 
 def search_carer_detail(request):
@@ -467,10 +491,92 @@ def news_detail(request):
     return render(request, 'web/news_detail.html')
 
 def requirement_list(request):
-    return render(request, 'web/requirement_list.html')
+    cases = Case.objects.all()
+    citys = City.objects.all()
+    counties = County.objects.all()
+    city_id = ''
+    care_type = ''
+    county_name = ''
+    start_date = ''
+    end_date = ''
+
+    
+
+    if request.method == 'POST':
+        if request.POST.get('county') != None:
+            county_name = request.POST.get('county')
+            
+        if request.POST.get('city') != None:
+            city_id = request.POST.get("city")
+        care_type = request.POST.get('care_type')
+        start_date = request.POST.get('datepicker_startDate')
+        end_date = request.POST.get('datepicker_endDate')
+        print(start_date,end_date)
+        condition1 = Q(start_datetime__range=[start_date, end_date])
+        condition2 = Q(end_datetime__range=[start_date, end_date])
+        
+        if county_name != None:
+            if county_name != '全區':
+                cases = cases.filter(county=County.objects.get(name=county_name))
+            else:
+                cases = cases.filter(city=City.objects.get(id=city_id))
+        if care_type !='':
+            cases = cases.filter(care_type=care_type)
+    if city_id == '':
+        city = ''
+    else:
+        city = City.objects.get(id=city_id)
+    if county_name == '':
+        county_name = ''
+    else:
+        if county_name != '全區':
+            county_name = County.objects.get(city=city_id,name=county_name)
+            counties = counties.filter(city=City.objects.get(id=city_id))
+            
+        else:
+            county_name = '全區'
+    if start_date != '' and end_date != '':
+        cases = cases.filter(condition1&condition2)
+    if start_date != '' and end_date == '':
+        cases = cases.filter(start_datetime__gte=start_date)
+    if start_date == '' and end_date != '':
+        cases = cases.filter(end_datetime__lte=end_date)
+
+    return render(request, 'web/requirement_list.html',{'start_date':start_date,'end_date':end_date, 'care_type':care_type, 'cases':cases,'cityName':city,'citys':citys,'countyName':county_name,'counties':counties,})
 
 def requirement_detail(request):
-    return render(request, 'web/requirement_detail.html')
+    case_id = request.GET.get('case')
+    case = Case.objects.get(id=case_id)
+    if case.is_continuous_time == False and case.weekday != None:
+        week_day = case.weekday
+        weekday_list = week_day.split(',')
+        print(weekday_list)
+        weekday_str = ''
+        count = 0
+        for weekday in weekday_list:
+            count += 1
+            if weekday == '1':
+                weekday_str += '星期一' 
+            elif weekday == '2':
+                weekday_str += '星期二' 
+            elif weekday == '3':
+                weekday_str += '星期三' 
+            elif weekday == '4':
+                weekday_str += '星期四' 
+            elif weekday == '5':
+                weekday_str += '星期五' 
+            elif weekday == '6':
+                weekday_str += '星期六' 
+            elif weekday == '0':
+                weekday_str += '星期日' 
+            if count < len(weekday_list):
+                weekday_str += '、'
+    else:
+        weekday_str = '星期一 ～ 星期日'
+    print(weekday_str)
+
+
+    return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str})
 
 def become_carer(request):
     return render(request, 'web/become_carer.html')

@@ -78,13 +78,33 @@
 
                   <!-- 每週時段 -->
                   <div id="time_type_select"></div>
+                  <div class="row">
+                    <div class="col-12 col-sm-3 inner title-font">&emsp;開始日期</div>
+                    <div class="col-12 col-sm-5" >
+                      <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" name="datepicker_startDate" type="text"  placeholder="年-月-日" data-options='{"disableMobile":true}' value="{{defaultStartDate}}" />
+
+                      <!-- <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_start" name="datetimepicker_start" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />          -->
+                    </div> 
+                  </div>
                   
+                  <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
+
+                  <div class="row">
+                    <div class="col-12 col-sm-3 inner title-font">&emsp;結束日期</div>
+                    <div class="col-12 col-sm-5" >
+                      <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" name="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' value="{{defaultEndDate}}"  />
+                    </div> 
+                  </div>
+                  
+                  <hr size="4" class="mx-2" style="color: #BB6BD9;"/>
                       
                   <!-- 開始時間 -->
                   <div class="row">
                     <div class="col-12 col-sm-3 inner title-font">&emsp;開始時間</div>
                     <div class="col-12 col-sm-5" >
-                      <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_start" name="datetimepicker_start" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />         
+                      <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" name="timepicker_startTime" type="text" placeholder="時:分" value="{{dict.start_time}}" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+
+                      <!-- <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_start" name="datetimepicker_start" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />          -->
                     </div> 
                   </div>
                   
@@ -94,7 +114,9 @@
                   <div class="row">
                     <div class="col-12 col-sm-3 title-font inner">&emsp;結束時間</div>
                     <div class="col-12 col-sm-5" >
-                      <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_end" name="datetimepicker_end" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />         
+                      <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" name="timepicker_endTime" type="text" placeholder="時:分" value="{{dict.end_time}}" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+
+                      <!-- <input class="timePicker-noBorder-button datetimepicker" style="width: 150px;" id="datetimepicker_end" name="datetimepicker_end" type="text" placeholder="年/月/日 時:分" data-options='{"enableTime":true,"dateFormat":"y/m/d H:i","disableMobile":true}' />          -->
                     </div>
                   </div>
                 

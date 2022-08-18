@@ -91,7 +91,7 @@
                 </div>
                 <div class="col align-self-center text-end" style="color: yellow;">
                   {% for i in review.servant_rating_range %}
-                    <span class="fas fa-star" style="stroke: gray;stroke-width: 20">></span>
+                    <span class="fas fa-star" ></span>
                   {% endfor %}
                   {% if review.servant_rating_is_half_star == True %}
                     <span class="fas fa-star-half-alt" ></span>
@@ -121,13 +121,13 @@
                 <div class="col mx-0" style="color: yellow;">
                   <div class="col align-self-center " >
                     {% for i in servant.servant_avg_rate_range %}
-                      <span class="fas fa-star" style="stroke: gray;stroke-width: 20; margin-top: 4px;">></span>
+                      <span class="fas fa-star" style=" margin-top: 4px;"></span>
                     {% endfor %}
                     {% if servant.servant_avg_rating_is_half_star == True %}
-                      <span class="fas fa-star-half-alt" ></span>
+                      <span class="fas fa-star-half-alt" style="margin-top: 4px;"></span>
                     {% endif %}
                     {% for i in servant.servant_avg_rating_empty_star_range %}
-                      <i class="fa-regular fa-star"  ></i>  
+                      <i class="fa-regular fa-star" ></i>  
                     {% endfor %}
                     <span class="case-info-font">&ensp;{{servant.servant_rate_nums}}評價</span>
                   </div>
