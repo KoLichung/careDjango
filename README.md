@@ -149,6 +149,10 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220818
+1.把 index 頁改成 開始日期, 結束日期, 開始時間, 結束時間 
+2.需求列表 / 需求詳細.
+
 20220817
 1.index 頁, 插入 每週時段 選擇~
 2.index 頁帶時間到 search_list 頁
