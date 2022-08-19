@@ -1,0 +1,115 @@
+{% extends 'backboard/base.html' %} {% block content %}
+{% load static %}
+
+<!-- 內容 -->
+<div class="mb-3">
+  <div class="col-lg-12 ps-lg-2 mb-3">
+
+     <!-- 新增文章標題 -->
+    <div class="card h-lg-100 mb-2">
+      <div class="card-header">
+        <div class="">
+            <input class="form-control" id="" placeholder="新增文章標題" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 輸入文章內容 -->
+    <div class="card h-lg-100 mb-2">
+      <div class="card-header">
+        <div class="min-vh-50">
+            <textarea class="tinymce d-none" name="content"></textarea>
+        </div>
+      </div>   
+    </div>
+
+    <!-- 選擇封面圖片 -->
+    <div class="card h-lg-100 mb-2">
+      <div class="row my-2 gx-5" style="padding: 1rem 1rem;">
+        <div class="col">
+          <div class=""><b>封面圖片</b> (建議尺寸 800 x 600 px)</div>
+        </div>
+        <div class="col alnright">
+          <a class="custom-purple-btn text-white btn-sm " href="#">選擇圖片</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 文章分類 -->
+    <div class="card h-lg-100 mb-4">
+      <div class="row mb-3 gx-5" style="padding: 1rem 1rem;">
+        <div class="col">
+          <b>文章分類</b>
+        </div>
+        <div class="col text-end">
+          <a class="custom-purple-btn text-white btn-sm " href="#" role="button" data-bs-toggle="modal" data-bs-target="#blog-category">編輯分類</a>
+          <!-- 編輯文章分類 Modal -->
+          <div class="modal fade" id="blog-category" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" style="width: 350px;">
+              <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">編輯文章分類</h5>
+                </div>
+                <div class="modal-body" style="padding: 1rem 1rem;">
+                    <div class="text-start"><b>新增分類</b></div>
+                    <div class="row mt-2 mb-3">
+                      <div class="col-8">
+                        <input class="form-control" id="" placeholder="新增分類名稱" />
+                      </div>
+                      <div class="col">
+                        <a href="#" class="custom-grey-border-btn btn-sm" role="button">新增</a>
+                      </div>
+                    </div>
+                    <div class="text-start"><b>分類列表</b></div>
+                    <div class="row mt-2 mb-3">
+                      <div class="col text-start">
+                        分類一
+                      </div>
+                      <div class="col me-2">
+                        <span class="far fa-edit"></span>
+                        <span class="far fa-trash-alt"></span>
+                      </div>
+                    </div>
+                    <div class="row mt-2 mb-3">
+                      <div class="col text-start">
+                        分類二
+                      </div>
+                      <div class="col me-2">
+                        <span class="far fa-edit"></span>
+                        <span class="far fa-trash-alt"></span>
+                      </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="bg-secondary text-white btn-sm " href="#" role="button" data-bs-dismiss="modal">取消</a>
+                    <a class="custom-purple-btn text-white btn-sm " href="#" role="button">確定</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>  
+      </div>
+      <div class="mx-3">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" id="inlineCheckbox1" type="checkbox" value="option1" />
+          <label class="form-check-label" for="inlineCheckbox1">分類一</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" id="inlineCheckbox2" type="checkbox" value="option2" />
+          <label class="form-check-label" for="inlineCheckbox2">分類二</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <a class="bg-danger text-white btn-sm " href="#" role="button">刪除文章</a>
+      </div>
+      <div class="col text-end">
+        <a class="bg-success text-white btn-sm " href="#" role="button">儲存草稿</a>
+        <a class="custom-purple-btn text-white btn-sm " href="#" role="button">發布文章</a>
+      </div>
+    </div>
+  </div>
+</div> 
+
+{% endblock %}

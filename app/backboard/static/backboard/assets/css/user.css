@@ -22,6 +22,12 @@ html,body {
   overflow-x: hidden; 
 }
 
+.custom-grey-btn {
+  color: #fff;
+  background-color: #a9a7aa;
+  border-color: #a9a7aa;
+}
+
 .custom-purple-btn {
   color: #fff;
   background-color: #BB6BD9;
@@ -59,8 +65,20 @@ html,body {
   text-decoration: none;
 }
 
+.custom-purple-solid-btn {
+  color: #BB6BD9;
+  background-color: white;
+  border: 1px solid #BB6BD9;
+  border-color: #BB6BD9;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
 .alnright { 
   text-align: right; 
+}
+
+.alnleft { 
+  text-align: left; 
 }
 
 .bill-thead {
