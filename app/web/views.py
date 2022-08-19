@@ -219,7 +219,6 @@ def ajax_cal_rate(request):
                         data = {'result':'2'}
                         return JsonResponse({'data':data})
 
-
 def login(request):
     return render(request, 'web/login.html')
 
@@ -471,7 +470,6 @@ def search_carer_detail(request):
     defaultEndTime = end_time
     return render(request, 'web/search_carer_detail.html',{'weekdays':weekdays, 'cityName':city,'citys':citys,'countyName':county_name,'counties':counties, 'is_continuous_time':is_continuous_time, 'defaultStartTime':defaultStartTime,'defaultEndTime':defaultEndTime,'defaultStartEndDate':defaultStartEndDate,'weekday_list':weekday_list, 'servant':servant,'license_not_provide':license_not_provide,'reviews':reviews,'citys':citys,'counties':counties,'care_type':care_type})
 
-
 def booking_patient_info(request):
     return render(request, 'web/booking/patient_info.html')
 
@@ -499,8 +497,6 @@ def requirement_list(request):
     county_name = ''
     start_date = ''
     end_date = ''
-
-    
 
     if request.method == 'POST':
         if request.POST.get('county') != None:

@@ -149,6 +149,21 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220819
+1.實現 登入 方法 (登入之後, 回上一頁)
+2.在 views 檢查是否已登入
+3.修正 nav bar (base.html)
+=============
+4.實現 LINE Web Login
+https://developers.line.biz/en/docs/line-login/integrate-line-login/
+a.連到 LINE 的網址
+b.授權成功後 call_back
+c.redirect_url
+d.取得 user line_id
+e.User.objects.get(line_id=line_id) 取得 user
+**f. 用 line_id 去 aunthenticate(user)
+
+
 20220818
 1.把 index 頁改成 開始日期, 結束日期, 開始時間, 結束時間 
 2.需求列表 / 需求詳細.
