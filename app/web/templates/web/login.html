@@ -33,7 +33,7 @@
                       </div>
 
                       <div class="mt-2">
-                        <a href="{% url 'register_line' %}">
+                        <a href="{% url 'register_line' %}?next={{next}}">
                           <button class="line-login-button my-2" type=""  >
                             <span class="mt-2"><span class="fab fa-line"></span> 透過 LINE 繼續</span>
                           </button>
@@ -49,48 +49,49 @@
                     </div>
 
                     <!-- 會員帳號登入 -->
-                    <div>
-                      <h5 class="mt-4 mb-3 col-lg-8">Care 168 會員帳號登入</h5>
+                    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                      <div>
+                        <h5 class="mt-4 mb-3 col-lg-8">Care 168 會員帳號登入</h5>
 
-                      <form>
+                        <form>
 
-                        <div class="input-box mb-3">
-                          <span class="material-icons md-18">phone_iphone</span>
-                          <input type="tel" name="phone" placeholder="電話號碼" />
-                        </div>
-
-                        <div class="input-box mb-3">
-                          <span class="material-icons md-18">lock</span>
-                          <input type="password" name="password" placeholder="密碼" />
-                        </div>
-  
-                        <div class="row flex-between-center">
-                          <div class="col-auto">
+                          <div class="input-box mb-3">
+                            <span class="material-icons md-18">phone_iphone</span>
+                            <input type="tel" name="phone" placeholder="電話號碼" />
                           </div>
-                          <div class="col-auto">
-                            <a class="fs--1 text-dark" href="#">忘記密碼?</a>
+
+                          <div class="input-box mb-3">
+                            <span class="material-icons md-18">lock</span>
+                            <input type="password" name="password" placeholder="密碼" />
                           </div>
+    
+                          <div class="row flex-between-center">
+                            <div class="col-auto">
+                            </div>
+                            <div class="col-auto">
+                              <a class="fs--1 text-dark" href="#">忘記密碼?</a>
+                            </div>
+                          </div>
+    
+                          <a href="">
+                            <button class="full-purple-button mt-3" type="submit" >
+                              <span class="mt-2">登入</span>
+                            </button>
+                          </a>
+            
+                        </form>
+
+                        <div class="flex-center inner col-lg-8 mx-auto mt-4" style="font-weight:400;font-size:16px">
+                          <h6>還沒加入 Care 168 嗎？</h6>
                         </div>
-  
-                        <a href="">
-                          <button class="full-purple-button mt-3" type="submit" >
-                            <span class="mt-2">登入</span>
-                          </button>
-                        </a>
-          
-                      </form>
 
-                      <div class="flex-center inner col-lg-8 mx-auto mt-4" style="font-weight:400;font-size:16px">
-                        <h6>還沒加入 Care 168 嗎？</h6>
+                        <div class="flex-center inner col-lg-8 mx-auto" style="font-weight:400;font-size:16px">
+                          <a href="{% url 'register_phone' %}" ><h6 style="color: #BB6BD9;">立刻註冊</h6></a>
+                        </div>
+
+
                       </div>
-
-                      <div class="flex-center inner col-lg-8 mx-auto" style="font-weight:400;font-size:16px">
-                        <a href="{% url 'register_phone' %}" ><h6 style="color: #BB6BD9;">立刻註冊</h6></a>
-                      </div>
-
-
-                    </div>
-
+                    </form>
                  </div>
 
                 </div>

@@ -32,7 +32,7 @@
                       <h5 class="mt-2 mb-3 col-lg-8">LINE 註冊</h5>
 
                       <form>
-
+                        <form method="post" enctype="multipart/form-data">{% csrf_token %}
                         <div class="input-box mb-3">
                           <span class="material-icons">person_outline</span>
                           <input type="text" name="userName" placeholder="使用者姓名" />
@@ -43,10 +43,11 @@
                           <input type="tel" name="phone" placeholder="電話號碼" />
                         </div>
 
-                        <button class="full-purple-button mt-3" type="submit" onclick="location.href='/index.html'" >
+                        <button class="full-purple-button mt-3" type="submit" >
+                          <!-- onclick="location.href='/index.html'" -->
                           <span class="mt-2">註冊</span>
                         </button>   
-          
+                        </form>
                       </form>
 
                       

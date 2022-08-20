@@ -1,17 +1,22 @@
 from django.shortcuts import render ,redirect
-from django.http import HttpResponse ,JsonResponse
+from django.http import HttpResponse ,JsonResponse ,HttpResponseRedirect
 
 import urllib
 from datetime import date ,timedelta
 import datetime
 import json
 import os
+import requests
 from time import time
+import logging
+from django.contrib import auth
+from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service
 from modelCore.models import UserLicenseShipImage ,License ,Case
 # Create your views here.
 
+logger = logging.getLogger(__file__)
 def index(request):
     citys = City.objects.all()
     counties = County.objects.all()
@@ -220,13 +225,61 @@ def ajax_cal_rate(request):
                         return JsonResponse({'data':data})
 
 def login(request):
-    return render(request, 'web/login.html')
+    redirect_to = request.GET.get('next', '')
+    if request.method == 'POST':
+        phone = request.POST['phone']
+        password = request.POST['password']
+        print(phone,password)
+        user = authenticate(request, phone=phone, password=password)
+        if user is not None:
+            auth.login(request, user)
+            print('is_user')
+            return HttpResponseRedirect(redirect_to) 
+        else:
+            print('not user')
+            return redirect('/web/')
+
+    return render(request, 'web/login.html',{'next':redirect_to})
+
 
 def register_line(request):
+    redirect_to = request.GET.get('next', '')
+    auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
+    call_back = 'http://202.182.105.11/' + redirect_to
+    data = {
+        'response_type': 'code',
+        'client_id': '1657316694',
+        'redirect_uri': call_back,
+        'state': '12345',
+        'scope': 'profile%20openid',
+    }
+    
+    if request.method == 'POST':
+        userName = request.POST['userName']
+        phone = request.POST['phone']
+        # user = authenticate(request, phone=phone, password=password)
+        # if user is not None:
+        #     auth.auth(request, user)
+        #     print('is_user')
+        query_str = urllib.parse.urlencode(data)
+        login_url = auth_url + query_str
+        logger.info(login_url)
+        resp = requests.post(login_url)
+        logger.info(resp)
+        return HttpResponseRedirect(redirect_to) 
+        # else:
+        #     print('not user')
+        #     return redirect('/web/')
+
     return render(request, 'web/register_line.html')
 
 def register_phone(request):
     return render(request, 'web/register_phone.html')
+
+def logout(request):
+    redirect_to = request.GET.get('current', '')
+    auth.logout(request)
+    return HttpResponseRedirect(redirect_to) 
 
 def search_list(request):
     
