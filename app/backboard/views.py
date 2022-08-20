@@ -16,3 +16,9 @@ def case_detail(request):
 
 def member_detail(request):
     return render(request, 'backboard/member_detail.html')
+
+def all_blogs(request):
+    return render(request, 'backboard/all_blogs.html')
+
+def new_blog(request):
+    return render(request, 'backboard/new_blog.html')

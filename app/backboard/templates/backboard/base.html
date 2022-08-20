@@ -31,11 +31,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
     <link href="{% static 'backboard/vendors/overlayscrollbars/OverlayScrollbars.min.css' %}" rel="stylesheet">
-    <link href="{% static 'backboard/assets/css/theme-rtl.min.css' %}" rel="stylesheet" id="style-rtl">
     <link href="{% static 'backboard/assets/css/theme.min.css' %}" rel="stylesheet" id="style-default">
-    <link href="{% static 'backboard/assets/css/user-rtl.min.css' %}" rel="stylesheet" id="user-style-rtl">
     <link href="{% static 'backboard/assets/css/user.min.css' %}" rel="stylesheet" id="user-style-default">
-    <script>
+    <!-- <script>
       var isRTL = JSON.parse(localStorage.getItem('isRTL'));
       
         var linkRTL = document.getElementById('style-rtl');
@@ -43,7 +41,7 @@
         linkRTL.setAttribute('disabled', true);
         userLinkRTL.setAttribute('disabled', true);
       
-    </script>
+    </script> -->
   </head>
 
   <body>
@@ -88,6 +86,14 @@
               <div class="navbar-vertical-content scrollbar">
                 <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
                   <li>
+                    <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+                      <div class="col-auto navbar-vertical-label">後台</div>
+                      <div class="col ps-0">
+                        <hr class="mb-0 navbar-vertical-divider" />
+                      </div>
+                    </div>
+                  </li>
+                  <li>
                     <a class="nav-link" href="{% url 'all_cases' %}" role="button" data-bs-toggle="" aria-expanded="false">
                       <div class="d-flex align-items-center">
                         <span class="nav-link-text ps-1">所有案件</span>
@@ -105,6 +111,28 @@
                     <a class="nav-link" href="{% url 'bills' %}" role="button" data-bs-toggle="" aria-expanded="false">
                       <div class="d-flex align-items-center">
                         <span class="nav-link-text ps-1">月帳單統計</span>
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+                      <div class="col-auto navbar-vertical-label">部落格</div>
+                      <div class="col ps-0">
+                        <hr class="mb-0 navbar-vertical-divider" />
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <a class="nav-link" href="{% url 'all_blogs' %}" role="button" data-bs-toggle="" aria-expanded="false">
+                      <div class="d-flex align-items-center">
+                        <span class="nav-link-text ps-1">所有文章</span>
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="nav-link" href="{% url 'new_blog' %}" role="button" data-bs-toggle="" aria-expanded="false">
+                      <div class="d-flex align-items-center">
+                        <span class="nav-link-text ps-1">新增文章</span>
                       </div>
                     </a>
                   </li>
@@ -156,5 +184,6 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
     <script src="{% static 'backboard/vendors/list.js/list.min.js' %}"></script>
     <script src="{% static 'backboard/assets/js/theme.js' %}"></script>
+    <script src="{% static 'backboard/vendors/tinymce/tinymce.min.js' %}"></script>
   </body>
 </html>
