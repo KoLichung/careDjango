@@ -240,25 +240,47 @@ class UserServicesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
         user = self.request.user
         queryset = self.queryset
         services = request.data.get('services')
-        increase_prices = request.data.get('increase_prices')
+        print(services)
+
         if services != None:
             service_ids = services.split(',')
-            increase_price_list = increase_prices.split(',')
+            print(service_ids)
+            service_id_list = []
             for i in range(len(service_ids)):
-                if queryset.filter(user=user,service=service_ids[i]).exists() != True:
-                    userserviceship = UserServiceShip()
+                if ':' in service_ids[i]:
+                    service_id = service_ids[i].split(':')[0]
+                    service_id_list.append(service_id)
+
+                    increase_percent = service_ids[i].split(':')[1]
+                    if queryset.filter(user=user,service=service_id).exists() != True:
+                        userserviceship = UserServiceShip()
+                    else:
+                        userserviceship = queryset.get(user=user,service=service_id)
+
+                    userserviceship.user = user
+                    userserviceship.service = Service.objects.get(id=service_id)
+                    userserviceship.increase_percent = increase_percent
+                    userserviceship.save()
                 else:
-                    userserviceship = queryset.get(user=user,service=service_ids[i])
-                userserviceship.user = user
-                userserviceship.service = Service.objects.get(id=service_ids[i])
-                if int(service_ids[i]) < 5 :
-                    userserviceship.increase_percent = increase_price_list[i]
-                userserviceship.save()
+                    service_id = service_ids[i]
+                    service_id_list.append(service_id)
+
+                    if queryset.filter(user=user,service=service_id).exists() != True:
+                        userserviceship = UserServiceShip()
+                    else:
+                        userserviceship = queryset.get(user=user,service=service_id)
+
+                    userserviceship.user = user
+                    userserviceship.service = Service.objects.get(id=service_id)
+                    userserviceship.save()
+
             for userserviceship in queryset.filter(user=user):
-                if str(userserviceship.service.id) not in service_ids:
+                if str(userserviceship.service.id) not in service_id_list:
                     userserviceship.delete()
+
         userservices = UserServiceShip.objects.filter(user=user)
         serializer = self.get_serializer(userservices,many=True)
+
         return Response(serializer.data)
 
 class UserLicenseImagesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
