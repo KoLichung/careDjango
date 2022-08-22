@@ -152,6 +152,13 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220822
+1.Line 登入(透過 LINE 繼續) 
+=> 如果沒有 User.objects.get(line_id=line_id) => 跳到註冊頁, 讓他註冊 並把 sub 存在 line_id => 註冊完回到 index 頁
+=> 如果有 User.objects.get(line_id=line_id) => 取回 User 資料, 返回 index 頁
+2.把 user_service_ship 的 relatitve name 改一下~
+3.把註冊的部分完成
+
 20220819
 1.實現 登入 方法 (登入之後, 回上一頁)
 2.在 views 檢查是否已登入
