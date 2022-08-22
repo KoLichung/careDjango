@@ -1,11 +1,11 @@
 from django.shortcuts import render ,redirect
-from django.http import HttpResponse ,JsonResponse ,HttpResponseRedirect
+from django.http import HttpResponse ,JsonResponse ,HttpResponseRedirect 
 
 import urllib
 from datetime import date ,timedelta
 import datetime
 import json
-import os
+from urllib import parse
 import requests
 from time import time
 import logging
@@ -245,33 +245,50 @@ def login(request):
 def register_line(request):
     redirect_to = request.GET.get('next', '')
     auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
-    call_back = 'http://202.182.105.11/' + redirect_to
+    # call_back = 'http://202.182.105.11/' + redirect_to
+    call_back = 'http://127.0.0.1:8000/web/login_line?next=/web/index'
+
+    print(call_back)
     data = {
         'response_type': 'code',
         'client_id': '1657316694',
         'redirect_uri': call_back,
-        'state': '12345',
-        'scope': 'profile%20openid',
+        'state': 'abcde',
     }
-    
     if request.method == 'POST':
-        userName = request.POST['userName']
-        phone = request.POST['phone']
-        # user = authenticate(request, phone=phone, password=password)
-        # if user is not None:
-        #     auth.auth(request, user)
-        #     print('is_user')
-        query_str = urllib.parse.urlencode(data)
+        query_str = urllib.parse.urlencode(data) + '&scope=profile%20openid%20email'
         login_url = auth_url + query_str
-        logger.info(login_url)
-        resp = requests.post(login_url)
-        logger.info(resp)
-        return HttpResponseRedirect(redirect_to) 
-        # else:
-        #     print('not user')
-        #     return redirect('/web/')
+        print(login_url)
+        return redirect(login_url) 
 
     return render(request, 'web/register_line.html')
+
+def login_line(request):
+    redirect_to = request.GET.get('next', '')
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    url = "https://api.line.me/oauth2/v2.1/token"
+    code = request.GET.get('code')
+    FormData = {
+        'grant_type': 'authorization_code',
+        'client_id': '1657316694',
+        'client_secret': 'd7751034c13427e80df2818ce86d3a26',
+        'code': code,
+        'redirect_uri': 'http://127.0.0.1:8000/web/login_line?next=/web/index' ,
+    }
+    data = parse.urlencode(FormData)
+    resp = requests.post(url, headers=headers, data=data)
+    print(resp.text)
+    id_token = json.loads(resp.text)['id_token']
+    print(id_token)
+    postdata = {
+        'id_token': id_token,
+        'client_id': '1657316694',
+    }
+    get_info_url = 'https://api.line.me/oauth2/v2.1/verify'
+    get_info_resp = requests.post(get_info_url, headers=headers, data=postdata)
+    print(json.loads(get_info_resp.text))
+    
+    return HttpResponseRedirect(redirect_to) 
 
 def register_phone(request):
     return render(request, 'web/register_phone.html')
