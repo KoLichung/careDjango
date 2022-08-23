@@ -72,6 +72,8 @@ class OrderViewSet(viewsets.GenericViewSet,
         if order.case.user == user:
             order.related_case = order.case
             order.servant = order.case.servant
+            order.increase_services = order.order_increase_services
+
             order.related_case.rating_nums= Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
             order.related_case.servant_rating = Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
             disease_ids = list(CaseDiseaseShip.objects.filter(case=order.case).values_list('disease', flat=True))
@@ -109,6 +111,17 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
         user = self.request.user
         chatroom_ids = list(ChatroomUserShip.objects.filter(user=user).values_list('chatroom', flat=True))
         queryset = self.queryset.filter(id__in=chatroom_ids).order_by('-update_at')
+
+        for i in range(len(queryset)):
+            other_side_user = ChatroomUserShip.objects.filter(chatroom=queryset[i]).filter(~Q(user=self.request.user)).first().user
+            queryset[i].other_side_image_url = other_side_user.image
+            queryset[i].other_side_name = other_side_user.name
+            print(other_side_user.name)
+            if Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
+                print(Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count())
+                queryset[i].last_message = Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).order_by('-id').first().content[0:15]
+            queryset[i].unread_num = 1
+
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -324,9 +337,11 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(user_locations__city=City.objects.get(id=city))
         if county != None:
             queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
+
         for i in range(len(queryset)):
             queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
             queryset[i].rating_nums = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
+            queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
 
         return queryset
 
@@ -416,15 +431,17 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
             case.services  = Service.objects.filter(id__in=service_ids)
 
             # 以下做 order 相關欄位
-            order = Order.objects.get(case=case)
-            case.work_hours = order.work_hours
-            case.base_money = order.base_money
-            case.platform_percent = order.platform_percent
-            # !!!
-            case.platform_money = order.platform_money
-            case.total_money = order.total_money
-            increase_service_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
-            case.increase_money = OrderIncreaseService.objects.filter(order=order,service__id__in=increase_service_ids)
+            case.order = Order.objects.get(case=case)
+            case.order.increase_services = OrderIncreaseService.objects.filter(order=case.order)
+
+            # case.work_hours = order.work_hours
+            # case.base_money = order.base_money
+            # case.platform_percent = order.platform_percent
+            # # !!!
+            # case.platform_money = order.platform_money
+            # case.total_money = order.total_money
+            # increase_service_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
+            # case.increase_money = OrderIncreaseService.objects.filter(order=order,service__id__in=increase_service_ids)
 
             serializer = self.get_serializer(case)
             return Response(serializer.data)
@@ -454,25 +471,30 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
                 case.hour_wage = case.servant.hospital_hour_wage
             
             case.servant_rating = Review.objects.get(case=case).servant_rating
-            case.servant_rating = Review.objects.get(case=case).servant_rating
+
             disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
             case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
+
             body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
             case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
 
             service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True)) 
             case.services  = Service.objects.filter(id__in=service_ids)
-            case.servant_name = case.servant.name
+            # case.servant = case.servant
+            
+            case.order = Order.objects.get(case=case)
+            case.order.increase_services = OrderIncreaseService.objects.filter(order=case.order)
+
             # 以下做 order 相關欄位
-            order = Order.objects.get(case=case)
-            case.work_hours = order.work_hours
-            case.base_money = order.base_money
-            case.platform_percent = order.platform_percent
-            # !!!!!!
-            case.platform_money = order.platform_money
-            case.total_money = order.total_money
-            increase_service_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
-            case.increase_money = OrderIncreaseService.objects.filter(order=order,service__id__in=increase_service_ids)
+            # order = Order.objects.get(case=case)
+            # case.work_hours = order.work_hours
+            # case.base_money = order.base_money
+            # case.platform_percent = order.platform_percent
+            # # !!!!!!
+            # case.platform_money = order.platform_money
+            # case.total_money = order.total_money
+            # increase_service_ids = list(CaseServiceShip.objects.filter(case=case,service__is_increase_price=True).values_list('service', flat=True))
+            # case.increase_money = OrderIncreaseService.objects.filter(order=order,service__id__in=increase_service_ids)
 
             serializer = self.get_serializer(case)
             return Response(serializer.data)

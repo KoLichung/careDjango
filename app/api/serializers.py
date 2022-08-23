@@ -114,26 +114,41 @@ class OrderIncreaseServiceSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
+class CaseOrderSerializer(serializers.ModelSerializer):
+    increase_services = OrderIncreaseServiceSerializer(read_only=True, many=True)
+    class Meta:
+        model = Order
+        fields = '__all__'
+        read_only_fields = ('id',)
+
 class CaseSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(read_only=True, many=True)
     disease = DiseaseConditionSerializer(read_only=True, many=True)
     body_condition = BodyConditionSerializer(read_only=True, many=True)
+    
+    status = serializers.CharField(default='')
+
+    # servant_name = serializers.CharField(default='')
+    servant = ServantSerializer(read_only=True)
+
+    order = CaseOrderSerializer(read_only=True)
+
+    # hour_wage = serializers.IntegerField(default=0)
+    # work_hours = serializers.IntegerField(default=0)
+    # base_money = serializers.IntegerField(default=0)
+    # platform_percent = serializers.FloatField(default=0)
+    # platform_money = serializers.IntegerField(default=0)
+    # total_money = serializers.IntegerField(default=0)
+    # increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
+
+    user_detail = UserSerializer(read_only=True)
+    servant_candidate = UserSerializer(read_only=True, many=True)
+
     review = ReviewSerializer(read_only=True, many=False)
     rating_nums = serializers.IntegerField(default=0)
     servant_rating = serializers.IntegerField(default=0)
     avg_offender_rating = serializers.FloatField(default=0)
-    status = serializers.CharField(default='')
-    hour_wage = serializers.IntegerField(default=0)
-    work_hours = serializers.IntegerField(default=0)
-    base_money = serializers.IntegerField(default=0)
-    platform_percent = serializers.FloatField(default=0)
-    platform_money = serializers.IntegerField(default=0)
-    total_money = serializers.IntegerField(default=0)
-    increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
-    user_detail = UserSerializer(read_only=True)
-    servant_candidate = UserSerializer(read_only=True, many=True)
     num_offender_rating = serializers.IntegerField(default=0)
-    servant_name = serializers.CharField(default='')
 
     class Meta:
         model = Case
@@ -143,6 +158,7 @@ class CaseSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     related_case = CaseSerializer(read_only=True)
     servant = ServantSerializer(read_only=True)
+    increase_services = OrderIncreaseServiceSerializer(read_only=True, many=True)
     class Meta:
         model = Order
         fields = '__all__'
@@ -157,6 +173,11 @@ class MessageSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class ChatRoomSerializer(serializers.ModelSerializer):
+    other_side_image_url = serializers.CharField(default='')
+    other_side_name = serializers.CharField(default='')
+    last_message = serializers.CharField(default='')
+    unread_num = serializers.IntegerField(default=0)
+
     class Meta:
         model = ChatRoom
         fields = '__all__'
