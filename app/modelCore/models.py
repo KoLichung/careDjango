@@ -226,7 +226,7 @@ class UserLanguage(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
-        related_name='languages'
+        related_name='user_languages'
     )
     language =  models.ForeignKey(
         Language,
@@ -244,7 +244,7 @@ class UserLicenseShipImage(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='license_images'
+        related_name='user_license_images'
         )
     license = models.ForeignKey(
         License,
@@ -447,7 +447,7 @@ class Order(models.Model):
     case = models.ForeignKey(
         Case,
         on_delete = models.CASCADE,
-        related_name='orders',
+        related_name='case_orders',
     )
     user = models.ForeignKey(
         User,
@@ -490,7 +490,7 @@ class OrderIncreaseService(models.Model):
     order =  models.ForeignKey(
         Order,
         on_delete = models.CASCADE,
-        related_name='order_service',
+        related_name='order_increase_services',
     )
     service = service = models.ForeignKey(
         Service,
@@ -504,7 +504,7 @@ class OrderWeekDay(models.Model):
     order =  models.ForeignKey(
         Order,
         on_delete = models.CASCADE,
-        related_name='order_weekday',
+        related_name='order_weekdays',
     )
     WEEKDAY_CHOICES = [
         ('0', 'Sunday'),
@@ -610,7 +610,7 @@ class Message(models.Model):
     chatroom = models.ForeignKey(
         ChatRoom,
         on_delete=models.CASCADE,
-        related_name='messages',
+        related_name='chatroom_messages',
     )
     # user is the one who make message
     user = models.ForeignKey(

@@ -39,7 +39,7 @@
 
             <div class="case-info-font mt-4">
               <span class="sub-purple-text">語言能力</span>
-              &emsp;{% for userlanguage in servant.languages.all %} {{userlanguage.language}} {% endfor %} <br>
+              &emsp;{% for userlanguage in servant.user_languages.all %} {{userlanguage.language}} {% endfor %} <br>
               <p class="text-indent-5 mt-2">
                 <span class="sub-purple-text">服務地區</span>&nbsp;&ensp;
                 {% for location in servant.user_locations.all %}
@@ -63,7 +63,7 @@
               {% for license in license_not_provide %}
               <p><span class="fas fa-times-circle fs-1" style="color: red;"></span>&ensp;未提供 {{license}}</p>
               {% endfor %}
-              {% for licenseImage in servant.license_images.all %}
+              {% for licenseImage in servant.user_license_images.all %}
               <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{licenseImage.license}}</p>
               {% endfor %}
        

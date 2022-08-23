@@ -188,7 +188,7 @@ def ajax_cal_rate(request):
                     #2.再從 1 取出週間有交集的訂單
                     #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
                     weekdays_num_list = weekdays
-                    weekday_condition_1 = Q(order_weekday__weekday__in=weekdays_num_list)
+                    weekday_condition_1 = Q(order_weekdays__weekday__in=weekdays_num_list)
                     weedkay_condition_2 =  Q(case__is_continuous_time=True)
                     #3.再從 2 取出時段有交集的訂單
                     time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
@@ -424,7 +424,7 @@ def search_list(request):
                 #2.再從 1 取出週間有交集的訂單
                 #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
                 weekdays_num_list = weekdays
-                weekday_condition_1 = Q(order_weekday__weekday__in=weekdays_num_list)
+                weekday_condition_1 = Q(order_weekdays__weekday__in=weekdays_num_list)
                 weedkay_condition_2 =  Q(case__is_continuous_time=True)
                 #3.再從 2 取出時段有交集的訂單
                 time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
@@ -560,7 +560,7 @@ def search_carer_detail(request):
         end_time = request.POST.get('timepicker_endTime')
         weekdays = request.POST.getlist('weekdays[]')
         defaultStartEndDate = start_end_date
-        return redirect_params('booking_patient_info',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'strat_end_date':strat_end_date,'start_time':start_time,'servant_care_type':servant_care_type})
+        return redirect_params('booking_patient_info',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_end_date':start_end_date,'start_time':start_time,'servant_care_type':servant_care_type})
     
     
     defaultStartTime = start_time

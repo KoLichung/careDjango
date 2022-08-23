@@ -252,7 +252,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         if weekdays != None:
             weekdays_num_list = weekdays.split(',')
             
-            weekday_condition_1 = Q(order_weekday__weekday__in=weekdays_num_list)
+            weekday_condition_1 = Q(order_weekdays__weekday__in=weekdays_num_list)
             weedkay_condition_2 =  Q(case__is_continuous_time=True)
             # orders = orders.filter(order_condition_1 | order_condition_2).distinct()
         #3.再從 2 取出時段有交集的訂單
