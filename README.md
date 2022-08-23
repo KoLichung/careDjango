@@ -152,6 +152,25 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220823
+1.relative_name 修正
+Order case => "case_orders"
+UserLicenseShipImage => "user_license_images"
+UserLanguage => "user_languages"
+OrderIncreaseService => "order_increase_services"
+OrderWeekDay => "order_weekdays"
+Message => "chatroom_messages"
+2.Line login 的 redirect_to = request.GET.get('next', '') 要移除?
+3.if line login 之後, 發現沒有該 line id 的帳號, 則要註冊(Create 新使用者)
+=> 現在是 "如果他在 LINE 註冊時, 是用既有帳號, 則 LINE ID 綁定到既有帳號"(綁定之後可以用 LINE 登入)
+=> v 要加做 非既有帳號, 註冊(Create 新使用者)
+=======
+4.做 reviews 評價頁的部分
+http://localhost:8000/web/my_reviews
+尚未評價 => 我發的案, 我還沒評價
+我的評價 => 我發的案, 我已評價
+給我的評價 => 我發的案, 給我的評價
+
 20220822
 1.Line 登入(透過 LINE 繼續) 
 => 如果沒有 User.objects.get(line_id=line_id) => 跳到註冊頁, 讓他註冊 並把 sub 存在 line_id => 註冊完回到 index 頁

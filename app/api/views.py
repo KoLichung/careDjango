@@ -71,7 +71,7 @@ class OrderViewSet(viewsets.GenericViewSet,
         user = self.request.user
         if order.case.user == user:
             order.related_case = order.case
-            order.servants = order.case.servant
+            order.servant = order.case.servant
             order.related_case.rating_nums= Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
             order.related_case.servant_rating = Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
             disease_ids = list(CaseDiseaseShip.objects.filter(case=order.case).values_list('disease', flat=True))
