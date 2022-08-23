@@ -1,4 +1,4 @@
-{% extends 'web/base_logged_in.html' %} {% block content %}
+{% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
 <main class="main bg-white" id="top" >
@@ -27,120 +27,51 @@
             
             <!-- tab 尚未評價 -->
             <div class="tab-pane fade show active" id="review-list" role="tabpanel" aria-labelledby="home-tab">
-              <div class="custom-card mb-3">
-          
-                <div class="row justify-content-between">
-                   
-                  <div class="col-10 col-sm-7 col-md-7 col-lg-6 col-xl-7">
-                    <div class="purple-border-tag mt-2">醫院看護</div>
-                    <p class="custom-card-font mt-2">
-                      日期：2022/04/01 ~ 2022/04/10 <br> 
-                      時間類型：每週預定 <br>
-                    </p>
-                  </div>
-      
-                  <div class="d-none d-md-block col-md-5 col-lg-5 col-xl-4 align-self-center text-center">
-                    <div class="highlight-text">張先生還在等您的評價！</div>
-                    <div class="mt-2">
-                      <a href="{% url 'my_write_review' %}">
-                        <button class="small-green-button">
+              {% for order in not_rated_orders %}
+                <div class="custom-card mb-3">
+                  
+                  <div class="row justify-content-between">
+                    
+                    <div class="col-10 col-sm-7 col-md-7 col-lg-6 col-xl-7">
+                      <div class="purple-border-tag mt-2">{% if order.case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</div>
+                      <p class="custom-card-font mt-2">
+                        日期：{{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} <br> 
+                        時間類型：{% if order.case.is_continuous_time == True %}連續時間{% else %}每週預定{% endif %} <br>
+                      </p>
+                    </div>
+        
+                    <div class="d-none d-md-block col-md-5 col-lg-5 col-xl-4 align-self-center text-center">
+                      <div class="highlight-text">{{order.servant.name}}還在等您的評價！</div>
+                      <div class="mt-2">
+                        <a href="{% url 'my_write_review' %}">
+                          <button class="small-green-button">
+                            <span class="fas fa-edit"></span>
+                            撰寫評價
+                          </button>
+                        </a>
+                      </div>
+                    </div>
+        
+                    <div class="d-block d-md-none ">
+                      <div class="highlight-text">{{order.servant.name}}還在等您的評價！</div>
+                      <div class="text-center mt-3">
+                        <button class="small-green-button ">
                           <span class="fas fa-edit"></span>
                           撰寫評價
                         </button>
-                      </a>
+                      </div>
                     </div>
+        
                   </div>
-      
-                  <div class="d-block d-md-none ">
-                    <div class="highlight-text">張先生還在等您的評價！</div>
-                    <div class="text-center mt-3">
-                      <button class="small-green-button ">
-                        <span class="fas fa-edit"></span>
-                        撰寫評價
-                      </button>
-                    </div>
-                  </div>
-      
+                  
                 </div>
-      
-              </div>
-
-              <div class="custom-card mb-3">
-          
-                <div class="row justify-content-between">
-                   
-                  <div class="col-10 col-sm-7 col-md-7 col-lg-6 col-xl-7">
-                    <div class="purple-border-tag mt-2">醫院看護</div>
-                    <p class="custom-card-font mt-2">
-                      日期：2022/04/01 ~ 2022/04/10 <br> 
-                      時間類型：每週預定 <br>
-                    </p>
-                  </div>
-      
-                  <div class="d-none d-md-block col-md-5 col-lg-5 col-xl-4 align-self-center text-center">
-                    <div class="highlight-text">張先生還在等您的評價！</div>
-                    <div class="mt-2">
-                      <button class="small-green-button">
-                        <span class="fas fa-edit"></span>
-                        撰寫評價
-                      </button>
-                    </div>
-                  </div>
-      
-                  <div class="d-block d-md-none ">
-                    <div class="highlight-text">張先生還在等您的評價！</div>
-                    <div class="text-center mt-3">
-                      <button class="small-green-button ">
-                        <span class="fas fa-edit"></span>
-                        撰寫評價
-                      </button>
-                    </div>
-                  </div>
-      
-                </div>
-      
-              </div>
-
-              <div class="custom-card mb-3">
-          
-                <div class="row justify-content-between">
-                   
-                  <div class="col-10 col-sm-7 col-md-7 col-lg-6 col-xl-7">
-                    <div class="purple-border-tag mt-2">醫院看護</div>
-                    <p class="custom-card-font mt-2">
-                      日期：2022/04/01 ~ 2022/04/10 <br> 
-                      時間類型：每週預定 <br>
-                    </p>
-                  </div>
-      
-                  <div class="d-none d-md-block col-md-5 col-lg-5 col-xl-4 align-self-center text-center">
-                    <div class="highlight-text">張先生還在等您的評價！</div>
-                    <div class="mt-2">
-                      <button class="small-green-button">
-                        <span class="fas fa-edit"></span>
-                        撰寫評價
-                      </button>
-                    </div>
-                  </div>
-      
-                  <div class="d-block d-md-none ">
-                    <div class="highlight-text">張先生還在等您的評價！</div>
-                    <div class="text-center mt-3">
-                      <button class="small-green-button ">
-                        <span class="fas fa-edit"></span>
-                        撰寫評價
-                      </button>
-                    </div>
-                  </div>
-      
-                </div>
-      
-              </div>
+              {% endfor %}
+              
             </div>
             
             <!-- tab 我的評價 -->
             <div class="tab-pane fade" id="given-reviews" role="tabpanel" aria-labelledby="profile-tab">
-              
+              {% for review in my_rating_reviews %}
               <div class="custom-card mb-3">
           
                 <div class="row justify-content-around">
@@ -153,14 +84,14 @@
                   <div class="col-sm-7 col-md-6 col-lg-6 col-xl-6">
                     
                     <p class="custom-card-font mt-2">
-                      照顧者：林先生3 <br>
-                      日期：2022/04/01 ~ 2022/04/10 <br> 
-                      時間類型：每週預定 
+                      照顧者：{{review.servant.name}} <br>
+                      日期：{{review.case.start_datetime.year}}/{{review.case.start_datetime.month}}/{{review.case.start_datetime.day}} ~ {{review.case.end_datetime.year}}/{{review.case.end_datetime.month}}/{{review.case.end_datetime.day}} <br> 
+                      時間類型：{% if review.case.is_continuous_time == True %}連續時間{% else %}每週預定{% endif %}  
                     </p>
                   </div>
 
                   <div class="col-sm-2 col-md-3 col-lg-4 col-xl-2 align-self-start">
-                    <p class="purple-border-tag">醫院看護</p>
+                    <p class="purple-border-tag">{% if review.case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</p>
                   </div>
                 </div>
 
@@ -170,73 +101,29 @@
                    
                   <div class="col-10 col-sm-9 col-md-8 col-lg-8 col-xl-7">
                     <span class="custom-card-font">我給照顧者幾顆星：</span>
-                    <div >
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
+                    <div style="color: yellow;">
+                      {% for i in review.servant_rating_range %}
+                        <span class="fas fa-star"  ></span>
+                      {% endfor %}
+                      {% if review.servant_rating_is_half_star == True %}
+                        <span class="fas fa-star-half-alt" ></span>
+                      {% endif %}
+                      {% for i in review.servant_rating_empty_star_range %}
+                        <i class="fa-regular fa-star"></i>  
+                      {% endfor %}
                     </div>
                     <div class="custom-card-font mt-2 mb-1">
                       我給照顧者的評價：
                     </div>                    
                   </div>
                   <div class="custom-card-font">
-                      照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心
+                      {{review.servant_comment}}
                   </div>
 
                 </div>
 
               </div> 
-
-              <div class="custom-card mb-3">
-          
-                <div class="row justify-content-around">
-                  <div class="col-sm-3 col-md-3 col-lg-2 col-xl-2">
-                    <div class="avatar  avatar-4xl">
-                      <img class="rounded-circle" src="{% static 'web/assets/img/team/1.jpg' %}" alt="" />
-                    </div>
-                  </div>
-
-                  <div class="col-sm-7 col-md-6 col-lg-6 col-xl-6">
-                    
-                    <p class="custom-card-font mt-2">
-                      照顧者：林先生3 <br>
-                      日期：2022/04/01 ~ 2022/04/10 <br> 
-                      時間類型：每週預定 
-                    </p>
-                  </div>
-
-                  <div class="col-sm-2 col-md-3 col-lg-4 col-xl-2 align-self-start">
-                    <p class="purple-border-tag">醫院看護</p>
-                  </div>
-                </div>
-
-                <hr>
-
-                <div class="row">
-                   
-                  <div class="col-10 col-sm-9 col-md-8 col-lg-8 col-xl-7">
-                    <span class="custom-card-font">我給照顧者幾顆星：</span>
-                    <div >
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                    </div>
-                    <div class="custom-card-font mt-2 mb-1">
-                      我給照顧者的評價：
-                    </div>                    
-                  </div>
-                  <div class="custom-card-font">
-                      照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心照顧者很用心細心貼心
-                  </div>
-
-                </div>
-
-              </div> 
-
+              {% endfor %}
             </div>
             
             <!-- tab 給我的評價 -->
@@ -244,17 +131,21 @@
               
             
               <p class="custom-card-font text-center">
-                總共 7 筆評價 | 平均 5 顆星
+                總共 {{user.needer_rate_nums}} 筆評價 | 平均 {{user.needer_avg_rating}} 顆星
               </p>
 
-              <div class="text-center mb-3">
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
-                <span class="fas fa-star"  style="color: yellow;"></span>
+              <div class="text-center mb-3" style="color: yellow;">
+                {% for i in user.needer_avg_rate_range %}
+                <span class="fas fa-star"  ></span>
+                {% endfor %}
+                {% if user.needer_avg_rating_is_half_star == True %}
+                  <span class="fas fa-star-half-alt" ></span>
+                {% endif %}
+                {% for i in user.needer_avg_rating_empty_star_range %}
+                  <i class="fa-regular fa-star"></i>  
+                {% endfor %}
               </div>
-
+              {% for review in my_reviews %}
               <div class="custom-card mb-3">
           
                 <div class="row justify-content-around">
@@ -267,14 +158,14 @@
                   <div class="col-sm-7 col-md-6 col-lg-6 col-xl-6">
                     
                     <p class="custom-card-font mt-2">
-                      照顧者：林先生3 <br>
-                      日期：2022/04/01 ~ 2022/04/10 <br> 
-                      時間類型：每週預定 
+                      照顧者：{{review.servant.name}} <br>
+                      日期：{{review.case.start_datetime.year}}/{{review.case.start_datetime.month}}/{{review.case.start_datetime.day}} ~ {{review.case.end_datetime.year}}/{{review.case.end_datetime.month}}/{{review.case.end_datetime.day}} <br> 
+                      時間類型：{% if review.case.is_continuous_time == True %}連續時間{% else %}每週預定{% endif %}  
                     </p>
                   </div>
 
                   <div class="col-sm-2 col-md-3 col-lg-4 col-xl-2 align-self-start">
-                    <p class="purple-border-tag">醫院看護</p>
+                    <p class="purple-border-tag">{% if review.case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</p>
                   </div>
                 </div>
 
@@ -284,122 +175,29 @@
                    
                   <div class="col-10 col-sm-9 col-md-8 col-lg-8 col-xl-7">
                     <span class="custom-card-font">照顧者給我幾顆星：</span>
-                    <div >
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
+                    <div style="color: yellow;">
+                      {% for i in review.case_offender_rating_range %}
+                        <span class="fas fa-star"  ></span>
+                      {% endfor %}
+                      {% if review.case_offender_rating_is_half_star == True %}
+                        <span class="fas fa-star-half-alt" ></span>
+                      {% endif %}
+                      {% for i in review.case_offender_rating_empty_star_range %}
+                        <i class="fa-regular fa-star"></i>  
+                      {% endfor %}
                     </div>
                     <div class="custom-card-font mt-2 mb-1">
                       照顧者給我的評價：
                     </div>                    
                   </div>
                   <div class="custom-card-font">
-                    案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好
+                    {{review.case_offender_comment}}
                   </div>
 
                 </div>
 
               </div>
-
-              <div class="custom-card mb-3">
-          
-                <div class="row justify-content-around">
-                  <div class="col-sm-3 col-md-3 col-lg-2 col-xl-2">
-                    <div class="avatar  avatar-4xl">
-                      <img class="rounded-circle" src="{% static 'web/assets/img/team/1.jpg' %}" alt="" />
-                    </div>
-                  </div>
-
-                  <div class="col-sm-7 col-md-6 col-lg-6 col-xl-6">
-                    
-                    <p class="custom-card-font mt-2">
-                      照顧者：林先生3 <br>
-                      日期：2022/04/01 ~ 2022/04/10 <br> 
-                      時間類型：每週預定 
-                    </p>
-                  </div>
-
-                  <div class="col-sm-2 col-md-3 col-lg-4 col-xl-2 align-self-start">
-                    <p class="purple-border-tag">醫院看護</p>
-                  </div>
-                </div>
-
-                <hr>
-
-                <div class="row">
-                   
-                  <div class="col-10 col-sm-9 col-md-8 col-lg-8 col-xl-7">
-                    <span class="custom-card-font">照顧者給我幾顆星：</span>
-                    <div >
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                    </div>
-                    <div class="custom-card-font mt-2 mb-1">
-                      照顧者給我的評價：
-                    </div>                    
-                  </div>
-                  <div class="custom-card-font">
-                    案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div class="custom-card mb-3">
-          
-                <div class="row justify-content-around">
-                  <div class="col-sm-3 col-md-3 col-lg-2 col-xl-2">
-                    <div class="avatar  avatar-4xl">
-                      <img class="rounded-circle" src="{% static 'web/assets/img/team/1.jpg' %}" alt="" />
-                    </div>
-                  </div>
-
-                  <div class="col-sm-7 col-md-6 col-lg-6 col-xl-6">
-                    
-                    <p class="custom-card-font mt-2">
-                      照顧者：林先生3 <br>
-                      日期：2022/04/01 ~ 2022/04/10 <br> 
-                      時間類型：每週預定 
-                    </p>
-                  </div>
-
-                  <div class="col-sm-2 col-md-3 col-lg-4 col-xl-2 align-self-start">
-                    <p class="purple-border-tag">醫院看護</p>
-                  </div>
-                </div>
-
-                <hr>
-
-                <div class="row">
-                   
-                  <div class="col-10 col-sm-9 col-md-8 col-lg-8 col-xl-7">
-                    <span class="custom-card-font">照顧者給我幾顆星：</span>
-                    <div >
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                      <span class="fas fa-star"  style="color: yellow;"></span>
-                    </div>
-                    <div class="custom-card-font mt-2 mb-1">
-                      照顧者給我的評價：
-                    </div>                    
-                  </div>
-                  <div class="custom-card-font">
-                    案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好
-                  </div>
-
-                </div>
-
-              </div>
-
-              
+              {% endfor %}     
 
             </div>
           </div>

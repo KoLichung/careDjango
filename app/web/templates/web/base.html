@@ -133,7 +133,7 @@
               <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser" >
                 <div class="bg-white dark__bg-1000 rounded-2 py-2 " >
         
-                  <span class="dropdown-userName carer-name">哈囉，林瑜婷!</span>
+                  <span class="dropdown-userName carer-name">哈囉，{{request.user.name}}!</span>
                   <div class="dropdown-divider"></div>
         
                   <span class="my-dropdown-title">我的服務</span>
@@ -151,7 +151,7 @@
                   <a class="dropdown-item" href="{% url 'my_reviews' %}"><span class="dropdown-item-font">評價</span></a>
                       
                   <div class="dropdown-divider"></div>
-                  <a href="{% url 'logout' %}?current={{ request.get_full_path  }}" style="vertical-align:center" >
+                  <a href="{% url 'logout' %}" style="vertical-align:center" >
                     <img src="{% static 'web/assets/img/new/logout.png' %}" alt="" style="display:block; margin:auto;height:30px;">
                   </a>
                     
@@ -164,7 +164,7 @@
         {% else %}
         <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
           <li class="nav-item">
-            <a class="nav-link-custom" href="{% url 'login' %}?next={{ request.get_full_path  }}">
+            <a class="nav-link-custom" href="{% url 'login' %}">
               登入/註冊
             </a>
           </li>

@@ -520,13 +520,15 @@ class OrderWeekDay(models.Model):
 class Review(models.Model):
     order = models.ForeignKey(
         Order,
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        related_name='order_reviews'
     )
     case = models.ForeignKey(
         Case,
         on_delete = models.CASCADE,
         null=True,
-        blank=True
+        blank=True,
+        related_name='case_reviews'
     )
     servant = models.ForeignKey(
         User,
@@ -563,6 +565,26 @@ class Review(models.Model):
             return range(4-int(self.servant_rating))
         else:
             return range(5-int(self.servant_rating))
+
+    @property
+    def case_offender_rating_range(self):
+        # return range(6)
+        return range(int(self.case_offender_rating))
+    
+    @property
+    def case_offender_rating_is_half_star(self):
+        if (self.case_offender_rating -int(self.case_offender_rating)) >= 0.5:
+        # 判斷
+            return True
+        else:
+            return False
+
+    @property
+    def case_offender_rating_empty_star_range(self):
+        if (self.case_offender_rating -int(self.case_offender_rating)) >= 0.5:
+            return range(4-int(self.case_offender_rating))
+        else:
+            return range(5-int(self.case_offender_rating))
     
 class PayInfo(models.Model):
     order = models.ForeignKey(

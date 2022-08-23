@@ -225,8 +225,6 @@ def ajax_cal_rate(request):
                         return JsonResponse({'data':data})
 
 def login(request):
-    redirect_to = request.GET.get('next', '')
-    print(redirect_to)
     if request.method == 'POST' and 'login'in request.POST :
         phone = request.POST['phone']
         password = request.POST['password']
@@ -235,10 +233,10 @@ def login(request):
         if user is not None:
             auth.login(request, user)
             print('is_user')
-            return HttpResponseRedirect(redirect_to) 
+            return redirect('index')
         else:
             print('not user')
-            return redirect('/web/')
+            return redirect('login')
     elif request.method == 'POST' and 'line_login' in request.POST:
         auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
         # call_back = 'http://202.182.105.11/' + redirect_to
@@ -257,7 +255,7 @@ def login(request):
         return redirect(login_url) 
 
 
-    return render(request, 'web/login.html',{'next':redirect_to})
+    return render(request, 'web/login.html')
 
 
 def register_line(request):
@@ -275,14 +273,19 @@ def register_line(request):
             print(request.user)
             return redirect('index')
         else:
-            print('not user')
-            return redirect_params('register_line',{'line_id':line_id})
+            user = User()
+            user.name = userName
+            user.phone = phone
+            user.line_id = line_id
+            user.save()
+            auth.login(request, user)
+            print(request.user)
+            return redirect('index')
 
     
     return render(request, 'web/register_line.html')
 
 def login_line(request):
-    redirect_to = request.GET.get('next', '')
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     url = "https://api.line.me/oauth2/v2.1/token"
     code = request.GET.get('code')
@@ -311,18 +314,17 @@ def login_line(request):
         if user is not None:
             auth.login(request, user)
             print(request.user)
-            return HttpResponseRedirect(redirect_to) 
+            return redirect('index')
         else:
             print('not user')
-            return redirect_params('login',{'next':next})
+            return redirect_params('login')
 
 def register_phone(request):
     return render(request, 'web/register_phone.html')
 
 def logout(request):
-    redirect_to = request.GET.get('current', '')
     auth.logout(request)
-    return HttpResponseRedirect(redirect_to) 
+    return redirect('index')
 
 def search_list(request):
     
@@ -705,7 +707,11 @@ def my_edit_profile(request):
     return render(request, 'web/my/edit_profile.html')
 
 def my_reviews(request):
-    return render(request, 'web/my/reviews.html')
+    user = request.user
+    not_rated_orders = Order.objects.filter(user=user,order_reviews__servant_rating__lt=1)
+    my_rating_reviews = Review.objects.filter(case__user=user,servant_rating__gte=1)
+    my_reviews = Review.objects.filter(case__user=user,case_offender_rating__gte=1)
+    return render(request, 'web/my/reviews.html',{'user':user,'not_rated_orders':not_rated_orders,'my_rating_reviews':my_rating_reviews,'my_reviews':my_reviews})
 
 def my_write_review(request):
     return render(request, 'web/my/write_review.html')
