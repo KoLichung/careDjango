@@ -226,6 +226,7 @@ def ajax_cal_rate(request):
 
 def login(request):
     redirect_to = request.GET.get('next', '')
+    print(redirect_to)
     if request.method == 'POST' and 'login'in request.POST :
         phone = request.POST['phone']
         password = request.POST['password']
@@ -526,7 +527,8 @@ def search_carer_detail(request):
         defaultStartEndDate = start_date_str + ' to ' + end_date_str
     else:
         defaultStartEndDate = ''
-    weekday_list = weekdays.split(',')
+    if weekdays != None:
+        weekday_list = weekdays.split(',')
     
     servant = User.objects.get(phone=servant_phone)
         

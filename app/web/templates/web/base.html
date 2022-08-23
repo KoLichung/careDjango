@@ -151,7 +151,7 @@
                   <a class="dropdown-item" href="{% url 'my_reviews' %}"><span class="dropdown-item-font">評價</span></a>
                       
                   <div class="dropdown-divider"></div>
-                  <a href="{% url 'logout' %}?current={{ request.path }}" style="vertical-align:center" >
+                  <a href="{% url 'logout' %}?current={{ request.get_full_path  }}" style="vertical-align:center" >
                     <img src="{% static 'web/assets/img/new/logout.png' %}" alt="" style="display:block; margin:auto;height:30px;">
                   </a>
                     
@@ -164,7 +164,7 @@
         {% else %}
         <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
           <li class="nav-item">
-            <a class="nav-link-custom" href="{% url 'login' %}?next={{ request.path }}">
+            <a class="nav-link-custom" href="{% url 'login' %}?next={{ request.get_full_path  }}">
               登入/註冊
             </a>
           </li>
