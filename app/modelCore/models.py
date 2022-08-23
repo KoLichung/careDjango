@@ -209,7 +209,7 @@ class UserServiceShip(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
-        related_name='services',
+        related_name='ship_services',
     )
     service = models.ForeignKey(
         Service,

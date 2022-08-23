@@ -33,21 +33,19 @@
 
                       
                         <form method="post" enctype="multipart/form-data">{% csrf_token %}
-                        <div class="input-box mb-3">
-                          <span class="material-icons">person_outline</span>
-                          <input type="text" name="userName" placeholder="使用者姓名" />
-                        </div>
+                          <div class="input-box mb-3">
+                            <span class="material-icons">person_outline</span>
+                            <input type="text" name="userName" placeholder="使用者姓名" />
+                          </div>
 
-                        <div class="input-box mb-3">
-                          <span class="material-icons md-18">phone_iphone</span>
-                          <input type="tel" name="phone" placeholder="電話號碼" />
-                        </div>
+                          <div class="input-box mb-3">
+                            <span class="material-icons md-18">phone_iphone</span>
+                            <input type="tel" name="phone" placeholder="電話號碼" />
+                          </div>
 
-                        <button class="full-purple-button mt-3" type="submit" >
-                        <!-- <button class="full-purple-button mt-3" onclick="handleLineLoginButtonClick()"> -->
-                          
-                          <span class="mt-2">註冊</span>
-                        </button>   
+                          <button class="full-purple-button mt-3" type="submit" >                
+                            <span class="mt-2">註冊</span>
+                          </button>   
                         </form>
                       
 
@@ -67,28 +65,6 @@
 
     </div>
   </div>
-  <script>
-    function handleLineLoginButtonClick() {
-      
-      let URL = 'https://access.line.me/oauth2/v2.1/authorize?';
-      URL += 'response_type=code';
-      
-      //channel id
-      URL += '&client_id=1657316694'; 
-
-      // 與Line Developer Channel設定的一樣就好，驗證完就會經過瀏覽器轉址回來
-      URL += '&redirect_uri=http://127.0.0.1:8000/';
-
-      // 狀態碼是會從client呼叫端帶到驗證端，再從驗證端帶回
-      // 因此應該可以作為一個亂數卡控確保是自   已丟出去的交易碼
-      URL += '&state=abcde';   
-     
-      //要求存取的範圍
-      URL += '&scope=openid%20profile';
-      console.log(URL)
-      window.location.href = URL;
-    }
-  </script>
 </main>
 
 {% endblock %}

@@ -52,7 +52,7 @@
 
             <p class="small-section-title-purple mt-5">服務項目</p>
             <div class="case-info-font mb-5 text-indent-28px">
-              {% for userservice in servant.services.all %}
+              {% for userservice in servant.ship_services.all %}
               <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{userservice.service}}</p>
               {% endfor %}
             </div>

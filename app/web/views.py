@@ -226,7 +226,7 @@ def ajax_cal_rate(request):
 
 def login(request):
     redirect_to = request.GET.get('next', '')
-    if request.method == 'POST':
+    if request.method == 'POST' and 'login'in request.POST :
         phone = request.POST['phone']
         password = request.POST['password']
         print(phone,password)
@@ -238,29 +238,46 @@ def login(request):
         else:
             print('not user')
             return redirect('/web/')
+    elif request.method == 'POST' and 'line_login' in request.POST:
+        auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
+        # call_back = 'http://202.182.105.11/' + redirect_to
+        call_back = 'http://127.0.0.1:8000/web/login_line?next=/web/index'
 
-    return render(request, 'web/login.html',{'next':redirect_to})
-
-
-def register_line(request):
-    redirect_to = request.GET.get('next', '')
-    auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
-    # call_back = 'http://202.182.105.11/' + redirect_to
-    call_back = 'http://127.0.0.1:8000/web/login_line?next=/web/index'
-
-    print(call_back)
-    data = {
-        'response_type': 'code',
-        'client_id': '1657316694',
-        'redirect_uri': call_back,
-        'state': 'abcde',
-    }
-    if request.method == 'POST':
+        print(call_back)
+        data = {
+            'response_type': 'code',
+            'client_id': '1657316694',
+            'redirect_uri': call_back,
+            'state': 'abcde',
+        }
         query_str = urllib.parse.urlencode(data) + '&scope=profile%20openid%20email'
         login_url = auth_url + query_str
         print(login_url)
         return redirect(login_url) 
 
+
+    return render(request, 'web/login.html',{'next':redirect_to})
+
+
+def register_line(request):
+    line_id = request.GET.get('line_id', '')
+    print(line_id)
+    if request.method == 'POST' and line_id != None :
+        userName = request.POST.get('userName')
+        phone = request.POST.get('phone')
+        
+        if User.objects.filter(phone=phone,name=userName).exists() != False:
+            user = User.objects.get(name=userName,phone=phone)
+            user.line_id = line_id
+            user.save()
+            auth.login(request, user)
+            print(request.user)
+            return redirect('index')
+        else:
+            print('not user')
+            return redirect_params('register_line',{'line_id':line_id})
+
+    
     return render(request, 'web/register_line.html')
 
 def login_line(request):
@@ -277,18 +294,26 @@ def login_line(request):
     }
     data = parse.urlencode(FormData)
     resp = requests.post(url, headers=headers, data=data)
-    print(resp.text)
     id_token = json.loads(resp.text)['id_token']
-    print(id_token)
     postdata = {
         'id_token': id_token,
         'client_id': '1657316694',
     }
     get_info_url = 'https://api.line.me/oauth2/v2.1/verify'
     get_info_resp = requests.post(get_info_url, headers=headers, data=postdata)
-    print(json.loads(get_info_resp.text))
-    
-    return HttpResponseRedirect(redirect_to) 
+    line_id = json.loads(get_info_resp.text)['sub']
+    if User.objects.filter(line_id=line_id).exists() != True:
+        print('line is not register')
+        return redirect_params('register_line',{'line_id':line_id})
+    else:
+        user = User.objects.get(line_id=line_id)
+        if user is not None:
+            auth.login(request, user)
+            print(request.user)
+            return HttpResponseRedirect(redirect_to) 
+        else:
+            print('not user')
+            return redirect_params('login',{'next':next})
 
 def register_phone(request):
     return render(request, 'web/register_phone.html')
