@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 urlpatterns = [
-    path('all_cases', views.all_cases, name = 'all_cases'), 
+    path('', views.all_cases, name = 'all_cases'), 
     path('all_members', views.all_members, name = 'all_members'), 
     path('bills', views.bills, name = 'bills'), 
     path('case_detail', views.case_detail, name = 'case_detail'), 

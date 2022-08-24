@@ -152,6 +152,11 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220824
+1.評價頁
+2.需求案件列表
+3.需求案件詳細
+
 20220823
 1.relative_name 修正
 Order case => "case_orders"
