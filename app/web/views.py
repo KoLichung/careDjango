@@ -730,6 +730,7 @@ def my_write_review(request):
     review = Review.objects.get(order=order)
     print(review)
     if request.method == 'POST' and 'post'in request.POST:
+        s
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
         review.servant_comment = comment

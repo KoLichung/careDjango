@@ -15,7 +15,7 @@
               <p class="">{{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}}  |  {% if order.case.is_continuous_time == True %}連續時間{% else %}每週預定{% endif %}  |  {% if order.case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</p>
               
               <div class="">我給照顧者幾顆星：</div>
-              <div class="my-3" data-rater='{"starSize":32,"step":0.5}' id="rating" name="rating" ></div>
+              <div id="rater" class="my-3" data-rater='{"starSize":32,"step":0.5}'></div>
               
               <p>請輸入給照顧者的評價(150字以內)：</p>
               <textarea class="custom-form-control" name="comment" rows="3"></textarea>
@@ -41,13 +41,17 @@
         </div>
       </div>
       </form>
-      <script type="text/javascript" >
-          document.getElementById('rating').addEventListener('click',function(){
-          rate = document.getElementById('rating').value;
-          document.getElementsByName('rating').value = rate
-          console.log(rate)
-        })
 
+      <script type="text/javascript" >
+        var rater = document.querySelector("#rater");
+        console.log(rater);
+        var myRating = window.raterJs( {
+            element:document.querySelector("#rater"),
+            rateCallback:function rateCallback(rating, done) {
+              this.setRating(rating); 
+              done(); 
+            }
+        });
       </script>
 
       
