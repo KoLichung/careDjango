@@ -1,4 +1,4 @@
-{% extends 'web/base_logged_in.html' %} {% block content %}
+{% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
 <main class="main bg-white h-100 " id="top" >
@@ -13,26 +13,26 @@
 
       <p class="h5 mb-5 text-center">請輸入您的收款帳戶資訊</p>
 
-      <form>
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
         <div class="mb-3">
               <label class="h6" for="bankNameCode">金融機構代碼</label>
               <div class="input-box mb-3">
-                <input type="text" id="bankNameCode" name="bank_name"/>
+                <input type="text" id="bankNameCode" name="bankNameCode"/>
               </div>
         </div>
 
         <div class="mb-3">
               <label class="h6" for="bankBranchCode">金融機構分行代碼</label>
               <div class="input-box mb-3">
-                <input type="text" id="bankBranchCode" name="bank_name"/>
+                <input type="text" id="bankBranchCode" name="bankBranchCode"/>
               </div>
         </div>
 
         <div class="mb-3">
               <label class="h6" for="bankAccountNum">金融機構帳戶帳號</label>
               <div class="input-box mb-3">
-                <input type="text" id="bankAccountNum" name="bank_name"/>
+                <input type="text" id="bankAccountNum" name="bankAccountNum"/>
               </div>
         </div>
 

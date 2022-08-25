@@ -254,6 +254,7 @@ def fakeData():
     case.care_type = 'home'
     case.name = '王大明'
     case.gender = 'M'
+    case.state = 'unComplete'
     case.age = 70
     case.weight = 67
     case.disease_remark = 'Test'
@@ -274,6 +275,7 @@ def fakeData():
     case.care_type = 'hospital'
     case.name = '陳小芬'
     case.gender = 'F'
+    case.state = 'Complete'
     case.age = 72
     case.weight = 56
     case.is_open_for_search = True
@@ -416,7 +418,7 @@ def fakeData():
 
     for order in Order.objects.all():
         order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
-        order.platform_money = order.total_money * (order.platform_percent/100)
+        order.platform_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * (order.platform_percent/100)
         order.save()
 
     ChatRoom.objects.create(update_at=datetime.datetime.now())

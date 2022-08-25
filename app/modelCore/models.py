@@ -328,6 +328,20 @@ class Case(models.Model):
     ]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,default=MALE)
 
+    UNTAKEN = 'unTaken'
+    UNCOMPLETE = 'unComplete'
+    COMPLETE = 'Complete'
+    CANCELED = 'Canceled'
+    ENDEARLY = 'endEarly'
+    STATE_CHOICES = [
+        (UNTAKEN, '未承接'),
+        (UNCOMPLETE, '未完成'),
+        (COMPLETE,'已完成'),
+        (CANCELED, '取消'),
+        (ENDEARLY,'提早結束')
+    ]
+    state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNTAKEN)
+
     age = models.IntegerField(default=0, blank=True, null=True)
     weight = models.IntegerField(default=0, blank=True, null=True)
     
