@@ -683,10 +683,21 @@ def my_bank_account(request):
     return render(request, 'web/my/bank_account.html')
  
 def my_bookings(request):
-    return render(request, 'web/my/bookings.html')
+    user = request.user
+    orders = Order.objects.filter(user=user)
+    return render(request, 'web/my/bookings.html',{'orders':orders,'user':user})
 
 def my_booking_detail(request):
-    return render(request, 'web/my/booking_detail.html')
+    order_id = request.GET.get('order')
+    order = Order.objects.get(id=order_id)
+    review = Review.objects.get(order=order)
+    work_hours = round(order.work_hours)
+    if request.method == 'POST':
+        comment = request.POST.get('comment')
+        review.servant_comment = comment
+        review.save()
+        return render(request, 'web/my/booking_detail.html',{'order':order,'review':review,'work_hours':work_hours})
+    return render(request, 'web/my/booking_detail.html',{'order':order,'review':review,'work_hours':work_hours})
 
 def my_cases(request):
     return render(request, 'web/my/cases.html')
@@ -714,7 +725,19 @@ def my_reviews(request):
     return render(request, 'web/my/reviews.html',{'user':user,'not_rated_orders':not_rated_orders,'my_rating_reviews':my_rating_reviews,'my_reviews':my_reviews})
 
 def my_write_review(request):
-    return render(request, 'web/my/write_review.html')
+    order_id = request.GET.get('order')
+    order = Order.objects.get(id=order_id)
+    review = Review.objects.get(order=order)
+    print(review)
+    if request.method == 'POST' and 'post'in request.POST:
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        review.servant_comment = comment
+        review.save()
+        return redirect_params('my_booking_detail',{'order':order_id})
+    elif request.method == 'POST' and 'back'in request.POST:
+        return redirect('my_reviews')
+    return render(request, 'web/my/write_review.html',{'order':order})
 
 def my_notification_setting(request):
     return render(request, 'web/my/notification_setting.html')

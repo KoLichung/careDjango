@@ -43,7 +43,7 @@
                     <div class="d-none d-md-block col-md-5 col-lg-5 col-xl-4 align-self-center text-center">
                       <div class="highlight-text">{{order.servant.name}}還在等您的評價！</div>
                       <div class="mt-2">
-                        <a href="{% url 'my_write_review' %}">
+                        <a href="{% url 'my_write_review' %}?order={{order.id}}">
                           <button class="small-green-button">
                             <span class="fas fa-edit"></span>
                             撰寫評價

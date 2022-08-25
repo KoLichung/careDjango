@@ -467,29 +467,29 @@ def fakeData():
     systemMessage.content = 'SystemTest02'
     systemMessage.save()
 
-    review = Review()
-    review.order = Order.objects.get(id=1)
-    review.case = Case.objects.get(id=1)
-    review.servant = Case.objects.get(id=1).servant
-    review.case_offender_rating = 4.8
-    review.case_offender_comment = 'test'
-    review.case_offender_rating_created_at = timezone.now()
-    review.servant_rating = 4.5
-    review.servant_comment = 'test'
-    review.servant_rating_created_at = timezone.now()
-    review.save()
+    # review = Review()
+    # review.order = Order.objects.get(id=1)
+    # review.case = Case.objects.get(id=1)
+    # review.servant = Case.objects.get(id=1).servant
+    # review.case_offender_rating = 4.8
+    # review.case_offender_comment = 'test'
+    # review.case_offender_rating_created_at = timezone.now()
+    # review.servant_rating = 4.5
+    # review.servant_comment = 'test'
+    # review.servant_rating_created_at = timezone.now()
+    # review.save()
 
-    review = Review()
-    review.order = Order.objects.get(id=2)
-    review.case = Case.objects.get(id=2)
-    review.servant = Case.objects.get(id=2).servant
-    review.case_offender_rating = 4.3
-    review.case_offender_comment = 'test'
-    review.case_offender_rating_created_at = timezone.now()
-    review.servant_rating = 4.2
-    review.servant_comment = 'test'
-    review.servant_rating_created_at = timezone.now()
-    review.save()
+    # review = Review()
+    # review.order = Order.objects.get(id=2)
+    # review.case = Case.objects.get(id=2)
+    # review.servant = Case.objects.get(id=2).servant
+    # review.case_offender_rating = 4.3
+    # review.case_offender_comment = 'test'
+    # review.case_offender_rating_created_at = timezone.now()
+    # review.servant_rating = 4.2
+    # review.servant_comment = 'test'
+    # review.servant_rating_created_at = timezone.now()
+    # review.save()
 
 
 def days_count(weekdays: list, start: date, end: date):

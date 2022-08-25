@@ -492,7 +492,7 @@ class OrderIncreaseService(models.Model):
         on_delete = models.CASCADE,
         related_name='order_increase_services',
     )
-    service = service = models.ForeignKey(
+    service = models.ForeignKey(
         Service,
         on_delete=models.RESTRICT
     )
