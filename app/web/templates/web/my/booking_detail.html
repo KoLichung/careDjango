@@ -18,7 +18,7 @@
 
         <p class="small-section-title-purple mt-5">被照顧者資訊</p>
         <div class="case-info-font">
-                  <p>性別：{{order.case.gender}}</p>
+                  <p>性別：{% if order.case.gender == 'F' %}女{% else %}男{% endif %}</p>
                   <p>體重：{{order.case.weight}}</p>
                   <p>年齡：{{order.case.age}}</p>
                   <p>疾病：{% for casedisease in order.case.case_diseases.all %} {{casedisease.disease}} {% endfor %}</p>
