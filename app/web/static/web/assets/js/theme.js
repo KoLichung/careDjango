@@ -3843,21 +3843,19 @@ var quantityInit = function quantityInit() {
 
 
 var ratingInit = function ratingInit() {
-  var raters = document.querySelectorAll('[data-rater]');
-  raters.forEach(function (rater) {
-    var options = _objectSpread({
-      reverse: utils.getItemFromStore('isRTL'),
+  var starRating1 = raterJs( {
+      reverse:utils.getItemFromStore('isRTL'),
       starSize: 32,
       step: 0.5,
-      element: rater,
-      rateCallback: function rateCallback(rating, done) {
-        this.setRating(rating);
-        done();
+      element:document.querySelector("#myRater"), 
+      rateCallback:function rateCallback(rating, done) {
+          this.setRating(rating); 
+          console.log(rating);
+          var input = document.querySelector('#myInput')
+          input.value = rating;
+          done(); 
       }
-    }, utils.getData(rater, 'rater'));
-
-    return window.raterJs(options);
-  });
+  }); 
 };
 /* -------------------------------------------------------------------------- */
 
