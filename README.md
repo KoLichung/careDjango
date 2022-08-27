@@ -143,6 +143,13 @@ http://127.0.0.1:8000/web/my_edit_profile
 我的文件
 http://127.0.0.1:8000/web/my_files
 
+看護證明
+http://127.0.0.1:8000/web/my_care_certificate?case=1
+
+照護員推薦
+http://127.0.0.1:8000/web/recommend_carer
+
+
 !暫定, 未處理：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播

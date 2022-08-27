@@ -732,7 +732,13 @@ def my_case_detail(request):
     return render(request, 'web/my/case_detail.html',{'case':case,'order':order,'work_hours':work_hours,'review':review})
 
 def my_care_certificate(request):
-    return render(request, 'web/my/care_certificate.html')
+    servant = request.user
+    case_id = request.GET.get('case')
+    case = Case.objects.get(id=case_id)
+    order = Order.objects.get(case=case)
+    total_fee = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum']))
+    print(total_fee)
+    return render(request, 'web/my/care_certificate.html',{'case':case,'order':order,'total_fee':total_fee})
 
 def my_files(request):
     user = request.user
@@ -844,7 +850,45 @@ def request_form_confirm(request):
     return render(request, 'web/request_form/confirm.html')
     
 def recommend_carer(request):
-    return render(request, 'web/recommend_carer.html')
+    servants = User.objects.filter(is_servant=True)
+    citys = City.objects.all()
+    counties = County.objects.all()
+    city_id = ''
+    care_type = ''
+    county_name = ''
+    if request.method == 'POST':
+        if request.POST.get('county') != None:
+            county_name = request.POST.get('county')
+            
+        if request.POST.get('city') != None:
+            city_id = request.POST.get("city")
+        care_type = request.POST.get('care_type')
+
+        
+        if county_name != None:
+            if county_name != '全區':
+                servants = servants.filter(user_locations__county=County.objects.get(name=county_name))
+            else:
+                servants = servants.filter(user_locations__city=City.objects.get(id=city_id))
+        if care_type !='':
+            if care_type == 'home':
+                servants = servants.filter(is_home=True)
+            elif care_type == 'hospital':
+                servants = servants.filter(is_hospital=True)
+    if city_id == '':
+        city = ''
+    else:
+        city = City.objects.get(id=city_id)
+    if county_name == '':
+        county_name = ''
+    else:
+        if county_name != '全區':
+            county_name = County.objects.get(city=city_id,name=county_name)
+            counties = counties.filter(city=City.objects.get(id=city_id))
+            
+        else:
+            county_name = '全區'
+    return render(request, 'web/recommend_carer.html',{'servants':servants,'care_type':care_type, 'cityName':city,'citys':citys,'countyName':county_name,'counties':counties})
 
 def redirect_params(url, params=None):
     response = redirect(url)
