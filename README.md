@@ -125,6 +125,24 @@ http://127.0.0.1:8000/web/search_carer_detail?servant=0985463816
 register_line
 http://202.182.105.11/web/register_line?next=/web/index
 
+收款方式
+http://127.0.0.1:8000/web/my_bank_account
+
+我的接案
+http://127.0.0.1:8000/web/my_cases
+
+我接的案詳細
+http://127.0.0.1:8000/web/my_case_detail?case=1
+
+我的基本資料
+http://127.0.0.1:8000/web/my_profile
+
+修改基本資料
+http://127.0.0.1:8000/web/my_edit_profile
+
+我的文件
+http://127.0.0.1:8000/web/my_files
+
 !暫定, 未處理：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播

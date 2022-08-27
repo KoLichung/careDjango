@@ -1,4 +1,4 @@
-{% extends 'web/base_logged_in.html' %} {% block content %}
+{% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
 <main class="main bg-white h-100 " id="top" >
@@ -8,7 +8,12 @@
 
   <div class="text-center">
     <div class="img-fluid avatar avatar-5xl ">
+      {% if user.image.url != None %}
+            <img src="{{ user.image.url }}" class="customImageSize rounded mb-2">
+      {% else %}
       <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
+      {% endif %}
+      
     </div>
   </div>
 
@@ -16,14 +21,14 @@
        
         <div class="my-auto col-11 col-sm-6 col-md-5 col-xl-3 mx-auto text-center ">
           
-          <p class="text-center news-title">林瑜婷</p>
+          <p class="text-center news-title">{{user.name}}</p>
 
           <p class="custom-card-font div-centered" style="line-height: 40px;">
-            性別：尚未提供 <br>
-            手機號碼：0912345678 (已透過簡訊驗證) <br>
-            地址：尚未提供 <br>
-            電子郵件：abc@gmail.com <br>
-            綁定 LINE 帳號：您已綁定 LINE 帳號 <br>
+            性別：{% if user.gender == 'M'%}男{% else %}女{% endif %} <br>
+            手機號碼：{{user.phone}}(已透過簡訊驗證) <br>
+            地址：{% if user.address%}{{user.address}}{% else %}尚未提供{% endif %} <br>
+            電子郵件：{{user.email}} <br>
+            綁定 LINE 帳號：{% if user.line_id %}您已綁定 LINE 帳號{% else %}尚未綁定LINE帳號{% endif %} <br>
           </p>
           
           <div class="row">

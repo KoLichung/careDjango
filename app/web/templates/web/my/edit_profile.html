@@ -1,4 +1,4 @@
-{% extends 'web/base_logged_in.html' %} {% block content %}
+{% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
 <main class="main bg-white " id="top" >
@@ -8,116 +8,129 @@
 
       <div class="text-center">
         <div class="img-fluid avatar avatar-5xl ">
-          <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
+          {% if user.image.url != None %}
+            <img src="{{ user.image.url }}" class="customImageSize rounded mb-2">
+          {% else %}
+            <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
+          {% endif %}
+          <!-- <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" /> -->
         </div>
 
         <div>
-          <button class="small-green-button mt-3">
-            <span class="fas fa-image"></span>
-            上傳頭像
-          </button>
+          <form method="post" enctype="multipart/form-data">{% csrf_token %}
+            <button class="small-green-button mt-3" type="submit" name="image">
+              <span class="fas fa-image"></span>
+              上傳頭像
+            </button><br><br>
+            <input type="file" name="upload" accept="image/*">
+          </br></br>
+          </form>
+          
         </div>
       </div>
 
-      
-      <div class="row pb-5">
-       
-        <div class="my-auto col-11 col-sm-6 col-md-5 col-xl-5 mx-auto">
-
-          <div class="row mx-auto mt-3 align-items-center">
-
-            <div class="col-3 custom-card-font">
-              <label for="user_name">姓名：</label>  
-            </div>
-            <div class="col-9">
-              <div class="input-box ">
-                <input id="user_name" type="text" name="user_name" placeholder="">
-              </div>
-            </div>
-
-          </div>
-
-          <div class="row mx-auto mt-3 align-items-center">
-
-            <div class="col-3 custom-card-font">
-              <label for="user_gender">性別：</label>  
-            </div>
-            <div class="col-9 my-2 " style="display: flex;">
-              <label class="custom-radio-parent">男
-                <input type="radio" checked="checked" name="gender">
-                <span class="checkmark"></span>
-              </label>
-              <label class="custom-radio-parent">女
-                <input type="radio" name="gender">
-                <span class="checkmark"></span>
-              </label>
-            </div>
-
-          </div>
-
-          <div class="row mx-auto mt-3 align-items-center">
-
-            <div class="col-3 custom-card-font">
-              <label for="user_name">手機號碼：</label>  
-            </div>
-            <div class="col-9">
-              <div class="input-box ">
-                <input id="name" type="text" name="name" placeholder="" />
-              </div>
-            </div>
-
-          </div>
-
-          <div class="row mx-auto mt-3 align-items-center">
-
-            <div class="col-3 custom-card-font">
-              <label for="user_name">電子郵件：</label>  
-            </div>
-            <div class="col-9">
-              <div class="input-box ">
-                <input id="user_name" type="text" name="user_name" placeholder="">
-              </div>
-            </div>
-
-          </div>
-
-          <div class="row mx-auto mt-3 align-items-center">
-
-            <div class="col-3 custom-card-font">
-              <label for="user_name">綁定 LINE：</label>  
-            </div>
-            <div class="col-9">
-              <button class="line-login-button-sm">
-                <span class="fab fa-line"></span>
-                &ensp;綁定帳號
-              </button>
-            </div>
-
-          </div>     
-          
-          <div class="row mt-3">
-            <div class="col-5 mx-auto">
-              <a href="{% url 'my_profile' %}">
-                <button class="full-purple-button mt-5">
-                  取消
-                </button>
-              </a>
-              
-            </div>
-            <div class="col-5 mx-auto">
-              <button class="full-purple-button mt-5" onclick="location.href='/my_service_setting.html'">
-                儲存
-              </button>
-            </div>
-
-          </div>
-          
-          
-          
-        </div>
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="row pb-5">
         
-      </div>
+          <div class="my-auto col-11 col-sm-6 col-md-5 col-xl-5 mx-auto">
 
+            <div class="row mx-auto mt-3 align-items-center">
+
+              <div class="col-3 custom-card-font">
+                <label for="user_name">姓名：</label>  
+              </div>
+              <div class="col-9">
+                <div class="input-box ">
+                  <input id="user_name" type="text" name="user_name" value="{{user.name}}">
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row mx-auto mt-3 align-items-center">
+
+              <div class="col-3 custom-card-font">
+                <label for="user_gender">性別：</label>  
+              </div>
+              <div class="col-9 my-2 " style="display: flex;">
+                <label class="custom-radio-parent">男
+                  <input type="radio"  name="gender" value="M" {% if user.gender == 'M' %}checked="checked"{% endif %}>
+                  <span class="checkmark"></span>
+                </label>
+                <label class="custom-radio-parent">女
+                  <input type="radio" name="gender" value="F" {% if user.gender == 'F' %}checked="checked"{% endif %}>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+            </div>
+
+            <div class="row mx-auto mt-3 align-items-center">
+
+              <div class="col-3 custom-card-font">
+                <label for="user_phone">手機號碼：</label>  
+              </div>
+              <div class="col-9">
+                <div class="input-box ">
+                  <input id="phone" type="text" name="phone" value="{{user.phone}}" />
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row mx-auto mt-3 align-items-center">
+
+              <div class="col-3 custom-card-font">
+                <label for="user_email">電子郵件：</label>  
+              </div>
+              <div class="col-9">
+                <div class="input-box ">
+                  <input id="user_email" type="text" name="email" value="{{user.email}}">
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row mx-auto mt-3 align-items-center">
+              
+              <div class="col-3 custom-card-font">
+                <label for="user_name">綁定 LINE：</label>  
+              </div>
+              {% if user.line_id %}
+                已綁定
+              {% else %}
+              <div class="col-9">
+                <button class="line-login-button-sm" type="submit" name="line_bind">
+                  <span class="fab fa-line"></span>
+                  &ensp;綁定帳號
+                </button>
+              </div>
+              {% endif %}
+            </div>     
+            
+            <div class="row mt-3">
+              <div class="col-5 mx-auto">
+                <a href="{% url 'my_profile' %}">
+                  <button class="full-purple-button mt-5">
+                    取消
+                  </button>
+                </a>
+                
+              </div>
+              <div class="col-5 mx-auto">
+                <button class="full-purple-button mt-5" type="submit" name="post">
+                  儲存
+                </button>
+              </div>
+
+            </div>
+            
+            
+            
+          </div>
+          
+        </div>
+      </form>
 
       
 

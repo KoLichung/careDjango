@@ -1,5 +1,6 @@
 from django.shortcuts import render ,redirect
 from django.http import HttpResponse ,JsonResponse ,HttpResponseRedirect 
+from django.core.files.storage import FileSystemStorage
 
 import urllib
 from datetime import date ,timedelta
@@ -10,10 +11,11 @@ import requests
 from time import time
 import logging
 from django.contrib import auth
+from modelCore.forms import *
 from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service
-from modelCore.models import UserLicenseShipImage ,License ,Case
+from modelCore.models import UserLicenseShipImage ,License ,Case ,OrderIncreaseService
 # Create your views here.
 
 logger = logging.getLogger(__file__)
@@ -680,6 +682,16 @@ def my_service_setting(request):
     return render(request, 'web/my/service_setting.html')
 
 def my_bank_account(request):
+    
+    user = request.user
+    if request.method == 'POST':
+        bankNameCode = request.POST.get('bankNameCode')
+        bankBranchCode = request.POST.get('bankBranchCode')
+        bankAccountNum = request.POST.get('bankAccountNum')
+        user.ATMInfoBankCode = bankNameCode
+        user.ATMInfoBranchBankCode = bankBranchCode
+        user.ATMInfoAccount = bankAccountNum
+        user.save()
     return render(request, 'web/my/bank_account.html')
  
 def my_bookings(request):
@@ -700,22 +712,98 @@ def my_booking_detail(request):
     return render(request, 'web/my/booking_detail.html',{'order':order,'review':review,'work_hours':work_hours})
 
 def my_cases(request):
-    return render(request, 'web/my/cases.html')
+    servant = request.user
+    cases = Case.objects.filter(servant=servant)
+    review = Review.objects.get(servant=servant)
+    return render(request, 'web/my/cases.html',{'servant':servant,'cases':cases,'review':review})
 
 def my_case_detail(request):
-    return render(request, 'web/my/case_detail.html')
+    case_id = request.GET.get('case')
+    case = Case.objects.get(id=case_id)
+    order = Order.objects.get(case=case)
+    work_hours = round(order.work_hours)
+    review = Review.objects.get(case=case)
+    print(OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])
+    if request.method == 'POST':
+        comment = request.POST.get('comment')
+        review.case_offender_comment = comment
+        review.save()
+        return render(request, 'web/my/case_detail.html',{'case':case,'order':order,'work_hours':work_hours,'review':review})
+    return render(request, 'web/my/case_detail.html',{'case':case,'order':order,'work_hours':work_hours,'review':review})
 
 def my_care_certificate(request):
     return render(request, 'web/my/care_certificate.html')
 
 def my_files(request):
+    user = request.user
+    if request.method == 'POST'  and 'ID_front_submit' in request.POST:
+        ID_card_front = request.FILES['ID_card_front']
+        fss = FileSystemStorage()
+        file = fss.save(ID_card_front.name, ID_card_front)
+        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=1)).exists() != False:
+            UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1)).image = file
+        else:
+            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=1),image=file)
+    elif request.method == 'POST'  and 'ID_back_submit' in request.POST:
+        ID_card_back = request.FILES['ID_card_back']
+        fss = FileSystemStorage()
+        file = fss.save(ID_card_back.name, ID_card_back)
+        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=2)).exists() != False:
+            UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=2)).image = file
+        else:
+            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=2),image=file)
+    elif request.method == 'POST'  and 'health_submit' in request.POST:
+        health_card_front = request.FILES['health_card_front']
+        fss = FileSystemStorage()
+        file = fss.save(health_card_front.name, health_card_front)
+        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=3)).exists() != False:
+            UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=3)).image = file
+        else:
+            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=3),image=file)
     return render(request, 'web/my/files.html')
 
 def my_profile(request):
-    return render(request, 'web/my/profile.html')
+    user = request.user
+    return render(request, 'web/my/profile.html',{'user':user})
 
 def my_edit_profile(request):
-    return render(request, 'web/my/edit_profile.html')
+    user = request.user 
+    
+    if request.method == 'POST' and 'image' in request.POST and 'upload' in request.FILES:
+        upload = request.FILES['upload']
+        fss = FileSystemStorage()
+        file = fss.save(upload.name, upload)
+        user.image = file
+        user.save()
+    elif request.method == 'POST' and 'line_bind' in request.POST:
+        auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
+        # call_back = 'http://202.182.105.11/' + redirect_to
+        call_back = 'http://127.0.0.1:8000/web/login_line?next=/web/index'
+
+        print(call_back)
+        data = {
+            'response_type': 'code',
+            'client_id': '1657316694',
+            'redirect_uri': call_back,
+            'state': 'abcde',
+        }
+        query_str = urllib.parse.urlencode(data) + '&scope=profile%20openid%20email'
+        login_url = auth_url + query_str
+        print(login_url)
+        return redirect(login_url) 
+    elif request.method == 'POST' and 'post' in request.POST:
+        print('post2')
+        user_name = request.POST.get('user_name')
+        gender = request.POST.get('gender')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        user.name = user_name
+        user.gender = gender
+        user.phone = phone
+        user.email = email
+        user.save()
+    
+    return render(request, 'web/my/edit_profile.html',{'user':user})
 
 def my_reviews(request):
     user = request.user
@@ -730,7 +818,7 @@ def my_write_review(request):
     review = Review.objects.get(order=order)
     print(review)
     if request.method == 'POST' and 'post'in request.POST:
-        s
+        
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
         review.servant_comment = comment

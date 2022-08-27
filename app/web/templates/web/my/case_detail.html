@@ -1,4 +1,4 @@
-{% extends 'web/base_logged_in.html' %} {% block content %}
+{% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
 <main class="main bg-white" id="top" >
@@ -9,48 +9,31 @@
               
                 <p class="small-section-title-purple mt-2">案件資訊</p>
                 <div class="case-info-font">
-                  <p>委託人：林瑜婷</p>
-                  <p>案件類型：居家照顧</p>
-                  <p>案件地點：桃園市 楊梅區</p>
-                  <p class="text-indent-5" >案件時間：連續時間<br>2022/04/18 晚上 8:00 ~ 2022/04/22 晚上 8:00</p>
+                  <p>委託人：{{case.user.name}}</p>
+                  <p>案件類型：{% if case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</p>
+                  <p>案件地點：{{case.city}} {{case.county}}</p>
+                  <p class="text-indent-5" >案件時間：{% if case.is_continuous_time == True %}連續時間{% else %} 每週預定{% endif %}<br>{{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ({{case.startTimeformat}})~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}})</p>
                 </div>
 
                 <p class="small-section-title-purple mt-5">被照顧者資訊</p>
                 <div class="case-info-font">
-                  <p>性別：男</p>
-                  <p>體重：70</p>
-                  <p>年齡：70</p>
-                  <p>疾病：阿茲海默症</p>
-                  <p>補充說明：補充說明補充說明</p>
-                  <p>身體狀況：使用輔具</p>
-                  <p class="text-indent-5">補充說明：補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明</p>
+                  <p>性別：{% if case.gender == 'F' %}女{% else %}男{% endif %}</p>
+                  <p>體重：{{case.weight}}</p>
+                  <p>年齡：{{case.age}}</p>
+                  <p>疾病：{% for casedisease in case.case_diseases.all %} {{casedisease.disease}} {% endfor %}</p>
+                  <p>補充說明：{{case.disease_remark}}</p>
+                  <p>身體狀況：{% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}</p>
+                  <p class="text-indent-5">補充說明：{{case.conditions_remark}}</p>
                 </div>
 
                 <p class="small-section-title-purple mt-5">需求服務項目</p>
                 <div class="case-info-font mb-5">
+                  {% for caseservice in case.case_services.all %}
                   <p>
                     <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    安全維護 (預防跌倒、陪同散步、推輪椅、心靈陪伴)
+                    {{caseservice.service}}
                   </p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    協助進食</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    協助如廁</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    陪同就醫</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    代購物品</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    簡易備餐</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    身體清潔
-                  </p>
+                  {% endfor %}
                 </div>
 
             </div>
@@ -61,31 +44,35 @@
                   <span class="case-info-font"><strong>基本費用</strong></span>
                   <div class="row case-info-font">
                     <div class="col-8">
-                      $208x72小時
+                      ${% if order.case.care_type == 'home' %}{{order.servant.home_hour_wage}}{% else %}{{order.servant.hospital_hour_wage}}{% endif %}x{{work_hours}}小時
                     </div>
                     <div class="col text-end">
-                      $ 14,976
+                      $ {{order.base_money}}
                     </div>
                   </div>
                   <br>
                   <span class="case-info-font"><strong>加價項目</strong></span>
-                  <div class="row case-info-font">
-                    <div class="col-8">
-                      體重超過70公斤<br>
-                      &emsp;每小時加 20% x 72小時
+                  {% for increase_service in order.order_increase_services.all %}
+                    <div class="row case-info-font">
+                      <div class="col-9">
+                        {{increase_service.service}}
+                        &emsp;每小時加 {{increase_service.increase_percent}}% x {{work_hours}}小時
+                      </div>
+                      <div class="col text-end">
+                        
+                        $ {{increase_service.increase_money}}
+                        <br>
+                      </div>
+                      
                     </div>
-                    <div class="col text-end">
-                      <br>
-                      $ 2,995
-                    </div>
-                  </div>
+                  {% endfor %}
                   <br>
                   <div class="row case-info-font">
                     <div class="col-8">
-                      <strong>扣除平台費用 15%</strong>
+                      <strong>扣除平台費用 {{order.platform_percent}}%</strong>
                     </div>
                     <div class="col text-end">
-                      - $ 3,146
+                      - $ {{order.platform_money}}
                     </div>
                   </div>
                   <hr>
@@ -94,7 +81,7 @@
                       <strong>總計</strong>
                     </div>
                     <div class="col text-end " style="color: red;">
-                      <strong>$ 14,825</strong> 
+                      <strong>$ {{order.total_money}}</strong> 
                     </div>
                   </div>
 
@@ -103,38 +90,47 @@
 
                 <p class="small-section-title-purple mt-4">委託人給我的評價</p>
                 <div class="case-info-font section-bg-grey">
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <p>“ 照顧很用心照顧很用心照顧很用心照顧很用心照顧很心照顧很用心照顧很用心照顧很用心照顧很用心照顧很用心照顧很用心照顧很用心 “</p>
+                  {% for i in review.servant_rating_range %}
+                    <span class="fas fa-star"  style="color: yellow;"></span>
+                  {% endfor %}
+                  {% if review.servant_rating_is_half_star == True %}
+                    <span class="fas fa-star-half-alt" style="color: yellow;" ></span>
+                  {% endif %}
+                  {% for i in review.servant_rating_empty_star_range %}
+                    <i class="fa-regular fa-star" style="color: yellow;"></i>  
+                  {% endfor %}
+                  <p>“ {{review.servant_comment}} “</p>
                   
                 </div>
 
                 <!-- 如果 已給 照顧者評價會顯示這個 -->
                 <p class="small-section-title-purple mt-4">我給委託人的評價</p>
                 <div class="case-info-font section-bg-grey">
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <p>“ 案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好案主人很好</p>
+                  {% for i in review.case_offender_rating_range %}
+                    <span class="fas fa-star"  style="color: yellow;"></span>
+                  {% endfor %}
+                  {% if review.case_offender_rating_is_half_star == True %}
+                    <span class="fas fa-star-half-alt" style="color: yellow;"></span>
+                  {% endif %}
+                  {% for i in review.case_offender_rating_empty_star_range %}
+                    <i class="fa-regular fa-star" style="color: yellow;"></i>  
+                  {% endfor %}
+                  <p>“ {{review.case_offender_comment}}</p>
                 </div>
 
                 <!-- 如果 還沒給 照顧者評價會顯示這個 -->
+                <form method="post" enctype="multipart/form-data">{% csrf_token %}
                 <p class="small-section-title-purple mt-4">我給委託人的評價</p>
                 <div class="case-info-font">
-                  <p>我給照顧者幾顆星：</p>
+                  <p>我給委託人幾顆星：</p>
                   <div class="d-block mb-3" data-rater='{"starSize":32,"step":0.5}'></div>
-                  <p>請輸入給照顧者的評價(150字以內)：</p>
-                  <textarea class="custom-form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                  <p>請輸入給委託人的評價(150字以內)：</p>
+                  <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>
                   <div class="d-flex mb-3 flex-row-reverse">
-                    <button class="small-green-button mt-3 float-right">送出</button>
+                    <button class="small-green-button mt-3 float-right" type="submit">送出</button>
                   </div>
                 </div>
-
+                </form>
             </div>
 
     </div>
