@@ -31,7 +31,7 @@
                     <!-- 照護地點 -->
                     <div class="col-sm-4 my-3">
                       <h5 class=" mb-2">照護地點</h5>
-                      <div class=" btn-group my-2">
+                      <div class=" btn-group mb-2">
                         <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
                           {% for city in citys %}
                             <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
@@ -39,7 +39,7 @@
                           {% endfor %}
                         </select>
                       </div>
-                      <div class=" btn-group my-2">
+                      <div class=" btn-group mb-2">
                         <select class="dropdown-button" id="county_select" name="county" >
                           <option style="text-align: center" value="全區">全區</option>
                           {% for county in counties %}
