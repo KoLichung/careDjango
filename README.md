@@ -177,6 +177,12 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220829
+1.total_money = base_money + service_increase_money 這樣比較直覺
+2.做下載 pdf 檔(如果困難, 這個按鈕可以拿掉) 跟 列印
+3.完成 write_review 的星星部分
+4.完成 我接的案, 我的需求案件的星星部分
+
 20220825
 1.我接的案, 我接的案詳細
 2.個人設定, 修改基本資料, 我的文件上傳

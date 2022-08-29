@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.forms import FloatField
 from django.urls import reverse
 from django.db.models import Avg ,Sum 
+from ckeditor_uploader.fields import RichTextUploadingField
 
 def image_upload_handler(instance,filename):
     fpath = pathlib.Path(filename)
@@ -668,7 +669,7 @@ class SystemMessage(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        )
+    )
     case = models.ForeignKey(
         Case,
         on_delete = models.CASCADE,
@@ -682,7 +683,38 @@ class UserStore(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        )
+    )
     MerchantID = models.CharField(max_length = 255, blank = True, null=True)
     MerchantHashKey = models.CharField(max_length = 255, blank = True, null=True)
     MerchantIvKey = models.CharField(max_length = 255, blank = True, null=True)
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length = 255, blank = True, null=True)
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length = 255, blank = True, null=True)
+    body = RichTextUploadingField(config_name='default')
+
+    STATE_CHOICES = [
+        ('draft', 'draft'),
+        ('publish', 'publish'),
+    ]
+    state = models.CharField(max_length=10, choices=STATE_CHOICES)
+
+    create_date = models.DateField()
+    publish_date = models.DateField()
+
+    def __str__(self):
+        return self.title
+
+class BlogPostCategoryShip(models.Model):
+    post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.RESTRICT,
+        related_name='ship_categories',
+    )
+    category = models.ForeignKey(
+        BlogCategory,
+        on_delete=models.RESTRICT,
+        related_name='ship_posts',
+    )

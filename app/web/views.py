@@ -819,6 +819,7 @@ def my_reviews(request):
     return render(request, 'web/my/reviews.html',{'user':user,'not_rated_orders':not_rated_orders,'my_rating_reviews':my_rating_reviews,'my_reviews':my_reviews})
 
 def my_write_review(request):
+    s
     order_id = request.GET.get('order')
     order = Order.objects.get(id=order_id)
     review = Review.objects.get(order=order)
