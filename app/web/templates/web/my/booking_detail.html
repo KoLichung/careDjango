@@ -108,7 +108,8 @@
         <p class="small-section-title-purple mt-4">我給照顧者的評價</p>
         <div class="case-info-font">
           <p>我給照顧者幾顆星：</p>
-          <div class="d-block mb-3" data-rater='{"starSize":32,"step":0.5}'></div>
+          <div id='myRater' class="d-block"></div>
+          <input type="hidden" id="myInput" name="myInput" value="0">
           <p>請輸入給照顧者的評價(150字以內)：</p>
           <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>
           <div class="d-flex mb-3 flex-row-reverse">

@@ -1,14 +1,21 @@
 from django.shortcuts import render ,redirect
 from django.http import HttpResponse ,JsonResponse ,HttpResponseRedirect 
 from django.core.files.storage import FileSystemStorage
+from io import StringIO
+from xhtml2pdf import pisa
+from django.template.loader import get_template
+from django.template import Context
+
 
 import urllib
 from datetime import date ,timedelta
 import datetime
 import json
+import io
 from urllib import parse
 import requests
 from time import time
+import reportlab
 import logging
 from django.contrib import auth
 from modelCore.forms import *
@@ -705,8 +712,11 @@ def my_booking_detail(request):
     review = Review.objects.get(order=order)
     work_hours = round(order.work_hours)
     if request.method == 'POST':
+        rating = request.POST.get('myInput')
         comment = request.POST.get('comment')
         review.servant_comment = comment
+        review.servant_rating = float(rating)
+        review.servant_rating_created_at = datetime.datetime.now()
         review.save()
         return render(request, 'web/my/booking_detail.html',{'order':order,'review':review,'work_hours':work_hours})
     return render(request, 'web/my/booking_detail.html',{'order':order,'review':review,'work_hours':work_hours})
@@ -723,13 +733,17 @@ def my_case_detail(request):
     order = Order.objects.get(case=case)
     work_hours = round(order.work_hours)
     review = Review.objects.get(case=case)
-    print(OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])
+    total_money = order.total_money - order.platform_money
     if request.method == 'POST':
+        rating = request.POST.get('myInput')
         comment = request.POST.get('comment')
+        print(type(rating))
         review.case_offender_comment = comment
+        review.case_offender_rating = float(rating)
+        review.case_offender_rating_created_at = datetime.datetime.now()
         review.save()
-        return render(request, 'web/my/case_detail.html',{'case':case,'order':order,'work_hours':work_hours,'review':review})
-    return render(request, 'web/my/case_detail.html',{'case':case,'order':order,'work_hours':work_hours,'review':review})
+        return render(request, 'web/my/case_detail.html',{'case':case,'order':order,'work_hours':work_hours,'review':review,'total_money':total_money})
+    return render(request, 'web/my/case_detail.html',{'case':case,'order':order,'work_hours':work_hours,'review':review,'total_money':total_money})
 
 def my_care_certificate(request):
     servant = request.user
@@ -738,6 +752,12 @@ def my_care_certificate(request):
     order = Order.objects.get(case=case)
     total_fee = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum']))
     print(total_fee)
+    # if request.method == 'POST' and 'PDFdownload' in request.POST:
+    #     print('pdf')
+    #     return render_to_pdf(
+    #         'web/my/care_certificate.html',
+    #         { 'pagesize':'A4','case':case,'order':order,'total_fee':total_fee}
+    #     )
     return render(request, 'web/my/care_certificate.html',{'case':case,'order':order,'total_fee':total_fee})
 
 def my_files(request):
@@ -819,16 +839,18 @@ def my_reviews(request):
     return render(request, 'web/my/reviews.html',{'user':user,'not_rated_orders':not_rated_orders,'my_rating_reviews':my_rating_reviews,'my_reviews':my_reviews})
 
 def my_write_review(request):
-    s
+    
     order_id = request.GET.get('order')
     order = Order.objects.get(id=order_id)
     review = Review.objects.get(order=order)
     print(review)
     if request.method == 'POST' and 'post'in request.POST:
         
-        rating = request.POST.get('rating')
+        rating = request.POST.get('myInput')
         comment = request.POST.get('comment')
+        review.servant_rating = float(rating)
         review.servant_comment = comment
+        review.servant_rating_created_at = datetime.datetime.now()
         review.save()
         return redirect_params('my_booking_detail',{'order':order_id})
     elif request.method == 'POST' and 'back'in request.POST:
@@ -902,3 +924,15 @@ def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]
     return len([day for day in days if day.weekday() in weekdays])
+
+# def render_to_pdf(template_src, context_dict):
+#     template = get_template(template_src)
+#     # context = Context(context_dict)
+#     html  = template.render(context_dict)
+#     print(type(html))
+#     result = io.BytesIO()
+
+#     pdf = pisa.pisaDocument(StringIO(html), result)
+#     if not pdf.err:
+#         return HttpResponse(result.getvalue(), content_type='application/pdf')
+#     return HttpResponse('We had some errors<pre>%s</pre>' % html.escape(html))

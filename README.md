@@ -125,6 +125,12 @@ http://127.0.0.1:8000/web/search_carer_detail?servant=0985463816
 register_line
 http://202.182.105.11/web/register_line?next=/web/index
 
+我的需求列表
+http://127.0.0.1:8000/web/my_bookings
+
+我的需求詳細
+http://127.0.0.1:8000/web/my_booking_detail?order=2
+
 收款方式
 http://127.0.0.1:8000/web/my_bank_account
 

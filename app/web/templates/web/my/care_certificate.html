@@ -3,18 +3,20 @@
 <!-- main -->
 <main class="main bg-white" id="top" >
 
-      <div class="col pt-4 text-center">
-        <button class="small-green-button">
-          <span class="fas fa-cloud-download-alt"></span>
-            下載PDF檔
-        </button>
-
-        <button class="small-green-button">
-          <span class="fas fa-print"></span>
-            列印此頁
-        </button>
-      </div>
-      
+  
+  <div class="col pt-4 text-center">
+    
+    <!-- <button class="small-green-button" name="PDFdownload">
+      <span class="fas fa-cloud-download-alt"></span>
+        下載PDF檔
+    </button> -->
+    
+    <button class="small-green-button" onclick="PrintData()">
+      <span class="fas fa-print"></span>
+        列印此頁
+    </button>
+  </div>
+  <div class="main-class" id="printdiv">
       <h3 class="text-center mt-6">看護證明書</h3>
       
       <div class="container pt-5">
@@ -49,13 +51,13 @@
                   {% endfor %}
 
                 </div>
-
+                <div style="page-break-after:always"></div>
                 <p class="h5 mt-2">看護費用</p>
                 <div class="section-bg-grey mt-2 mb-5" style="width: 50%;">
                   <span class="case-info-font"><strong>基本費用</strong></span>
                   <div class="row case-info-font">
-                    <div class="col-8">
-                      ${% if order.case.care_type == 'home' %}{{order.servant.home_hour_wage}}{% else %}{{order.servant.hospital_hour_wage}}{% endif %}x{{work_hours}}小時
+                    <div class="col-9">
+                      ${% if order.case.care_type == 'home' %}{{order.servant.home_hour_wage}}{% else %}{{order.servant.hospital_hour_wage}}{% endif %}x{{order.work_hours}}小時
                     </div>
                     <div class="col text-end">
                       $ {{order.base_money}}
@@ -67,7 +69,7 @@
                     <div class="row case-info-font">
                       <div class="col-9">
                         {{increase_service.service}}
-                        &emsp;每小時加 {{increase_service.increase_percent}}% x {{work_hours}}小時
+                        &emsp;每小時加 {{increase_service.increase_percent}}% x {{order.work_hours}}小時
                       </div>
                       <div class="col text-end">
                         
@@ -83,7 +85,7 @@
                       <strong>總計</strong>
                     </div>
                     <div class="col text-end " style="color: red;">
-                      <strong>$ {{total_fee}}</strong> 
+                      <strong>$ {{order.total_money}}</strong> 
                     </div>
                   </div>
 
@@ -114,7 +116,53 @@
 
         </div>
       </div>
-     
+  
+
+  <style>
+    @media print{
+      html *{
+          height: auto;
+          width: auto;
+      }
+
+
+    /*assing myPagesClass to every div you want to print on single separate A4 page*/
+
+    body .main-class {
+        z-index: 100 !important;
+        visibility: visible !important;
+        position: relative !important;
+        display: block !important;
+        background-color: lightgray !important;
+        height: auto;
+        width: 100%;
+        position: relative !important;
+
+        padding: 0px;
+        top: 70px !important;
+        left: 0 !important;
+        margin: 0 !important;
+        orphans: 0!important;
+        widows: 0!important;
+        overflow: visible !important;
+              }
+    @page{
+        size: A4;
+        margin: 0mm ;
+        orphans: 0!important;
+        widows: 0!important;
+    }}
+      
+  </style>
+  <script>
+    function PrintData(){
+      html = document.body.innerHTML
+      document.body.innerHTML=document.getElementById('top').innerHTML ;
+      window.print(); 
+      document.body.innerHTML = html
+    }
+  </script>
+  </div>
 </main>
 {% endblock %}
    
