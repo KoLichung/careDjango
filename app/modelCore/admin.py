@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
-from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore
+from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore ,TempCase
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -50,6 +50,10 @@ class UserServiceLocationAdmin(admin.ModelAdmin):
 @admin.register(Case)
 class CaseAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'servant', 'city', 'county', 'care_type', 'start_datetime', 'end_datetime')
+
+@admin.register(TempCase)
+class TempCaseAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'city', 'county', 'care_type', 'start_datetime', 'end_datetime')
 
 @admin.register(DiseaseCondition)
 class DiseaseConditionAdmin(admin.ModelAdmin):

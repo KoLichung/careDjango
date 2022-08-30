@@ -1,4 +1,4 @@
-{% extends 'web/base_logged_in.html' %} {% block content %}
+{% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
 <main class="main bg-white" id="top" >
@@ -24,337 +24,188 @@
           <hr>
         </div>
       </div>
+      <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+        <div class="row">
+          
+          <div class="col-11 mx-auto"> 
+            <div class="py-4">
+              <div class="">
+                
+                  <div class="px-sm-3">
+                      <p class="h6" style="font-weight: 600;">被照顧者資料：</p>
+                      <!-- <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="same_patient" />
+                        <label class="h6" for="same_patient">套用被照顧者資料</label>
+                      </div> -->
+                      <div class="">
+                        <label class="h6" for="patient_name">姓名：</label>
+                        <input class="booking-input" id="patient_name" name="patient_name" type="text"/>
+                      </div>
+
+                      <div class="mt-3 h6" style="display: flex;">
+                        <label class="h6" for="patient_gender" style="padding-top: 2px; padding-right: 10px;">性別：</label>
+                        <label class="custom-radio-parent">男
+                          <input type="radio" checked="checked" name="gender" value="M">
+                          <span class="checkmark"></span>
+                        </label>
+                        <label class="custom-radio-parent">女
+                          <input type="radio" name="gender" value="F">
+                          <span class="checkmark"></span>
+                        </label>      
+                      </div>
+                      <div class="">
+                        <label class="h6" for="patient_weight">體重：</label>
+                        <input class="booking-input" id="patient_weight" name="weight" type="text"/>
+                      </div>
+
+                      <div class="mt-2 mb-4">
+                        <label class="h6" for="patient_age">年齡：</label>
+                        <input class="booking-input" id="patient_age" name="age" type="text"/>
+                      </div>
+
+                          <p class="h6" style="font-weight: 600;">疾病狀況：</p>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="disease_none" id="disease_none" value='{{disease.none.id}}'/>
+                            <label class="h6" for="disease_none">{{disease_none}}</label>
+                          </div>
+                          <div class="row">
+                            <div class="col-12 col-md-6 col-lg-3">
+                              {% for disease in disease_column_1 %}
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="diseases[]"  value="{{disease.id}}" />
+                                <label class="h6" for="diseases[]">{{disease}}</label>
+                              </div>
+
+                              {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                              {% for disease in disease_column_2 %}
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="diseases[]"  value="{{disease.id}}" />
+                                <label class="h6" for="diseases[]">{{disease}}</label>
+                              </div>
+
+                              {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                              {% for disease in disease_column_3 %}
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="diseases[]"  value="{{disease.id}}" />
+                                <label class="h6" for="diseases[]">{{disease}}</label>
+                              </div>
+
+                              {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                              {% for disease in disease_column_4 %}
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="diseases[]"  value="{{disease.id}}" />
+                                <label class="h6" for="diseases[]">{{disease}}</label>
+                              </div>
+
+                              {% endfor %}
+                            </div>
+                            
+                          </div>
+                          <div class="mb-4">
+                            <input class="form-check-input" type="checkbox" name="disease_info" id="" />
+                            <label class="h6" for="infectious_disease">傳染性疾病，補充說明：</label>
+                            <textarea class="custom-form-control" id="infectious_disease" name="disease_text" rows="3" placeholder="例：傳染性疾病名稱、病情狀況... "></textarea>
+                          </div>
+
+                          <p class="h6" style="font-weight: 600;">身體狀況：</p>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="body_condition_none" id="body_condition" value="{{body_condition_none.id}}" />
+                            <label class="h6" for="body_condition">{{body_condition_none}}</label>
+                          </div>
+                          <div class="row">
+                            <div class="col-12 col-md-6 col-lg-3">
+                              {% for body_condition in body_column_1 %}
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" value="body_condition.id" />
+                                <label class="h6" for="body_conditions[]">{{body_condition}}</label>
+                              </div>
       
-      <div class="row">
-        <div class="col-11 mx-auto"> 
-          <div class="py-4">
-            <div class="">
-              <div class="px-sm-3">
-                <form>
-                  <p class="h6" style="font-weight: 600;">被照顧者資料：</p>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="same_patient" />
-                    <label class="h6" for="same_patient">套用被照顧者資料</label>
-                  </div>
-                  <div class="">
-                    <label class="h6" for="patient_name">姓名：</label>
-                    <input class="booking-input" id="patient_name" type="text"/>
-                  </div>
-
-                  <div class="mt-3 h6" style="display: flex;">
-                    <label class="h6" for="patient_gender" style="padding-top: 2px; padding-right: 10px;">性別：</label>
-                    <label class="custom-radio-parent">男
-                      <input type="radio" checked="checked" name="gender">
-                      <span class="checkmark"></span>
-                    </label>
-                    <label class="custom-radio-parent">女
-                      <input type="radio" name="gender">
-                      <span class="checkmark"></span>
-                    </label>      
-                  </div>
-                  <div class="">
-                    <label class="h6" for="patient_weight">體重：</label>
-                    <input class="booking-input" id="patient_weight" type="text"/>
-                  </div>
-
-                  <div class="mt-2 mb-4">
-                    <label class="h6" for="patient_age">年齡：</label>
-                    <input class="booking-input" id="patient_age" type="text"/>
-                  </div>
-
-                      <p class="h6" style="font-weight: 600;">疾病狀況：</p>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="disease_none" id="disease_none" />
-                        <label class="h6" for="disease_none">無</label>
-                      </div>
-                      <div class="row">
-                        <div class="col-12 col-md-6 col-lg-3">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="cancer" id="cancer" />
-                            <label class="h6" for="cancer">癌症</label>
+                              {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                              {% for body_condition in body_column_2 %}
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" value="body_condition.id" />
+                                <label class="h6" for="body_conditions[]">{{body_condition}}</label>
+                              </div>
+      
+                              {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                              {% for body_condition in body_column_3 %}
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" value="body_condition.id" />
+                                <label class="h6" for="body_conditions[]">{{body_condition}}</label>
+                              </div>
+      
+                              {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                              {% for body_condition in body_column_4 %}
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" value="body_condition.id" />
+                                <label class="h6" for="body_conditions[]">{{body_condition}}</label>
+                              </div>
+      
+                              {% endfor %}
+                            </div>
                           </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="surgery" id="surgery" />
-                            <label class="h6" for="surgery">手術照顧</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="fracture" id="fracture" />
-                            <label class="h6" for="fracture">骨折</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="high_blood_pressure" id="high_blood_pressure" />
-                            <label class="h6" for="high_blood_pressure">高血壓</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="arthritis" />
-                            <label class="h6" for="arthritis">關節炎</label>
+                          <div class="mb-4">
+                            <label class="h6" for="body_condition_note">身體狀況補充說明：</label>
+                            <textarea class="custom-form-control" id="body_condition_note" name="body_condition_note" rows="3" placeholder=""></textarea>
                           </div>
 
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="osteoporosis" />
-                            <label class="h6" for="osteoporosis">骨質酥鬆症</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="heart_disease" />
-                            <label class="h6" for="heart_disease">心臟病</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="septicemia" />
-                            <label class="h6" for="septicemia">敗血症</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="pneumonia" />
-                            <label class="h6" for="pneumonia">肺炎</label>
-                          </div>
-
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="diabetes" />
-                            <label class="h6" for="diabetes">糖尿病</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="dementia" />
-                            <label class="h6" for="dementia">失智症</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="stroke" />
-                            <label class="h6" for="stroke">中風</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="kidney_disease" />
-                            <label class="h6" for="kidney_disease">腎臟病</label>
-                          </div>
-                        </div>
-                        <div class="col-12 col-sm-3">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="bedsores" />
-                            <label class="h6" for="bedsores">褥瘡</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="parkinson_disease" />
-                            <label class="h6" for="parkinson_disease">帕金森氏症</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="mental_illness" />
-                            <label class="h6" for="mental_illness">精神疾病</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="epilepsy" />
-                            <label class="h6" for="epilepsy">癲癇</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="mb-4">
-                        <input class="form-check-input" type="checkbox" name="terms" id="" />
-                        <label class="h6" for="infectious_disease">傳染性疾病，補充說明：</label>
-                        <textarea class="custom-form-control" id="infectious_disease" rows="3" placeholder="例：傳染性疾病名稱、病情狀況... "></textarea>
-                      </div>
-
-                      <p class="h6" style="font-weight: 600;">身體狀況：</p>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="terms" id="body_condition" />
-                        <label class="h6" for="body_condition">無</label>
-                      </div>
-                      <div class="row">
-                        <div class="col-12 col-md-6 col-lg-3">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="aids" />
-                            <label class="h6" for="aids">使用輔具</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="chronic_bedrest" />
-                            <label class="h6" for="chronic_bedrest">長期臥床</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="nasogastric_tube" />
-                            <label class="h6" for="nasogastric_tube">鼻胃管</label>
+                          <p class="h6" style="font-weight: 600;">需求服務項目：</p>
+                          <div class="mb-4">
+                            {% for service in services %}
+                            <div class="form-check">
+                              <input class="form-check-input" id="flexCheckChecked" type="checkbox" name="services[]" value="{{service.id}}" />
+                              <label class="h6 mb-0" for="services[]">{{service}}</label>
+                              {% if service.remark %}
+                              <div class="">
+                                <span class="sub-font">{{service.remark}}</span>
+                              </div>
+                              {% endif %}
+                            </div>
+                            {% endfor %}
                           </div>
                           
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="urinary_catheter" />
-                            <label class="h6" for="urinary_catheter">尿管</label>
+                          <p class="h6" style="font-weight: 600;">加價項目： <span style="color:#BB6BD9; font-weight: 400;">(價格 % 數依服務者自訂)</span> </p>
+                          <div>
+                            {% for increase_service in increase_services %}
+                            <div class="form-check">
+                              <input class="form-check-input" id="flexCheckChecked" type="checkbox" name="increase_services[]" value="{{increase_service.id}}" />
+                              <label class="h6 mb-0" for="increase_services[]">{{increase_service}}</label>
+                            </div>
+                            {% endfor %}
                           </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="tracheotomy_tube" />
-                            <label class="h6" for="tracheotomy_tube">氣切管</label>
-                          </div>
-                          
-
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="wound" />
-                            <label class="h6" for="wound">傷口</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="coma" />
-                            <label class="h6" for="coma">昏迷</label>
-                          </div>
-                          
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="enterostomy" />
-                            <label class="h6" for="enterostomy">腸造口 - 人工肛門</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms" id="gastrostomy" />
-                            <label class="h6" for="gastrostomy">胃造口</label>
-                          </div>
-                          
-                        </div>
-                      </div>
-                      <div class="mb-4">
-                        <label class="h6" for="body_condition_note">身體狀況補充說明：</label>
-                        <textarea class="custom-form-control" id="body_condition_note" rows="3" placeholder=""></textarea>
-                      </div>
-
-                      <p class="h6" style="font-weight: 600;">需求服務項目：</p>
-                      <div class="mb-4">
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                          <label class="h6 mb-0" for="flexCheckChecked">安全維護</label>
-                          <div class="">
-                            <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">協助進食</label>
-                          <div class="">
-                            <span class="sub-font">用餐，按醫囑給藥</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">協助如廁</label>
-                          <div class="">
-                            <span class="sub-font">大小便處理、更換尿布、會陰沖洗</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                          <label class="h6 mb-0" for="flexCheckChecked">身體清潔</label>
-                          <div class="">
-                            <span class="sub-font">沐浴、擦澡</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                          <label class="h6 mb-0" for="flexCheckChecked">陪同就醫</label>
-                          <div class="">
-                            <span class="sub-font">陪伴看診、洗腎，代領藥品</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">陪同復健</label>
-                          <div class="">
-                            <!-- <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span> -->
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">代購物品</label>
-                          <div class="">
-                            <span class="sub-font">代買生活必需品以有發票或收據為主；代購物品期間服務者無法負責安全維護，家屬需自行評估被照顧者狀況</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                          <label class="h6 mb-0" for="flexCheckChecked">簡易備餐</label>
-                          <div class="">
-                            <span class="sub-font">依現有食材簡易煮粥、麵食或加熱即食品；僅提供被照顧者與一位家屬餐食</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">家務協助</label>
-                          <div class="">
-                            <span class="sub-font">簡易掃地拖地，清洗衣物、床單 <br>服務範圍僅限被照顧者主要生活環境，照服員非專業清潔人員無提供刷洗環境、移動家具、大掃除等服務；清洗衣物、床單，需提供洗衣機或付費使用投幣式洗衣機，超出以上服務範圍服務者有權利拒絕服務</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">鼻胃管灌食</label>
-                          <div class="">
-                            <!-- <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span> -->
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">管路清潔</label>
-                          <div class="">
-                            <!-- <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span> -->
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">翻身拍背</label>
-                          <div class="">
-                            <span class="sub-font">僅提供長期臥床或手術無法自行翻身的病人</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">被動關節運動</label>
-                          <div class="">
-                            <span class="sub-font">僅提供長期臥床、癱瘓、昏迷或關節炎的病人；病人有骨質疏鬆症、骨折病史請告知</span>
-                          </div>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">協助移位</label>
-                          <div class="">
-                            <!-- <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span> -->
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <p class="h6" style="font-weight: 600;">加價項目： <span style="color:#BB6BD9; font-weight: 400;">(價格 % 數依服務者自訂)</span> </p>
-                      <div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                          <label class="h6 mb-0" for="flexCheckChecked">急診室</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">傳染性疾病</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                          <label class="h6 mb-0" for="flexCheckChecked">體重超過 70 公斤</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                          <label class="h6 mb-0" for="flexCheckChecked">體重超過 90 公斤</label>
-                        </div>
-                      </div>
-                </form>
+                  </div>
+                
               </div>
             </div>
           </div>
+          
         </div>
-      </div>
 
-      <div class="row mt-7 justify-content-between pb-6">
-        <div class="col-5 col-md-4 mx-auto">
-          <a href="{% url 'request_form_service_type' %}">
-            <button class="full-purple-button"><span class="far fa-arrow-alt-circle-left"> </span>上一頁</button>
-          </a>
-        </div>
-        <div class="col-5 col-md-4 mx-auto">
-          <a href="{% url 'request_form_contact' %}">
-            <button class="full-purple-button">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
+        <div class="row mt-7 justify-content-between pb-6">
+          <div class="col-5 col-md-4 mx-auto">
+            <a href="{% url 'request_form_service_type' %}">
+              <button class="full-purple-button" ><span class="far fa-arrow-alt-circle-left"> </span>上一頁</button>
+            </a>
+          </div>
+          <div class="col-5 col-md-4 mx-auto">
+            <!-- <a href="{% url 'request_form_contact' %}"> -->
+              <button class="full-purple-button" type="submit">下一頁 <span class="far fa-arrow-alt-circle-right" type="submit" ></span></button>
 
-          </a>
+            <!-- </a> -->
+          </div>
         </div>
-      </div>
-     
+      </form>
 </main>
 {% endblock %}

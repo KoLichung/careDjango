@@ -22,8 +22,9 @@
             </div>
             
               <div class="d-flex justify-content-end col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-              <input type="file" name="ID_card_front" accept="image/*">
-
+                <input type="hidden" id="userId" name="userId" value={{user}}>
+                {{ form.user.as_hidden }}
+                {{ form.image }}
               <button class="small-purple-button" type="submit" name="ID_front_submit">
                 上傳文件
              </button> 
@@ -35,7 +36,8 @@
         </div>
         
       </div>
-
+      </form>
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
       <div class="row mx-auto">
         <div class="my-auto col-11 col-sm-8 col-md-7 col-lg-6 col-xl-5 mx-auto align-self-center">
           
@@ -48,7 +50,9 @@
             </div>
 
             <div class="d-flex justify-content-end col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-              <input type="file" name="ID_card_back" accept="image/*">
+              <input type="hidden" id="userId" name="userId" value={{user}}>
+                {{ form.user.as_hidden }}
+                {{ form.image }}
               <button class="small-purple-button"type="submit" name="ID_back_submit">
                 上傳文件
               </button>
@@ -59,7 +63,8 @@
         </div>
 
       </div>
-
+      </form>
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
       <div class="row mx-auto">
         <div class="my-auto col-11 col-sm-8 col-md-7 col-lg-6 col-xl-5 mx-auto align-self-center">
           
@@ -72,7 +77,9 @@
             </div>
 
             <div class="d-flex justify-content-end col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-              <input type="file" name="health_card_front" accept="image/*">
+              <input type="hidden" id="userId" name="userId" value={{user}}>
+                {{ form.user.as_hidden }}
+                {{ form.image }}
               <button class="small-purple-button" type="submit" name="health_submit">
                 上傳文件
               </button>

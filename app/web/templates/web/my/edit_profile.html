@@ -17,13 +17,15 @@
         </div>
 
         <div>
-          <form method="post" enctype="multipart/form-data">{% csrf_token %}
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <button class="small-green-button mt-3" type="submit" name="image">
               <span class="fas fa-image"></span>
               上傳頭像
             </button><br><br>
-            <input type="file" name="upload" accept="image/*">
-          </br></br>
+            <input type="hidden" id="userId" name="userId" value={{user.phone}}>
+            {{ form.as_hidden }}
+            {{ form.image }}</br></br>
           </form>
           
         </div>
