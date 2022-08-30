@@ -15,7 +15,6 @@ import io
 from urllib import parse
 import requests
 from time import time
-import reportlab
 import logging
 from django.contrib import auth
 from modelCore.forms import *

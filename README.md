@@ -183,6 +183,25 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220830
+1.評價列表的 bug
+2.liscense image 的上傳沒有正確使用 image_upload_handler
+3.在 model 建一個 TempCase
+User
+在第一頁時,  
+“下一頁繼續” => 產生 temp case
+“取消” => delete temp case
+
+city_id => 1
+county_id => 0 (代表全區), 1~... 代表 county
+
+disease_ids => “1,4,7” 
+condition_ids => “2,5,6” 
+service_ids => “2,5,7”
+
+第四頁, 
+”送出” => 把 temp case 刪除, 產生 case
+
 20220829
 1.total_money = base_money + service_increase_money 這樣比較直覺
 2.做下載 pdf 檔(如果困難, 這個按鈕可以拿掉) 跟 列印
