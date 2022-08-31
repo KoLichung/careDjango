@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
-from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
-from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore
+from .models import ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
+from .models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
+from .models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore, BlogCategory, BlogPost
+from .models import BlogPostCategoryShip
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -111,4 +112,15 @@ class SystemMessageAdmin(admin.ModelAdmin):
 class UserStoreAdmin(admin.ModelAdmin):
     list_display = ('id', 'MerchantID', 'MerchantHashKey' ,'MerchantIvKey')
 
+@admin.register(BlogCategory)
+class BlogCategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+@admin.register(BlogPost)
+class BlogAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'state')
+
+@admin.register(BlogPostCategoryShip)
+class BlogPostCategoryShipAdmin(admin.ModelAdmin):
+    list_display = ('id', 'post', 'category')
 

@@ -24,26 +24,37 @@
                   </tr>
                 </thead>
                 <tbody class="list">
-                  <tr>
-                    <td >
-                      <button type="button" class="custom-grey-border-btn btn-sm" disabled>已發布</button>
-                    </td>
-                    <td>雇主聘僱家庭看護移工期間 可申請喘息服務</td>
-                    <td class="alnright">                    
-                      <a class="custom-purple-btn text-white btn-sm " href="{% url 'case_detail' %}">編輯</a>
-                      <a class="bg-danger text-white btn-sm " href="{% url 'case_detail' %}">刪除</a>
-                    </td>
-                  </tr>
-                 
-                  
+                  {% for post in blogPosts %}
+                    <tr>
+                      <td >
+                        {% if post.state == 'draft' %}
+                          <button type="button" class="custom-grey-border-btn btn-sm" disabled>草稿</button>
+                        {% else %}
+                          <button type="button" class="custom-grey-border-btn btn-sm" disabled>已發布</button>
+                        {% endif %}
+                      </td>
+                      <td>{{post.title}}</td>
+                      <td class="alnright">                    
+                        <a class="custom-purple-btn text-white btn-sm " href="{% url 'new_blog' %}?post_id={{post.id}}">編輯</a>
+                        <a class="bg-danger text-white btn-sm" href="{% url 'all_blogs' %}?delete_id={{post.id}}" >刪除</a>
+                      </td>
+                    </tr> 
+                  {% endfor %}
                 </tbody>
               </table>
             </div>
-            <div class="d-flex justify-content-center mt-3">
-              <button class="btn btn-sm btn-chijia-default me-1" type="button" title="Previous" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-              <ul class="pagination mb-0"></ul>
-              <button class="btn btn-sm btn-chijia-default ms-1" type="button" title="Next" data-list-pagination="next"><span class="fas fa-chevron-right"> </span></button>
+
+            <br>
+            <div class="text-center">
+              {% for page_number in blogPosts.adjusted_elided_pages %} 
+                {% if page_number == blogPosts.paginator.ELLIPSIS %} 
+                  {{page_number}} 
+                {% else %}
+                  <a href="?page={{page_number}}" class="{% if page_number == blogPosts.number %}current{% endif %}">&nbsp;&nbsp;{{page_number}}&nbsp;&nbsp;</a>
+                {% endif %} 
+              {% endfor %}
             </div>
+
           </div>
 
         </div>

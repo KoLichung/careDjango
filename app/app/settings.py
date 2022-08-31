@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'web',
     'newebpayApi',
     'backboard',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -206,3 +207,5 @@ STATIC_ROOT = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'modelCore.User'
+
+CKEDITOR_UPLOAD_PATH = "uploads/"

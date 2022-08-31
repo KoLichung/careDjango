@@ -10,6 +10,7 @@ urlpatterns = [
     path('web/', include('web.urls')),
     path('newebpayApi/', include('newebpayApi.urls')),
     path('backboard/', include('backboard.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
 if settings.DEBUG:

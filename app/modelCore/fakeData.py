@@ -8,7 +8,7 @@ from pytz import tzinfo
 from django.db.models import Avg ,Sum 
 from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
-from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService
+from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService, BlogCategory, BlogPost
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -493,6 +493,24 @@ def fakeData():
     # review.servant_rating_created_at = timezone.now()
     # review.save()
 
+def fake_blog_post():
+    BlogCategory.objects.create(name="分類一")
+    BlogCategory.objects.create(name="分類二")
+
+    blogPost = BlogPost()
+    blogPost.title = "文章標題一"
+    blogPost.body = "文章內容一"
+    blogPost.state = "draft"
+    blogPost.create_date = timezone.now()
+    blogPost.save()
+
+    blogPost = BlogPost()
+    blogPost.title = "文章標題二"
+    blogPost.body = "文章內容二"
+    blogPost.state = "publish"
+    blogPost.create_date = timezone.now()
+    blogPost.publish_date = timezone.now()
+    blogPost.save()
 
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start

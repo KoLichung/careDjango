@@ -90,3 +90,7 @@ div .text-purple {
   color: #BB6BD9;
 }
 
+.purple-button{
+  background-color:#BB6BD9 !important;
+  color:white !important;
+}

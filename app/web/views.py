@@ -2,7 +2,6 @@ from django.shortcuts import render ,redirect
 from django.http import HttpResponse ,JsonResponse ,HttpResponseRedirect 
 from django.core.files.storage import FileSystemStorage
 from io import StringIO
-from xhtml2pdf import pisa
 from django.template.loader import get_template
 from django.template import Context
 

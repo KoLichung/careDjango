@@ -701,8 +701,8 @@ class BlogPost(models.Model):
     ]
     state = models.CharField(max_length=10, choices=STATE_CHOICES)
 
-    create_date = models.DateField()
-    publish_date = models.DateField()
+    create_date = models.DateField(blank = True, null=True)
+    publish_date = models.DateField(blank = True, null=True)
 
     def __str__(self):
         return self.title
@@ -710,11 +710,11 @@ class BlogPost(models.Model):
 class BlogPostCategoryShip(models.Model):
     post = models.ForeignKey(
         BlogPost,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         related_name='ship_categories',
     )
     category = models.ForeignKey(
         BlogCategory,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         related_name='ship_posts',
     )

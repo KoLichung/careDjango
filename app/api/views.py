@@ -459,6 +459,11 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
     def get_queryset(self):
         user = self.request.user
         queryset = self.queryset.filter(user=user)
+        
+        for i in range(len(queryset)):
+            language_ids = list(UserLanguage.objects.filter(user=queryset[i].user.id).values_list('language', flat=True))
+            queryset[i].servant.languages = Language.objects.filter(id__in=language_ids)
+
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -478,10 +483,12 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
             case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
 
-            service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True)) 
+            service_ids = list(CaseServiceShip.objects.filter(case=case.user.id).values_list('service', flat=True)) 
             case.services  = Service.objects.filter(id__in=service_ids)
-            # case.servant = case.servant
-            
+
+            language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
+            case.servant.languages = Language.objects.filter(id__in=language_ids)
+
             case.order = Order.objects.get(case=case)
             case.order.increase_services = OrderIncreaseService.objects.filter(order=case.order)
 
