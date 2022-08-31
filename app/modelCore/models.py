@@ -103,7 +103,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def needer_avg_rate_range(self):
-        if Review.objects.filter(case__user=self,servant_rating__gte=1).count() > 0:
+        if Review.objects.filter(case__user=self,case_offender_rating__gte=1).count() > 0:
             avg_rating = Review.objects.filter(case__user=self,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
             return range(int(avg_rating))
         else:
@@ -414,6 +414,74 @@ class Case(models.Model):
             else:
                 min_str = str(min)
             return ('早上 ' + hour_str + ':' + min_str)
+
+
+class TempCase(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        default=''
+    )
+    
+    city = models.CharField(max_length= 100, blank=True, null=True)
+    county = models.CharField(max_length= 100, blank=True, null=True)
+
+    CARETYPE_CHOICES = [
+        ('home', '居家照顧'),
+        ('hospital', '醫院看護'),
+    ]
+    care_type = models.CharField(max_length=10, choices=CARETYPE_CHOICES,default='')
+
+    name = models.CharField(max_length= 100, blank=True, null=True)
+
+    MALE = 'M'
+    FEMALE = 'F'
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+    ]
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,default=MALE)
+
+    UNTAKEN = 'unTaken'
+    UNCOMPLETE = 'unComplete'
+    COMPLETE = 'Complete'
+    CANCELED = 'Canceled'
+    ENDEARLY = 'endEarly'
+    STATE_CHOICES = [
+        (UNTAKEN, '未承接'),
+        (UNCOMPLETE, '未完成'),
+        (COMPLETE,'已完成'),
+        (CANCELED, '取消'),
+        (ENDEARLY,'提早結束')
+    ]
+    state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNTAKEN)
+
+    age = models.IntegerField(default=0, blank=True, null=True)
+    weight = models.IntegerField(default=0, blank=True, null=True)
+    
+    disease_remark = models.CharField(max_length= 255, blank=True, null=True)
+    conditions_remark = models.CharField(max_length= 255, blank=True, null=True)
+
+    is_continuous_time = models.BooleanField(default=False)
+
+    is_taken = models.BooleanField(default=False)
+    is_open_for_search = models.BooleanField(default=False)
+
+    body_condition = models.CharField(max_length=255, blank=True, null=True)
+    disease = models.CharField(max_length=255, blank=True, null=True)
+    service = models.CharField(max_length=255, blank=True, null=True)
+    increase_service = models.CharField(max_length=255, blank=True, null=True)
+
+    weekday = models.CharField(max_length=100, blank=True, null=True)
+    start_time = models.FloatField(default=0, blank=True, null=True)
+    end_time = models.FloatField(default=24, blank=True, null=True)
+    start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
+    end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    emergencycontact_name = models.CharField(max_length=100, blank=True, null=True)
+    emergencycontact_relation = models.CharField(max_length=100, blank=True, null=True)
+    emergencycontact_phone = models.CharField(max_length=10, blank=True, null=True)
 
 class DiseaseCondition(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)

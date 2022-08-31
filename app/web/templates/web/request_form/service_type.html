@@ -1,4 +1,4 @@
-{% extends 'web/base_logged_in.html' %} {% block content %}
+{% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
 <main class="main bg-white h-100" id="top" >
@@ -24,18 +24,18 @@
           <hr>
         </div>
       </div>
-
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
       <div class="row">
         <div class="col-11 mx-auto mt-3">
-
+          
           <div class="mt-3 h6" style="display: flex;">
-            <label class="h6" for="home_care" style="padding-top: 2px; padding-right: 10px;">需求類型：</label>
+            <label class="h6" for="home_care" name="care_type" style="padding-top: 2px; padding-right: 10px;">需求類型：</label>
             <label class="custom-radio-parent">居家照顧
-              <input type="radio" checked="checked" name="care_type" id="home_care"> 
+              <input type="radio" checked="checked" name="care_type" id="home_care" value="home"> 
               <span class="checkmark"></span>
             </label>
             <label class="custom-radio-parent">醫院看護
-              <input type="radio" name="care_type" id="hospital_care">
+              <input type="radio" name="care_type" id="hospital_care" value="hospital">
               <span class="checkmark"></span>
             </label>           
           </div>
@@ -44,53 +44,54 @@
             <span class="h6 mt-2">照護地點：</span>
             
               <div class="btn-group">
-              <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                台中市
-              </button>
-              <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
-                <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
-              </div>
+                <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
+                      
+                  {% for city in citys %}
+                    <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                    <!-- <option value="醫院看護">醫院看護</option> -->
+                  {% endfor %}
+                </select>
               </div>
               &emsp;
               <div class="btn-group">
-              <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                全區
-              </button>
-              <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
-                <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
-              </div>
+                <select class="dropdown-button" id="county_select" name="county" >
+                  <option style="text-align: center" value="全區">全區</option>
+                  {% for county in counties %}
+                    <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                  {% endfor %}
+                </select>
               </div>
             
           </div>     
 
           <div class="mt-2 h6" style="display: flex;">
             <p class="mt-2 h6">需求日期：</p>
-            <input class="modal-timePicker-button datetimepicker" style="width: 200px;" id="timepicker2" type="text" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
+            <input class="modal-timePicker-button datetimepicker " style="width: 200px;" id="start_end_date" name="start_end_date" type="text"  placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
+
           </div>
 
           <div class=" h6" style="display: flex;">
             <label class="h6" for="time_type" style="padding-top: 2px; padding-right: 10px;">時間類型：</label>
             <label class="custom-radio-parent">連續時間
-              <input type="radio" checked="checked" name="time_type" id="continuous_time"> 
+              <input type="radio" checked="checked" name="time_type" value="True" id="continuous_time" onchange="continuous_timeSelect()"> 
               <span class="checkmark"></span>
             </label>
             <label class="custom-radio-parent">每週時段預定
-              <input type="radio" name="time_type" id="weekly_time">
+              <input type="radio" name="time_type" id="weekly_time" value="False" onchange="WeekdaySelect()">
               <span class="checkmark"></span>
             </label>           
           </div>
+          <div id="time_type_select"></div>
 
           <div style="display: flex;">
             <span class="h6 mt-2">開始時間：</span>
-            <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+            <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{defaultStartTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
 
           </div>
 
           <div class="mt-2" style="display: flex;">
             <span class="h6 mt-2">結束時間：</span>
-            <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+            <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
 
           </div>
 
@@ -105,11 +106,122 @@
         </div>
         <div class="col-5 col-md-4 mx-auto">
           <a href="{% url 'request_form_patient_info' %}">
-            <button class="full-purple-button">下一頁繼續 <span class="far fa-arrow-alt-circle-right"></span></button>
+            <button class="full-purple-button">下一頁繼續 <span class="far fa-arrow-alt-circle-right" type="submit"></span></button>
           </a>
         </div>
       </div>
+      </form>
+      <style>
+        input[type=checkbox], input[type=radio] {
+          vertical-align: middle; 
+          position: relative;
+          bottom: .09em; /* this is a better value for different fonts! */
+        }
+      </style>
+      <script>
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        const csrftoken = getCookie('csrftoken');
+        
+        function listCities(){
+          var cityid = $("[name='city']").val();
+          $('#county_select').html('');
+          $.ajax({
+            type: "POST",
+            data: {'city_id':cityid,
+                    'action':'refresh_county'},
+            headers: {'X-CSRFToken': csrftoken},
+            url: "{% url 'ajax_refresh_county' %}",
+            success: function(response)
+            {
+              const data = response.data
+              console.log(data)
+              // var resultObj = JSON.parse(response);
+              var dataHandler = $("#county_select");
+              var county_all = `<option style="text-align: center" value="全區">全區</option>`
+              dataHandler.append(county_all);
+              data.forEach(el =>
+              {
+                  var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+                  dataHandler.append(newRow);
+              });
 
+            }
+          });
+    }
+    const weekday_select = document.getElementById('time_type_select')
+    const select_continuous_time = document.getElementById('time_type_select')
+    function continuous_timeSelect(){
+      console.log('delete')
+      select_continuous_time.innerHTML = ``
+    }
+    function WeekdaySelect(){
+        weekday_select.innerHTML = ` 
+                <div class="h6" style="display: flex;">
+                    <p class="h6">每週時段：</p>
+                  <div class="weekdayCheck ">
+                    <div class="form-check form-check-inline ">
+                      <input class="form-check-input" id="1" name="weekdays[]" type="checkbox" value="1" {% if "1" in weekday_list %} checked="" {% endif %} />
+                      <label class="h6" for="weekdays[]">星期一</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" id="2" name="weekdays[]" type="checkbox" value="2" {% if "2" in weekday_list %} checked="" {% endif %} />
+                      <label class="h6" for="weekdays[]">星期二</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" id="3" name="weekdays[]" type="checkbox" value="3" {% if "3" in weekday_list %} checked="" {% endif %} />
+                      <label class="h6" for="weekdays[]">星期三</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" id="4" name="weekdays[]" type="checkbox" value="4" {% if "4" in weekday_list %} checked="" {% endif %} />
+                      <label class="h6" for="weekdays[]">星期四</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" id="5" name="weekdays[]" type="checkbox" value="5" {% if "5" in weekday_list %} checked="" {% endif %} />
+                      <label class="h6" for="weekdays[]">星期五</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" id="6" name="weekdays[]" type="checkbox" value="6" {% if "6" in weekday_list %} checked="" {% endif %} />
+                      <label class="h6" for="weekdays[]">星期六</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" id="0" name="weekdays[]" type="checkbox" value="0" {% if "0" in weekday_list %} checked="" {% endif %} />
+                      <label class="h6" for="weekdays[]">星期日</label>
+                    </div>
+                  </div>
+                </div>
+                  `
+        document.querySelector('.weekdayCheck').addEventListener('change', event => {
+          event.preventDefault();
+          weekdays = []
+          checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+
+          for (var i = 0; i < checkboxes.length; i++) {
+            weekdays.push(checkboxes[i].value)
+              };
+              console.log(weekdays)
+        })
+        weekdays.forEach(e =>{
+          var element = document.getElementById(e)
+          element.checked = true;
+          console.log(element)
+        })
+        
+        }
+      </script>
 
 </main>
 {% endblock %}

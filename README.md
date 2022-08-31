@@ -183,6 +183,14 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220831
+1.city 改成 "台北市" (不要 String 存 id)
+2.license 要加一個審核狀態, isPassed (bool, default=False)
+3.files.html 的 form 改成一個 licence_id 1~3 的 for 迴圈, 多一個 hidden_input licenseId
+4.views.py/my_files 的方法收斂
+======
+5.申請預訂3, 申請預訂4
+
 20220830
 1.評價列表的 bug
 2.liscense image 的上傳沒有正確使用 image_upload_handler
