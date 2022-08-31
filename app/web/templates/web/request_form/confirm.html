@@ -31,59 +31,40 @@
           <div class="col-6">
             <p class="h5">您的需求</p>
             <div class="case-info-font mt-2">
-                  <p>照護類型：居家照顧</p>
-                  <p>日期：3/1~3/28</p>
-                  <p>時間類型：連續時間</p>
-                  <p>開始時間：9:00</p>
-                  <p>結束時間：14:00</p>
+                  <p>照護類型：{% if care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</p>
+                  <p>日期：{{start_date}}~{{end_date}}</p>
+                  <p>時間類型：{{time_type}}</p>
+                  <p>開始時間：{{start_time}}</p>
+                  <p>結束時間：{{end_time}}</p>
             </div>
 
             <p class="h5 mt-5">被照顧者資訊</p>
             <div class="case-info-font mt-2">
-                  <p>性別：男</p>
-                  <p>體重：70</p>
-                  <p>年齡：70</p>
-                  <p>疾病：阿茲海默症</p>
-                  <p>補充說明：補充說明補充說明</p>
-                  <p>身體狀況：使用輔具</p>
-                  <p class="text-indent-5">補充說明：補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明</p>
+                  <p>性別：{% if tempcase.gender == 'M' %}男{% else %}女{% endif %}</p>
+                  <p>體重：{{tempcase.weight}}</p>
+                  <p>年齡：{{tempcase.age}}</p>
+                  <p>疾病：{% for disease in disease_list %} {{disease}} {% endfor %}</p>
+                  <p>補充說明：{{tempcase.disease_remark}}</p>
+                  <p>身體狀況：{% for body_condition in body_condition_list %} {{body_condition}} {% endfor %}</p>
+                  <p class="text-indent-5">補充說明：{{tempcase.conditions_remark}}</p>
             </div>
 
             <p class="h5 mt-5">需求服務項目</p>
             <div class="case-info-font mt-3 mb-5">
+              {% for service in service_list %}
                   <p>
                     <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    安全維護 (預防跌倒、陪同散步、推輪椅、心靈陪伴)
+                    {{service}}
                   </p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    協助進食</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    協助如廁</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    陪同就醫</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    代購物品</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    簡易備餐</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    身體清潔
-                  </p>
-
-
+              {% endfor %}
                  
             </div>
 
             <p class="h5 mt-5">緊急聯絡人</p>
             <div class="case-info-font mt-2">
-              <p>姓名：張大明</p>
-              <p>與被照顧者關係：父子</p>
-              <p>聯絡電話：0912345678</p>
+              <p>姓名：{{tempcase.emergencycontact_name}}</p>
+              <p>與被照顧者關係：{{tempcase.emergencycontact_relation}}</p>
+              <p>聯絡電話：{{tempcase.emergencycontact_phone}}</p>
             </div>
           </div>
         </div>

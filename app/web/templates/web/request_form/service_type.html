@@ -31,11 +31,11 @@
           <div class="mt-3 h6" style="display: flex;">
             <label class="h6" for="home_care" name="care_type" style="padding-top: 2px; padding-right: 10px;">需求類型：</label>
             <label class="custom-radio-parent">居家照顧
-              <input type="radio" checked="checked" name="care_type" id="home_care" value="home"> 
+              <input type="radio" checked="checked" name="care_type" {% if care_type == 'home' %} checked {% endif %} id="home_care" value="home"> 
               <span class="checkmark"></span>
             </label>
             <label class="custom-radio-parent">醫院看護
-              <input type="radio" name="care_type" id="hospital_care" value="hospital">
+              <input type="radio" name="care_type" id="hospital_care" {% if care_type == 'hospital' %} checked {% endif %}  value="hospital">
               <span class="checkmark"></span>
             </label>           
           </div>
@@ -66,18 +66,18 @@
 
           <div class="mt-2 h6" style="display: flex;">
             <p class="mt-2 h6">需求日期：</p>
-            <input class="modal-timePicker-button datetimepicker " style="width: 200px;" id="start_end_date" name="start_end_date" type="text"  placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
+            <input class="modal-timePicker-button datetimepicker " style="width: 200px;" id="start_end_date" name="start_end_date" type="text" value="{{start_end_date}}" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
 
           </div>
 
           <div class=" h6" style="display: flex;">
             <label class="h6" for="time_type" style="padding-top: 2px; padding-right: 10px;">時間類型：</label>
             <label class="custom-radio-parent">連續時間
-              <input type="radio" checked="checked" name="time_type" value="True" id="continuous_time" onchange="continuous_timeSelect()"> 
+              <input type="radio" checked="checked" name="time_type" value="True" id="continuous_time" {% if is_continuous_time == True %}checked{% endif %} onchange="continuous_timeSelect()"> 
               <span class="checkmark"></span>
             </label>
             <label class="custom-radio-parent">每週時段預定
-              <input type="radio" name="time_type" id="weekly_time" value="False" onchange="WeekdaySelect()">
+              <input type="radio" name="time_type" id="weekly_time" value="False" {% if is_continuous_time == False %}checked{% endif %} onchange="WeekdaySelect()">
               <span class="checkmark"></span>
             </label>           
           </div>
@@ -85,13 +85,13 @@
 
           <div style="display: flex;">
             <span class="h6 mt-2">開始時間：</span>
-            <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{defaultStartTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+            <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" value="{{start_time}}" type="text" value="{{defaultStartTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
 
           </div>
 
           <div class="mt-2" style="display: flex;">
             <span class="h6 mt-2">結束時間：</span>
-            <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+            <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" value="{{end_time}}" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
 
           </div>
 
@@ -220,6 +220,10 @@
           console.log(element)
         })
         
+        }
+        if (document.getElementById('weekly_time').checked){
+          console.log('weekly_checked');
+          WeekdaySelect.call();
         }
       </script>
 

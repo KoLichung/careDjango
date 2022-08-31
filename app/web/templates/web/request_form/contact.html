@@ -24,50 +24,48 @@
           <hr>
         </div>
   </div>
+  <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <div class="row">
+          <div class="col-11 mx-auto">
+            <div class=" py-4">             
+                <p class="h6" style="font-weight: 600;">預定者：</p>
+                <p class="h6">姓名：{{user.name}}</p>
+                <p class="h6">聯絡電話：{{user.phone}}</p>
+                <br>
+                <p class="h6" style="font-weight: 600;">緊急聯絡人：</p>
+                      
+                <div class="mt-2" style="display: flex;">
+                  <label class="h6 mt-2" for="aboriginal">姓名：</label>
+                  <input class="booking-input" style="width: 300px;" id="aboriginal" name="emergencycontact_name" value="{{emergencycontact_name}}" type="text" placeholder="" />
+                </div>
 
-  <div class="row">
-        <div class="col-11 mx-auto">
-          <div class=" py-4">             
-            <form>
-              <p class="h6" style="font-weight: 600;">預定者：</p>
-              <p class="h6">姓名：王小明</p>
-              <p class="h6">聯絡電話：0912345678</p>
-              <br>
-              <p class="h6" style="font-weight: 600;">緊急聯絡人：</p>
-                    
-              <div class="mt-2" style="display: flex;">
-                <label class="h6 mt-2" for="aboriginal">姓名：</label>
-                <input class="booking-input" style="width: 300px;" id="aboriginal" type="text" placeholder="" />
-              </div>
+                <div class="mt-2" style="display: flex;">
+                  <label class="h6 mt-2" for="aboriginal">與被照顧者關係：</label>
+                  <input class="booking-input" style="width: 300px;" id="aboriginal" name="emergencycontact_relation" value="{{emergencycontact_relation}}" type="text" placeholder="" />                
+                </div>
 
-              <div class="mt-2" style="display: flex;">
-                <label class="h6 mt-2" for="aboriginal">與被照顧者關係：</label>
-                <input class="booking-input" style="width: 300px;" id="aboriginal" type="text" placeholder="" />                
-              </div>
-
-              <div class="mt-2" style="display: flex;">
-                <label class="h6 mt-2" for="aboriginal">聯絡電話：</label>
-                <input class="booking-input" style="width: 300px;" id="aboriginal" type="text" placeholder="" />
-              </div>
-              
-            </form> 
+                <div class="mt-2" style="display: flex;">
+                  <label class="h6 mt-2" for="aboriginal">聯絡電話：</label>
+                  <input class="booking-input" style="width: 300px;" id="aboriginal" name="emergencycontact_phone" value="{{emergencycontact_phone}}" type="text" placeholder="" />
+                </div>
+                
+            </div>
           </div>
-        </div>
-          
-  </div>
+            
+    </div>
 
-  <div class="row mt-7 pb-4 justify-content-between">
-        <div class="col-5 col-md-4 mx-auto">
-          <a href="{% url 'request_form_patient_info' %}">
-            <button class="full-purple-button"><span class="far fa-arrow-alt-circle-left"> </span>上一頁</button>
-          </a>
-        </div>
-        <div class="col-5 col-md-4 mx-auto">
-          <a href="{% url 'request_form_confirm' %}">
-            <button class="full-purple-button">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
-          </a>
-        </div>
-  </div>  
-     
+    <div class="row mt-7 pb-4 justify-content-between">
+          <div class="col-5 col-md-4 mx-auto">
+            <a href="{% url 'request_form_patient_info' %}">
+              <button class="full-purple-button" type="submit" name="previous"><span class="far fa-arrow-alt-circle-left"> </span>上一頁</button>
+            </a>
+          </div>
+          <div class="col-5 col-md-4 mx-auto">
+            <a href="{% url 'request_form_confirm' %}">
+              <button class="full-purple-button" type="submit" name="next">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
+            </a>
+          </div>
+    </div>  
+  </form>
 </main>
 {% endblock %}

@@ -39,40 +39,40 @@
                       </div> -->
                       <div class="">
                         <label class="h6" for="patient_name">姓名：</label>
-                        <input class="booking-input" id="patient_name" name="patient_name" type="text"/>
+                        <input class="booking-input" id="patient_name" name="patient_name" value="{{patient_name}}" type="text"/>
                       </div>
 
                       <div class="mt-3 h6" style="display: flex;">
                         <label class="h6" for="patient_gender" style="padding-top: 2px; padding-right: 10px;">性別：</label>
                         <label class="custom-radio-parent">男
-                          <input type="radio" checked="checked" name="gender" value="M">
+                          <input type="radio" {% if gender == 'M' %}checked=""{% endif %} name="gender" value="M">
                           <span class="checkmark"></span>
                         </label>
                         <label class="custom-radio-parent">女
-                          <input type="radio" name="gender" value="F">
+                          <input type="radio" name="gender" {% if gender == 'F' %}checked=""{% endif %}  value="F">
                           <span class="checkmark"></span>
                         </label>      
                       </div>
                       <div class="">
                         <label class="h6" for="patient_weight">體重：</label>
-                        <input class="booking-input" id="patient_weight" name="weight" type="text"/>
+                        <input class="booking-input" id="patient_weight" value="{{weight}}" name="weight" type="text"/>
                       </div>
 
                       <div class="mt-2 mb-4">
                         <label class="h6" for="patient_age">年齡：</label>
-                        <input class="booking-input" id="patient_age" name="age" type="text"/>
+                        <input class="booking-input" id="patient_age" name="age" value="{{age}}" type="text"/>
                       </div>
 
                           <p class="h6" style="font-weight: 600;">疾病狀況：</p>
                           <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="disease_none" id="disease_none" value='{{disease.none.id}}'/>
-                            <label class="h6" for="disease_none">{{disease_none}}</label>
+                            <input class="form-check-input" type="checkbox" name="disease_none" id="disease_none" {% if disease_none == True %}checked=""{% endif %} value='{{disease.none.id}}'/>
+                            <label class="h6" for="disease_none">無</label>
                           </div>
                           <div class="row">
                             <div class="col-12 col-md-6 col-lg-3">
                               {% for disease in disease_column_1 %}
                               <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="diseases[]"  value="{{disease.id}}" />
+                                <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
                                 <label class="h6" for="diseases[]">{{disease}}</label>
                               </div>
 
@@ -81,7 +81,7 @@
                             <div class="col-12 col-md-6 col-lg-3">
                               {% for disease in disease_column_2 %}
                               <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="diseases[]"  value="{{disease.id}}" />
+                                <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}   value="{{disease.id}}" />
                                 <label class="h6" for="diseases[]">{{disease}}</label>
                               </div>
 
@@ -90,7 +90,7 @@
                             <div class="col-12 col-md-6 col-lg-3">
                               {% for disease in disease_column_3 %}
                               <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="diseases[]"  value="{{disease.id}}" />
+                                <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
                                 <label class="h6" for="diseases[]">{{disease}}</label>
                               </div>
 
@@ -99,7 +99,7 @@
                             <div class="col-12 col-md-6 col-lg-3">
                               {% for disease in disease_column_4 %}
                               <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="diseases[]"  value="{{disease.id}}" />
+                                <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
                                 <label class="h6" for="diseases[]">{{disease}}</label>
                               </div>
 
@@ -110,19 +110,19 @@
                           <div class="mb-4">
                             <input class="form-check-input" type="checkbox" name="disease_info" id="" />
                             <label class="h6" for="infectious_disease">傳染性疾病，補充說明：</label>
-                            <textarea class="custom-form-control" id="infectious_disease" name="disease_text" rows="3" placeholder="例：傳染性疾病名稱、病情狀況... "></textarea>
+                            <textarea class="custom-form-control" id="infectious_disease" name="disease_text"  rows="3" placeholder="例：傳染性疾病名稱、病情狀況... ">{{disease_remark}}</textarea>
                           </div>
 
                           <p class="h6" style="font-weight: 600;">身體狀況：</p>
                           <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="body_condition_none" id="body_condition" value="{{body_condition_none.id}}" />
-                            <label class="h6" for="body_condition">{{body_condition_none}}</label>
+                            <input class="form-check-input" type="checkbox" name="body_condition_none" id="body_condition" {% if body_condition_none == True %}checked=""{% endif %} value="{{body_condition_none.id}}" />
+                            <label class="h6" for="body_condition">無</label>
                           </div>
                           <div class="row">
                             <div class="col-12 col-md-6 col-lg-3">
                               {% for body_condition in body_column_1 %}
                               <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" value="body_condition.id" />
+                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %} value="{{body_condition.id}}" />
                                 <label class="h6" for="body_conditions[]">{{body_condition}}</label>
                               </div>
       
@@ -131,7 +131,7 @@
                             <div class="col-12 col-md-6 col-lg-3">
                               {% for body_condition in body_column_2 %}
                               <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" value="body_condition.id" />
+                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %}  value="{{body_condition.id}}" />
                                 <label class="h6" for="body_conditions[]">{{body_condition}}</label>
                               </div>
       
@@ -140,7 +140,7 @@
                             <div class="col-12 col-md-6 col-lg-3">
                               {% for body_condition in body_column_3 %}
                               <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" value="body_condition.id" />
+                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %}  value="{{body_condition.id}}" />
                                 <label class="h6" for="body_conditions[]">{{body_condition}}</label>
                               </div>
       
@@ -149,7 +149,7 @@
                             <div class="col-12 col-md-6 col-lg-3">
                               {% for body_condition in body_column_4 %}
                               <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" value="body_condition.id" />
+                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %}  value="{{body_condition.id}}" />
                                 <label class="h6" for="body_conditions[]">{{body_condition}}</label>
                               </div>
       
@@ -158,14 +158,14 @@
                           </div>
                           <div class="mb-4">
                             <label class="h6" for="body_condition_note">身體狀況補充說明：</label>
-                            <textarea class="custom-form-control" id="body_condition_note" name="body_condition_note" rows="3" placeholder=""></textarea>
+                            <textarea class="custom-form-control" id="body_condition_note" name="body_condition_note" rows="3" placeholder="">{{conditions_remark}}</textarea>
                           </div>
 
                           <p class="h6" style="font-weight: 600;">需求服務項目：</p>
                           <div class="mb-4">
                             {% for service in services %}
                             <div class="form-check">
-                              <input class="form-check-input" id="flexCheckChecked" type="checkbox" name="services[]" value="{{service.id}}" />
+                              <input class="form-check-input" id="flexCheckChecked" type="checkbox" name="services[]" {% if service in service_list %}checked=""{% endif %} value="{{service.id}}" />
                               <label class="h6 mb-0" for="services[]">{{service}}</label>
                               {% if service.remark %}
                               <div class="">
@@ -180,7 +180,7 @@
                           <div>
                             {% for increase_service in increase_services %}
                             <div class="form-check">
-                              <input class="form-check-input" id="flexCheckChecked" type="checkbox" name="increase_services[]" value="{{increase_service.id}}" />
+                              <input class="form-check-input" id="flexCheckChecked" type="checkbox" name="increase_services[]" {% if increase_service in increase_service_list %}checked=""{% endif %} value="{{increase_service.id}}" />
                               <label class="h6 mb-0" for="increase_services[]">{{increase_service}}</label>
                             </div>
                             {% endfor %}
@@ -196,12 +196,12 @@
         <div class="row mt-7 justify-content-between pb-6">
           <div class="col-5 col-md-4 mx-auto">
             <a href="{% url 'request_form_service_type' %}">
-              <button class="full-purple-button" ><span class="far fa-arrow-alt-circle-left"> </span>上一頁</button>
+              <button class="full-purple-button" type="submit" name="previous"><span class="far fa-arrow-alt-circle-left"> </span>上一頁</button>
             </a>
           </div>
           <div class="col-5 col-md-4 mx-auto">
             <!-- <a href="{% url 'request_form_contact' %}"> -->
-              <button class="full-purple-button" type="submit">下一頁 <span class="far fa-arrow-alt-circle-right" type="submit" ></span></button>
+              <button class="full-purple-button" type="submit" name="next">下一頁 <span class="far fa-arrow-alt-circle-right" ></span></button>
 
             <!-- </a> -->
           </div>
