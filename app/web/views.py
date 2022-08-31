@@ -759,64 +759,29 @@ def my_care_certificate(request):
 
 def my_files(request):
     user = request.user
+    licences = License.objects.all().order_by('id')[:3]
     form = UserLicenseImageForm()
-    if request.method == 'POST'  and 'ID_front_submit' in request.POST:
-        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=1)).exists() != False:
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1))
+    if request.method == 'POST' :
+        license_id = request.POST.get('licenceId')
+        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=license_id)).exists() != False:
+            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=license_id))
         else:
-            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=1))
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1))
+            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=license_id))
+            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=license_id))
         form = UserLicenseImageForm(request.POST or None, request.FILES or None,instance=shipinstance)
         if form.is_valid():
             print('valid')
             new = form.save(commit=False)
             new.user = user
-            new.license = License.objects.get(id=1)
+            new.license = License.objects.get(id=license_id)
             new.save()
         img_obj = form.instance
         print(img_obj)
         img_obj.user = user
-        img_obj.license = License.objects.get(id=1)
+        img_obj.license = License.objects.get(id=license_id)
         img_obj.save()
 
-    elif request.method == 'POST'  and 'ID_back_submit' in request.POST:
-        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=2)).exists() != False:
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=2))
-        else:
-            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=2))
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=2))
-        form = UserLicenseImageForm(request.POST or None, request.FILES or None,instance=shipinstance)
-        if form.is_valid():
-            print('valid')
-            new = form.save(commit=False)
-            new.user = user
-            new.license = License.objects.get(id=2)
-            new.save()
-        img_obj = form.instance
-        print(img_obj)
-        img_obj.user = user
-        img_obj.license = License.objects.get(id=2)
-        img_obj.save()
-
-    elif request.method == 'POST'  and 'health_submit' in request.POST:
-        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=3)).exists() != False:
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=3))
-        else:
-            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=3))
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=3))
-        form = UserLicenseImageForm(request.POST or None, request.FILES or None,instance=shipinstance)
-        if form.is_valid():
-            print('valid')
-            new = form.save(commit=False)
-            new.user = user
-            new.license = License.objects.get(id=3)
-            new.save()
-        img_obj = form.instance
-        print(img_obj)
-        img_obj.user = user
-        img_obj.license = License.objects.get(id=3)
-        img_obj.save()
-    return render(request, 'web/my/files.html',{'user':user,'form':form})
+    return render(request, 'web/my/files.html',{'user':user,'form':form,'licences':licences})
 
 def my_profile(request):
     user = request.user
@@ -927,7 +892,7 @@ def request_form_service_type(request):
             tempcase = TempCase()
         tempcase.user = user
         tempcase.care_type = care_type
-        tempcase.city = city
+        tempcase.city = City.objects.get(id=city).name
         tempcase.county = county
         tempcase.start_datetime = start_date
         tempcase.end_datetime = end_date
@@ -948,7 +913,6 @@ def request_form_service_type(request):
         tempcase.save()
         return redirect('request_form_patient_info')
     else:
-        
         return render(request, 'web/request_form/service_type.html',{'countyName':county_name,'cityName':city,'citys':citys,'counties':counties})
 
 def request_form_patient_info(request):
