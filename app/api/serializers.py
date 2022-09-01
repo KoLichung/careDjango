@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
-from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderIncreaseService
+from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderIncreaseService, BlogPost, BlogCategory, BlogPostCategoryShip
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -189,3 +189,26 @@ class SystemMessageSerializer(serializers.ModelSerializer):
         model = SystemMessage
         fields = '__all__'
         read_only_fields = ('id',)
+
+class BlogCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogCategory
+        fields = '__all__'
+        read_only_fields = ('id',)
+
+class BlogPostListSerializer(serializers.ModelSerializer):
+    categories = BlogCategorySerializer(read_only=True, many=True)
+
+    class Meta:
+        model = BlogPost
+        fields = ('id', 'title', 'cover_image', 'publish_date', 'categories')
+        read_only_fields = ('id',)
+
+class BlogPostSerializer(serializers.ModelSerializer):
+    categories = BlogCategorySerializer(read_only=True, many=True)
+
+    class Meta:
+        model = BlogPost
+        fields = '__all__'
+        read_only_fields = ('id',)
+

@@ -15,6 +15,7 @@ from datetime import date ,timedelta
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom ,ChatroomUserShip
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage , OrderWeekDay ,OrderIncreaseService
+from modelCore.models import BlogPost, BlogPostCategoryShip, BlogCategory
 from api import serializers
 
 class LicenseViewSet(viewsets.GenericViewSet,
@@ -590,7 +591,6 @@ class ServantPutReviewView(APIView):
         else:
             return Response({'message': "have no authority"})
 
-
 class CreateCase(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -937,6 +937,33 @@ class CreateServantOrder(APIView):
         # for weekday in 
         serializer = self.serializer_class(order)
         return Response(serializer.data)
+
+class BlogPostViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin):
+    queryset = BlogPost.objects.all()
+    serializer_class = serializers.BlogPostListSerializer
+
+    def get_queryset(self):
+        category_id = self.request.query_params.get('category_id')
+        if category_id != None:
+            theCategory = BlogCategory.objects.get(id=category_id)
+            post_ids = list(BlogPostCategoryShip.objects.filter(category=theCategory).values_list('post', flat=True))
+            queryset = self.queryset.filter(id__in=post_ids,state="publish").order_by('-publish_date')
+        else:
+            queryset = self.queryset.filter(state="publish").order_by('-publish_date')
+        for i in range(len(queryset)):
+            ids = list(BlogPostCategoryShip.objects.filter(post=queryset[i]).values_list('category', flat=True))
+            queryset[i].categories = BlogCategory.objects.filter(id__in=ids)
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        post = self.get_object()
+        ids = list(BlogPostCategoryShip.objects.filter(post=post).values_list('category', flat=True))
+        post.categories = BlogCategory.objects.filter(id__in=ids)
+        serializer = serializers.BlogPostSerializer(post)
+        return Response(serializer.data)
+
 
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start

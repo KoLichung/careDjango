@@ -22,6 +22,7 @@ router.register('recommend_servants', views.RecommendServantViewSet)
 router.register('servant_cases', views.ServantCaseViewSet)
 router.register('need_cases', views.NeedCaseViewSet)
 router.register('reviews', views.ReviewViewSet)
+router.register('blog_posts', views.BlogPostViewSet)
 # router.register('choose_servant', views.ChooseServantViewSet)
 
 app_name = 'api'
