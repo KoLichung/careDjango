@@ -1,8 +1,14 @@
 from django.contrib import admin
+
 from .models import ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore, BlogCategory, BlogPost
-from .models import BlogPostCategoryShip, TempCase
+from .models import BlogPostCategoryShip
+from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
+from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
+from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore ,TempCase
+
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

@@ -759,64 +759,29 @@ def my_care_certificate(request):
 
 def my_files(request):
     user = request.user
+    licences = License.objects.all().order_by('id')[:3]
     form = UserLicenseImageForm()
-    if request.method == 'POST'  and 'ID_front_submit' in request.POST:
-        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=1)).exists() != False:
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1))
+    if request.method == 'POST' :
+        license_id = request.POST.get('licenceId')
+        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=license_id)).exists() != False:
+            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=license_id))
         else:
-            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=1))
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1))
+            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=license_id))
+            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=license_id))
         form = UserLicenseImageForm(request.POST or None, request.FILES or None,instance=shipinstance)
         if form.is_valid():
             print('valid')
             new = form.save(commit=False)
             new.user = user
-            new.license = License.objects.get(id=1)
+            new.license = License.objects.get(id=license_id)
             new.save()
         img_obj = form.instance
         print(img_obj)
         img_obj.user = user
-        img_obj.license = License.objects.get(id=1)
+        img_obj.license = License.objects.get(id=license_id)
         img_obj.save()
 
-    elif request.method == 'POST'  and 'ID_back_submit' in request.POST:
-        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=2)).exists() != False:
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=2))
-        else:
-            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=2))
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=2))
-        form = UserLicenseImageForm(request.POST or None, request.FILES or None,instance=shipinstance)
-        if form.is_valid():
-            print('valid')
-            new = form.save(commit=False)
-            new.user = user
-            new.license = License.objects.get(id=2)
-            new.save()
-        img_obj = form.instance
-        print(img_obj)
-        img_obj.user = user
-        img_obj.license = License.objects.get(id=2)
-        img_obj.save()
-
-    elif request.method == 'POST'  and 'health_submit' in request.POST:
-        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=3)).exists() != False:
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=3))
-        else:
-            UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=3))
-            shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=3))
-        form = UserLicenseImageForm(request.POST or None, request.FILES or None,instance=shipinstance)
-        if form.is_valid():
-            print('valid')
-            new = form.save(commit=False)
-            new.user = user
-            new.license = License.objects.get(id=3)
-            new.save()
-        img_obj = form.instance
-        print(img_obj)
-        img_obj.user = user
-        img_obj.license = License.objects.get(id=3)
-        img_obj.save()
-    return render(request, 'web/my/files.html',{'user':user,'form':form})
+    return render(request, 'web/my/files.html',{'user':user,'form':form,'licences':licences})
 
 def my_profile(request):
     user = request.user
@@ -900,10 +865,44 @@ def request_form_service_type(request):
     user = request.user
     citys = City.objects.all()
     counties = County.objects.all()
-    city_id = '8'
-    city = City.objects.get(id=city_id)
-    counties = counties.filter(city=City.objects.get(id=city_id))
-    county_name = '全區'
+    
+    
+    if TempCase.objects.filter(user=user).exists() != False:
+        last_tempcase = TempCase.objects.get(user=user)
+        care_type = last_tempcase.care_type
+        start_date = str(last_tempcase.start_datetime.date())
+        end_date = str(last_tempcase.end_datetime.date())
+        start_date = start_date.split('-')
+        end_date = end_date.split('-')
+        start_end_date = start_date[0].split('20')[1] + "/" + start_date[1] + "/" + start_date[2] + " to " + end_date[0].split('20')[1] + "/" + end_date[1] + "/" + end_date[2]
+        city = City.objects.get(name=last_tempcase.city)
+        county_name = last_tempcase.county
+        counties = counties.filter(city=city)
+        county = County.objects.get(city=city,name=county_name)
+        is_continuous_time = last_tempcase.is_continuous_time
+        print(is_continuous_time)
+        if is_continuous_time == False:
+            weekdays = last_tempcase.weekday
+            weekday_list = weekdays.split(',')
+        else:
+            weekday_list = []
+        start_time_int = last_tempcase.start_time
+        end_time_int = last_tempcase.end_time
+        start_time = str(int(start_time_int)) + ':' + str(int((float(start_time_int)-int(start_time_int))*60))
+        end_time = str(int(end_time_int)) + ':' + str(int((float(end_time_int)-int(end_time_int))*60))
+        start_time = datetime.datetime.strptime(start_time,"%H:%M")
+        end_time = datetime.datetime.strptime(end_time,"%H:%M")
+        start_time = start_time.strftime("%H:%M")
+        end_time = end_time.strftime("%H:%M")
+        print(start_time,end_time)
+
+    else:
+        city_id = '8'
+        city = City.objects.get(id=city_id)
+        counties = counties.filter(city=City.objects.get(id=city_id))
+        county_name = '全區'
+        county = County.objects.get(city=city,name=county_name)
+        
 
     if request.method == 'POST':
         care_type = request.POST.get('care_type')
@@ -927,7 +926,7 @@ def request_form_service_type(request):
             tempcase = TempCase()
         tempcase.user = user
         tempcase.care_type = care_type
-        tempcase.city = city
+        tempcase.city = City.objects.get(id=city).name
         tempcase.county = county
         tempcase.start_datetime = start_date
         tempcase.end_datetime = end_date
@@ -936,6 +935,7 @@ def request_form_service_type(request):
         if is_continuous_time == 'True':
             tempcase.is_continuous_time = True
         else:
+            tempcase.is_continuous_time = False
             weekdays = request.POST.getlist('weekdays[]')
             weekday_str = ''
             count = 0
@@ -947,9 +947,8 @@ def request_form_service_type(request):
             tempcase.weekday = weekday_str
         tempcase.save()
         return redirect('request_form_patient_info')
-    else:
-        
-        return render(request, 'web/request_form/service_type.html',{'countyName':county_name,'cityName':city,'citys':citys,'counties':counties})
+    
+    return render(request, 'web/request_form/service_type.html',{'start_time':start_time,'end_time':end_time, 'weekday_list':weekday_list,'is_continuous_time':is_continuous_time, 'start_end_date':start_end_date,'care_type':care_type, 'countyName':county,'cityName':city,'citys':citys,'counties':counties})
 
 def request_form_patient_info(request):
     user = request.user
@@ -986,7 +985,46 @@ def request_form_patient_info(request):
     services = Service.objects.all().order_by('id')[4:]
     increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
 
-    if request.method == 'POST':
+    if TempCase.objects.filter(user=user).exists() != False:
+        last_tempcase = TempCase.objects.get(user=user)
+        patient_name = last_tempcase.name
+        gender = last_tempcase.gender
+        weight = last_tempcase.weight
+        age = last_tempcase.age
+        disease = last_tempcase.disease
+        disease_remark = last_tempcase.disease_remark
+        body_condition = last_tempcase.body_condition
+        conditions_remark = last_tempcase.conditions_remark
+        service = last_tempcase.service
+        increase_service = last_tempcase.increase_service
+        disease_Idlist = disease.split(',')
+        if '1' in disease_Idlist:
+            disease_none = True
+        else:
+            disease_none = False
+        disease_list = []
+        for diseaseId in disease_Idlist:
+            disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
+        body_condition_Idlist = body_condition.split(',')
+        if '1' in body_condition_Idlist:
+            body_condition_none = True
+        else:
+            body_condition_none = False
+        body_condition_list = []
+        for body_condition_id in body_condition_Idlist:
+            body_condition_list.append(BodyCondition.objects.get(id=body_condition_id))
+        service_Idlist = service.split(',')
+        service_list = []
+        for service_id in service_Idlist:
+            service_list.append(Service.objects.get(id=service_id))
+        increase_service_Idlist = increase_service.split(',')
+        increase_service_list = []
+        for increase_service_id in increase_service_Idlist:
+            increase_service_list.append(Service.objects.get(id=increase_service_id))
+
+  
+
+    if request.method == 'POST' and 'next' in request.POST:
         print('post')
         patient_name = request.POST.get('patient_name')
         gender = request.POST.get('gender')
@@ -1000,7 +1038,6 @@ def request_form_patient_info(request):
         body_condition_note = request.POST.get('body_condition_note')
         services_list = request.POST.getlist('services[]')
         increase_services_list = request.POST.getlist('increase_services[]')
-        print(gender,patient_name)
         tempcase = TempCase.objects.get(user=user)
         tempcase.name = patient_name
         tempcase.gender = gender
@@ -1055,14 +1092,80 @@ def request_form_patient_info(request):
         print('save')
         return redirect('request_form_contact')
         
+    elif request.method == 'POST' and 'previous' in request.POST:
+        return redirect('request_form_service_type')
 
-    return render(request, 'web/request_form/patient_info.html',{'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'body_column_1':body_column_1,'body_column_2':body_column_2,'body_column_3':body_column_3,'body_column_4':body_column_4, 'disease_none':disease_none,'disease_column_1':disease_column_1,'disease_column_2':disease_column_2,'disease_column_3':disease_column_3,'disease_column_4':disease_column_4})
+    return render(request, 'web/request_form/patient_info.html',{'disease_none':disease_none,'body_condition_none':body_condition_none, 'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'body_column_1':body_column_1,'body_column_2':body_column_2,'body_column_3':body_column_3,'body_column_4':body_column_4, 'disease_none':disease_none,'disease_column_1':disease_column_1,'disease_column_2':disease_column_2,'disease_column_3':disease_column_3,'disease_column_4':disease_column_4})
 
 def request_form_contact(request):
-    return render(request, 'web/request_form/contact.html')
+    user = request.user
+    if TempCase.objects.filter(user=user).exists() != False:
+        last_tempcase = TempCase.objects.get(user=user)
+        emergencycontact_name = last_tempcase.emergencycontact_name
+        emergencycontact_relation = last_tempcase.emergencycontact_relation
+        emergencycontact_phone = last_tempcase.emergencycontact_phone
+
+    if request.method == 'POST' and 'next' in request.POST:
+        print('next')
+        emergencycontact_name = request.POST.get('emergencycontact_name')
+        emergencycontact_relation = request.POST.get('emergencycontact_relation')
+        emergencycontact_phone = request.POST.get('emergencycontact_phone')
+        tempcase = TempCase.objects.get(user=user)
+        tempcase.emergencycontact_name = emergencycontact_name
+        tempcase.emergencycontact_relation = emergencycontact_relation
+        tempcase.emergencycontact_phone = emergencycontact_phone
+        tempcase.save()
+        return redirect('request_form_confirm')
+    elif request.method == 'POST' and 'previous' in request.POST:
+        return redirect('request_form_patient_info')
+    return render(request, 'web/request_form/contact.html',{'user':user,'emergencycontact_phone':emergencycontact_phone,'emergencycontact_relation':emergencycontact_relation,'emergencycontact_name':emergencycontact_name})
 
 def request_form_confirm(request):
-    return render(request, 'web/request_form/confirm.html')
+    user = request.user
+    tempcase = TempCase.objects.get(user=user)
+    care_type = tempcase.care_type
+    start_date = tempcase.start_datetime
+    start_date = str(start_date.month ) + '/' +str(start_date.day)
+    end_date = tempcase.end_datetime
+    end_date = str(end_date.month) + '/' + str(end_date.day)
+    if tempcase.is_continuous_time == True:
+        time_type = '連續時間'
+    else:
+        time_type = '每週固定'
+    start_time_int = tempcase.start_time
+    end_time_int = tempcase.end_time
+    start_time = str(int(start_time_int)) + ':' + str(int((float(start_time_int)-int(start_time_int))*60))
+    end_time = str(int(end_time_int)) + ':' + str(int((float(end_time_int)-int(end_time_int))*60))
+    start_time = datetime.datetime.strptime(start_time,"%H:%M")
+    end_time = datetime.datetime.strptime(end_time,"%H:%M")
+    start_time = start_time.strftime("%H:%M")
+    end_time = end_time.strftime("%H:%M")
+
+    disease = tempcase.disease
+    disease_Idlist = disease.split(',')
+    disease_list = []
+    for diseaseId in disease_Idlist:
+        disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
+
+    body_condition = tempcase.body_condition
+    body_condition_Idlist = body_condition.split(',')
+    body_condition_list = []
+    for body_condition_id in body_condition_Idlist:
+        body_condition_list.append(BodyCondition.objects.get(id=body_condition_id))
+
+    service = tempcase.service
+    service_Idlist = service.split(',')
+    service_list = []
+    for service_id in service_Idlist:
+        service_list.append(Service.objects.get(id=service_id))
+
+    increase_service = tempcase.increase_service
+    increase_service_Idlist = increase_service.split(',')
+    increase_service_list = []
+
+    for increase_service_id in increase_service_Idlist:
+        increase_service_list.append(Service.objects.get(id=increase_service_id))
+    return render(request, 'web/request_form/confirm.html',{'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list, 'tempcase':tempcase, 'care_type':care_type,'start_date':start_date,'end_date':end_date,'time_type':time_type,'start_time':start_time,'end_time':end_time})
     
 def recommend_carer(request):
     servants = User.objects.filter(is_servant=True)
