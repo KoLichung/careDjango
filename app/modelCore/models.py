@@ -415,7 +415,6 @@ class Case(models.Model):
                 min_str = str(min)
             return ('早上 ' + hour_str + ':' + min_str)
 
-
 class TempCase(models.Model):
     user = models.ForeignKey(
         User,
@@ -768,6 +767,8 @@ class BlogPost(models.Model):
         ('publish', 'publish'),
     ]
     state = models.CharField(max_length=10, choices=STATE_CHOICES)
+
+    cover_image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
 
     create_date = models.DateField(blank = True, null=True)
     publish_date = models.DateField(blank = True, null=True)

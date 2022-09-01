@@ -1,5 +1,7 @@
 {% extends 'backboard/base.html' %} {% block content %}
 {% load static %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 
 <!-- 內容 -->
 <div class="mb-3">
@@ -24,13 +26,7 @@
       <div class="card h-lg-100 mb-2">
         <div class="card-header">
           <div class="min-vh-50">
-            {% if post %}
-              <textarea class="tinymce d-none" id="content" name="content">
-                {{post.body}}
-              </textarea>
-            {% else %}
-              <textarea class="tinymce d-none" id="content" name="content"></textarea>
-            {% endif %}
+            {{ form.body }}
           </div>
         </div>   
       </div>
@@ -40,9 +36,16 @@
         <div class="row my-2 gx-5" style="padding: 1rem 1rem;">
           <div class="col">
             <div class=""><b>封面圖片</b> (建議尺寸 800 x 600 px)</div>
+              {% if post.cover_image %}
+                <img src="{{ post.cover_image.url }}" alt="{{post.title}}" class="customImageSize rounded mb-2" width="300"> <br>
+              {% endif %}
+
+              <input type="hidden" id="post" name="post" value={{post.id}}>
+              {{ form.id.as_hidden }}
+              {{ form.cover_image }}
           </div>
-          <div class="col alnright">
-            <a class="custom-purple-btn text-white btn-sm " href="#">選擇圖片</a>
+
+          <div class="col alnleft">
           </div>
         </div>
       </div>

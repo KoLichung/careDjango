@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.core.paginator import Paginator
 
 import datetime
+from modelCore.forms import BlogPostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip
 
 def all_cases(request):
@@ -41,32 +42,46 @@ def new_blog(request):
     categories = BlogCategory.objects.all()
 
     if request.method == 'POST':
+        
         if request.GET.get('post_id') != None:
             blogPost = BlogPost.objects.get(id=request.GET.get('post_id'))
         else:
             blogPost = BlogPost()
+            blogPost.create_date = datetime.datetime.now()
 
         blogPost.title = request.POST.get('title') 
-        blogPost.body = request.POST.get('content') 
+        blogPost.body = request.POST.get('body') 
         blogPost.state = request.POST.get('post')
-        blogPost.create_date = datetime.datetime.now()
-
+        
         if blogPost.state == 'publish':
             blogPost.publish_date = datetime.datetime.now()
         
         if blogPost.title != None and blogPost.title != '':
+
+            if request.FILES.get('cover_image', False):
+                blogPost.cover_image = request.FILES['cover_image']
+
             blogPost.save()
 
             for category in categories:
                 if request.POST.get(f'check_category_{category.id}') != None:
                     BlogPostCategoryShip.objects.create(post=blogPost, category=category)
 
+            # if request.FILES.get('cover_image', False):
+            #     form = BlogPostCoverImageForm(request.POST, request.FILES)
+            #     form.instance = 
+            #     form.save()
+            # else:
+            #     print("no new file, do nothing")
+
         return redirect('all_blogs')
 
     if request.GET.get('post_id') != None:
         blogPost = BlogPost.objects.get(id=request.GET.get('post_id'))
+        form = BlogPostCoverImageForm(instance=blogPost)
         category_ids = list(BlogPostCategoryShip.objects.filter(post=blogPost).values_list('category', flat=True))
         checkedCatories = BlogCategory.objects.filter(id__in=category_ids)
-        return render(request, 'backboard/new_blog.html', {'categories': categories, 'post':blogPost, 'checkedCatories':checkedCatories})
+        return render(request, 'backboard/new_blog.html', {'categories':categories, 'post':blogPost, 'checkedCatories':checkedCatories, 'form':form})
 
-    return render(request, 'backboard/new_blog.html', {'categories': categories})
+    form = BlogPostCoverImageForm()
+    return render(request, 'backboard/new_blog.html', {'categories':categories, 'form':form})
