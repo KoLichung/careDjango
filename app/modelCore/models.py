@@ -238,7 +238,7 @@ class UserLanguage(models.Model):
 class License(models.Model):
     name = models.CharField(max_length= 100, unique=True)
     remark = models.CharField(max_length= 150, null=True, blank=True)
-    isPassed = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.name
 
@@ -253,6 +253,7 @@ class UserLicenseShipImage(models.Model):
         on_delete=models.CASCADE
     )
     image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
+    isPassed = models.BooleanField(default=False)
 
 class City(models.Model):
     name = models.CharField(max_length = 255, blank=True, null=True)

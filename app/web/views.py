@@ -760,28 +760,39 @@ def my_care_certificate(request):
 def my_files(request):
     user = request.user
     licences = License.objects.all().order_by('id')[:3]
+    
+    # UserLicenseImageShips 也許在 User Create 時就產生好
+    for license in licences:
+        if UserLicenseShipImage.objects.filter(user=user, license=license).count() == 0:
+            UserLicenseShipImage.objects.create(user=user,license=license)
+    
+    licenseImageShips = UserLicenseShipImage.objects.filter(user=user).order_by('license')[:3]
+
     form = UserLicenseImageForm()
     if request.method == 'POST' :
         license_id = request.POST.get('licenceId')
+
         if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=license_id)).exists() != False:
             shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=license_id))
         else:
             UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=license_id))
             shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=license_id))
         form = UserLicenseImageForm(request.POST or None, request.FILES or None,instance=shipinstance)
+
         if form.is_valid():
             print('valid')
-            new = form.save(commit=False)
-            new.user = user
-            new.license = License.objects.get(id=license_id)
-            new.save()
-        img_obj = form.instance
-        print(img_obj)
-        img_obj.user = user
-        img_obj.license = License.objects.get(id=license_id)
-        img_obj.save()
+            userLicenseShipImage = form.save(commit=False)
+            userLicenseShipImage.user = user
+            userLicenseShipImage.license = License.objects.get(id=license_id)
+            userLicenseShipImage.save()
+            
+        userLicenseShipImage = form.instance
+        print(userLicenseShipImage)
+        userLicenseShipImage.user = user
+        userLicenseShipImage.license = License.objects.get(id=license_id)
+        userLicenseShipImage.save()
 
-    return render(request, 'web/my/files.html',{'user':user,'form':form,'licences':licences})
+    return render(request, 'web/my/files.html',{'user':user,'form':form,'licences':licences, 'licenseImageShips':licenseImageShips})
 
 def my_profile(request):
     user = request.user

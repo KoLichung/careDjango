@@ -183,6 +183,20 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220901
+1.關於命名
+city => City or id(Foreign key)
+city_name => String
+
+cities => [City, City, City]
+city_ids => [2, 3, 5, 7]
+
+city_list => [City, City, City]
+(cities 優於 city_list)
+2.完成填寫需求單的部分, 需求單部分的程式碼整理一下
+====
+3.申請預訂
+
 20220831
 1.city 改成 "台北市" (不要 String 存 id)
 2.license 要加一個審核狀態, isPassed (bool, default=False)
