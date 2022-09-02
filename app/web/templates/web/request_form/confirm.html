@@ -24,20 +24,18 @@
           <hr>
         </div>
       </div>
-
+      
       <div class="container  pt-5">
-
         <div class="row mt-3">
           <div class="col-6">
             <p class="h5">您的需求</p>
             <div class="case-info-font mt-2">
                   <p>照護類型：{% if care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</p>
-                  <p>日期：{{start_date}}~{{end_date}}</p>
+                  <p>日期：{{start_date_str}}~{{end_date_str}}</p>
                   <p>時間類型：{{time_type}}</p>
-                  <p>開始時間：{{start_time}}</p>
-                  <p>結束時間：{{end_time}}</p>
+                  <p>開始時間：{{start_time_str}}</p>
+                  <p>結束時間：{{end_time_str}}</p>
             </div>
-
             <p class="h5 mt-5">被照顧者資訊</p>
             <div class="case-info-font mt-2">
                   <p>性別：{% if tempcase.gender == 'M' %}男{% else %}女{% endif %}</p>
@@ -48,7 +46,6 @@
                   <p>身體狀況：{% for body_condition in body_condition_list %} {{body_condition}} {% endfor %}</p>
                   <p class="text-indent-5">補充說明：{{tempcase.conditions_remark}}</p>
             </div>
-
             <p class="h5 mt-5">需求服務項目</p>
             <div class="case-info-font mt-3 mb-5">
               {% for service in service_list %}
@@ -56,10 +53,8 @@
                     <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
                     {{service}}
                   </p>
-              {% endfor %}
-                 
+              {% endfor %}                 
             </div>
-
             <p class="h5 mt-5">緊急聯絡人</p>
             <div class="case-info-font mt-2">
               <p>姓名：{{tempcase.emergencycontact_name}}</p>
@@ -68,320 +63,78 @@
             </div>
           </div>
         </div>
-
         <div class="row">
           <p class="h5 my-4">選擇 3 位照顧者詢問是否有意願接單</p>
         </div>
-
+        <form method="post" enctype="multipart/form-data">{% csrf_token %}
         <div class="row">
+          {% for servant in servants %}
+            <div class="mb-4 col-md-6 col-xl-3 flex-center" >
+              <div class="card mx-auto border border-600">
 
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-600">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                
-                <div>
-                  <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  <span class="carer-name">林瑜婷</span >
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="carer-review-number"> 評價7</span>
-                </div>
-
-                <div class="mt-2">
-                  <span class="purple-border-tag">居家照顧</span>
-                  <span class="purple-border-tag">醫院看護</span>
-                </div>
-
-                <div class="mt-3">
-                  <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                  <p class="h6">服務地區：</p>
-                  <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                </div>
+                {% if servant.background_image.url != None %}
+                  <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
+                {% else %}
+                  <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖"> 
+                {% endif %}                
+                <div class="card-body">
                   
+                  <div>
+                    {% if servant.image.url != None %}
+                      <img class="rounded-circle" src="{{servant.image.url}}" alt="" > 
+                    {% else %}
+                      <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
+                    {% endif %}
+                    <span class="carer-name">{{servant.name}}</span >
+                      {% for i in servant.servant_avg_rate_range %}
+                        <span class="fas fa-star" style="color: yellow;"></span>
+                      {% endfor %}
+                      {% if servant.servant_avg_rating_is_half_star == True %}
+                        <span class="fas fa-star-half-alt" style="color: yellow;"></span>
+                      {% endif %}
+                      {% for i in servant.servant_avg_rating_empty_star_range%}
+                        <i class="fa-regular fa-star" style="color: yellow;"></i>  
+                      {% endfor %}
+                    <span class="carer-review-number"> 評價{{servant.servant_rate_nums}}</span>
+                  </div>
+
+                  <div class="mt-2">
+                    {% if servant.is_home == True %}
+                      <span class="purple-border-tag">居家照顧</span>
+                    {% endif %}
+                    {% if servant.is_hospital == True %}
+                      <span class="purple-border-tag">醫院照護</span>
+                    {% endif %}
+                  </div>
+                  <div class="mt-3">
+                    {% if servant.is_hospital == True %}
+                      {% if care_type == 'home' %}
+                        <p class="h6 text-800">時薪 ${{servant.home_hour_wage}} | 半天 ${{servant.home_half_day_wage}} | 一天 ${{servant.home_one_day_wage}}</p>
+                      {% else %}
+                        <p class="h6 text-800">時薪 ${{servant.hospital_hour_wage}} | 半天 ${{servant.hospital_half_day_wage}} | 一天 ${{servant.hospital_one_day_wage}}</p>
+                      {% endif %}
+                    {% elif servant.is_home == True %}
+                      {% if care_type == 'hospital' %}
+                        <p class="h6 text-800">時薪 ${{servant.hospital_hour_wage}} | 半天 ${{servant.hospital_half_day_wage}} | 一天 ${{servant.hospital_one_day_wage}}</p>
+                      {% else %}
+                        <p class="h6 text-800">時薪 ${{servant.home_hour_wage}} | 半天 ${{servant.home_half_day_wage}} | 一天 ${{servant.home_one_day_wage}}</p>
+                      {% endif %}
+                    {% endif %}
+    
+                    <p class="h6 text-800">服務地區：</p>
+                    <p class="h6 text-800">{% for location in servant.user_locations.all %}{{location.city}}{% endfor %}</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="text-center mt-2">
+                  <input class="form-check-input servants-choose" type="checkbox" name="choose_carer[]" id="choose" value="{{servant.id}}" />
+                  <label class="h6" for="choose_carer[]">選擇</label>
+                </div>
               </div>
             </div>
-            <div>
-              <div class="text-center mt-2">
-                <input class="form-check-input" type="checkbox" name="choose_carer" id="choose" />
-                <label class="h6" for="choose">選擇</label>
-              </div>
-            </div>
-          </div>
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-600">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                
-                <div>
-                  <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  <span class="carer-name">林瑜婷</span >
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="carer-review-number"> 評價7</span>
-                </div>
-
-                <div class="mt-2">
-                  <span class="purple-border-tag">居家照顧</span>
-                  <span class="purple-border-tag">醫院看護</span>
-                </div>
-
-                <div class="mt-3">
-                  <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                  <p class="h6">服務地區：</p>
-                  <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                </div>
-                  
-              </div>
-            </div>
-            <div>
-              <div class="text-center mt-2">
-                <input class="form-check-input" type="checkbox" name="choose_carer" id="choose" />
-                <label class="h6" for="choose">選擇</label>
-              </div>
-            </div>
-          </div>
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-600">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                
-                <div>
-                  <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  <span class="carer-name">林瑜婷</span >
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="carer-review-number"> 評價7</span>
-                </div>
-
-                <div class="mt-2">
-                  <span class="purple-border-tag">居家照顧</span>
-                  <span class="purple-border-tag">醫院看護</span>
-                </div>
-
-                <div class="mt-3">
-                  <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                  <p class="h6">服務地區：</p>
-                  <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                </div>
-                  
-              </div>
-            </div>
-            <div>
-              <div class="text-center mt-2">
-                <input class="form-check-input" type="checkbox" name="choose_carer" id="choose" />
-                <label class="h6" for="choose">選擇</label>
-              </div>
-            </div>
-          </div>
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-600">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                
-                <div>
-                  <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  <span class="carer-name">林瑜婷</span >
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="carer-review-number"> 評價7</span>
-                </div>
-
-                <div class="mt-2">
-                  <span class="purple-border-tag">居家照顧</span>
-                  <span class="purple-border-tag">醫院看護</span>
-                </div>
-
-                <div class="mt-3">
-                  <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                  <p class="h6">服務地區：</p>
-                  <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                </div>
-                  
-              </div>
-            </div>
-            <div>
-              <div class="text-center mt-2">
-                <input class="form-check-input" type="checkbox" name="choose_carer" id="choose" />
-                <label class="h6" for="choose">選擇</label>
-              </div>
-            </div>
-          </div>
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-600">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                
-                <div>
-                  <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  <span class="carer-name">林瑜婷</span >
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="carer-review-number"> 評價7</span>
-                </div>
-
-                <div class="mt-2">
-                  <span class="purple-border-tag">居家照顧</span>
-                  <span class="purple-border-tag">醫院看護</span>
-                </div>
-
-                <div class="mt-3">
-                  <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                  <p class="h6">服務地區：</p>
-                  <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                </div>
-                  
-              </div>
-            </div>
-            <div>
-              <div class="text-center mt-2">
-                <input class="form-check-input" type="checkbox" name="choose_carer" id="choose" />
-                <label class="h6" for="choose">選擇</label>
-              </div>
-            </div>
-          </div>
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-600">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                
-                <div>
-                  <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  <span class="carer-name">林瑜婷</span >
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="carer-review-number"> 評價7</span>
-                </div>
-
-                <div class="mt-2">
-                  <span class="purple-border-tag">居家照顧</span>
-                  <span class="purple-border-tag">醫院看護</span>
-                </div>
-
-                <div class="mt-3">
-                  <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                  <p class="h6">服務地區：</p>
-                  <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                </div>
-                  
-              </div>
-            </div>
-            <div>
-              <div class="text-center mt-2">
-                <input class="form-check-input" type="checkbox" name="choose_carer" id="choose" />
-                <label class="h6" for="choose">選擇</label>
-              </div>
-            </div>
-          </div>
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-600">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                
-                <div>
-                  <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  <span class="carer-name">林瑜婷</span >
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="carer-review-number"> 評價7</span>
-                </div>
-
-                <div class="mt-2">
-                  <span class="purple-border-tag">居家照顧</span>
-                  <span class="purple-border-tag">醫院看護</span>
-                </div>
-
-                <div class="mt-3">
-                  <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                  <p class="h6">服務地區：</p>
-                  <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                </div>
-                  
-              </div>
-            </div>
-            <div>
-              <div class="text-center mt-2">
-                <input class="form-check-input" type="checkbox" name="choose_carer" id="choose" />
-                <label class="h6" for="choose">選擇</label>
-              </div>
-            </div>
-          </div>
-          <div class="mb-4 col-md-6 col-xl-3 flex-center" >
-            <div class="card mx-auto border border-600">
-
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="Card image cap">
-              
-              <div class="card-body">
-                
-                <div>
-                  <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                  <span class="carer-name">林瑜婷</span >
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="fas fa-star"  style="color: yellow;"></span>
-                  <span class="carer-review-number"> 評價7</span>
-                </div>
-
-                <div class="mt-2">
-                  <span class="purple-border-tag">居家照顧</span>
-                  <span class="purple-border-tag">醫院看護</span>
-                </div>
-
-                <div class="mt-3">
-                  <p class="h6">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-                  <p class="h6">服務地區：</p>
-                  <p class="h6">基隆市 台北市 宜蘭縣 新北市</p>
-                </div>
-                  
-              </div>
-            </div>
-            <div>
-              <div class="text-center mt-2">
-                <input class="form-check-input" type="checkbox" name="choose_carer" id="choose" />
-                <label class="h6" for="choose">選擇</label>
-              </div>
-            </div>
-          </div>
-
+          {% endfor %}
         </div>
-
         <div class="row mt-5 pb-5 justify-content-between">
           <div class="col-4">
             <a href="{% url 'request_form_contact' %}">
@@ -389,11 +142,18 @@
             </a>
           </div>
           <div class="col-4">
-            <button class="full-green-button" onclick="location.href='#'">確認送出</button>
+            <button class="full-green-button" type="submit">確認送出</button>
           </div>
         </div>
-
+        </form>
       </div>
-     
+     <script>
+      var limit = 3;
+      $('input.servants-choose').on('change', function(evt) {
+        if($(this).siblings(':checked').length >= limit) {
+            this.checked = false;
+        }
+      });
+     </script>
 </main>
 {% endblock %}

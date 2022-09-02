@@ -76,7 +76,7 @@
 
             <hr>
 
-            <p class="small-section-title-purple mt-5"><strong> {{servant_rate_nums}} </strong>則評價</p>
+            <p class="small-section-title-purple mt-5"><strong> {{servant.servant_rate_nums}} </strong>則評價</p>
             {% for review in reviews %}
             <div class="section-bg-grey my-3">
               <div class="row">
@@ -248,10 +248,10 @@
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
                     <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{defaultStartTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                </div>
-                <div class="mt-1 btn-group">
-                  <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                </div>
+                  </div>
+                  <div class="mt-1 btn-group">
+                    <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  </div>
 
                 </div>
                 
@@ -411,7 +411,7 @@
     document.querySelector('.weekdayCheck').addEventListener('change', event => {
       is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
       weekdays = []
-      checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+      checkboxes = $('input[type=checkbox]:checked')
 
       for (var i = 0; i < checkboxes.length; i++) {
         weekdays.push(checkboxes[i].value)
@@ -422,6 +422,7 @@
     
     function calculate_rate(){
       care_type = document.querySelector('input[name="care_type"]:checked').value;
+      console.log(increase_service_ids)
       return $.ajax({
         type: "POST",
         data: { 'servant':servant,
@@ -467,7 +468,6 @@
     calculate_rate.call();
     console.log(start_end_date,is_continuous_time,weekdays,startTime,endTime)
     
-      
   </script>
 </main>
 {% endblock %}
