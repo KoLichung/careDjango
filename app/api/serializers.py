@@ -107,7 +107,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         rep['needer_name'] = instance.case.user.name
-        if instance.case.user.image != None:
+        if instance.case.user.image:
             rep['needer_image'] = instance.case.user.image.url
         rep['care_type'] = instance.case.care_type
         rep['is_continuous_time'] =  instance.case.is_continuous_time
