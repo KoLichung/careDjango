@@ -25,12 +25,9 @@
         </div>
       </div>
       <form method="POST" enctype="multipart/form-data">{% csrf_token %}
-        <div class="row">
-          
+        <div class="row">  
           <div class="col-11 mx-auto"> 
             <div class="py-4">
-              <div class="">
-                
                   <div class="px-sm-3">
                       <p class="h6" style="font-weight: 600;">被照顧者資料：</p>
                       <!-- <div class="form-check">
@@ -186,13 +183,9 @@
                             {% endfor %}
                           </div>
                   </div>
-                
-              </div>
             </div>
           </div>
-          
         </div>
-
         <div class="row mt-7 justify-content-between pb-6">
           <div class="col-5 col-md-4 mx-auto">
             <a href="{% url 'request_form_service_type' %}">
@@ -202,7 +195,6 @@
           <div class="col-5 col-md-4 mx-auto">
             <!-- <a href="{% url 'request_form_contact' %}"> -->
               <button class="full-purple-button" type="submit" name="next">下一頁 <span class="far fa-arrow-alt-circle-right" ></span></button>
-
             <!-- </a> -->
           </div>
         </div>

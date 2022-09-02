@@ -19,7 +19,8 @@ from modelCore.forms import *
 from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service
-from modelCore.models import UserLicenseShipImage ,License ,Case ,OrderIncreaseService ,TempCase ,DiseaseCondition ,BodyCondition
+from modelCore.models import UserLicenseShipImage ,License ,Case ,OrderIncreaseService ,TempCase ,DiseaseCondition ,BodyCondition ,CaseServiceShip
+from modelCore.models import CaseBodyConditionShip, CaseDiseaseShip
 # Create your views here.
 
 logger = logging.getLogger(__file__)
@@ -39,7 +40,6 @@ def index(request):
         end_time = request.POST.get('timepicker_endTime')
         weekdays = request.POST.getlist('weekdays[]')
         weekday_list = weekdays
-        print(start_date,start_time)
         weekday_str = ''
         count = 0
         for weekday in weekdays:
@@ -115,7 +115,6 @@ def ajax_cal_rate(request):
         care_type = updatedData['care_type'][0]
         start_end_date = updatedData['start_end_date'][0]
         is_continuous_time = updatedData['is_continuous_time'][0]
-        print(is_continuous_time)
         startTime = updatedData['startTime'][0]
         endTime = updatedData['endTime'][0]
         start_date = '20' + start_end_date.split(' to ')[0].replace('/','-')
@@ -165,8 +164,8 @@ def ajax_cal_rate(request):
                 return JsonResponse({'data':data})
         else:
             weekdays = updatedData['weekdays[]']
+            print(weekdays)
             if (start_date != '') | (end_date != '') | (startTime != '') | (endTime != ''):
-                print('1')
                 start_time = startTime.split(':')
                 end_time = endTime.split(':')
                 start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
@@ -210,22 +209,40 @@ def ajax_cal_rate(request):
                             hour_wage = servant.hospital_hour_wage
                         elif care_type == '居家照顧':
                             hour_wage = servant.home_hour_wage
-                        print('calculate')
                         start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
                         end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
-                        print(start_date,end_date)
                         total_hours = 0
                         for i in weekdays_num_list:
                             total_hours += (days_count([int(i)], start_date, end_date)) * (end_time_int - start_time_int)
                         total_money = total_hours * hour_wage
-                        print(total_money,total_hours)
                         data = {
                             'result':'3',
                             'total_hours':total_hours,
                             'total_money':total_money,
                             'hour_wage':hour_wage,
                         }
-                        return JsonResponse({'data':data})
+
+                        if 'increase_service[]' in updatedData:
+                            increase_service_ids = updatedData['increase_service[]']
+                            print(increase_service_ids)
+                            increase_service_data = []
+                            count = 0
+                            for service_id in increase_service_ids:
+                                count += 1
+                                service = Service.objects.get(id=service_id)
+                                increase_percent = UserServiceShip.objects.get(user=servant,service=service).increase_percent
+                                increase_money = total_money * increase_percent / 100
+                                increase_data = {
+                                    'service' : service,
+                                    'increase_percent' : increase_percent,
+                                    'increase_money':increase_money,
+                                }
+                                increase_service_data['data'+str(count)] = increase_data
+                            print(increase_service_data)
+                            return JsonResponse({'data':data,'increase_service_data':increase_service_data})
+                        else:
+                            
+                            return JsonResponse({'data':data})
                     else:
                         data = {'result':'2'}
                         return JsonResponse({'data':data})
@@ -262,7 +279,6 @@ def login(request):
 
 
     return render(request, 'web/login.html')
-
 
 def register_line(request):
     line_id = request.GET.get('line_id', '')
@@ -344,6 +360,7 @@ def search_list(request):
     is_continuous_time = request.GET.get('is_continuous_time')
     start_date= request.GET.get('start_date')
     end_date= request.GET.get('end_date')
+    print(start_date,end_date)
     start_time = request.GET.get('start_time')
     end_time = request.GET.get('end_time')
     weekdays = request.GET.get('weekdays')
@@ -485,7 +502,7 @@ def search_list(request):
     
     if county_name != None:
         if county_name != '全區':
-            user_ids = list(UserServiceLocation.objects.filter(county=county_name).values_list('user', flat=True))
+            user_ids = list(UserServiceLocation.objects.filter(city=city_id,county=county_name).values_list('user', flat=True))
         else:
             user_ids = list(UserServiceLocation.objects.filter(city=city_id).values_list('user', flat=True))
         servants = servants.filter(id__in=user_ids)
@@ -568,15 +585,90 @@ def search_carer_detail(request):
         end_time = request.POST.get('timepicker_endTime')
         weekdays = request.POST.getlist('weekdays[]')
         defaultStartEndDate = start_end_date
-        return redirect_params('booking_patient_info',{'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_end_date':start_end_date,'start_time':start_time,'servant_care_type':servant_care_type})
-    
+        weekday_str = ''
+        count = 0
+        for weekday in weekdays:
+            count += 1
+            weekday_str += weekday 
+            if count < len(weekdays):
+                weekday_str += ','
+        return redirect_params('booking_patient_info',{'weekdays':weekday_str, 'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_end_date':start_end_date,'start_time':start_time,'end_time':end_time,'servant':servant})
     
     defaultStartTime = start_time
     defaultEndTime = end_time
-    return render(request, 'web/search_carer_detail.html',{'weekdays':weekdays, 'cityName':city,'citys':citys,'countyName':county_name,'counties':counties, 'is_continuous_time':is_continuous_time, 'defaultStartTime':defaultStartTime,'defaultEndTime':defaultEndTime,'defaultStartEndDate':defaultStartEndDate,'weekday_list':weekday_list, 'servant':servant,'license_not_provide':license_not_provide,'reviews':reviews,'citys':citys,'counties':counties,'care_type':care_type})
+    return render(request, 'web/search_carer_detail.html',{'servant_care_type':servant_care_type, 'weekdays':weekdays, 'cityName':city,'citys':citys,'countyName':county_name,'counties':counties, 'is_continuous_time':is_continuous_time, 'defaultStartTime':defaultStartTime,'defaultEndTime':defaultEndTime,'defaultStartEndDate':defaultStartEndDate,'weekday_list':weekday_list, 'servant':servant,'license_not_provide':license_not_provide,'reviews':reviews,'citys':citys,'counties':counties,'care_type':care_type})
 
 def booking_patient_info(request):
-    return render(request, 'web/booking/patient_info.html')
+    servant_phone = request.GET.get('servant')
+    servant = User.objects.get(phone=servant_phone)
+    city_id = request.GET.get('city')
+    county_name = request.GET.get('county')
+    care_type = request.GET.get('care_type')
+    is_continuous_time = request.GET.get('is_continuous_time')
+    start_end_date = request.GET.get('start_end_date')
+    start_time = request.GET.get('start_time')
+    end_time = request.GET.get('end_time')
+    weekdays = request.GET.get('weekdays')
+    weekday_list = weekdays.split(',')
+    print(weekdays)
+    citys = City.objects.all()
+    counties = County.objects.all()
+    if city_id == None:
+        city_id = '8'
+    city = City.objects.get(id=city_id)
+    counties = counties.filter(city=City.objects.get(id=city_id))
+
+    if county_name == None:
+        county_name = '全區'
+    else:
+        if county_name != '全區':
+            county_name = County.objects.get(city=city_id,name=county_name)
+        else:
+            county_name = '全區'
+    start_date = start_end_date.split(' to ')[0]
+    end_date = start_end_date.split(' to ')[1]
+    start_date = datetime.datetime.strptime(start_date,"%y/%m/%d")
+    end_date = datetime.datetime.strptime(end_date,"%y/%m/%d")
+    start_date = start_date.strftime("%m/%d")
+    end_date = end_date.strftime("%m/%d")
+    disease_none = DiseaseCondition.objects.get(id=1)
+    disease_column_1 = []
+    disease_column_2 = []
+    disease_column_3 = []
+    disease_column_4 = []
+    diseaseconditions = DiseaseCondition.objects.all().order_by('id')[1:]
+    for disease in diseaseconditions:
+        if int(disease.id)%4 == 2:
+            disease_column_1.append(disease)
+        elif int(disease.id)%4 == 3:
+            disease_column_2.append(disease)
+        elif int(disease.id)%4 == 0:
+            disease_column_3.append(disease)
+        elif int(disease.id)%4 == 1:
+            disease_column_4.append(disease)
+    body_condition_none = BodyCondition.objects.get(id=1)
+    body_column_1 = []
+    body_column_2 = []
+    body_column_3 = []
+    body_column_4 = []
+    body_conditions = BodyCondition.objects.all().order_by('id')[1:]
+    for body_condition in body_conditions:
+        if int(body_condition.id) %4 ==2:
+            body_column_1.append(body_condition)
+        elif int(body_condition.id) %4 == 3:
+            body_column_2.append(body_condition)
+        elif int(body_condition.id) %4 == 0 :
+            body_column_3.append(body_condition)
+        elif int(body_condition.id) %4 == 1:
+            body_column_4.append(body_condition)
+    services = Service.objects.all().order_by('id')[4:]
+    
+    increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
+    for service in increase_services:
+        if UserServiceShip.objects.filter(user=servant, service=service).count() == 0:
+            UserServiceShip.objects.create(user=servant,service=service)
+    increase_service_ships = UserServiceShip.objects.filter(user=servant).order_by('service')[:4]
+    return render(request, 'web/booking/patient_info.html',{'increase_service_ships':increase_service_ships, 'weekday_list':weekday_list, 'servant':servant, 'care_type':care_type, 'start_time':start_time,'end_time':end_time, 'start_date':start_date,'end_date':end_date,'cityName':city,'citys':citys,'countyName':county_name,'counties':counties, 'is_continuous_time':is_continuous_time, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'body_column_1':body_column_1,'body_column_2':body_column_2,'body_column_3':body_column_3,'body_column_4':body_column_4, 'disease_none':disease_none,'disease_column_1':disease_column_1,'disease_column_2':disease_column_2,'disease_column_3':disease_column_3,'disease_column_4':disease_column_4})
 
 def booking_location(request):
     return render(request, 'web/booking/location.html')
@@ -749,12 +841,6 @@ def my_care_certificate(request):
     order = Order.objects.get(case=case)
     total_fee = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum']))
     print(total_fee)
-    # if request.method == 'POST' and 'PDFdownload' in request.POST:
-    #     print('pdf')
-    #     return render_to_pdf(
-    #         'web/my/care_certificate.html',
-    #         { 'pagesize':'A4','case':case,'order':order,'total_fee':total_fee}
-    #     )
     return render(request, 'web/my/care_certificate.html',{'case':case,'order':order,'total_fee':total_fee})
 
 def my_files(request):
@@ -877,8 +963,7 @@ def request_form_service_type(request):
     citys = City.objects.all()
     counties = County.objects.all()
     
-    
-    if TempCase.objects.filter(user=user).exists() != False:
+    if TempCase.objects.filter(user=user).exists() :
         last_tempcase = TempCase.objects.get(user=user)
         care_type = last_tempcase.care_type
         start_date = str(last_tempcase.start_datetime.date())
@@ -912,8 +997,12 @@ def request_form_service_type(request):
         city = City.objects.get(id=city_id)
         counties = counties.filter(city=City.objects.get(id=city_id))
         county_name = '全區'
-        county = County.objects.get(city=city,name=county_name)
-        
+        start_time = ''
+        end_time = ''
+        weekday_list = []
+        is_continuous_time = True
+        start_end_date = ''
+        care_type = 'home'
 
     if request.method == 'POST':
         care_type = request.POST.get('care_type')
@@ -959,7 +1048,7 @@ def request_form_service_type(request):
         tempcase.save()
         return redirect('request_form_patient_info')
     
-    return render(request, 'web/request_form/service_type.html',{'start_time':start_time,'end_time':end_time, 'weekday_list':weekday_list,'is_continuous_time':is_continuous_time, 'start_end_date':start_end_date,'care_type':care_type, 'countyName':county,'cityName':city,'citys':citys,'counties':counties})
+    return render(request, 'web/request_form/service_type.html',{'start_time':start_time,'end_time':end_time, 'weekday_list':weekday_list,'is_continuous_time':is_continuous_time, 'start_end_date':start_end_date,'care_type':care_type, 'countyName':county_name,'cityName':city,'citys':citys,'counties':counties})
 
 def request_form_patient_info(request):
     user = request.user
@@ -1033,8 +1122,6 @@ def request_form_patient_info(request):
         for increase_service_id in increase_service_Idlist:
             increase_service_list.append(Service.objects.get(id=increase_service_id))
 
-  
-
     if request.method == 'POST' and 'next' in request.POST:
         print('post')
         patient_name = request.POST.get('patient_name')
@@ -1106,7 +1193,7 @@ def request_form_patient_info(request):
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect('request_form_service_type')
 
-    return render(request, 'web/request_form/patient_info.html',{'disease_none':disease_none,'body_condition_none':body_condition_none, 'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'body_column_1':body_column_1,'body_column_2':body_column_2,'body_column_3':body_column_3,'body_column_4':body_column_4, 'disease_none':disease_none,'disease_column_1':disease_column_1,'disease_column_2':disease_column_2,'disease_column_3':disease_column_3,'disease_column_4':disease_column_4})
+    return render(request, 'web/request_form/patient_info.html',{'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'body_column_1':body_column_1,'body_column_2':body_column_2,'body_column_3':body_column_3,'body_column_4':body_column_4, 'disease_none':disease_none,'disease_column_1':disease_column_1,'disease_column_2':disease_column_2,'disease_column_3':disease_column_3,'disease_column_4':disease_column_4})
 
 def request_form_contact(request):
     user = request.user
@@ -1133,12 +1220,13 @@ def request_form_contact(request):
 
 def request_form_confirm(request):
     user = request.user
+    servants = User.objects.filter(is_servant=True)
     tempcase = TempCase.objects.get(user=user)
     care_type = tempcase.care_type
     start_date = tempcase.start_datetime
-    start_date = str(start_date.month ) + '/' +str(start_date.day)
+    start_date_str = str(start_date.month ) + '/' +str(start_date.day)
     end_date = tempcase.end_datetime
-    end_date = str(end_date.month) + '/' + str(end_date.day)
+    end_date_str = str(end_date.month) + '/' + str(end_date.day)
     if tempcase.is_continuous_time == True:
         time_type = '連續時間'
     else:
@@ -1149,8 +1237,8 @@ def request_form_confirm(request):
     end_time = str(int(end_time_int)) + ':' + str(int((float(end_time_int)-int(end_time_int))*60))
     start_time = datetime.datetime.strptime(start_time,"%H:%M")
     end_time = datetime.datetime.strptime(end_time,"%H:%M")
-    start_time = start_time.strftime("%H:%M")
-    end_time = end_time.strftime("%H:%M")
+    start_time_str = start_time.strftime("%H:%M")
+    end_time_str = end_time.strftime("%H:%M")
 
     disease = tempcase.disease
     disease_Idlist = disease.split(',')
@@ -1169,6 +1257,9 @@ def request_form_confirm(request):
     service_list = []
     for service_id in service_Idlist:
         service_list.append(Service.objects.get(id=service_id))
+        servant_ids = list(UserServiceShip.objects.filter(service=Service.objects.get(id=service_id)).values_list('user', flat=True))
+        servants = servants.filter(id__in=servant_ids)
+        print(servant_ids)
 
     increase_service = tempcase.increase_service
     increase_service_Idlist = increase_service.split(',')
@@ -1176,7 +1267,107 @@ def request_form_confirm(request):
 
     for increase_service_id in increase_service_Idlist:
         increase_service_list.append(Service.objects.get(id=increase_service_id))
-    return render(request, 'web/request_form/confirm.html',{'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list, 'tempcase':tempcase, 'care_type':care_type,'start_date':start_date,'end_date':end_date,'time_type':time_type,'start_time':start_time,'end_time':end_time})
+    
+    is_continuous_time = tempcase.is_continuous_time
+    weekdays = tempcase.weekday
+    city_name = tempcase.city
+    county_name = tempcase.county
+
+    if county_name != '全區':
+        user_ids = list(UserServiceLocation.objects.filter(county=County.objects.get(city=City.objects.get(name=city_name),name=county_name)).values_list('user', flat=True))
+    else:
+        user_ids = list(UserServiceLocation.objects.filter(city=City.objects.get(name=city_name)).values_list('user', flat=True))
+    servants = servants.filter(id__in=user_ids)
+
+    if care_type == 'home':
+        servants = servants.filter(is_home=True)
+    elif care_type == 'hospital':
+        servants = servants.filter(is_hospital=True)
+
+    if is_continuous_time == 'True':
+            servants = servants.filter(is_continuous_time=True)
+
+        #所選擇的周間跟時段 要符合 servant 的服務時段
+    if weekdays != None:
+        if (start_date != '') and (end_date != '') and (start_time != '') and (end_time != ''):
+            start_time = start_time_str.split(':')
+            end_time = end_time_str.split(':')
+            start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
+            end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
+            weekdays_num_list = weekdays
+            service_time_condition_1 = Q(is_continuous_time=True)
+            # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+            # queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
+            for weekdays_num in weekdays_num_list:
+                service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+                servants = servants.filter(service_time_condition_1 | service_time_condition_2).distinct()
+            # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
+            # 2022-07-10
+
+            #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
+            #1.取出日期期間有交集的訂單
+            condition1 = Q(start_datetime__range=[start_date, end_date])
+            condition2 = Q(end_datetime__range=[start_date, end_date])
+            condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
+            orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
+
+            #2.再從 1 取出週間有交集的訂單
+            #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
+            weekdays_num_list = weekdays
+            weekday_condition_1 = Q(order_weekdays__weekday__in=weekdays_num_list)
+            weedkay_condition_2 =  Q(case__is_continuous_time=True)
+            #3.再從 2 取出時段有交集的訂單
+            time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
+            time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
+            time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
+            order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
+            order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
+            orders = orders.filter(order_condition_1|order_condition_2).distinct()
+            order_conflict_servants_id = list(orders.values_list('servant', flat=True))
+            servants = servants.filter(~Q(id__in=order_conflict_servants_id))
+        else:
+            weekdays_num_list = weekdays
+            service_time_condition_1 = Q(is_continuous_time=True)
+            for weekdays_num in weekdays_num_list:
+                service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num)
+                servants = servants.filter(service_time_condition_1 | service_time_condition_2).distinct()
+        
+    if request.method == 'POST':
+        choose_servants = request.POST.getlist('choose_carer[]')
+        case = Case()
+        case.user = user
+        case.city = City.objects.get(name=city_name)
+        case.county = County.objects.get(city=City.objects.get(name=city_name),name=county_name)
+        case.care_type = care_type
+        case.name = tempcase.name
+        case.gender = tempcase.gender
+        case.age = tempcase.age
+        case.weight = tempcase.weight
+        case.disease_remark = tempcase.disease_remark
+        case.conditions_remark = tempcase.conditions_remark
+        case.is_continuous_time = tempcase.is_continuous_time
+        case.weekday = tempcase.weekday
+        case.start_time = tempcase.start_time
+        case.end_time = tempcase.end_time
+        case.start_datetime = tempcase.start_datetime
+        case.end_datetime = tempcase.end_datetime
+        case.emergencycontact_name = tempcase.emergencycontact_name
+        case.emergencycontact_relation = tempcase.emergencycontact_relation
+        case.emergencycontact_phone = tempcase.emergencycontact_phone
+        case.save()
+        tempcase.delete()
+
+        for disease in disease_list:
+            CaseDiseaseShip.objects.create(case=case,disease=disease)
+
+        for body_condition in body_condition_list:
+            CaseBodyConditionShip.objects.create(case=case,body_condition=body_condition)
+        
+        for service in service_list:
+            CaseServiceShip.objects.create(case=case,service=service)
+        return redirect('index')
+
+    return render(request, 'web/request_form/confirm.html',{'servants':servants, 'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list, 'tempcase':tempcase, 'care_type':care_type,'start_date_str':start_date_str,'end_date_str':end_date_str,'time_type':time_type,'start_time_str':start_time_str,'end_time_str':end_time_str})
     
 def recommend_carer(request):
     servants = User.objects.filter(is_servant=True)
@@ -1231,14 +1422,3 @@ def days_count(weekdays: list, start: date, end: date):
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]
     return len([day for day in days if day.weekday() in weekdays])
 
-# def render_to_pdf(template_src, context_dict):
-#     template = get_template(template_src)
-#     # context = Context(context_dict)
-#     html  = template.render(context_dict)
-#     print(type(html))
-#     result = io.BytesIO()
-
-#     pdf = pisa.pisaDocument(StringIO(html), result)
-#     if not pdf.err:
-#         return HttpResponse(result.getvalue(), content_type='application/pdf')
-#     return HttpResponse('We had some errors<pre>%s</pre>' % html.escape(html))
