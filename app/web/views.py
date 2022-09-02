@@ -1085,7 +1085,7 @@ def request_form_patient_info(request):
     services = Service.objects.all().order_by('id')[4:]
     increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
 
-    if TempCase.objects.filter(user=user).exists() != False:
+    if TempCase.objects.filter(user=user).exists() :
         last_tempcase = TempCase.objects.get(user=user)
         patient_name = last_tempcase.name
         gender = last_tempcase.gender
