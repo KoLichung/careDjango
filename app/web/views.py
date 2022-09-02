@@ -1085,6 +1085,8 @@ def request_form_patient_info(request):
     services = Service.objects.all().order_by('id')[4:]
     increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
 
+    return render(request, 'web/request_form/patient_info.html',{'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'body_column_1':body_column_1,'body_column_2':body_column_2,'body_column_3':body_column_3,'body_column_4':body_column_4, 'disease_none':disease_none,'disease_column_1':disease_column_1})
+
     if TempCase.objects.filter(user=user).exists() != False:
         last_tempcase = TempCase.objects.get(user=user)
         patient_name = last_tempcase.name

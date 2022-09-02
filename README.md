@@ -183,6 +183,10 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220902
+1.修正需求單
+2.繼續預訂單的部分
+
 20220901
 1.關於命名
 city => City or id(Foreign key)
