@@ -309,11 +309,19 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         service_ids = list(UserServiceShip.objects.filter(user=user).values_list('service', flat=True))
         user.services = Service.objects.filter(id__in=service_ids)
 
+        for i in range(len(user.services)):
+            if user.services[i].id <= 4:
+                user.services[i].increase_percent = UserServiceShip.objects.get(user=user, service=user.services[i]).increase_percent
+
         license_ids = list(UserLicenseShipImage.objects.filter(user=user).values_list('license', flat=True))
         user.licences = License.objects.filter(id__in=license_ids)
+
+        language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
+        user.languages = Language.objects.filter(id__in=language_ids)
+
         user.avg_rate = Review.objects.filter(servant=user,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
         user.about_me = User.objects.get(phone=user).about_me
-        user.reviews = Review.objects.filter(servant=user)[:2]
+        user.reviews = Review.objects.filter(servant=user)
         serializer = self.get_serializer(user, context={"request":request})
         return Response(serializer.data)
 
@@ -536,8 +544,9 @@ class ReviewViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(case_offender_rating__gte=1)  
 
         for i in range(len(queryset)):
-            queryset[i].care_type = queryset[i].case.care_type
-            queryset[i].is_continuous_time = queryset[i].case.is_continuous_time
+            # queryset[i].care_type = queryset[i].case.care_type
+            # queryset[i].is_continuous_time = queryset[i].case.is_continuous_time
+
             queryset[i].start_datetime = queryset[i].case.start_datetime
             queryset[i].end_datetime = queryset[i].case.end_datetime
             queryset[i].user_avg_rate = queryset.filter(case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
@@ -549,8 +558,8 @@ class ReviewViewSet(viewsets.GenericViewSet,
         review = self.get_object()
         user = self.request.user
         if review.case.user == user:
-            review.care_type = review.case.care_type
-            review.is_continuous_time = review.case.is_continuous_time
+            # review.care_type = review.case.care_type
+            # review.is_continuous_time = review.case.is_continuous_time
             review.start_datetime = review.case.start_datetime
             review.end_datetime = review.case.end_datetime
             review.servant_name = review.servant.name
