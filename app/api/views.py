@@ -233,72 +233,73 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         if county != None:
             queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
 
-        start_date = start_datetime.split('T')[0]
-        end_date = end_datetime.split('T')[0]
-        start_time_int = int(start_end_time.split(':')[0])
-        end_time_int = int(start_end_time.split(':')[1])
-        #以下兩個情形只會有其中一個發生
-        if is_continuous_time == 'True':
-            queryset = queryset.filter(is_continuous_time=True)
-        
-        #所選擇的周間跟時段 要符合 servant 的服務時段
-        elif weekdays != None:
+        if start_datetime != None:
+            start_date = start_datetime.split('T')[0]
+            end_date = end_datetime.split('T')[0]
+            start_time_int = int(start_end_time.split(':')[0])
+            end_time_int = int(start_end_time.split(':')[1])
+            #以下兩個情形只會有其中一個發生
+            if is_continuous_time == 'True':
+                queryset = queryset.filter(is_continuous_time=True)
             
-            
-            weekdays_num_list = weekdays.split(',')
-            service_time_condition_1 = Q(is_continuous_time=True)
-            # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
-            # queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
-            for weekdays_num in weekdays_num_list:
-                service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
-                queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
-        # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
-        # 2022-07-10
+            #所選擇的周間跟時段 要符合 servant 的服務時段
+            elif weekdays != None:
+                
+                
+                weekdays_num_list = weekdays.split(',')
+                service_time_condition_1 = Q(is_continuous_time=True)
+                # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+                # queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
+                for weekdays_num in weekdays_num_list:
+                    service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+                    queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
+            # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
+            # 2022-07-10
 
-        #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
-        #1.取出日期期間有交集的訂單
-        condition1 = Q(start_datetime__range=[start_date, end_date])
-        condition2 = Q(end_datetime__range=[start_date, end_date])
-        condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
-        orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
-        #2.再從 1 取出週間有交集的訂單
-        #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
-        if weekdays != None:
-            weekdays_num_list = weekdays.split(',')
-            
-            weekday_condition_1 = Q(order_weekdays__weekday__in=weekdays_num_list)
-            weedkay_condition_2 =  Q(case__is_continuous_time=True)
-            # orders = orders.filter(order_condition_1 | order_condition_2).distinct()
-        #3.再從 2 取出時段有交集的訂單
-        time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
-        time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
-        time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
-        order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
-        order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
-        orders = orders.filter(order_condition_1|order_condition_2).distinct()
-        # orders = Order.objects.filter(order_condition_2)
-        print(orders)
-        order_conflict_servants_id = list(orders.values_list('servant', flat=True))
-        queryset = queryset.filter(~Q(id__in=order_conflict_servants_id))
+            #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
+            #1.取出日期期間有交集的訂單
+            condition1 = Q(start_datetime__range=[start_date, end_date])
+            condition2 = Q(end_datetime__range=[start_date, end_date])
+            condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
+            orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
+            #2.再從 1 取出週間有交集的訂單
+            #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
+            if weekdays != None:
+                weekdays_num_list = weekdays.split(',')
+                
+                weekday_condition_1 = Q(order_weekdays__weekday__in=weekdays_num_list)
+                weedkay_condition_2 =  Q(case__is_continuous_time=True)
+                # orders = orders.filter(order_condition_1 | order_condition_2).distinct()
+            #3.再從 2 取出時段有交集的訂單
+            time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
+            time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
+            time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
+            order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
+            order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
+            orders = orders.filter(order_condition_1|order_condition_2).distinct()
+            # orders = Order.objects.filter(order_condition_2)
+            print(orders)
+            order_conflict_servants_id = list(orders.values_list('servant', flat=True))
+            queryset = queryset.filter(~Q(id__in=order_conflict_servants_id))
 
-        if order == 'rating':
-            queryset = queryset.order_by('-rating')
-        elif order == 'rating_nums':
-            queryset = queryset.filter(servant_reviews__servant_rating__gte=1).annotate(rating_nums=Count('servant_reviews__servant_rating')).order_by('-rating_nums')
-        elif order == 'price_low':
-            if care_type == 'home':
-                queryset = queryset.order_by('home_hour_wage')
-                print('low')
-            else:
-                queryset = queryset.order_by('hospital_hour_wage')
-        elif order == 'price_high':
-            if care_type == 'home':
-                queryset = queryset.order_by('-home_hour_wage')
-            else:
-                queryset = queryset.order_by('-hospital_hour_wage')
-        for i in range(len(queryset)):
-            queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
-            queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+            if order == 'rating':
+                queryset = queryset.order_by('-rating')
+            elif order == 'rating_nums':
+                queryset = queryset.filter(servant_reviews__servant_rating__gte=1).annotate(rating_nums=Count('servant_reviews__servant_rating')).order_by('-rating_nums')
+            elif order == 'price_low':
+                if care_type == 'home':
+                    queryset = queryset.order_by('home_hour_wage')
+                    print('low')
+                else:
+                    queryset = queryset.order_by('hospital_hour_wage')
+            elif order == 'price_high':
+                if care_type == 'home':
+                    queryset = queryset.order_by('-home_hour_wage')
+                else:
+                    queryset = queryset.order_by('-hospital_hour_wage')
+            for i in range(len(queryset)):
+                queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
+                queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -389,6 +390,7 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
         case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
         service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True))
         case.services = Service.objects.filter(id__in=service_ids)
+        case.user_detail = case.user
 
         serializer = self.get_serializer(case)
         return Response(serializer.data)

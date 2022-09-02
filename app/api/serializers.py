@@ -7,10 +7,16 @@ from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServ
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderIncreaseService, BlogPost, BlogCategory, BlogPostCategoryShip
 
-class UserSerializer(serializers.ModelSerializer):
+# class ServantSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ('id', 'phone', 'name', 'gender', 'image', 'is_home', 'home_hour_wage', 'home_half_day_wage', 'home_one_day_wage', 'is_hospital', 'hospital_hour_wage', 'hospital_half_day_wage', 'hospital_one_day_wage', 'about_me', 'background_image')
+#         read_only_fields = ('id',)
+
+class NeederSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('id', 'phone', 'name', 'gender', 'image')
         read_only_fields = ('id',)
 
 class LicenseSerializer(serializers.ModelSerializer):
@@ -88,6 +94,10 @@ class ReviewSerializer(serializers.ModelSerializer):
     user_avg_rate = serializers.IntegerField(default=0)
     user_rating_nums= serializers.IntegerField(default=0)
     servant_name = serializers.CharField(default='')
+
+    needer_image = serializers.CharField(read_only=True)
+    needer_name = serializers.CharField(read_only=True)
+
     class Meta:
         model = Review
         fields = '__all__'
@@ -142,8 +152,8 @@ class CaseSerializer(serializers.ModelSerializer):
     # total_money = serializers.IntegerField(default=0)
     # increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
 
-    user_detail = UserSerializer(read_only=True)
-    servant_candidate = UserSerializer(read_only=True, many=True)
+    user_detail = NeederSerializer(read_only=True)
+    servant_candidate = ServantSerializer(read_only=True, many=True)
 
     review = ReviewSerializer(read_only=True, many=False)
     rating_nums = serializers.IntegerField(default=0)
