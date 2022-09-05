@@ -3,149 +3,143 @@
 <!-- main -->
 <main class="main bg-white" id="top" >
       <div class="container pt-5">
-        <div class="row">
-          <span class="section-title-purple"><strong>申請預訂</strong></span>         
-          <div class="col-12 col-md-7">
-            <div class="row text-center mt-3" style="font-weight: 600;">
-                <div class="col" style="color: #BB6BD9;">
-                  ① 填寫資料
+        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+          <div class="row">
+            <span class="section-title-purple"><strong>申請預訂</strong></span>         
+            <div class="col-12 col-md-7">
+              <div class="row text-center mt-3" style="font-weight: 600;">
+                  <div class="col" style="color: #BB6BD9;">
+                    ① 填寫資料
+                  </div>
+                  <div class="col" style="color: #BB6BD9;">
+                    ② 照護地點
+                  </div>
+                  <div class="col" style="color: #CCCCCC;">
+                    ③ 聯絡人
+                  </div>
+                  <div class="col" style="color: #CCCCCC;">
+                    ④ 確認付款
+                  </div>
+              </div>
+              <hr style="color: #BB6BD9;">             
+              <div class=" py-4">
+                <!-- 照護地點 -->              
+                <div class="px-sm-3" >
+                  
+                    <p class="h6" style="font-weight: 600;">地址：</p>
+                    <div class="mt-1 mb-3">
+                      <div class="mt-1 btn-group">
+                        <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
+                          {% for city in citys %}
+                            <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                            <!-- <option value="醫院看護">醫院看護</option> -->
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="mt-1 btn-group">
+                        <select class="dropdown-button" id="county_select" name="county" >
+                          <option style="text-align: center" value="全區">全區</option>
+                          {% for county in counties %}
+                            <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>                 
+                    <div class="">
+                      <input class="custom-form-control" style="width: 100%;" id="aboriginal" name="address" type="text" placeholder="地址" value="{{address}}" />
+                    </div>
+                    <p class="h6 mt-3" style="font-weight: 600;">交通路線或注意事項：</p>
+                    <div class="mb-4">
+                      <label class="h6" for="tranfer_info"></label>
+                      <textarea class="custom-form-control" id="tranfer_info" name="tranfer_info" rows="3" placeholder="">{{tranfer_info}}</textarea>
+                    </div>
+                  <div class="row">
+                    <div class="col">
+                      <a href="{% url 'booking_patient_info' %}">
+                        <button class="full-purple-button" name="previous"><span class="far fa-arrow-alt-circle-left"></span> 上一頁</button>
+                      </a>
+                    </div>
+                    <div class="col">
+                      <a href="{% url 'booking_contact' %}">
+                        <button type="submit" class="full-purple-button" type="submit" name="next">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
+                      </a>
+                    </div>
+                  </div>
                 </div>
-                <div class="col" style="color: #BB6BD9;">
-                  ② 照護地點
-                </div>
-                <div class="col" style="color: #CCCCCC;">
-                  ③ 聯絡人
-                </div>
-                <div class="col" style="color: #CCCCCC;">
-                  ④ 確認付款
-                </div>
+              </div>
             </div>
-            <hr style="color: #BB6BD9;">             
-            <div class=" py-4">
-              <!-- 照護地點 -->              
-              <div class="px-sm-3" >
-                <form method="POST" enctype="multipart/form-data">{% csrf_token %}
-                  <p class="h6" style="font-weight: 600;">地址：</p>
-                  <div class="mt-1 mb-3">
-                    <div class="mt-1 btn-group">
-                      <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
-                        {% for city in citys %}
-                          <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
-                          <!-- <option value="醫院看護">醫院看護</option> -->
-                        {% endfor %}
-                      </select>
-                    </div>
-                    <div class="mt-1 btn-group">
-                      <select class="dropdown-button" id="county_select" name="county" >
-                        <option style="text-align: center" value="全區">全區</option>
-                        {% for county in counties %}
-                          <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
-                        {% endfor %}
-                      </select>
-                    </div>
-                  </div>                 
-                  <div class="">
-                    <input class="custom-form-control" style="width: 100%;" id="aboriginal" name="address" type="text" placeholder="地址" />
-                  </div>
-                  <p class="h6 mt-3" style="font-weight: 600;">交通路線或注意事項：</p>
-                  <div class="mb-4">
-                    <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="tranfer_info" rows="3" placeholder=""></textarea>
-                  </div>
+            <!-- 右側 預定欄位 -->
+            <div class="d-sm-none d-md-block col-12 col-md-5 col-lg-4 mb-5">
+              <div class="booking-box px-4">
                 <div class="row">
-                  <div class="col">
-                    <a href="{% url 'booking_patient_info' %}">
-                      <button class="full-purple-button" name="previous"><span class="far fa-arrow-alt-circle-left"></span> 上一頁</button>
-                    </a>
+                  <div class="col-1">
+                    <p class="small-section-title-purple" style="font-weight: 700;">{{servant.servant_avg_rating}}</p>
                   </div>
-                  <div class="col">
-                    <a href="{% url 'booking_contact' %}">
-                      <button type="submit" class="full-purple-button" type="submit" name="next">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
-                    </a>
+                  <div class="col mx-0" style="color: yellow;">
+                    {% for i in servant.servant_avg_rate_range %}
+                      <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
+                    {% endfor %}
+                    {% if servant.servant_avg_rating_is_half_star == True %}
+                      <span class="fas fa-star-half-alt" style="color: yellow; margin-top: 4px;"></span>
+                    {% endif %}
+                    {% for i in servant.servant_avg_rating_empty_star_range %}
+                      <i class="fa-regular fa-star" style="color: yellow; margin-top: 4px;"></i>  
+                    {% endfor %}
+                      <span class="case-info-font">&ensp;{{servant.servant_rate_nums}}評價</span>
                   </div>
+                </div>       
+                <div class="mb-3" style="margin: 0; display: flex;">
+                  <div class="segment__item">
+                    <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="home.call_backend()" value="home" {% if care_type == 'home' %} checked {% endif %} >
+                    <div class="segment__button" >居家照顧</div>
+                  </div>
+                  <div class="segment__item">
+                    <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="hospital.call_backend()" value="hospital" {% if care_type == 'hospital' %} checked {% endif %} >
+                    <div class="segment__button">醫院看護</div>
+                  </div>
+                </div>              
+                <div class="case-info-font">
+                  <span class="news-subtitle">照護地點</span><br>
+                  <div class="mt-1 mb-3">
+                    {{cityName}}，{{countyName}}
+                  </div>
+                  <span class="news-subtitle mt-2">日期</span><br>
+                  <div class="mt-2 mb-3">
+                    {{start_date_str}} ~ {{end_date_str}}
+                  </div>
+                  <span class="news-subtitle mt-2">時間類型</span><br>
+                  <div class="my-2 ">
+                    {% if is_continuous_time == True %}連續時間{% else %}每週固定{% endif %}
+                  </div>                
+                  <span class="news-subtitle">開始時間 & 結束時間</span><br>
+                  <div class="mt-1 mb-3">
+                    {{start_time}}~{{end_time}}
+                  </div>                
+                  <span class="news-subtitle mt-2">費率</span><br>
+                  <div class="mt-2 mb-3">
+                    {% if servant.is_hospital == True %}
+                      {% if care_type == 'home' %}
+                        每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
+                      {% else %}
+                        每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
+                      {% endif %}
+                    {% elif servant.is_home == True %}
+                      {% if care_type == 'hospital' %}
+                        每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
+                      {% else %}
+                        每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                  <span class="news-subtitle mt-2">費用</span><br>
+                  <div class="row case-info-font mt-3" id="post_html"> </div>
+                  <div class="row case-info-font mt-3" id="increase_service_html"> </div>
+                  <div id="sum_html"></div>           
                 </div>
-                </form>
-              </div>
+              </div>          
             </div>
           </div>
-          <!-- 右側 預定欄位 -->
-          <div class="d-sm-none d-md-block col-12 col-md-5 col-lg-4 mb-5">
-            <div class="booking-box px-4">
-              <div class="row">
-                <div class="col-1">
-                  <p class="small-section-title-purple" style="font-weight: 700;">4.8</p>
-                </div>
-                <div class="col mx-0" style="color: yellow;">
-                    <span class="fas fa-star" style="stroke: gray;stroke-width: 20"></span>></span>
-                    <span class="fas fa-star"></span>
-                    <span class="fas fa-star"></span>
-                    <span class="fas fa-star"></span>
-                    <span class="fas fa-star-half-alt" ></span>
-                    <span class="case-info-font">&ensp;7評價</span>
-                </div>
-              </div>             
-              <div class="mb-3" style="margin: 0; display: flex;">
-                <div class="segment__item">
-                  <input type="radio" class="segment__input" name="segment-a" checked>
-                  <div class="segment__button">居家照顧</div>
-                </div>         
-                <div class="segment__item">
-                  <input type="radio" class="segment__input" name="segment-a">
-                  <div class="segment__button">醫院看護</div>
-                </div>               
-              </div>             
-              <div class="case-info-font">
-                <span class="news-subtitle">照護地點</span><br>
-                <div class="mt-1 mb-3">
-                  台中市，西屯區
-                </div>
-                <span class="news-subtitle mt-2">日期</span><br>
-                <div class="mt-2 mb-3">
-                  3/12 ~ 3/23
-                </div>
-                <span class="news-subtitle mt-2">時間類型</span><br>
-                <div class="my-2 ">
-                  連續時間
-                </div>                
-                <span class="news-subtitle">開始時間 & 結束時間</span><br>
-                <div class="mt-1 mb-3">
-                  9:00~14:00
-                </div>                
-                <span class="news-subtitle mt-2">費率</span><br>
-                <div class="mt-2 mb-3">
-                  每小時 $350｜半天 $2500｜全天 $4000 
-                </div>
-                <span class="news-subtitle mt-2">費用</span><br>
-                <div class="row case-info-font mt-2 h6">
-                  <div class="col-12  col-lg-8">
-                    $208x72小時 
-                  </div>
-                  <div class="col-12  col-lg-4 text-end">
-                    $ 14,976
-                  </div>
-                </div>
-                <div class="row case-info-font mt-2 h6">
-                  <div class="col-12  col-lg-8">
-                    體重超過70公斤<br>
-                    每小時加 20% x 72小時
-                  </div>
-                  <div class="col-12  col-lg-4 text-end">
-                    <br>
-                    $ 2,995
-                  </div>
-                </div>
-                <hr>
-                <div class="row case-info-font mt-2">
-                  <div class="col-4 align-self-center">
-                    總計
-                  </div>
-                  <div class="col text-end">
-                    <strong>$ </strong><span class="section-title-purple"><strong>20,971</strong></span>
-                  </div>
-                </div>               
-              </div>
-            </div>          
-          </div>
-        </div>
+        </form>
       </div>
     <script>
       function getCookie(name) {
@@ -164,7 +158,18 @@
             return cookieValue;
         }
       const csrftoken = getCookie('csrftoken');
-    
+      start_end_date = "{{start_end_date}}";
+      startTime = "{{start_time}}";
+      endTime = "{{end_time}}";
+      weekday_str = "{{weekday_str}}";
+      weekdays = weekday_str.split(',');
+      increase_service_ids = "{{increase_service_ids}}".split(',');
+      const servant = "{{servant_phone}}";
+      console.log(increase_service_ids)
+      const post_html = document.getElementById('post_html');
+      const increase_service_html = document.getElementById('increase_service_html');
+      const sum_html = document.getElementById('sum_html');
+      is_continuous_time = "{{is_continuous_time}}";
       function listCities(){
         var cityid = $("[name='city']").val();
         $('#county_select').html('');
@@ -190,6 +195,89 @@
           }
         });
       }
+      var home = {
+        call_backend : function (){
+        var care_type = 'home';
+        console.log(care_type);
+        }
+      }
+      var hospital = {
+        call_backend : function (){
+        var care_type = 'hospital';
+        console.log(care_type);
+        }
+      }
+      function calculate_rate(){
+        care_type = document.querySelector('input[name="care_type"]:checked').value;
+        console.log(care_type)
+        console.log('increase_service_ids:',increase_service_ids)
+        return $.ajax({
+          type: "POST",
+          data: { 'servant':servant,
+                  'care_type':care_type,
+                  'start_end_date':start_end_date,
+                  'is_continuous_time':is_continuous_time,
+                  'startTime':startTime,
+                  'endTime':endTime,
+                  'weekdays[]':weekdays,
+                  'increase_service[]':increase_service_ids,
+                  'action':'ajax_cal_rate'},
+          headers: {'X-CSRFToken': csrftoken},
+          url: "{% url 'ajax_cal_rate' %}",
+          success: function(response)
+            {
+              const data = response.data;
+              const increase_service_data = response.increase_service_data;
+              increase_service_html.innerHTML = ``
+              if (data.result == '3'){post_html.innerHTML = `
+                  <div class="row case-info-font mt-2 h6">
+                  <div class="col-12  col-lg-8">
+                    $${data.hour_wage}x${data.total_hours}小時 
+                  </div>
+                  <div class="col-12  col-lg-4 text-end">
+                    $ ${data.base_money}
+                  </div>
+                </div> `;
+                for (var num in increase_service_data){
+                  increase_service_html.innerHTML += `
+                  <div class="row case-info-font mt-2 h6">
+                    <div class="col-12  col-lg-8">
+                      ${increase_service_data[num].service}<br>
+                      每小時加 ${increase_service_data[num].increase_percent}% x ${data.total_hours}小時
+                    </div>
+                    <div class="col-12  col-lg-4 text-end">
+                      <br>
+                      $ ${increase_service_data[num].increase_money}
+                    </div>
+                  </div>`};
+                  sum_html.innerHTML = `
+                  <hr>
+                  <div class="row case-info-font mt-2">
+                    <div class="col-4 align-self-center">
+                      總計
+                    </div>
+                    <div class="col text-end">
+                      <strong>$ </strong><span class="section-title-purple"><strong>${data.total_money}</strong></span>
+                    </div>
+                  </div>    
+                  `
+              }else if (data.result == '1'){
+                post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`
+              }else if (data.result == '2'){
+                post_html.innerHTML = `<span>所選時段與該服務者已有訂單時間重複</span>`
+              }
+            },
+            error: function (error) {
+              console.log(error);
+              post_html.innerHTML = `
+              <span>請輸入完整訂單資料</span>
+              `
+            }
+        });
+      }
+      $( document ).ready(function() {
+        calculate_rate.call();
+      });
      </script>
 </main>
 {% endblock %}

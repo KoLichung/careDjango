@@ -248,8 +248,11 @@
   <div class="py-6 mx-auto text-center">
         <span class="h5">沒有符合您搜尋的結果！</span>
         <br>
-        <a href="{% url 'request_form_service_type' %}" class="section-title-purple custom-card-link" style="font-weight: 600;"><span class="far fa-edit"></span>填寫需求單</a>
-
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'request_form_service_type' %}" class="section-title-purple custom-card-link" style="font-weight: 600;"><span class="far fa-edit"></span>填寫需求單</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="section-title-purple custom-card-link" style="font-weight: 600;"><span class="far fa-edit"></span>填寫需求單</a>
+        {% endif %}
   </div>
   <script>
     function getCookie(name) {

@@ -1,4 +1,4 @@
-{% extends 'web/base_logged_in.html' %} {% block content %}
+{% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
 <main class="main bg-white" id="top" >
@@ -25,100 +25,70 @@
           <div class="col-11 col-sm-6 mx-auto">
             <p class="h5">您的預定</p>
                 <div class="case-info-font mt-2">
-                  <p>照護類型：居家照顧</p>
-                  <p>日期：3/1~3/28</p>
-                  <p>時間類型：連續時間</p>
-                  <p>開始時間：9:00</p>
-                  <p>結束時間：14:00</p>
+                  <p>照護類型：{% if care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
+                  <p>日期：{{start_date_str}}~{{end_date_str}}</p>
+                  <p>時間類型：{% if is_continuous_time == True %}連續時間{% else %}每週固定{% endif %}</p>
+                  <p>開始時間：{{start_time}}</p>
+                  <p>結束時間：{{end_time}}</p>
                 </div>
 
                 <p class="h5 mt-5">被照顧者資訊</p>
                 <div class="case-info-font mt-2">
-                  <p>性別：男</p>
-                  <p>體重：70</p>
-                  <p>年齡：70</p>
-                  <p>疾病：阿茲海默症</p>
-                  <p>補充說明：補充說明補充說明</p>
-                  <p>身體狀況：使用輔具</p>
-                  <p class="text-indent-5">補充說明：補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明</p>
+                  <p>性別：{% if tempcase.gender == 'M' %}男{% else %}女{% endif %}</p>
+                  <p>體重：{{tempcase.weight}}</p>
+                  <p>年齡：{{tempcase.age}}</p>
+                  <p>疾病：{% for disease in disease_list %} {{disease}} {% endfor %}</p>
+                  <p>補充說明：{{tempcase.disease_remark}}</p>
+                  <p>身體狀況：{% for body_condition in body_condition_list %} {{body_condition}} {% endfor %}</p>
+                  <p class="text-indent-5">補充說明：{{tempcase.conditions_remark}}</p>
                 </div>
 
                 <p class="h5 mt-5">需求服務項目</p>
                 <div class="case-info-font mt-3 mb-5">
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    安全維護 (預防跌倒、陪同散步、推輪椅、心靈陪伴)
-                  </p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    協助進食</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    協助如廁</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    陪同就醫</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    代購物品</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    簡易備餐</p>
-                  <p>
-                    <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
-                    身體清潔
-                  </p>
+                  {% for service in service_list %}
+                    <p>
+                      <span class="fas fa-check-circle fs-1" style="color: 55D9A0;"></span>
+                      {{service}}
+                    </p>
+                  {% endfor %}        
                 </div>
 
           </div>
           <div class="col-11 col-sm-6 mx-auto">
             <p class="h5">照顧者費率</p>
             <div class="case-info-font mt-2">
-              每小時 $350｜半天 $2500｜全天 $4000
+              {% if servant.is_hospital == True %}
+                {% if care_type == 'home' %}
+                  每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
+                {% else %}
+                  每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
+                {% endif %}
+              {% elif servant.is_home == True %}
+                {% if care_type == 'hospital' %}
+                  每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
+                {% else %}
+                  每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
+                {% endif %}
+              {% endif %}
             </div>
 
             <p class="h5 mt-4" style="color: #BB6BD9;">費用計算</p>
-            <div class="mt-3">
+            <div class="mt-3">          
               <span class="case-info-font" style="color: #BB6BD9;"><strong>基本費用</strong></span>
-              <div class="row case-info-font">
-                <div class="col-8">
-                  $208x72小時
-                </div>
-                <div class="col text-end">
-                  $ 14,976
-                </div>
-              </div>
+              <br>    
+              <div class="row case-info-font mt-3" id="post_html"> </div>
+              
               <br>
               <span class="case-info-font" style="color: #BB6BD9;"><strong>加價項目</strong></span>
-              <div class="row case-info-font">
-                <div class="col-8">
-                  體重超過70公斤<br>
-                  每小時加 20% x 72小時
-                </div>
-                <div class="col text-end">
-                  <br>
-                  $ 2,995
-                </div>
-              </div>
-              
-              
-              <hr style="color: #BB6BD9;">
-              <div class="row">
-                <div class="col-8 case-info-font" style="color: #BB6BD9;">
-                  <strong>總計</strong>
-                </div>
-                <div class="col text-end ">
-                  <strong>$ <span class="h5" style="color: #BB6BD9;">14,825</span> </strong> 
-                </div>
-              </div>
-
-
+              <br>
+              <div class="row case-info-font mt-3" id="increase_service_html"> </div>
+              <div id="sum_html"></div>    
             </div>
           </div>
         </div>
 
         <hr class="mt-3">
-
+        
         <div class="row mt-5 mx-auto">
           <span class="h5 "><strong>訂單說明</strong></span>
           <div class="case-info-font"></div>
@@ -127,20 +97,123 @@
           <span>3. 需求時數在一天之內，未滿 12 小時以每小時時薪計價；12 ~ 24 小時以半天價格之時薪計價；滿 24 小時以全天價格之時薪計價。</span>
           <span>4. 距離服務開始 24 小時以前取消，可全額退款。24 小時內取消則無法退款。其他相關規定請看服務合約。</span>          
         </div>
-        <div class="row justify-content-center mt-5 pb-6 mx-auto">
-          <div class="col-12 col-sm-4 mt-2 ">
-            <a href="{% url 'booking_contact' %}">
-              <button class="full-purple-button"><span class="far fa-arrow-alt-circle-left"></span> 上一頁</button>
-            </a>
+        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+          <div class="row justify-content-center mt-5 pb-6 mx-auto">
+            <div class="col-12 col-sm-4 mt-2 ">
+              <a href="{% url 'booking_contact' %}">
+                <button class="full-purple-button" type="submit" name="previous"><span class="far fa-arrow-alt-circle-left"></span> 上一頁</button>
+              </a>
+            </div>
+            <div class="col-12 col-sm-4 mt-2">
+              
+                <button class="full-green-button" type="submit" name="pay">確認付款 <span class="far fa-credit-card"></span> </button>
+              
+            </div>
           </div>
-          <div class="col-12 col-sm-4 mt-2">
-            
-              <button class="full-green-button">確認付款 <span class="far fa-credit-card"></span> </button>
-            
-          </div>
-        </div>
+        </form>
+      </div>     
+      <script>
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                        }
+                    }
+                }
+              return cookieValue;
+          }
+        const csrftoken = getCookie('csrftoken');
+        start_end_date = "{{start_end_date}}";
+        startTime = "{{start_time}}";
+        endTime = "{{end_time}}";
+        weekday_str = "{{weekday_str}}";
+        weekdays = weekday_str.split(',');
+        care_type = "{{care_type}}";
+        increase_service_ids = "{{increase_service_ids}}".split(',');
+        const servant = "{{servant_phone}}";
+        console.log(increase_service_ids)
+        const post_html = document.getElementById('post_html');
+        const increase_service_html = document.getElementById('increase_service_html');
+        const sum_html = document.getElementById('sum_html');
+        is_continuous_time = "{{is_continuous_time}}";
 
-      </div>
-     
+        function calculate_rate(){
+          console.log(care_type)
+          console.log('increase_service_ids:',increase_service_ids)
+          return $.ajax({
+            type: "POST",
+            data: { 'servant':servant,
+                    'care_type':care_type,
+                    'start_end_date':start_end_date,
+                    'is_continuous_time':is_continuous_time,
+                    'startTime':startTime,
+                    'endTime':endTime,
+                    'weekdays[]':weekdays,
+                    'increase_service[]':increase_service_ids,
+                    'action':'ajax_cal_rate'},
+            headers: {'X-CSRFToken': csrftoken},
+            url: "{% url 'ajax_cal_rate' %}",
+            success: function(response)
+              {
+                const data = response.data;
+                const increase_service_data = response.increase_service_data;
+                increase_service_html.innerHTML = ``
+                if (data.result == '3'){post_html.innerHTML = `
+                      
+                      <div class="row case-info-font">
+                        <div class="col-8">
+                          $${data.hour_wage}x${data.total_hours}小時 
+                        </div>
+                        <div class="col text-end">
+                          $ ${data.base_money}
+                        </div>
+                      </div>
+                      <br>`;
+                  for (var num in increase_service_data){
+                    increase_service_html.innerHTML += `                   
+                    <div class="row case-info-font">
+                        <div class="col-8">
+                          ${increase_service_data[num].service}<br>
+                          每小時加 ${increase_service_data[num].increase_percent}% x ${data.total_hours}小時
+                        </div>
+                        <div class="col text-end">
+                          $ ${increase_service_data[num].increase_money}
+                        </div>
+                      </div>`};
+                    sum_html.innerHTML = `
+                    <hr style="color: #BB6BD9;">
+                    <div class="row">
+                      <div class="col-8 case-info-font" style="color: #BB6BD9;">
+                        <strong>總計</strong>
+                      </div>
+                      <div class="col text-end ">
+                        <strong>$ <span class="h5" style="color: #BB6BD9;">${data.total_money}</span> </strong> 
+                      </div>
+                    </div>
+                    `
+                }else if (data.result == '1'){
+                  post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`
+                }else if (data.result == '2'){
+                  post_html.innerHTML = `<span>所選時段與該服務者已有訂單時間重複</span>`
+                }
+              },
+              error: function (error) {
+                console.log(error);
+                post_html.innerHTML = `
+                <span>請輸入完整訂單資料</span>
+                `
+              }
+          });
+        }
+        $( document ).ready(function() {
+          calculate_rate.call();
+        });
+       </script>
 </main>
 {% endblock %}
