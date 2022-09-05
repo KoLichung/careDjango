@@ -1289,7 +1289,7 @@ def request_form_service_type(request):
         start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
         end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
         if TempCase.objects.filter(user=user,is_booking=False).exists() != False:
-            tempcase = TempCase.objects.get(user=user)
+            tempcase = TempCase.objects.get(user=user,is_booking=False)
         else:
             tempcase = TempCase()
         tempcase.user = user
