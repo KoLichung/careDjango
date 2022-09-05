@@ -126,7 +126,7 @@ class MpgTrade(APIView):
 
         Version = "2.0"
         order_id = '4'
-        merchant_id = "ACE00010"
+        merchant_id = "ACE00009"
         key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
         iv = "C3RqE64KeXb3RPqP"
 
