@@ -2,12 +2,9 @@
 {% load static %}
 <!-- main -->
 <main class="main bg-white" id="top" >
-
       <div class="container pt-5">
-
         <div class="row">
-          <span class="section-title-purple"><strong>申請預訂</strong></span>
-          
+          <span class="section-title-purple"><strong>申請預訂</strong></span>         
           <div class="col-12 col-md-7">
             <div class="row text-center mt-3" style="font-weight: 600;">
                 <div class="col" style="color: #BB6BD9;">
@@ -23,65 +20,55 @@
                   ④ 確認付款
                 </div>
             </div>
-
-            <hr style="color: #BB6BD9;">
-
-            
-              
+            <hr style="color: #BB6BD9;">             
             <div class=" py-4">
-              <!-- 照護地點 -->
+              <!-- 照護地點 -->              
               <div class="px-sm-3" >
-                <form>
+                <form method="POST" enctype="multipart/form-data">{% csrf_token %}
                   <p class="h6" style="font-weight: 600;">地址：</p>
                   <div class="mt-1 mb-3">
-                        <div class="mt-1 btn-group">
-                          <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            台中市
-                          </button>
-                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
-                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
-                          </div>
-                      </div>
-                      <div class="mt-1 btn-group">
-                          <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            全區
-                          </button>
-                          <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
-                            <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
-                          </div>
-                      </div>
-      
-                  </div>
-                      
+                    <div class="mt-1 btn-group">
+                      <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
+                        
+                        {% for city in citys %}
+                          <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                          <!-- <option value="醫院看護">醫院看護</option> -->
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="mt-1 btn-group">
+                      <select class="dropdown-button" id="county_select" name="county" >
+                        <option style="text-align: center" value="全區">全區</option>
+                        {% for county in counties %}
+                          <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+  
+                  </div>                 
                   <div class="">
-                    <input class="custom-form-control" style="width: 100%;" id="aboriginal" type="text" placeholder="地址" />
+                    <input class="custom-form-control" style="width: 100%;" id="aboriginal" name="address" type="text" placeholder="地址" />
                   </div>
-
                   <p class="h6 mt-3" style="font-weight: 600;">交通路線或注意事項：</p>
                   <div class="mb-4">
-                    <textarea class="custom-form-control" id="exampleFormControlTextarea1" rows="3" placeholder=""></textarea>
+                    <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="tranfer_info" rows="3" placeholder=""></textarea>
                   </div>
-                </form>
-
                 <div class="row">
                   <div class="col">
                     <a href="{% url 'booking_patient_info' %}">
-                      <button class="full-purple-button"><span class="far fa-arrow-alt-circle-left"></span> 上一頁</button>
+                      <button class="full-purple-button" name="previous"><span class="far fa-arrow-alt-circle-left"></span> 上一頁</button>
                     </a>
                   </div>
                   <div class="col">
                     <a href="{% url 'booking_contact' %}">
-                      <button type="submit" class="full-purple-button">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
+                      <button type="submit" class="full-purple-button" type="submit" name="next">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
                     </a>
                   </div>
                 </div>
+                </form>
               </div>
-
             </div>
           </div>
-
           <!-- 右側 預定欄位 -->
           <div class="d-sm-none d-md-block col-12 col-md-5 col-lg-4 mb-5">
             <div class="booking-box px-4">
@@ -98,48 +85,37 @@
                     <span class="case-info-font">&ensp;7評價</span>
                 </div>
               </div>             
-
               <div class="mb-3" style="margin: 0; display: flex;">
-
                 <div class="segment__item">
                   <input type="radio" class="segment__input" name="segment-a" checked>
                   <div class="segment__button">居家照顧</div>
-                </div>
-          
+                </div>         
                 <div class="segment__item">
                   <input type="radio" class="segment__input" name="segment-a">
                   <div class="segment__button">醫院看護</div>
-                </div>
-                
-              </div>
-              
+                </div>               
+              </div>             
               <div class="case-info-font">
-
                 <span class="news-subtitle">照護地點</span><br>
                 <div class="mt-1 mb-3">
                   台中市，西屯區
                 </div>
-
                 <span class="news-subtitle mt-2">日期</span><br>
                 <div class="mt-2 mb-3">
                   3/12 ~ 3/23
                 </div>
-
                 <span class="news-subtitle mt-2">時間類型</span><br>
                 <div class="my-2 ">
                   連續時間
-                </div>
-                
+                </div>                
                 <span class="news-subtitle">開始時間 & 結束時間</span><br>
                 <div class="mt-1 mb-3">
                   9:00~14:00
-                </div>
-                
+                </div>                
                 <span class="news-subtitle mt-2">費率</span><br>
                 <div class="mt-2 mb-3">
                   每小時 $350｜半天 $2500｜全天 $4000 
                 </div>
-
                 <span class="news-subtitle mt-2">費用</span><br>
                 <div class="row case-info-font mt-2 h6">
                   <div class="col-12  col-lg-8">
@@ -167,19 +143,55 @@
                   <div class="col text-end">
                     <strong>$ </strong><span class="section-title-purple"><strong>20,971</strong></span>
                   </div>
-                </div>
-                
+                </div>               
               </div>
-
-
-            </div>
-            
-            
+            </div>          
           </div>
-          
-
         </div>
       </div>
-     
+    <script>
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                      }
+                  }
+              }
+            return cookieValue;
+        }
+      const csrftoken = getCookie('csrftoken');
+    
+      function listCities(){
+        var cityid = $("[name='city']").val();
+        $('#county_select').html('');
+        $.ajax({
+          type: "POST",
+          data: {'city_id':cityid,
+                  'action':'refresh_county'},
+          headers: {'X-CSRFToken': csrftoken},
+          url: "{% url 'ajax_refresh_county' %}",
+          success: function(response)
+          {
+            const data = response.data
+            console.log(data)
+            // var resultObj = JSON.parse(response);
+            var dataHandler = $("#county_select");
+            var county_all = `<option style="text-align: center" value="全區">全區</option>`
+            dataHandler.append(county_all);
+            data.forEach(el =>
+            {
+                var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+                dataHandler.append(newRow);
+            });
+          }
+        });
+      }
+     </script>
 </main>
 {% endblock %}

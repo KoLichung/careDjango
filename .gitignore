@@ -1,5 +1,6 @@
 **/flutterjava-firebase.json
 **/media/images/*
+*/media/uploads/*
 /static/*
 
 .idea/

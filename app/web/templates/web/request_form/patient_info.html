@@ -65,44 +65,13 @@
                             <input class="form-check-input" type="checkbox" name="disease_none" id="disease_none" {% if disease_none == True %}checked=""{% endif %} value='{{disease.none.id}}'/>
                             <label class="h6" for="disease_none">無</label>
                           </div>
-                          <div class="row">
-                            <div class="col-12 col-md-6 col-lg-3">
-                              {% for disease in disease_column_1 %}
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
-                                <label class="h6" for="diseases[]">{{disease}}</label>
-                              </div>
-
-                              {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-3">
-                              {% for disease in disease_column_2 %}
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}   value="{{disease.id}}" />
-                                <label class="h6" for="diseases[]">{{disease}}</label>
-                              </div>
-
-                              {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-3">
-                              {% for disease in disease_column_3 %}
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
-                                <label class="h6" for="diseases[]">{{disease}}</label>
-                              </div>
-
-                              {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-3">
-                              {% for disease in disease_column_4 %}
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
-                                <label class="h6" for="diseases[]">{{disease}}</label>
-                              </div>
-
-                              {% endfor %}
-                            </div>
-                            
+                          <div class="row mx-0">
+                              {% for disease in diseases %}
+                                <div class="form-check " style="width:200px">
+                                  <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
+                                  <label class="h6" for="diseases[]">{{disease}}</label>
+                                </div>
+                              {% endfor %}                       
                           </div>
                           <div class="mb-4">
                             <input class="form-check-input" type="checkbox" name="disease_info" id="" />
@@ -115,43 +84,13 @@
                             <input class="form-check-input" type="checkbox" name="body_condition_none" id="body_condition" {% if body_condition_none == True %}checked=""{% endif %} value="{{body_condition_none.id}}" />
                             <label class="h6" for="body_condition">無</label>
                           </div>
-                          <div class="row">
-                            <div class="col-12 col-md-6 col-lg-3">
-                              {% for body_condition in body_column_1 %}
-                              <div class="form-check">
+                          <div class="row mx-0">
+                              {% for body_condition in body_conditions %}
+                              <div class="form-check" style="width:200px">
                                 <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %} value="{{body_condition.id}}" />
                                 <label class="h6" for="body_conditions[]">{{body_condition}}</label>
                               </div>
-      
                               {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-3">
-                              {% for body_condition in body_column_2 %}
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %}  value="{{body_condition.id}}" />
-                                <label class="h6" for="body_conditions[]">{{body_condition}}</label>
-                              </div>
-      
-                              {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-3">
-                              {% for body_condition in body_column_3 %}
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %}  value="{{body_condition.id}}" />
-                                <label class="h6" for="body_conditions[]">{{body_condition}}</label>
-                              </div>
-      
-                              {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-3">
-                              {% for body_condition in body_column_4 %}
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %}  value="{{body_condition.id}}" />
-                                <label class="h6" for="body_conditions[]">{{body_condition}}</label>
-                              </div>
-      
-                              {% endfor %}
-                            </div>
                           </div>
                           <div class="mb-4">
                             <label class="h6" for="body_condition_note">身體狀況補充說明：</label>

@@ -312,7 +312,9 @@ class Case(models.Model):
 
     county = models.ForeignKey(
         County,
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        null=True,
+        blank=True
     )
 
     CARETYPE_CHOICES = [
@@ -363,9 +365,9 @@ class Case(models.Model):
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
-    emergencycontact_name = models.CharField(max_length=100, blank=True, null=True)
-    emergencycontact_relation = models.CharField(max_length=100, blank=True, null=True)
-    emergencycontact_phone = models.CharField(max_length=10, blank=True, null=True)
+    emergencycontact_name = models.CharField(max_length=100,blank=True, null=True)
+    emergencycontact_relation = models.CharField(max_length=100,blank=True, null=True)
+    emergencycontact_phone = models.CharField(max_length=10,blank=True, null=True)
 
     @property
     def startTimeformat(self):
@@ -423,6 +425,13 @@ class TempCase(models.Model):
         on_delete=models.RESTRICT,
         default=''
     )
+    servant = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        blank = True,
+        null=True,
+        related_name='servant_tempcase'
+    )
     
     city = models.CharField(max_length= 100, blank=True, null=True)
     county = models.CharField(max_length= 100, blank=True, null=True)
@@ -433,7 +442,7 @@ class TempCase(models.Model):
     ]
     care_type = models.CharField(max_length=10, choices=CARETYPE_CHOICES,default='')
 
-    name = models.CharField(max_length= 100, blank=True, null=True)
+    name = models.CharField(max_length= 100, default='')
 
     MALE = 'M'
     FEMALE = 'F'
@@ -460,9 +469,10 @@ class TempCase(models.Model):
     age = models.IntegerField(default=0, blank=True, null=True)
     weight = models.IntegerField(default=0, blank=True, null=True)
     
-    disease_remark = models.CharField(max_length= 255, blank=True, null=True)
-    conditions_remark = models.CharField(max_length= 255, blank=True, null=True)
+    disease_remark = models.CharField(max_length= 255, default='')
+    conditions_remark = models.CharField(max_length= 255, default='')
 
+    is_booking = models.BooleanField(default=False)
     is_continuous_time = models.BooleanField(default=False)
 
     is_taken = models.BooleanField(default=False)
@@ -473,6 +483,9 @@ class TempCase(models.Model):
     service = models.CharField(max_length=255, blank=True, null=True)
     increase_service = models.CharField(max_length=255, blank=True, null=True)
 
+    address = models.CharField(max_length=255, default='')
+    tranfer_info = models.CharField(max_length=255, default='')
+
     weekday = models.CharField(max_length=100, blank=True, null=True)
     start_time = models.FloatField(default=0, blank=True, null=True)
     end_time = models.FloatField(default=24, blank=True, null=True)
@@ -480,9 +493,9 @@ class TempCase(models.Model):
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
-    emergencycontact_name = models.CharField(max_length=100, blank=True, null=True)
-    emergencycontact_relation = models.CharField(max_length=100, blank=True, null=True)
-    emergencycontact_phone = models.CharField(max_length=10, blank=True, null=True)
+    emergencycontact_name = models.CharField(max_length=100, default='')
+    emergencycontact_relation = models.CharField(max_length=100, default='')
+    emergencycontact_phone = models.CharField(max_length=10, default='')
 
 class DiseaseCondition(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)

@@ -2,376 +2,305 @@
 {% load static %}
 <!-- main -->
 <main class="main bg-white" id="top" >
-
-  <div class="container pt-5">
-    <div class="row">
-      <span class="section-title-purple"><strong>申請預訂</strong></span>
-          
-      <!-- 左側填表 -->
-      <div class="col-12 col-md-7">
-
-        <div class="row text-center mt-3" style="font-weight: 600;">
-          <div class="col" style="color: #BB6BD9;">
-            ① 填寫資料
-          </div>
-          <div class="col" style="color: #CCCCCC;">
-            ② 照護地點
-          </div>
-          <div class="col" style="color: #CCCCCC;">
-            ③ 聯絡人
-          </div>
-          <div class="col" style="color: #CCCCCC;">
-             ④ 確認付款
-          </div>
-        </div>
-              
-        <hr style="color: #BB6BD9;">
-              
-        <div class="py-4">
-            <!-- 填寫資料 -->
-            <div class="px-sm-3">
-                      <p class="h6" style="font-weight: 600;">被照顧者資料：</p>
-                      <!-- <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="same_patient" />
-                        <label class="h6" for="same_patient">套用被照顧者資料</label>
-                      </div> -->
-                      <div class="">
-                        <label class="h6" for="patient_name">姓名：</label>
-                        <input class="booking-input" id="patient_name" name="patient_name" type="text"/>
-                      </div>
-
-                      <div class="mt-3 h6" style="display: flex;">
-                        <label class="h6" for="patient_gender" style="padding-top: 2px; padding-right: 10px;">性別：</label>
-                        <label class="custom-radio-parent">男
-                          <input type="radio" {% if gender == 'M' %}checked=""{% endif %} name="gender" value="M">
-                          <span class="checkmark"></span>
-                        </label>
-                        <label class="custom-radio-parent">女
-                          <input type="radio" name="gender" {% if gender == 'F' %}checked=""{% endif %}  value="F">
-                          <span class="checkmark"></span>
-                        </label>      
-                      </div>
-
-                      <div class="">
-                        <label class="h6" for="patient_weight">體重：</label>
-                        <input class="booking-input" id="patient_weight" value="{{weight}}" name="weight" type="text"/>
-                      </div>
-
-                      <div class="mt-2 mb-4">
-                        <label class="h6" for="patient_age">年齡：</label>
-                        <input class="booking-input" id="patient_age" name="age" value="{{age}}" type="text"/>
-                      </div>
-
-                      <p class="h6" style="font-weight: 600;">疾病狀況：</p>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="disease_none" id="disease_none" {% if disease_none == True %}checked=""{% endif %} value='{{disease.none.id}}'/>
-                        <label class="h6" for="disease_none">無</label>
-                      </div>
-                      <div class="row">
-                        <div class="col-12 col-md-6 col-lg-3">
-                          {% for disease in disease_column_1 %}
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
-                            <label class="h6" for="diseases[]">{{disease}}</label>
-                          </div>
-
-                          {% endfor %}
+  <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <div class="container pt-5">
+      <div class="row">
+        <span class="section-title-purple"><strong>申請預訂</strong></span>          
+        <!-- 左側填表 -->
+        
+        <div class="col-12 col-md-7">
+          <div class="row text-center mt-3" style="font-weight: 600;">
+            <div class="col" style="color: #BB6BD9;">
+              ① 填寫資料
+            </div>
+            <div class="col" style="color: #CCCCCC;">
+              ② 照護地點
+            </div>
+            <div class="col" style="color: #CCCCCC;">
+              ③ 聯絡人
+            </div>
+            <div class="col" style="color: #CCCCCC;">
+              ④ 確認付款
+            </div>
+          </div>         
+          <hr style="color: #BB6BD9;">
+          <div class="py-4">
+              <!-- 填寫資料 -->
+              <div class="px-sm-3">
+                        <p class="h6" style="font-weight: 600;">被照顧者資料：</p>
+                        <!-- <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="same_patient" />
+                          <label class="h6" for="same_patient">套用被照顧者資料</label>
+                        </div> -->
+                        <div class="">
+                          <label class="h6" for="patient_name">姓名：</label>
+                          <input class="booking-input" id="patient_name" name="patient_name" value="{{patient_name}}" type="text"/>
                         </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          {% for disease in disease_column_2 %}
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}   value="{{disease.id}}" />
-                            <label class="h6" for="diseases[]">{{disease}}</label>
-                          </div>
 
-                          {% endfor %}
+                        <div class="mt-3 h6" style="display: flex;">
+                          <label class="h6" for="patient_gender" style="padding-top: 2px; padding-right: 10px;">性別：</label>
+                          <label class="custom-radio-parent">男
+                            <input type="radio" {% if gender == 'M' %}checked=""{% endif %} name="gender" value="M">
+                            <span class="checkmark"></span>
+                          </label>
+                          <label class="custom-radio-parent">女
+                            <input type="radio" name="gender" {% if gender == 'F' %}checked=""{% endif %}  value="F">
+                            <span class="checkmark"></span>
+                          </label>      
                         </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          {% for disease in disease_column_3 %}
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
-                            <label class="h6" for="diseases[]">{{disease}}</label>
-                          </div>
 
-                          {% endfor %}
+                        <div class="">
+                          <label class="h6" for="patient_weight">體重：</label>
+                          <input class="booking-input" id="patient_weight" value="{{weight}}" name="weight" type="text"/>
                         </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          {% for disease in disease_column_4 %}
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
-                            <label class="h6" for="diseases[]">{{disease}}</label>
-                          </div>
 
-                          {% endfor %}
+                        <div class="mt-2 mb-4">
+                          <label class="h6" for="patient_age">年齡：</label>
+                          <input class="booking-input" id="patient_age" name="age" value="{{age}}" type="text"/>
                         </div>
-                        
-                      </div>
-                      <div class="mb-4">
-                        <input class="form-check-input" type="checkbox" name="disease_info" id="" />
-                        <label class="h6" for="infectious_disease">傳染性疾病，補充說明：</label>
-                        <textarea class="custom-form-control" id="infectious_disease" name="disease_text"  rows="3" placeholder="例：傳染性疾病名稱、病情狀況... ">{{disease_remark}}</textarea>
-                      </div>
 
-                      <p class="h6" style="font-weight: 600;">身體狀況：</p>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="body_condition_none" id="body_condition" {% if body_condition_none == True %}checked=""{% endif %} value="{{body_condition_none.id}}" />
-                        <label class="h6" for="body_condition">無</label>
+                        <p class="h6" style="font-weight: 600;">疾病狀況：</p>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="disease_none" id="disease_none" {% if disease_none == True %}checked=""{% endif %} value='{{disease.none.id}}'/>
+                          <label class="h6" for="disease_none">無</label>
+                        </div>
+                        <div class="row mx-0">
+                          {% for disease in diseases %}
+                            <div class="form-check " style="width:180px">
+                              <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
+                              <label class="h6" for="diseases[]">{{disease}}</label>
+                            </div>
+                          {% endfor %}                       
                       </div>
-                      <div class="row">
-                        <div class="col-12 col-md-6 col-lg-3">
-                          {% for body_condition in body_column_1 %}
-                          <div class="form-check">
+                        <div class="mb-4">
+                          <input class="form-check-input" type="checkbox" name="disease_info" id="" />
+                          <label class="h6" for="infectious_disease">傳染性疾病，補充說明：</label>
+                          <textarea class="custom-form-control" id="infectious_disease" name="disease_text"  rows="3" placeholder="例：傳染性疾病名稱、病情狀況... ">{{disease_remark}}</textarea>
+                        </div>
+
+                        <p class="h6" style="font-weight: 600;">身體狀況：</p>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="body_condition_none" id="body_condition" {% if body_condition_none == True %}checked=""{% endif %} value="{{body_condition_none.id}}" />
+                          <label class="h6" for="body_condition">無</label>
+                        </div>
+                        <div class="row mx-0">
+                          {% for body_condition in body_conditions %}
+                          <div class="form-check" style="width:180px">
                             <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %} value="{{body_condition.id}}" />
                             <label class="h6" for="body_conditions[]">{{body_condition}}</label>
                           </div>
-  
                           {% endfor %}
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          {% for body_condition in body_column_2 %}
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %}  value="{{body_condition.id}}" />
-                            <label class="h6" for="body_conditions[]">{{body_condition}}</label>
-                          </div>
-  
-                          {% endfor %}
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          {% for body_condition in body_column_3 %}
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %}  value="{{body_condition.id}}" />
-                            <label class="h6" for="body_conditions[]">{{body_condition}}</label>
-                          </div>
-  
-                          {% endfor %}
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                          {% for body_condition in body_column_4 %}
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %}  value="{{body_condition.id}}" />
-                            <label class="h6" for="body_conditions[]">{{body_condition}}</label>
-                          </div>
-  
-                          {% endfor %}
-                        </div>
                       </div>
-                      <div class="mb-4">
-                        <label class="h6" for="body_condition_note">身體狀況補充說明：</label>
-                        <textarea class="custom-form-control" id="body_condition_note" name="body_condition_note" rows="3" placeholder="">{{conditions_remark}}</textarea>
-                      </div>
+                        <div class="mb-4">
+                          <label class="h6" for="body_condition_note">身體狀況補充說明：</label>
+                          <textarea class="custom-form-control" id="body_condition_note" name="body_condition_note" rows="3" placeholder="">{{conditions_remark}}</textarea>
+                        </div>
 
-                      <p class="h6" style="font-weight: 600;">需求服務項目：</p>
-                      <div class="mb-4">
-                        {% for service in services %}
-                        <div class="form-check">
-                          <input class="form-check-input" id="flexCheckChecked" type="checkbox" name="services[]" {% if service in service_list %}checked=""{% endif %} value="{{service.id}}" />
-                          <label class="h6 mb-0" for="services[]">{{service}}</label>
-                          {% if service.remark %}
-                          <div class="">
-                            <span class="sub-font">{{service.remark}}</span>
-                          </div>
-                          {% endif %}
-                        </div>
-                        {% endfor %}
-                      </div>
-
-                      <p class="h6" style="font-weight: 600;">加價項目： <span style="color:#BB6BD9; font-weight: 400;">(價格 % 數依服務者自訂)</span> </p>
-                        <div class="increaseService">
-                          {% for increase_service_ship in increase_service_ships %}
-                          <div class="form-check ">
-                            <input class="form-check-input " id="increaseServiceChecked" type="checkbox" name="increase_services[]" {% if increase_service in increase_service_list %}checked=""{% endif %} value="{{increase_service_ship.service.id}}" />
-                            <label class="h6 mb-0" for="increase_services[]">{{increase_service_ship.service}}，每小時的時薪加 <span style="color:red">{{increase_service_ship.increase_percent}}% </span></label>
+                        <p class="h6" style="font-weight: 600;">需求服務項目：</p>
+                        <div class="mb-4">
+                          {% for service in services %}
+                          <div class="form-check">
+                            <input class="form-check-input" id="flexCheckChecked" type="checkbox" name="services[]" {% if service in service_list %}checked=""{% endif %} value="{{service.id}}" />
+                            <label class="h6 mb-0" for="services[]">{{service}}</label>
+                            {% if service.remark %}
+                            <div class="">
+                              <span class="sub-font">{{service.remark}}</span>
+                            </div>
+                            {% endif %}
                           </div>
                           {% endfor %}
                         </div>
-              <div class="mt-3">
-                <a href="{% url 'booking_location' %}">
-                  <button class="full-purple-button">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
-                </a>
+
+                        <p class="h6" style="font-weight: 600;">加價項目： <span style="color:#BB6BD9; font-weight: 400;">(價格 % 數依服務者自訂)</span> </p>
+                          <div class="increaseService">
+                            {% for increase_service_ship in increase_service_ships %}
+                            <div class="form-check ">
+                              <input class="form-check-input " id="increaseServiceChecked" type="checkbox" name="increase_services[]" {% if increase_service_ship in increase_service_list %}checked=""{% endif %} value="{{increase_service_ship.service.id}}" />
+                              <label class="h6 mb-0" for="increase_services[]">{{increase_service_ship.service}}，每小時的時薪加 <span style="color:red">{{increase_service_ship.increase_percent}}% </span></label>
+                            </div>
+                            {% endfor %}
+                          </div>
+                <div class="mt-3">
+                  <a href="{% url 'booking_location' %}">
+                    <button class="full-purple-button" type="submit">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
+                  </a>
+                </div>
+                      
               </div>
-                    
-            </div>
+          </div>
+        </div>         
+        <!-- 右側 預定欄位 -->
+        <div class="d-sm-none d-md-block col-12 col-md-5 col-lg-4 mb-5">
+          <div class="booking-box px-4">
+            <div class="row">
+              <div class="col-1">
+                <p class="small-section-title-purple" style="font-weight: 700;">4.8</p>
+              </div>
+              <div class="col mx-0" style="color: yellow;">
+                  <span class="fas fa-star" style="stroke: gray;stroke-width: 20"></span>></span>
+                  <span class="fas fa-star"></span>
+                  <span class="fas fa-star"></span>
+                  <span class="fas fa-star"></span>
+                  <span class="fas fa-star-half-alt" ></span>
+                  <span class="case-info-font">&ensp;7評價</span>
+              </div>
+            </div>             
+            <form method="post" enctype="multipart/form-data">{% csrf_token %}
+              <div class="mb-3" style="margin: 0; display: flex;">
+                <div class="segment__item">
+                  <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="home.call_backend()" value="居家照顧" {% if care_type == '居家照顧' %} checked {% endif %} >
+                  <div class="segment__button" >居家照顧</div>
+                </div>
+          
+                <div class="segment__item">
+                  <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="hospital.call_backend()" value="醫院看護" {% if care_type == '醫院看護' %} checked {% endif %} >
+                  <div class="segment__button">醫院看護</div>
+                </div>
+              </div>
+              
+              <div class="case-info-font">
+
+                <span class="news-subtitle">照護地點</span><br>
+                <div class="mt-1 mb-3">
+                  <div class="mt-1 btn-group">
+                    <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
+                      
+                      {% for city in citys %}
+                        <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                        <!-- <option value="醫院看護">醫院看護</option> -->
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mt-1 btn-group">
+                    <select class="dropdown-button" id="county_select" name="county" >
+                      <option style="text-align: center" value="全區">全區</option>
+                      {% for county in counties %}
+                        <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                </div>
+
+                <span class="news-subtitle mt-2">日期</span><br>
+                <div class="mt-2 mb-3">
+                  {{start_date_str}} ~ {{end_date_str}}
+                </div>
+
+                <span class="news-subtitle mt-2">時間類型</span><br>
+                <div class="my-2 " style="display: flex;">
+                  <label class="custom-radio-parent">連續時間
+                    <input type="radio" name="is_continuous_time" value="True" id="continuous_time" {% if is_continuous_time == 'True' %}checked=""{% endif %} onchange="continuous_timeSelect()"> 
+                    <span class="checkmark"></span>
+                  </label>
+                  <label class="custom-radio-parent">每週時段預定
+                    <input type="radio" name="is_continuous_time" id="weekly_time" value="False" {% if is_continuous_time == 'False' %}checked=""{% endif %} onchange="WeekdaySelect()">
+                    <span class="checkmark"></span>
+                  </label>           
+                </div>
+                <div id="time_type_select"></div>
+
+                <span class="news-subtitle">開始時間 & 結束時間</span><br>
+                <div class="mt-1 mb-3">
+                  <div class="mt-1 btn-group">
+                    <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{start_time}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  </div>
+                  <div class="mt-1 btn-group">
+                    <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{end_time}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  </div>
+
+                </div>
+                
+                <span class="news-subtitle mt-2">費率</span><br>
+                <div class="mt-2 mb-3">
+                  {% if servant.is_hospital == True %}
+                    {% if care_type == '居家照顧' %}
+                      每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
+                    {% else %}
+                      每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
+                    {% endif %}
+                  {% elif servant.is_home == True %}
+                    {% if care_type == '醫院照顧' %}
+                      每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
+                    {% else %}
+                      每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
+                    {% endif %}
+                  {% endif %}
+
+                </div>
+
+                <span class="news-subtitle mt-2">費用</span><br>
+                <div class="row case-info-font mt-3" id="post_html"> </div>
+                <div class="row case-info-font mt-3" id="increase_service_html"> </div>
+                <div id="sum_html"></div>
+              </div>
+            </form>
+          </div>
         </div>
-
-      </div>
-            
-      <!-- 右側 預定欄位 -->
-
-      <div class="d-sm-none d-md-block col-12 col-md-5 col-lg-4 mb-5">
-        <div class="booking-box px-4">
-          <div class="row">
-            <div class="col-1">
-              <p class="small-section-title-purple" style="font-weight: 700;">4.8</p>
-            </div>
-            <div class="col mx-0" style="color: yellow;">
-                <span class="fas fa-star" style="stroke: gray;stroke-width: 20"></span>></span>
-                <span class="fas fa-star"></span>
-                <span class="fas fa-star"></span>
-                <span class="fas fa-star"></span>
-                <span class="fas fa-star-half-alt" ></span>
-                <span class="case-info-font">&ensp;7評價</span>
-            </div>
-          </div>             
-          <form method="post" enctype="multipart/form-data">{% csrf_token %}
-            <div class="mb-3" style="margin: 0; display: flex;">
-              <div class="segment__item">
-                <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="home.call_backend()" value="居家照顧" {% if care_type == '居家照顧' %} checked {% endif %} >
-                <div class="segment__button" >居家照顧</div>
-              </div>
         
-              <div class="segment__item">
-                <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="hospital.call_backend()" value="醫院看護" {% if care_type == '醫院看護' %} checked {% endif %} >
-                <div class="segment__button">醫院看護</div>
-              </div>
-            </div>
-            
-            <div class="case-info-font">
-
-              <span class="news-subtitle">照護地點</span><br>
-              <div class="mt-1 mb-3">
-                <div class="mt-1 btn-group">
-                  <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
-                    
-                    {% for city in citys %}
-                      <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
-                      <!-- <option value="醫院看護">醫院看護</option> -->
-                    {% endfor %}
-                  </select>
-              </div>
-              <div class="mt-1 btn-group">
-                <select class="dropdown-button" id="county_select" name="county" >
-                  <option style="text-align: center" value="全區">全區</option>
-                  {% for county in counties %}
-                    <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              </div>
-
-              <span class="news-subtitle mt-2">日期</span><br>
-              <div class="mt-2 mb-3">
-                {{start_date}} ~ {{end_date}}
-              </div>
-
-              <span class="news-subtitle mt-2">時間類型</span><br>
-              <div class="my-2 " style="display: flex;">
-                <label class="custom-radio-parent">連續時間
-                  <input type="radio" name="is_continuous_time" value="True" id="continuous_time" {% if is_continuous_time == 'True' %}checked=""{% endif %} onchange="continuous_timeSelect()"> 
-                  <span class="checkmark"></span>
-                </label>
-                <label class="custom-radio-parent">每週時段預定
-                  <input type="radio" name="is_continuous_time" id="weekly_time" value="False" {% if is_continuous_time == 'False' %}checked=""{% endif %} onchange="WeekdaySelect()">
-                  <span class="checkmark"></span>
-                </label>           
-              </div>
-              <div id="time_type_select"></div>
-
-              <span class="news-subtitle">開始時間 & 結束時間</span><br>
-              <div class="mt-1 mb-3">
-                <div class="mt-1 btn-group">
-                  <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{start_time}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                </div>
-                <div class="mt-1 btn-group">
-                  <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{end_time}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                </div>
-
-              </div>
-              
-              <span class="news-subtitle mt-2">費率</span><br>
-              <div class="mt-2 mb-3">
-                {% if servant.is_hospital == True %}
-                  {% if care_type == '居家照顧' %}
-                    每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
-                  {% else %}
-                    每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
-                  {% endif %}
-                {% elif servant.is_home == True %}
-                  {% if care_type == '醫院照顧' %}
-                    每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
-                  {% else %}
-                    每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
-                  {% endif %}
-                {% endif %}
-
-              </div>
-
-              <span class="news-subtitle mt-2">費用</span><br>
-              <div class="row case-info-font mt-3" id="post_html"> 
-              </div>
-              
-              <hr>
-              <div class="row case-info-font mt-2">
-                <div class="col-4 align-self-center">
-                  總計
-                </div>
-                <div class="col text-end">
-                  <strong>$ </strong><span class="section-title-purple"><strong>20,971</strong></span>
-                </div>
-              </div>             
-            </div>
-          </form>
-        </div>
       </div>
     </div>
-  </div>
+  </form> 
   <script>
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                  }
+              }
+          }
+        return cookieValue;
+  }
     const csrftoken = getCookie('csrftoken');
     
-    function listCities(){
-      var cityid = $("[name='city']").val();
-      $('#county_select').html('');
-      $.ajax({
-        type: "POST",
-        data: {'city_id':cityid,
-                'action':'refresh_county'},
-        headers: {'X-CSRFToken': csrftoken},
-        url: "{% url 'ajax_refresh_county' %}",
-        success: function(response)
+  function listCities(){
+    var cityid = $("[name='city']").val();
+    $('#county_select').html('');
+    $.ajax({
+      type: "POST",
+      data: {'city_id':cityid,
+              'action':'refresh_county'},
+      headers: {'X-CSRFToken': csrftoken},
+      url: "{% url 'ajax_refresh_county' %}",
+      success: function(response)
+      {
+        const data = response.data
+        console.log(data)
+        // var resultObj = JSON.parse(response);
+        var dataHandler = $("#county_select");
+        var county_all = `<option style="text-align: center" value="全區">全區</option>`
+        dataHandler.append(county_all);
+        data.forEach(el =>
         {
-          const data = response.data
-          console.log(data)
-          // var resultObj = JSON.parse(response);
-          var dataHandler = $("#county_select");
-          var county_all = `<option style="text-align: center" value="全區">全區</option>`
-          dataHandler.append(county_all);
-          data.forEach(el =>
-          {
-              var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-              dataHandler.append(newRow);
-          });
+            var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+            dataHandler.append(newRow);
+        });
 
-        }
-      });
-}
+      }
+    });
+  }
   const weekday_select = document.getElementById('time_type_select')
   const select_continuous_time = document.getElementById('time_type_select')
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const servant = urlParams.get('servant');
-  start_end_date = urlParams.get('start_end_date');
-  startTime = urlParams.get('start_time');
-  endTime = urlParams.get('end_time');
-  weekdays = urlParams.get('weekdays');
-  weekdays = weekdays.split(',');
-  increase_service_ids = []
+  start_end_date = "{{start_end_date}}";
+  console.log(start_end_date)
+  startTime = "{{start_time}}";
+  endTime = "{{end_time}}";
+  weekday_str = "{{weekday_str}}";
+  weekdays = weekday_str.split(',');
+  increase_service_ids = [];
   const post_html = document.getElementById('post_html');
-  is_continuous_time = urlParams.get('is_continuous_time');
+  const increase_service_html = document.getElementById('increase_service_html');
+  const sum_html = document.getElementById('sum_html');
+  is_continuous_time = "{{is_continuous_time}}";
   function continuous_timeSelect(){
     console.log('delete')
     select_continuous_time.innerHTML = ``
@@ -420,27 +349,26 @@
         for (var i = 0; i < checkboxes.length; i++) {
           weekdays.push(checkboxes[i].value)
             };
-            console.log(weekdays)
       })
       weekdays.forEach(e =>{
         var element = document.getElementById(e)
         element.checked = true;
         console.log(element)
       })
-      
       }
   if (document.getElementById('weekly_time').checked){
-      console.log('weekly_checked');
       WeekdaySelect.call();
     }
-  document.querySelector('.increaseService').addEventListener('change', event => {
+  function increase_service_check(){
     increase_service_ids = []
     service_checkboxes = $('.increaseService input[type=checkbox]:checked')
 
     for (var x = 0; x < service_checkboxes.length; x++) {
       increase_service_ids.push(service_checkboxes[x].value)
     };
-    console.log(increase_service_ids)
+  }
+  document.querySelector('.increaseService').addEventListener('change', event => {
+    increase_service_check.call();
     calculate_rate.call();
   })
   var home = {
@@ -499,6 +427,7 @@
 
   document.getElementById('weekly_time').addEventListener('click', function(e) {
     is_continuous_time  = 'False';
+    get_weekdays.call();
     calculate_rate.call();
   })
   document.getElementById('timepicker_endTime').addEventListener('change', event => {
@@ -507,14 +436,7 @@
     
     calculate_rate.call();
   })
-  document.querySelector('input[name="is_continuous_time"]:checked').addEventListener('change', event => {
-    event.preventDefault();
-    is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
-    
-    calculate_rate.call();
-  })
-
-  document.querySelector('.weekdayCheck').addEventListener('change', event => {
+  function get_weekdays(){
     is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
     weekdays = []
     weekdays_checkboxes = $('.weekdayCheck input[type=checkbox]:checked')
@@ -522,11 +444,24 @@
     for (var i = 0; i < weekdays_checkboxes.length; i++) {
       weekdays.push(weekdays_checkboxes[i].value)
     };
-    console.log(weekdays)
+    
+  }
+  document.querySelector('input[name="is_continuous_time"]:checked').addEventListener('change', event => {
+    event.preventDefault();
+    is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
+    
     calculate_rate.call();
+  })
+  if (is_continuous_time == 'False' ){
+    document.querySelector('.weekdayCheck').addEventListener('change', event => {
+      get_weekdays.call();
+      calculate_rate.call();
   });
+  }
+  
   function calculate_rate(){
     care_type = document.querySelector('input[name="care_type"]:checked').value;
+    console.log('increase_service_ids:',increase_service_ids)
     return $.ajax({
       type: "POST",
       data: { 'servant':servant,
@@ -543,28 +478,41 @@
       success: function(response)
         {
           const data = response.data;
-          // console.log(data.result);
-          console.log(response)
+          const increase_service_data = response.increase_service_data;
+          increase_service_html.innerHTML = ``
           if (data.result == '3'){post_html.innerHTML = `
               <div class="row case-info-font mt-2 h6">
               <div class="col-12  col-lg-8">
                 $${data.hour_wage}x${data.total_hours}小時 
               </div>
               <div class="col-12  col-lg-4 text-end">
-                $ ${data.total_money}
+                $ ${data.base_money}
               </div>
-            </div>
-            <div class="row case-info-font mt-2 h6">
-              <div class="col-12  col-lg-8">
-                體重超過70公斤<br>
-                每小時加 20% x ${data.total_hours}小時
-              </div>
-              <div class="col-12  col-lg-4 text-end">
-                <br>
-                $ 2,995
-              </div>
-            </div>
-          `}else if (data.result == '1'){
+            </div> `;
+            for (var num in increase_service_data){
+              increase_service_html.innerHTML += `
+              <div class="row case-info-font mt-2 h6">
+                <div class="col-12  col-lg-8">
+                  ${increase_service_data[num].service}<br>
+                  每小時加 ${increase_service_data[num].increase_percent}% x ${data.total_hours}小時
+                </div>
+                <div class="col-12  col-lg-4 text-end">
+                  <br>
+                  $ ${increase_service_data[num].increase_money}
+                </div>
+              </div>`};
+              sum_html.innerHTML = `
+              <hr>
+              <div class="row case-info-font mt-2">
+                <div class="col-4 align-self-center">
+                  總計
+                </div>
+                <div class="col text-end">
+                  <strong>$ </strong><span class="section-title-purple"><strong>${data.total_money}</strong></span>
+                </div>
+              </div>    
+              `
+          }else if (data.result == '1'){
             post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`
           }else if (data.result == '2'){
             post_html.innerHTML = `<span>所選時段與該服務者已有訂單時間重複</span>`
@@ -580,9 +528,13 @@
     });
   }
   $( document ).ready(function() {
+    get_weekdays.call();
+    increase_service_check.call();
     calculate_rate.call();
   });
   
   </script>
 </main>
 {% endblock %}
+
+              

@@ -422,7 +422,6 @@
     
     function calculate_rate(){
       care_type = document.querySelector('input[name="care_type"]:checked').value;
-      console.log(increase_service_ids)
       return $.ajax({
         type: "POST",
         data: { 'servant':servant,
@@ -444,7 +443,7 @@
                   $${data.hour_wage}x${data.total_hours}小時 
                 </div>
                 <div class="col text-end">
-                  <strong>$ </strong><span class="section-title-purple"><strong>${data.total_money}</strong></span><span class="h6"> 起</span> 
+                  <strong>$ </strong><span class="section-title-purple"><strong>${data.base_money}</strong></span><span class="h6"> 起</span> 
                 </div>
             `}else if (data.result == '1'){
               post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`
