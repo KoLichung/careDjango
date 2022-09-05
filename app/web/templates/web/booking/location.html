@@ -29,7 +29,6 @@
                   <div class="mt-1 mb-3">
                     <div class="mt-1 btn-group">
                       <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
-                        
                         {% for city in citys %}
                           <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
                           <!-- <option value="醫院看護">醫院看護</option> -->
@@ -44,7 +43,6 @@
                         {% endfor %}
                       </select>
                     </div>
-  
                   </div>                 
                   <div class="">
                     <input class="custom-form-control" style="width: 100%;" id="aboriginal" name="address" type="text" placeholder="地址" />

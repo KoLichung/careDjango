@@ -48,17 +48,14 @@
                             <span class="checkmark"></span>
                           </label>      
                         </div>
-
                         <div class="">
                           <label class="h6" for="patient_weight">體重：</label>
                           <input class="booking-input" id="patient_weight" value="{{weight}}" name="weight" type="text"/>
                         </div>
-
                         <div class="mt-2 mb-4">
                           <label class="h6" for="patient_age">年齡：</label>
                           <input class="booking-input" id="patient_age" name="age" value="{{age}}" type="text"/>
                         </div>
-
                         <p class="h6" style="font-weight: 600;">疾病狀況：</p>
                         <div class="form-check">
                           <input class="form-check-input" type="checkbox" name="disease_none" id="disease_none" {% if disease_none == True %}checked=""{% endif %} value='{{disease.none.id}}'/>
@@ -77,7 +74,6 @@
                           <label class="h6" for="infectious_disease">傳染性疾病，補充說明：</label>
                           <textarea class="custom-form-control" id="infectious_disease" name="disease_text"  rows="3" placeholder="例：傳染性疾病名稱、病情狀況... ">{{disease_remark}}</textarea>
                         </div>
-
                         <p class="h6" style="font-weight: 600;">身體狀況：</p>
                         <div class="form-check">
                           <input class="form-check-input" type="checkbox" name="body_condition_none" id="body_condition" {% if body_condition_none == True %}checked=""{% endif %} value="{{body_condition_none.id}}" />
@@ -95,7 +91,6 @@
                           <label class="h6" for="body_condition_note">身體狀況補充說明：</label>
                           <textarea class="custom-form-control" id="body_condition_note" name="body_condition_note" rows="3" placeholder="">{{conditions_remark}}</textarea>
                         </div>
-
                         <p class="h6" style="font-weight: 600;">需求服務項目：</p>
                         <div class="mb-4">
                           {% for service in services %}
@@ -110,7 +105,6 @@
                           </div>
                           {% endfor %}
                         </div>
-
                         <p class="h6" style="font-weight: 600;">加價項目： <span style="color:#BB6BD9; font-weight: 400;">(價格 % 數依服務者自訂)</span> </p>
                           <div class="increaseService">
                             {% for increase_service_ship in increase_service_ships %}
@@ -125,7 +119,6 @@
                     <button class="full-purple-button" type="submit">下一頁 <span class="far fa-arrow-alt-circle-right"></span></button>
                   </a>
                 </div>
-                      
               </div>
           </div>
         </div>         
@@ -151,15 +144,12 @@
                   <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="home.call_backend()" value="居家照顧" {% if care_type == '居家照顧' %} checked {% endif %} >
                   <div class="segment__button" >居家照顧</div>
                 </div>
-          
                 <div class="segment__item">
                   <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="hospital.call_backend()" value="醫院看護" {% if care_type == '醫院看護' %} checked {% endif %} >
                   <div class="segment__button">醫院看護</div>
                 </div>
               </div>
-              
               <div class="case-info-font">
-
                 <span class="news-subtitle">照護地點</span><br>
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
@@ -181,12 +171,10 @@
                   </div>
 
                 </div>
-
                 <span class="news-subtitle mt-2">日期</span><br>
                 <div class="mt-2 mb-3">
                   {{start_date_str}} ~ {{end_date_str}}
                 </div>
-
                 <span class="news-subtitle mt-2">時間類型</span><br>
                 <div class="my-2 " style="display: flex;">
                   <label class="custom-radio-parent">連續時間
@@ -199,7 +187,6 @@
                   </label>           
                 </div>
                 <div id="time_type_select"></div>
-
                 <span class="news-subtitle">開始時間 & 結束時間</span><br>
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
@@ -208,9 +195,7 @@
                   <div class="mt-1 btn-group">
                     <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{end_time}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                   </div>
-
-                </div>
-                
+                </div>               
                 <span class="news-subtitle mt-2">費率</span><br>
                 <div class="mt-2 mb-3">
                   {% if servant.is_hospital == True %}
@@ -226,9 +211,7 @@
                       每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
                     {% endif %}
                   {% endif %}
-
                 </div>
-
                 <span class="news-subtitle mt-2">費用</span><br>
                 <div class="row case-info-font mt-3" id="post_html"> </div>
                 <div class="row case-info-font mt-3" id="increase_service_html"> </div>
@@ -236,8 +219,7 @@
               </div>
             </form>
           </div>
-        </div>
-        
+        </div>       
       </div>
     </div>
   </form> 
@@ -257,8 +239,7 @@
           }
         return cookieValue;
   }
-    const csrftoken = getCookie('csrftoken');
-    
+    const csrftoken = getCookie('csrftoken');    
   function listCities(){
     var cityid = $("[name='city']").val();
     $('#county_select').html('');
@@ -281,7 +262,6 @@
             var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
             dataHandler.append(newRow);
         });
-
       }
     });
   }
@@ -391,7 +371,6 @@
       });
     }
   }
-  
   var hospital = {
     call_backend : function (){
     var care_type = 'hospital'
@@ -419,12 +398,10 @@
     
     calculate_rate.call();
   })
-
   document.getElementById('continuous_time').addEventListener('click', function(e) {
     is_continuous_time = 'True';
     calculate_rate.call();
   })
-
   document.getElementById('weekly_time').addEventListener('click', function(e) {
     is_continuous_time  = 'False';
     get_weekdays.call();
@@ -444,7 +421,6 @@
     for (var i = 0; i < weekdays_checkboxes.length; i++) {
       weekdays.push(weekdays_checkboxes[i].value)
     };
-    
   }
   document.querySelector('input[name="is_continuous_time"]:checked').addEventListener('change', event => {
     event.preventDefault();
@@ -458,7 +434,6 @@
       calculate_rate.call();
   });
   }
-  
   function calculate_rate(){
     care_type = document.querySelector('input[name="care_type"]:checked').value;
     console.log('increase_service_ids:',increase_service_ids)
@@ -517,7 +492,6 @@
           }else if (data.result == '2'){
             post_html.innerHTML = `<span>所選時段與該服務者已有訂單時間重複</span>`
           }
-          
         },
         error: function (error) {
           console.log(error);
@@ -532,7 +506,6 @@
     increase_service_check.call();
     calculate_rate.call();
   });
-  
   </script>
 </main>
 {% endblock %}
