@@ -8,13 +8,23 @@
      <!-- 會員資訊 -->
     <div class="card h-lg-100 mb-5">
       <div class="card-header">
-        <div class="h5 mb-3"><b>會員資訊</b></div>
-        <div class="border"></div>
-        <div class="d-flex mt-3">
-          <div>姓名：張曉明</div>
-          <div class="mx-3">電話：0912345678</div>
-          <div>服務者 / 需求者</div>
+        <div class="h5 mb-3">
+          <b>會員資訊</b>
+          
         </div>
+        <div class="border"></div>
+        <div class="d-flex justify-content-between mt-3">
+          <div>
+            <span>姓名：張曉明</span>
+            <span class="mx-3">電話：0912345678</span>
+            <span>服務者 / 需求者</span>
+            <span style="color: red;">（服務者尚未審核）</span> 
+          </div>
+          <div>
+            <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_data_review' %}">資料審核</a>
+          </div>
+        </div>
+
       </div>
     </div>
 

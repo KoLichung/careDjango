@@ -39,6 +39,19 @@ html,body {
   text-decoration: none;
 }
 
+.custom-red-border-btn {
+  color: red;
+  background-color: white;
+  border: 1px solid red;
+  border-color: red;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.custom-red-border-btn:hover{
+  color: red;
+  text-decoration: none;
+}
+
 .custom-purple-border-btn {
   color: #BB6BD9;
   background-color: white;
@@ -94,3 +107,4 @@ div .text-purple {
   background-color:#BB6BD9 !important;
   color:white !important;
 }
+

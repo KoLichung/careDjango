@@ -35,10 +35,18 @@
       <div class="card-header">
         <div class="h5 mb-3"><b>訂單明細</b></div>
         <div class="border"></div>
-        <div class="d-flex mt-3">
-          <div><a href="#" class="custom-purple-border-btn btn-sm" role="button">已承接</a></div>
-          <div class="mx-3">建立：2022/4/6 服務者：林小梅 金額：$15200</div>
+
+        <div class="d-flex mt-3 justify-content-between">
+          <div>
+            <a href="#" class="custom-purple-border-btn btn-sm" role="button">已承接</a>
+            <span class="mx-3">建立：2022/4/6 服務者：林小梅 金額：$15200</span>
+          </div>
+          <div>
+            (已退款 $7900)
+            <a href="{% url 'refunds' %}" class="custom-red-border-btn btn-sm" role="button">按我退款</a>
+          </div>
         </div>
+
         <div class="h6 mt-4 mb-2">基本費用</div>
         <div class="row">
           <div class="col">$208 x 72 小時</div>

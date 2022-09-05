@@ -11,6 +11,11 @@ urlpatterns = [
     path('member_detail', views.member_detail, name = 'member_detail'), 
     path('all_blogs', views.all_blogs, name = 'all_blogs'), 
     path('new_blog', views.new_blog, name = 'new_blog'), 
+    path('all_categories', views.all_categories, name = 'all_categories'),
+    path('new_edit_category', views.new_edit_category, name = 'new_edit_category'),
+    path('member_data_review', views.member_data_review, name = 'member_data_review'),
+    path('refunds', views.refunds, name = 'refunds'),
+
 
 
 ]

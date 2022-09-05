@@ -57,52 +57,7 @@
             <b>文章分類</b>
           </div>
           <div class="col text-end">
-            <a class="custom-purple-btn text-white btn-sm " href="#" role="button" data-bs-toggle="modal" data-bs-target="#blog-category">編輯分類</a>
-            
-            <!-- 編輯文章分類 Modal -->
-            <div class="modal fade" id="blog-category" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" style="width: 350px;">
-                <div class="modal-content">
-                  <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">編輯文章分類</h5>
-                  </div>
-                  <div class="modal-body" style="padding: 1rem 1rem;">
-                      <div class="text-start"><b>新增分類</b></div>
-                      <div class="row mt-2 mb-3">
-                        <div class="col-8">
-                          <input class="form-control" id="" placeholder="新增分類名稱" />
-                        </div>
-                        <div class="col">
-                          <a href="#" class="custom-grey-border-btn btn-sm" role="button">新增</a>
-                        </div>
-                      </div>
-                      <div class="text-start"><b>分類列表</b></div>
-                      <div class="row mt-2 mb-3">
-                        <div class="col text-start">
-                          分類一
-                        </div>
-                        <div class="col me-2">
-                          <span class="far fa-edit"></span>
-                          <span class="far fa-trash-alt"></span>
-                        </div>
-                      </div>
-                      <div class="row mt-2 mb-3">
-                        <div class="col text-start">
-                          分類二
-                        </div>
-                        <div class="col me-2">
-                          <span class="far fa-edit"></span>
-                          <span class="far fa-trash-alt"></span>
-                        </div>
-                      </div>
-                  </div>
-                  <div class="modal-footer">
-                      <a class="bg-secondary text-white btn-sm " href="#" role="button" data-bs-dismiss="modal">取消</a>
-                      <a class="custom-purple-btn text-white btn-sm " href="#" role="button">確定</a>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <a class="custom-purple-btn text-white btn-sm " href="{% url 'new_edit_category' %}" role="button">編輯分類</a>
           </div>  
         </div>
         <div class="mx-3">

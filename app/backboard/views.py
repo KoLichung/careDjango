@@ -5,6 +5,7 @@ import datetime
 from modelCore.forms import BlogPostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip
 
+
 def all_cases(request):
     return render(request, 'backboard/all_cases.html')
 
@@ -85,3 +86,16 @@ def new_blog(request):
 
     form = BlogPostCoverImageForm()
     return render(request, 'backboard/new_blog.html', {'categories':categories, 'form':form})
+
+
+def all_categories(request):
+    return render(request, 'backboard/all_categories.html')
+
+def new_edit_category(request):
+    return render(request, 'backboard/new_edit_category.html')
+
+def member_data_review(request):
+    return render(request, 'backboard/member_data_review.html')
+
+def refunds(request):
+    return render(request, 'backboard/refunds.html')
