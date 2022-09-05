@@ -37,7 +37,7 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = '__all__'
         read_only_fields = ('id',)
-
+    
 class DiseaseConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiseaseCondition
@@ -89,6 +89,7 @@ class UserWeekDayTimeSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     care_type = serializers.CharField(default='')
     is_continuous_time = serializers.CharField(default='')
+
     start_datetime = serializers.CharField(default='')
     end_datetime = serializers.CharField(default='')
     user_avg_rate = serializers.IntegerField(default=0)
@@ -102,6 +103,16 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
         read_only_fields = ('id',)
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['needer_name'] = instance.case.user.name
+        if instance.case.user.image:
+            rep['needer_image'] = instance.case.user.image.url
+        rep['care_type'] = instance.case.care_type
+        rep['is_continuous_time'] =  instance.case.is_continuous_time
+        return rep
+    
 
 class ServantSerializer(serializers.ModelSerializer):
     locations = UserServiceLocationSerializer(read_only=True, many=True)
@@ -131,7 +142,7 @@ class CaseOrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = '__all__'
         read_only_fields = ('id',)
-
+    
 class CaseSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(read_only=True, many=True)
     disease = DiseaseConditionSerializer(read_only=True, many=True)
