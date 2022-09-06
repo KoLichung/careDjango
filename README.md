@@ -171,6 +171,8 @@ vCRQtf77UZ6vCie
 HashKey: SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH
 HashIV: C6RhZZ45pflwEoSP
 
+訂單產生網址
+http://202.182.105.11/newebpayApi/mpg_trade?order_id=3
 測試卡號：4000-2211-1111-1111
 
 平台商代號：CARE168
