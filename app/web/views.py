@@ -1229,7 +1229,41 @@ def become_carer(request):
     return render(request, 'web/become_carer.html')
 
 def my_service_setting(request):
-    return render(request, 'web/my/service_setting.html')
+    user = request.user
+    languages = Language.objects.all()
+    if request.method == 'POST':
+        gender = request.POST.get('gender')
+        monday = request.POST.get('mondday')
+        tuesday = request.POST.get('tuesday')
+        wednesday = request.POST.get('wednesday')
+        thursday = request.POST.get('thursday')
+        friday = request.POST.get('friday')
+        saturday = request.POST.get('saturday')
+        sunday = request.POST.get('sunday')
+        if monday != None:
+            mon_start_time = request.POST.get('mon_start_time ')
+            mon_end_time = request.POST.get('mon_end_time')
+        if tuesday != None:
+            tue_start_time = request.POST.get('tue_start_time')
+            tue_end_time = request.POST.get('tue_end_time')
+        if wednesday != None:
+            wed_start_time = request.POST.get('wed_start_time')
+            wed_end_time = request.POST.get('wed_end_time')
+        if thursday != None:
+            thu_start_time = request.POST.get('thu_start_time')
+            thu_end_time = request.POST.get('thu_end_time')
+        if friday != None:
+            fri_start_time = request.POST.get('fri_start_time')
+            fri_end_time = request.POST.get('fri_end_time')
+        if saturday != None:
+            sat_start_time = request.POST.get('sat_start_time')
+            sat_end_time = request.POST.get('sat_end_time')
+        if sunday != None:
+            sun_start_time = request.POST.get('sun_start_time')
+            sun_end_time = request.POST.get('sun_end_time')
+        language_ids = request.POST.getlist('languages[]')
+        print(language_ids)
+    return render(request, 'web/my/service_setting.html',{'languages':languages})
 
 def my_bank_account(request):
     
