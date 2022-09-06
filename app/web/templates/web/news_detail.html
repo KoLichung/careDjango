@@ -47,7 +47,7 @@
 
       <div class="row justify-content-center">  
         <div class="col-9">
-          <p class="news-content">{{blogpost.body}}</p>
+          <p class="news-content">{{blogpost.body|safe}}</p>
 
         <hr>
 
@@ -57,10 +57,10 @@
         <div class="row">
           
           {% for post in blogposts%}          
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <div class="col-4 col-sm-1 col-md-4 col-lg-3 col-xl-4">
               <a  href="{% url 'news_detail' %}?blogpost={{post.id}}">
               {% if blogpost.cover_image.url != None %}
-                <img src="{{ blogpost.cover_image.url }}" style="min-height:80px;min-width:120px;">
+                <img src="{{ blogpost.cover_image.url }}" style="width:300px;">
               {% else %}
                 <img src="{% static 'web/assets/img/new/index_bg_hands.jpg' %}" class="img-fluid img-thumbnail" style="object-fit: cover;">
               {% endif %}

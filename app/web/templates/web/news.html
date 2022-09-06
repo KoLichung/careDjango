@@ -10,6 +10,9 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLightExample" aria-controls="navbarLightExample" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
+
+            
+
             <div class="collapse navbar-collapse" id="navbarLightExample">
               <ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">   
                 <!-- <li class="nav-item px-3">
@@ -18,12 +21,20 @@
                 <li class="nav-item px-3">
                   <a class="nav-link h5" href="#post-all" id="home-tab" data-bs-toggle="tab" role="tab" aria-controls="tab-home" aria-selected="true">全部</a>
                 </li>
+                {% for category in categories %}
+                  <li class="nav-item px-3">
+                    <a class="nav-link h5" href="{% url 'news' %}?category_id={{category.id}}">{{category.name}}</a>
+                  </li>
+                {% endfor %}
+                {% comment %} <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#post-all" id="home-tab" data-bs-toggle="tab" role="tab" aria-controls="tab-home" aria-selected="true">全部</a>
+                </li>
                 <li class="nav-item px-3">
                   <a class="nav-link h5" href="#post-1" id="category-1-tab" data-bs-toggle="tab" role="tab" aria-controls="tab-1" aria-selected="false">居家照護</a>
                 </li>
                 <li class="nav-item px-3">
                   <a class="nav-link h5" href="#post-2" id="category-2-tab" data-bs-toggle="tab" role="tab" aria-controls="tab-2" aria-selected="false">接案資訊</a>
-                </li>
+                </li> {% endcomment %}
                 <!-- <li class="nav-item px-3">
                   <a class="nav-link h5" href="#">其他分類</a>
                 </li> -->
@@ -60,7 +71,7 @@
                       </div>
                     </div>
                     <p class="news-title">{{blogpost.title}}</p>
-                    <p class="news-content">{{blogpost.body}}</p>
+                    {% comment %} <p class="news-content">{{blogpost.body}}</p> {% endcomment %}
                   </div>
                   </div>
   

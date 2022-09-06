@@ -163,6 +163,9 @@ class MpgTrade(APIView):
         # resp = requests.post(api_url, data =params)
         # return HttpResponse(resp.text)
 
+def success_pay(request):
+    return render(request, 'success_pay.html')
+
 class SearchTradeInfo(APIView):
     def get(self, request, format=None):
         post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 

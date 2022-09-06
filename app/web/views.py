@@ -1,3 +1,4 @@
+from unicodedata import category
 from django.shortcuts import render ,redirect
 from django.http import HttpResponse ,JsonResponse ,HttpResponseRedirect 
 from django.core.files.storage import FileSystemStorage
@@ -20,7 +21,7 @@ from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service
 from modelCore.models import UserLicenseShipImage ,License ,Case ,OrderIncreaseService ,TempCase ,DiseaseCondition ,BodyCondition ,CaseServiceShip
-from modelCore.models import CaseBodyConditionShip, CaseDiseaseShip ,BlogCategory
+from modelCore.models import CaseBodyConditionShip, CaseDiseaseShip ,BlogCategory, BlogPostCategoryShip
 # Create your views here.
 
 logger = logging.getLogger(__file__)
@@ -1121,15 +1122,20 @@ def booking_confirm(request):
 
 def news(request):
     blogposts = BlogPost.objects.all()
-    blogpost_1 = blogposts.filter(ship_categories__category=BlogCategory.objects.get(name='分類一'))
-    blogpost_2 = blogposts.filter(ship_categories__category=BlogCategory.objects.get(name='分類二'))
-    print(blogpost_1,blogpost_2)
-    return render(request, 'web/news.html',{'blogposts':blogposts,'blogpost_1':blogpost_1,'blogpost_2':blogpost_2})
+    categories = BlogCategory.objects.all()
+
+    if request.GET.get('category_id'):
+        category_id = request.GET.get('category_id')
+        the_category = BlogCategory.objects.get(id=category_id)
+        post_ids = list(BlogPostCategoryShip.objects.filter(category=the_category).values_list('post', flat=True))
+        blogposts = BlogPost.objects.filter(id__in=post_ids)
+
+    return render(request, 'web/news.html',{'blogposts':blogposts,'categories':categories})
 
 def news_detail(request):
     blogpost_id = request.GET.get('blogpost')
     blogpost = BlogPost.objects.get(id=blogpost_id)
-    blogposts = BlogPost.objects.filter(~Q(id=blogpost_id))
+    blogposts = BlogPost.objects.filter(~Q(id=blogpost_id))[:3]
     print(blogposts)
     return render(request, 'web/news_detail.html',{'blogpost':blogpost,'blogposts':blogposts})
 

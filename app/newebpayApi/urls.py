@@ -12,4 +12,6 @@ urlpatterns = [
     path('appropriation', views.Appropriation.as_view()),
     path('debit', views.Debit.as_view()),
     path('notifyurl_callback', views.NotifyUrlCallback.as_view()),
+
+    path('success_pay', views.success_pay, name = 'success_pay'),
 ]

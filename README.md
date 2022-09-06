@@ -183,6 +183,20 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220906
+1.blog => 全部, blog_detail => tab items
+2.預訂單 
+確認付款 
+v => 產生 Order, Message, 刪除 Temp case 
+
+xxx => 返回時, 回到 Servant Detail (不確定是不是從 ReturnUrl 設定)
+
+v If temp-case == None:
+	redirect to Servant Detail
+=======
+3.我的服務設定~
+
+
 20220905
 1.預訂單的部分完成
 2.部落格列表, 部落格詳細頁
