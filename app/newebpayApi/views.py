@@ -138,7 +138,8 @@ class MpgTrade(APIView):
             "MerchantOrderNo": order_id,
             "Amt": 3000,
             "ItemDesc": "test",       
-            "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback"
+            "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback",
+            "ReturnURL": "http://202.182.105.11/newebpayApi/success_pay",
         }
 
         query_str = urllib.parse.urlencode(data)
