@@ -52,6 +52,7 @@ urlpatterns = [
     path('ajax_refresh_county', views.ajax_refresh_county, name = 'ajax_refresh_county'),
     path('ajax_return_wage', views.ajax_return_wage, name = 'ajax_return_wage'),
     path('ajax_cal_rate', views.ajax_cal_rate, name = 'ajax_cal_rate'),
+    path('ajax_post_image', views.ajax_post_image, name = 'ajax_post_image'),
   
 ]
 

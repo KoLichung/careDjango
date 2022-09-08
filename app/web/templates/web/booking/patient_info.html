@@ -165,7 +165,7 @@
                     <select class="dropdown-button" id="county_select" name="county" >
                       <option style="text-align: center" value="全區">全區</option>
                       {% for county in counties %}
-                        <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                        <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county.name == county_name %} selected="selected" {% endif %}>{{county}}</option>
                       {% endfor %}
                     </select>
                   </div>
