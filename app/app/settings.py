@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'fontawesomefree',
+    # 'fontawesomefree',
     'modelCore',
     'user',
     'api',
@@ -209,3 +209,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'modelCore.User'
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
+
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost'
