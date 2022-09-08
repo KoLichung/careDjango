@@ -10,24 +10,24 @@
         <div class="border"></div>
         <div class="d-flex mt-3">
           <div><a href="#" class="custom-purple-border-btn btn-sm" role="button">已承接</a></div>
-          <div class="mx-3">建立：2022/4/8</div>
+          <div class="mx-3">建立：{{case.created_at.year}}/{{case.created_at.month}}/{{case.created_at.day}}</div>
         </div>
         <div class="mt-4 mb-2"><b>案件資訊</b></div>
-        <div>發案者：劉先生 0912333444</div>
-        <div>案件類型：居家照顧</div>
-        <div>案件地點：桃園市 楊梅區</div>
-        <div>案件時間：連續時間 2022/04/18 晚上 8:00 ~ 2022/04/22 晚上 8:00</div>
-        <div>案主收到的評價：評價內容 ooxx</div>
+        <div>發案者：{{case.user.name}} {{case.user.phone}}</div>
+        <div>案件類型：{% if case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</div>
+        <div>案件地點：{{case.city}}{{case.county}}</div>
+        <div>案件時間：{% if case.is_continuous_time == True %}連續時間{% else %}每週時間預定{% endif %} {{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ({{case.startTimeformat}}) ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}})</div>
+        <div>案主收到的評價：{{review.case_offender_commentcase_offender_comment}}</div>
         <div class="mt-4 mb-2"><b>被照顧者資訊</b></div>
-        <div>性別：男, 體重：70, 年齡：70</div>
-        <div>疾病：阿茲海默症</div>
-        <div>身體狀況：使用輔具</div>
-        <div>補充說明：補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明補充說明</div>
+        <div>性別：{% if case.gender == 'M' %}男{% else %}女{% endif %}, 體重：{{case.weight}}, 年齡：{{case.age}}</div>
+        <div>疾病：{% for casedisease in case.case_diseases.all %} {{casedisease.disease}} {% endfor %}</div>
+        <div>身體狀況：{% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}</div>
+        <div>補充說明：</div>
         <div class="mt-4 mb-2"><b>需求服務項目</b></div>
-        <div>安全維護, 協助進食, 協助如廁, 陪同就醫, 代購物品, 簡易備餐, 身體清潔, 鼻胃管灌食</div>
+        <div>{% for caseservice in case.case_services.all %}{{caseservice.service}}{% endfor %}</div>
         <div class="mt-4 mb-2"><b>服務者資訊</b></div>
-        <div>服務者：林小梅 0922333455</div>
-        <div class="mb-3">服務者收到的評價：評價xxxx</div>
+        <div>服務者：{{case.servant.name}}{{case.servant.phone}}</div>
+        <div class="mb-3">服務者收到的評價：{{review.servant_comment}}</div>
       </div>
     </div>
 
@@ -49,22 +49,24 @@
 
         <div class="h6 mt-4 mb-2">基本費用</div>
         <div class="row">
-          <div class="col">$208 x 72 小時</div>
-          <div class="col alnright">$14,976</div>
+          <div class="col">${% if case.care_type == 'home' %}{{case.servant.home_hour_wage}}{% else %}{{case.servant.hospital_hour_wage}}{% endif %} x {{order.work_hours}} 小時</div>
+          <div class="col alnright">${{order.base_money}}</div>
         </div>
         <div class="h6 mt-4 mb-2">加價項目</div>
+        {% for data in increase_data_list %}
         <div class="row">
-          <div class="col">體重超過 70 公斤 每小時加 20% x 72 小時 </div>
-          <div class="col alnright">$2,995</div>
+          <div class="col">{{data.case_increase_ship.service}} 每小時加 {{data.case_increase_ship.increase_percent}}% x {{order.work_hours}} 小時 </div>
+          <div class="col alnright">${{data.case_increase_ship.increase_money}}</div>
         </div>
-        <div class="row">
+        {% endfor %}
+        <!-- <div class="row">
           <div class="col">協助復健 $300 x 10 小時 </div>
           <div class="col alnright">$3,000</div>
-        </div>
+        </div> -->
         <div class="border my-2"></div>
         <div class="row">
           <div class="col"><b>總計</b></div>
-          <div class="col alnright text-danger"><b>$23,000</b></div>
+          <div class="col alnright text-danger"><b>${{order.total_money}}</b></div>
         </div>    
       </div>
     </div>

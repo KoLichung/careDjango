@@ -214,7 +214,8 @@ class UserServiceShip(models.Model):
     )
     service = models.ForeignKey(
         Service,
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        related_name='service_ships'
     )
     increase_percent = models.FloatField(default=0, blank = True, null=True)
     

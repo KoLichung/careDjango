@@ -3,11 +3,12 @@ from django.core.paginator import Paginator
 
 import datetime
 from modelCore.forms import BlogPostCoverImageForm
-from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip
+from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
 
 
 def all_cases(request):
-    return render(request, 'backboard/all_cases.html')
+    cases = Case.objects.all()
+    return render(request, 'backboard/all_cases.html',{'cases':cases})
 
 def all_members(request):
     return render(request, 'backboard/all_members.html')
@@ -16,7 +17,22 @@ def bills(request):
     return render(request, 'backboard/bills.html')
 
 def case_detail(request):
-    return render(request, 'backboard/case_detail.html')
+    case_id = request.GET.get('case')
+    case = Case.objects.get(id=case_id)
+    servant = case.servant
+    order = Order.objects.get(case=case)
+    review = Review.objects.get(case=case)
+    increase_services_list = list(Service.objects.filter(is_increase_price=True).values_list('service_ships', flat=True))
+    increase_services_ships = CaseServiceShip.objects.filter(case=case,id__in=increase_services_list)
+    increase_data_list = []
+    print(increase_services_ships)
+    for case_increase_ship in increase_services_ships:
+        increase_percent = UserServiceShip.objects.get(user=servant,service=case_increase_ship.service).increase_percent
+        increase_money = order.work_hours * increase_percent
+        data = {'case_increase_ship':case_increase_ship,'increase_percent':increase_percent,'increase_money':increase_money}
+        increase_data_list.append(data)
+    print(increase_data_list)
+    return render(request, 'backboard/case_detail.html',{'case':case,'review':review,'order':order,'increase_data_list':increase_data_list})
 
 def member_detail(request):
     return render(request, 'backboard/member_detail.html')
