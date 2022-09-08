@@ -29,20 +29,26 @@
                   </tr>
                 </thead>
                 <tbody class="list">
+                  {% for case in cases %}
                   <tr>
                     <td >
-                      <button type="button" class="custom-grey-border-btn btn-sm" disabled>未承接</button>
+                      <button type="button" class="custom-grey-border-btn btn-sm" disabled>{{case.state}}</button>
                     </td>
-                    <td>2022/4/6</td>
-                    <td>2022/5/1~2022/5/12</td>
-                    <td>劉金發</td>
-                    <td>桃園市楊梅區</td>
-                    <td></td>
+                    <td>{{case.created_at.year}}/{{case.created_at.month}}/{{case.created_at.day}}</td>
+                    <td>{{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}}</td>
+                    <td>{{case.servant.name}}</td>
+                    <td>{{case.city}}{{case.county}}</td>
+                    {% for order in case.case_orders.all %}
+                      {% if order.total_money %}
+                      <td>{{order.total_money}}</td>
+                      {% endif %}
+                    {% endfor %}
                     <td>                    
-                      <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
+                      <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}?case={{case.id}}"?>查看</a>
                     </td>
                   </tr>
-                  <tr>
+                  {% endfor %}
+                  <!-- <tr>
                     <td >
                       <button type="button" class="custom-grey-border-btn btn-sm" disabled>未承接</button>
                     </td>
@@ -67,7 +73,7 @@
                     <td>                    
                       <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
                     </td>
-                  </tr>
+                  </tr> -->
                   
                 </tbody>
               </table>

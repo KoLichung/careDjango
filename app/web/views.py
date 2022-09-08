@@ -19,9 +19,9 @@ from django.contrib import auth
 from modelCore.forms import *
 from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
-from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service
+from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service ,UserWeekDayTime
 from modelCore.models import UserLicenseShipImage ,License ,Case ,OrderIncreaseService ,TempCase ,DiseaseCondition ,BodyCondition ,CaseServiceShip
-from modelCore.models import CaseBodyConditionShip, CaseDiseaseShip ,BlogCategory, BlogPostCategoryShip
+from modelCore.models import CaseBodyConditionShip, CaseDiseaseShip ,BlogCategory, BlogPostCategoryShip ,OrderWeekDay ,ChatRoom ,ChatroomUserShip ,Message
 # Create your views here.
 
 logger = logging.getLogger(__file__)
@@ -62,6 +62,15 @@ def index(request):
 
     # elif request.is_ajax():
     #     return JsonResponse({'text':'hello world'})
+
+def ajax_post_image(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        print(request.files)
+        # isthisFile=request.files.get('file')
+        # print(isthisFile)
+        # updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
+        # print(updatedData)
+        return JsonResponse({'data':'ajax'})
 
 def ajax_refresh_county(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'refresh_county':
@@ -590,6 +599,8 @@ def search_carer_detail(request):
         defaultStartEndDate = ''
     if weekdays != None:
         weekday_list = weekdays.split(',')
+    else:
+        weekday_list = []
     
     servant = User.objects.get(phone=servant_phone)
         
@@ -671,7 +682,7 @@ def search_carer_detail(request):
                         weekday_str += ','
                 tempcase.weekday = weekday_str
             tempcase.save()
-            print(tempcase)
+            print(tempcase.county)
             return redirect_params('booking_patient_info',{'weekdays':weekday_str, 'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_end_date':start_end_date,'start_time':start_time,'end_time':end_time,'servant':servant})
         else:
             return redirect('login')
@@ -695,6 +706,7 @@ def booking_patient_info(request):
         start_end_date = start_date[0].split('20')[1] + "/" + start_date[1] + "/" + start_date[2] + " to " + end_date[0].split('20')[1] + "/" + end_date[1] + "/" + end_date[2]
         city = City.objects.get(name=last_tempcase.city)
         county_name = last_tempcase.county
+        
         counties = counties.filter(city=city)
         is_continuous_time = str(last_tempcase.is_continuous_time)
         if is_continuous_time == 'False':
@@ -720,7 +732,6 @@ def booking_patient_info(request):
         conditions_remark = last_tempcase.conditions_remark
         service = last_tempcase.service
         increase_service = last_tempcase.increase_service
-        print('increase_service:',increase_service)
         disease_list = []
         if disease != None and disease != '':
             disease_Idlist = disease.split(',')
@@ -744,7 +755,6 @@ def booking_patient_info(request):
             body_condition_none = True
         else:
             body_condition_none = False
-        print(body_condition_none,disease_none)
         if service != None:
             service_Idlist = service.split(',')
         else:
@@ -762,28 +772,7 @@ def booking_patient_info(request):
             increase_service_list.append(UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=increase_service_id)))
         print(increase_service_list)
     else:
-        city_id = request.GET.get('city')
-        county_name = request.GET.get('county')
-        care_type = request.GET.get('care_type')
-        is_continuous_time = request.GET.get('is_continuous_time')
-        start_end_date = request.GET.get('start_end_date')
-        start_time = request.GET.get('start_time')
-        end_time = request.GET.get('end_time')
-        weekdays = request.GET.get('weekdays')
-        weekday_list = weekdays.split(',')
-        
-        if city_id == None:
-            city_id = '8'
-        city = City.objects.get(id=city_id)
-        counties = counties.filter(city=City.objects.get(id=city_id))
-
-        if county_name == None:
-            county_name = '全區'
-        else:
-            if county_name != '全區':
-                county_name = County.objects.get(city=city_id,name=county_name)
-            else:
-                county_name = '全區'
+        return redirect_params('search_carer_detail',{'servant':servant})
     
     start_date = start_end_date.split(' to ')[0]
     end_date = start_end_date.split(' to ')[1]
@@ -796,13 +785,11 @@ def booking_patient_info(request):
     services = Service.objects.all().order_by('id')[4:]
     weekday_str = ''
     count = 0
-    print(weekday_list)
     for weekday in weekday_list:
         count += 1
         weekday_str += weekday 
         if count < len(weekday_list):
             weekday_str += ','
-        print(weekday_str)
     increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
     for service in increase_services:
         if UserServiceShip.objects.filter(user=servant, service=service).count() == 0:
@@ -911,7 +898,8 @@ def booking_patient_info(request):
             tempcase.increase_service = increase_service_str
         tempcase.save()
         return redirect_params('booking_location',{'servant':servant})
-    return render(request, 'web/booking/patient_info.html',{'start_end_date':start_end_date, 'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight,'weekday_str':weekday_str, 'increase_service_ships':increase_service_ships, 'weekday_list':weekday_list, 'servant':servant, 'care_type':care_type, 'start_time':start_time,'end_time':end_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'cityName':city,'citys':citys,'countyName':county_name,'counties':counties, 'is_continuous_time':is_continuous_time, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'disease_none':disease_none, 'diseases':diseases,'body_conditions':body_conditions})
+    print('county_name',county_name)
+    return render(request, 'web/booking/patient_info.html',{'start_end_date':start_end_date, 'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight,'weekday_str':weekday_str, 'increase_service_ships':increase_service_ships, 'weekday_list':weekday_list, 'servant':servant, 'care_type':care_type, 'start_time':start_time,'end_time':end_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'cityName':city,'citys':citys,'county_name':county_name,'counties':counties, 'is_continuous_time':is_continuous_time, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'disease_none':disease_none, 'diseases':diseases,'body_conditions':body_conditions})
 
 def booking_location(request):
     servant_phone = request.GET.get('servant')
@@ -964,6 +952,8 @@ def booking_location(request):
             weekday_str += weekday 
             if count < len(weekday_list):
                 weekday_str += ','
+    else:
+        return redirect_params('search_carer_detail',{'servant':servant})
     if request.method == 'POST' and 'next' in request.POST:
         city = request.POST.get('city')
         county = request.POST.get('county')
@@ -1033,6 +1023,8 @@ def booking_contact(request):
             weekday_str += weekday 
             if count < len(weekday_list):
                 weekday_str += ','
+    else:
+        return redirect_params('search_carer_detail',{'servant':servant})
     if request.method == 'POST' and 'next' in request.POST:
         emergencycontact_name = request.POST.get('emergencycontact_name')
         emergencycontact_relation = request.POST.get('emergencycontact_relation')
@@ -1113,9 +1105,103 @@ def booking_confirm(request):
 
         for increase_service_id in increase_service_Idlist:
             increase_service_list.append(Service.objects.get(id=increase_service_id))
+    else:
+        return redirect_params('search_carer_detail',{'servant':servant})
     if request.method == 'POST' and 'pay' in request.POST:
+        city_name = tempcase.city
+        county_name = tempcase.county
+        case = Case()
+        case.user = user
+        case.servant = servant
+        case.city = City.objects.get(name=city_name)
+        if county_name != '全區':
+            case.county = County.objects.get(city=City.objects.get(name=city_name),name=county_name)
+        case.care_type = care_type
+        case.name = tempcase.name
+        case.gender = tempcase.gender
+        case.age = tempcase.age
+        case.weight = tempcase.weight
+        case.disease_remark = tempcase.disease_remark
+        case.conditions_remark = tempcase.conditions_remark
+        case.is_continuous_time = tempcase.is_continuous_time
+        case.weekday = tempcase.weekday
+        case.start_time = tempcase.start_time
+        case.end_time = tempcase.end_time
+        case.start_datetime = tempcase.start_datetime
+        case.end_datetime = tempcase.end_datetime
+        case.emergencycontact_name = tempcase.emergencycontact_name
+        case.emergencycontact_relation = tempcase.emergencycontact_relation
+        case.emergencycontact_phone = tempcase.emergencycontact_phone
+        case.save()
 
-        return redirect('http://202.182.105.11/newebpayApi/mpg_trade')
+        order = Order()
+        order.case = case
+        order.user = order.case.user
+        order.servant = order.case.servant
+        order.state = 'unPaid'
+        order.start_time = order.case.start_time
+        order.end_time = order.case.end_time
+        order.start_datetime = order.case.start_datetime
+        order.end_datetime = order.case.end_datetime
+        order.base_money =(((Case.objects.get(id=1).end_datetime) - (Case.objects.get(id=1).start_datetime)).days) * (Case.objects.get(id=1).servant.home_one_day_wage)
+        if case.is_continuous_time == True:
+            total_hours = 0
+            for i in range(7):
+                total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+            order.work_hours = total_hours
+        elif case.is_continuous_time == False:
+            weekdays = order.case.weekday.split(',')
+            for weekday in weekdays:
+                orderWeekday = OrderWeekDay()
+                orderWeekday.order = order
+                orderWeekday.weekday = weekday
+                orderWeekday.save()
+            weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+            total_hours = 0
+            for i in weekday_list:
+                total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+            order.work_hours = total_hours
+            order.base_money = order.work_hours * order.case.servant.hospital_hour_wage
+        order.platform_percent = 10
+        order.save()
+        Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+        
+        for disease in disease_list:
+            CaseDiseaseShip.objects.create(case=case,disease=disease)
+
+        for body_condition in body_condition_list:
+            CaseBodyConditionShip.objects.create(case=case,body_condition=body_condition)
+        
+        for service in service_list:
+            CaseServiceShip.objects.create(case=case,service=service)
+
+        for increase_service in increase_service_list:
+            CaseServiceShip.objects.create(case=case,service=increase_service)
+            orderIncreaseService = OrderIncreaseService()
+            orderIncreaseService.order = order
+            orderIncreaseService.service = increase_service
+            orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=increase_service).increase_percent
+            orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+            orderIncreaseService.save()
+
+        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum']))
+        order.platform_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * (order.platform_percent/100)
+        order.save()
+
+        chatroom = ChatRoom.objects.create(update_at=datetime.datetime.now())
+        ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
+        message = Message()
+        message.chatroom = chatroom
+        message.user = user
+        message.is_this_message_only_case = True
+        message.case = case
+        chatroom.update_at = datetime.datetime.now()
+        chatroom.save()
+        message.save()
+
+        tempcase.delete()
+        order_id = order.id
+        return redirect_params('http://202.182.105.11/newebpayApi/mpg_trade',{'order_id':order_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_contact',{'servant':servant_phone})
     return render(request, 'web/booking/confirm.html',{'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'servant_phone':servant_phone, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant,})
@@ -1133,11 +1219,17 @@ def news(request):
     return render(request, 'web/news.html',{'blogposts':blogposts,'categories':categories})
 
 def news_detail(request):
+    categories = BlogCategory.objects.all()
+    blogposts = BlogPost.objects.all()
     blogpost_id = request.GET.get('blogpost')
     blogpost = BlogPost.objects.get(id=blogpost_id)
-    blogposts = BlogPost.objects.filter(~Q(id=blogpost_id))[:3]
-    print(blogposts)
-    return render(request, 'web/news_detail.html',{'blogpost':blogpost,'blogposts':blogposts})
+    if request.GET.get('category_id'):
+        category_id = request.GET.get('category_id')
+        the_category = BlogCategory.objects.get(id=category_id)
+        post_ids = list(BlogPostCategoryShip.objects.filter(category=the_category).values_list('post', flat=True))
+        blogposts = BlogPost.objects.filter(id__in=post_ids)[:3]
+
+    return render(request, 'web/news_detail.html',{'blogpost':blogpost, 'categories':categories,'blogposts':blogposts})
 
 def requirement_list(request):
     cases = Case.objects.all()
@@ -1222,7 +1314,6 @@ def requirement_detail(request):
         weekday_str = '星期一 ～ 星期日'
     print(weekday_str)
 
-
     return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str})
 
 def become_carer(request):
@@ -1231,39 +1322,189 @@ def become_carer(request):
 def my_service_setting(request):
     user = request.user
     languages = Language.objects.all()
-    if request.method == 'POST':
+    citys = City.objects.all()
+    counties = County.objects.all()
+    city_id = '4'
+    city = City.objects.get(id=city_id)
+    counties = counties.filter(city=City.objects.get(id=city_id))
+    county_name = '全區'
+    services = Service.objects.filter(is_increase_price=False).order_by('id')
+    increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
+    licences = License.objects.all().order_by('id')[3:]
+    
+    # UserLicenseImageShips 也許在 User Create 時就產生好
+    for license in licences:
+        if UserLicenseShipImage.objects.filter(user=user, license=license).count() == 0:
+            UserLicenseShipImage.objects.create(user=user,license=license)
+    
+    licenseImageShips = UserLicenseShipImage.objects.filter(user=user).order_by('license')[3:]
+
+    form = UserLicenseImageForm()
+    userform = UserImageForm()
+    # increase_service_ships = UserServiceShip.objects.filter(user=servant).order_by('service')[:4]
+    if request.method == 'POST' and 'submit' in request.POST:
         gender = request.POST.get('gender')
-        monday = request.POST.get('mondday')
-        tuesday = request.POST.get('tuesday')
-        wednesday = request.POST.get('wednesday')
-        thursday = request.POST.get('thursday')
-        friday = request.POST.get('friday')
-        saturday = request.POST.get('saturday')
-        sunday = request.POST.get('sunday')
-        if monday != None:
-            mon_start_time = request.POST.get('mon_start_time ')
-            mon_end_time = request.POST.get('mon_end_time')
-        if tuesday != None:
-            tue_start_time = request.POST.get('tue_start_time')
-            tue_end_time = request.POST.get('tue_end_time')
-        if wednesday != None:
-            wed_start_time = request.POST.get('wed_start_time')
-            wed_end_time = request.POST.get('wed_end_time')
-        if thursday != None:
-            thu_start_time = request.POST.get('thu_start_time')
-            thu_end_time = request.POST.get('thu_end_time')
-        if friday != None:
-            fri_start_time = request.POST.get('fri_start_time')
-            fri_end_time = request.POST.get('fri_end_time')
-        if saturday != None:
-            sat_start_time = request.POST.get('sat_start_time')
-            sat_end_time = request.POST.get('sat_end_time')
-        if sunday != None:
-            sun_start_time = request.POST.get('sun_start_time')
-            sun_end_time = request.POST.get('sun_end_time')
-        language_ids = request.POST.getlist('languages[]')
-        print(language_ids)
-    return render(request, 'web/my/service_setting.html',{'languages':languages})
+        is_continuous_time = request.POST.get('is_continuous_time') 
+        if gender != None:
+            user.gender = gender
+        if is_continuous_time == 'True':
+            user.is_continuous_time = True
+        else:
+            user.is_continuous_time = False
+        weekday_id_list = request.POST.getlist('weekdays[]')
+        weekday_str_list = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']
+        weekday_list = []
+        for num in weekday_id_list:
+            weekday_list.append(int(num))
+        weekday_list.sort()
+        for i in weekday_list:
+            start_time = request.POST.get(weekday_str_list[int(i)][:3]+'_start_time')
+            end_time = request.POST.get(weekday_str_list[int(i)][:3]+'_end_time')
+            start_time = start_time.split(':')
+            end_time = end_time.split(':')
+            start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
+            end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
+            if UserWeekDayTime.objects.filter(user=user,weekday=str(i)).exists():
+                userweekdaytime = UserWeekDayTime.objects.get(user=user,weekday=str(i))
+            else:
+                userweekdaytime = UserWeekDayTime()
+            userweekdaytime.user = user
+            userweekdaytime.weekday = str(i)
+            userweekdaytime.start_time = start_time_int
+            userweekdaytime.end_time = end_time_int
+            userweekdaytime.save()
+
+        language_idlist = request.POST.getlist('languages[]')
+        for language_id in language_idlist:
+            language = Language.objects.get(id=language_id)
+            if UserLanguage.objects.filter(user=user,language=language).exists():
+                userlanguage = UserLanguage.objects.get(user=user,language=language)
+            else:
+                userlanguage = UserLanguage()
+            userlanguage.user = user
+            userlanguage.language = language
+            if language_id == '5':
+                userlanguage.remark = request.POST.get('lan_aboriginal')
+            if language_id == '8':
+                userlanguage.remark = request.POST.get('lan_other')
+            userlanguage.save()
+
+        care_type_home = request.POST.get('care_type_home')
+        care_type_hospital = request.POST.get('care_type_hospital')
+        if care_type_home == 'home':
+            user.is_home = True
+        if care_type_hospital == 'hospital':
+            user.is_hospital = True
+        home_hour = request.POST.get('home_hour')
+        home_half_day = request.POST.get('home_half_day')
+        home_full_day = request.POST.get('home_full_day')
+        hospital_hour = request.POST.get('hospital_hour')
+        hospital_half_day = request.POST.get('hospital_half_day')
+        hospital_full_day = request.POST.get('hospital_full_day')
+        if home_hour != ('' or None):
+            user.home_hour_wage = int(home_hour)
+        if home_half_day != ('' or None):
+            user.home_half_day_wage = int(home_half_day)
+        if home_full_day != ('' or None):
+            user.home_one_day_wage = int(home_full_day)
+        if hospital_hour != ('' or None):
+            user.hospital_hour_wage = int(hospital_hour)
+        if hospital_half_day != ('' or None):
+            user.hospital_half_day_wage = int(hospital_half_day)
+        if hospital_full_day != ('' or None):
+            user.hospital_one_day_wage = int(hospital_full_day)
+
+        locations_nums = request.POST.get('hidden_locations[]')
+        if locations_nums != None:
+            location_list = locations_nums.split(',')
+        else:
+            location_list = []
+        for num in location_list:
+            set_city = request.POST.get('city_'+str(num))
+            set_county = request.POST.get('county_'+str(num))
+            set_tranfer_fee = request.POST.get('tranfer_fee_'+str(num))
+            set_city = City.objects.get(id=set_city)
+            if set_county != '全區':
+                set_county = County.objects.get(city=set_city,name=set_county) 
+                if UserServiceLocation.objects.filter(user=user,city=set_city,county=set_county).exists():
+                    userlocation = UserServiceLocation.objects.get(user=user,city=set_city,county=set_county)
+                else:
+                    userlocation = UserServiceLocation()
+                userlocation.user = user
+                userlocation.city = set_city
+                userlocation.county = set_county
+                if set_tranfer_fee != '':
+                    userlocation.tranfer_fee = int(set_tranfer_fee)
+                userlocation.save()
+            else:
+                if UserServiceLocation.objects.filter(user=user,city=set_city).exists():
+                    userlocation = UserServiceLocation.objects.get(user=user,city=set_city)
+                else:
+                    userlocation = UserServiceLocation()
+                userlocation.user = user
+                userlocation.city = set_city
+                if set_tranfer_fee != '':
+                    userlocation.tranfer_fee = int(set_tranfer_fee)
+                userlocation.save()
+
+        services_ids = request.POST.getlist('services[]')
+        for service_id in services_ids :
+            service = Service.objects.get(id=service_id)
+            if UserServiceShip.objects.filter(user=user,service=service).exists() != True:
+                UserServiceShip.objects.create(user=user,service=service)
+
+        increase_ids = request.POST.getlist('increases[]')
+        for increase_service_id in increase_ids:
+            increase_item = increase_services.get(id=increase_service_id)
+            set_increase_percent = request.POST.get(increase_item.name + 'percent')
+            if UserServiceShip.objects.filter(user=user,service=increase_item).exists():
+                userserviceship = UserServiceShip.objects.get(user=user,service=increase_item)
+            else:
+                userserviceship = UserServiceShip()
+            userserviceship.user = user
+            userserviceship.service = increase_item
+            userserviceship.increase_percent = float(set_increase_percent)
+            userserviceship.save()
+        
+        license_id = request.POST.get('licenseId')
+        if license_id != None:
+            print(type(license_id))
+            if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=license_id)).exists() :
+                shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=license_id))
+            else:
+                UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=license_id))
+                shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=license_id))
+            
+            form = UserLicenseImageForm(request.POST or None, request.FILES or None,instance=shipinstance)
+            if form.is_valid():
+                print('valid')
+                userLicenseShipImage = form.save(commit=False)
+                userLicenseShipImage.user = user
+                userLicenseShipImage.license = License.objects.get(id=license_id)
+                userLicenseShipImage.save()
+                
+            userLicenseShipImage = form.instance
+            print(userLicenseShipImage)
+            userLicenseShipImage.user = user
+            userLicenseShipImage.license = License.objects.get(id=license_id)
+            userLicenseShipImage.save()
+
+        about_me = request.POST.get('about_me')
+        user.about_me = about_me
+        user.save()
+
+        userform = UserImageForm(request.POST or None, request.FILES or None, instance=user)
+        if userform.is_valid():
+            print('valid')
+            user = userform.save(commit=False)
+            user.phone = user.phone
+            user.save()
+        user = userform.instance
+        user.phone = user.phone
+        user.save()
+
+
+    return render(request, 'web/my/service_setting.html',{'user':user,'form':form,'userform':userform, 'licenseImageShips':licenseImageShips, 'services':services,'increase_services':increase_services, 'languages':languages,'citys':citys,'counties':counties,'cityName':city,'county_name':county_name})
 
 def my_bank_account(request):
     
@@ -1346,7 +1587,7 @@ def my_files(request):
     if request.method == 'POST' :
         license_id = request.POST.get('licenceId')
 
-        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=license_id)).exists() != False:
+        if UserLicenseShipImage.objects.filter(user=user,license=License.objects.get(id=license_id)).exists() :
             shipinstance = UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=license_id))
         else:
             UserLicenseShipImage.objects.create(user=user,license=License.objects.get(id=license_id))
@@ -1845,6 +2086,8 @@ def request_form_confirm(request):
         
         for service in service_list:
             CaseServiceShip.objects.create(case=case,service=service)
+        for increase_service in increase_service_list:
+            CaseServiceShip.objects.create(case=case,service=increase_service)
         return redirect('index')
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect('request_form_contact')
@@ -1902,4 +2145,3 @@ def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]
     return len([day for day in days if day.weekday() in weekdays])
-

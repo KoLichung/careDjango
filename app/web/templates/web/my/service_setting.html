@@ -20,510 +20,308 @@
 
           </div>
         </div>
-
         <!-- tab content -->
+        
         <div class="row">
           <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-7 mx-auto mt-3">
             <div class="tab-content p-3 mt-3" id="pill-myTabContent">
-              
               <!-- tab 時段語言 -->
-              <div class="tab-pane fade show active" id="pill-tab-home" role="tabpanel" aria-labelledby="home-tab">
-                  <p class="custom-card-font"><strong>您的性別</strong></p>
-                  <!-- <div>
-                    <div class="col-9 text-start">
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" id="inlineRadio2" type="radio" name="inlineRadioOptions" value="option2" />
-                        <label class="h6" for="inlineRadio2">  男</label>
-                      </div>
-            
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" id="inlineRadio2" type="radio" name="inlineRadioOptions" value="option2" />
-                        <label class="h6" for="inlineRadio2">  女</label>
-                      </div>
-                    </div>
-                  </div> -->
 
-                  <div class="col-9 my-2 " style="display: flex;">
-                    <label class="custom-radio-parent">男
-                      <input type="radio" checked="checked" name="gender" value="M">
-                      <span class="checkmark"></span>
-                    </label>
-                    <label class="custom-radio-parent">女
-                      <input type="radio" name="gender" value="F">
-                      <span class="checkmark"></span>
-                    </label>
-                  </div>
-
-
-                  <p class="custom-card-font mt-4"><strong>服務時段</strong></p>
-                  <div class="form-check">
-                    <input class="form-check-input" id="flexCheckDefault" type="checkbox" value="" checked/>
-                    <label class="h6" for="flexCheckDefault">任何時段皆可</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input mt-2" id="flexCheckChecked" name="monday" type="checkbox" value=""/>
-                    <label class="h6" for="flexCheckChecked">星期一，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                    <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input mt-2" id="flexCheckChecked" name="tuesday" type="checkbox" value=""/>
-                    <label class="h6" for="flexCheckChecked">星期二，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                    <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input mt-2" id="flexCheckChecked" name="wednesday" type="checkbox" value=""/>
-                    <label class="h6" for="flexCheckChecked">星期三，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                    <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input mt-2" id="flexCheckChecked" name="thursday" type="checkbox" value=""/>
-                    <label class="h6" for="flexCheckChecked">星期四，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                    <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input mt-2" id="flexCheckChecked" name="friday" type="checkbox" value=""/>
-                    <label class="h6" for="flexCheckChecked">星期五，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                    <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input mt-2" id="flexCheckChecked" name="saturday" type="checkbox" value=""/>
-                    <label class="h6" for="flexCheckChecked">星期六，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                    <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input mt-2" id="flexCheckChecked" name="sunday" type="checkbox" value=""/>
-                    <label class="h6" for="flexCheckChecked">星期日，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                    <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  </div>
-                  
-                  <p class="custom-card-font mt-5"><strong>可溝通語言</strong></p>
-                  <div>
-                    {% for language in languages %}
-                      {% if language.id == 5 %}
+                <div class="tab-pane fade show active" id="pill-tab-home" role="tabpanel" aria-labelledby="home-tab">
+                    <p class="custom-card-font"><strong>您的性別</strong></p>
+                    <!-- <div>
+                      <div class="col-9 text-start">
                         <div class="form-check form-check-inline">
-                          <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}" />
-                          <label class="h6" for="aboriginal">原住民語，族語名：</label>
-                          <input class="service-setting-input " id="lan-aboriginal" name="lan_aboriginal" type="text" placeholder="" />
+                          <input class="form-check-input" id="inlineRadio2" type="radio" name="inlineRadioOptions" value="option2" />
+                          <label class="h6" for="inlineRadio2">  男</label>
                         </div>
-                      {% elif language.id == 8 %}
-                        <div class=" form-check-inline">
-                          <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}" />
-                          <label class="h6" for="aboriginal">其他，請填寫：</label>
-                          <input class="service-setting-input" id="lan-other" name="lan_other" type="text" placeholder="" />
-                        </div>
-                      {% else %}
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" id="chinese" name="languages[]" type="checkbox" value="{{language.id}}" />
-                        <label class="h6" for="chinese">{{language}}</label>                
-                      </div>
-                      {% endif %}
-                    {% endfor %}
-                    <!-- <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="taiwanese" name="languages[]" type="checkbox" value="option2" />
-                      <label class="h6" for="taiwanese">台語</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="hakka" name="languages[]" type="checkbox" value="option3" />
-                      <label class="h6" for="hakka">客家話</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="cantonese" name="languages[]" type="checkbox" value="option2" />
-                      <label class="h6" for="cantonese">粵語</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="option3" />
-                      <label class="h6" for="aboriginal">原住民語，族語名：</label>
-                      <input class="service-setting-input " id="lan-aboriginal" name="lan_aboriginal" type="text" placeholder="" />
-                    </div>
-
-                  </div>  
-                  <div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="chinese" name="languages[]" type="checkbox" value="option1" />
-                      <label class="h6" for="chinese">日文</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="taiwanese" name="languages[]" type="checkbox" value="option2" />
-                      <label class="h6" for="taiwanese">英文</label>
-                    </div>
-                    <div class=" form-check-inline">
-                      <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="option3" />
-                      <label class="h6" for="aboriginal">其他，請填寫：</label>
-                      <input class="service-setting-input" id="lan-other" name="lan_other" type="text" placeholder="" />
-                    </div> -->
-                  </div>
-
-                  <div class="col-4 mt-7 mx-auto text-center">
-                    <button class="full-purple-button ">儲存</button>
-                  </div>
-                  
-              </div>
               
-              <!-- tab 服務項目 -->
-              <div class="tab-pane fade" id="pill-tab-profile" role="tabpanel" aria-labelledby="profile-tab">
-                  <p class="custom-card-font"><strong>服務類型</strong></p>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" id="inlineRadio2" type="radio" name="inlineRadioOptions" value="option2" />
+                          <label class="h6" for="inlineRadio2">  女</label>
+                        </div>
+                      </div>
+                    </div> -->
 
-                  <div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="inlineCheckbox1" type="checkbox" value="option1" />
-                      <label class="form-check-label" for="inlineCheckbox1">居家照顧</label>
+                    <div class="col-9 my-2 " style="display: flex;">
+                      <label class="custom-radio-parent">男
+                        <input type="radio" checked="checked" name="gender" value="M">
+                        <span class="checkmark"></span>
+                      </label>
+                      <label class="custom-radio-parent">女
+                        <input type="radio" name="gender" value="F">
+                        <span class="checkmark"></span>
+                      </label>
                     </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="inlineCheckbox2" type="checkbox" value="option2" />
-                      <label class="form-check-label" for="inlineCheckbox2">醫院照護</label>
-                    </div>
-                  </div>
 
-                  <p class="custom-card-font mt-3"><strong>居家照顧 服務費用</strong></p>
-                  <div>
-                      <span class="h6">時薪&ensp;</span>
-                      <input class="service-setting-input" style="width: 60px;" id="home-hour" type="text"/>
-                      <span class="h6 form-check-inline">&ensp;元</span>
-                      <span class="news-content">( 未滿 12 小時以每小時<u>時薪</u>計價 )</span>
-                  </div>
-                  <div class="mt-2">
-                      <span class="h6">半天&ensp;</span>
-                      <input class="service-setting-input" style="width: 60px;" id="home-half-day" type="text"/>
-                      <span class="h6 form-check-inline">&ensp;元</span>
-                      <span class="news-content">( 12 ~ 24 小時以<u>半天價格之時薪</u>計價 )</span>
-                  </div>
-                  <div class="mt-2">
-                      <span class="h6">全天&ensp;</span>
-                      <input class="service-setting-input" style="width: 60px;" id="home-full-day" type="text"/>
-                      <span class="h6 form-check-inline">&ensp;元</span>
-                      <span class="news-content">( 24 小時以上以<u>全天價格</u>計價 )</span>
-                  </div>
 
-                  <p class="custom-card-font mt-3"><strong>醫院照顧 服務費用</strong></p>
-                  <div>
-                      <span class="h6">時薪&ensp;</span>
-                      <input class="service-setting-input" style="width: 60px;" id="hospital-hour" type="text" placeholder="" />
-                      <span class="h6 form-check-inline">&ensp;元</span>
-                      <span class="news-content">( 未滿 12 小時以每小時<u>時薪</u>計價 )</span>
-                  </div>
-                  <div class="mt-2">
-                      <span class="h6">半天&ensp;</span>
-                      <input class="service-setting-input" style="width: 60px;" id="hospital-half-day" type="text" placeholder="" />
-                      <span class="h6 form-check-inline">&ensp;元</span>
-                      <span class="news-content">( 12 ~ 24 小時以<u>半天價格之時薪</u>計價 )</span>
-                  </div>
-                  <div class="mt-2">
-                      <span class="h6">全天&ensp;</span>
-                      <input class="service-setting-input" style="width: 60px;" id="hospital-full-day" type="text" placeholder="" />
-                      <span class="h6 form-check-inline">&ensp;元</span>
-                      <span class="news-content">( 24 小時以上以<u>全天價格</u>計價 )</span>
-                  </div>
-
-                  <p class="custom-card-font mt-3"><strong>服務地區</strong></p>
-                  <div>
-                    <div class="btn-group">
-                      <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        台中市
-                      </button>
-                      <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
-                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
-                      </div>
-                    </div>
-                    &ensp;
-                    <div class="btn-group">
-                      <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        全區
-                      </button>
-                      <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">信義區</span></a>
-                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">萬華區</span></a>
-                      </div>
-                    </div>
-                    &ensp;
-                    <span class="h6 ml-3">
-                      交通費&ensp;
-                      <input class="service-setting-input" style="width: 60px;" id="traffic-fee" type="text" placeholder="" />
-                      元／趟
-                    </span>
-
-                  </div>
-                  <button class="small-green-button mt-3">+ 增加地區</button>
-
-                  <p class="custom-card-font mt-3"><strong>服務項目</strong></p>
-                  <div>
+                    <p class="custom-card-font mt-4"><strong>服務時段</strong></p>
                     <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                      <label class="h6 mb-0" for="flexCheckChecked">安全維護</label>
-                      <div class="">
-                        <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span>
-                      </div>
+                      <input class="form-check-input" id="flexCheckDefault" type="checkbox" name="is_continuous_time" value="True" checked/>
+                      <label class="h6" for="flexCheckDefault">任何時段皆可</label>
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">協助進食</label>
-                      <div class="">
-                        <span class="sub-font">用餐，按醫囑給藥</span>
-                      </div>
+                      <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="1"/>
+                      <label class="h6" for="weekdays[]">星期一，時段：</label>
+                      <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                      <span>～</span>
+                      <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">協助如廁</label>
-                      <div class="">
-                        <span class="sub-font">大小便處理、更換尿布、會陰沖洗</span>
-                      </div>
+                      <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="2"/>
+                      <label class="h6" for="weekdays[]">星期二，時段：</label>
+                      <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                      <span>～</span>
+                      <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                      <label class="h6 mb-0" for="flexCheckChecked">身體清潔</label>
-                      <div class="">
-                        <span class="sub-font">沐浴、擦澡</span>
-                      </div>
+                      <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="3"/>
+                      <label class="h6" for="weekdays[]">星期三，時段：</label>
+                      <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                      <span>～</span>
+                      <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                      <label class="h6 mb-0" for="flexCheckChecked">陪同就醫</label>
-                      <div class="">
-                        <span class="sub-font">陪伴看診、洗腎，代領藥品</span>
-                      </div>
+                      <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="4"/>
+                      <label class="h6" for="weekdays[]">星期四，時段：</label>
+                      <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                      <span>～</span>
+                      <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">陪同復健</label>
-                      <div class="">
-                        <!-- <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span> -->
-                      </div>
+                      <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="5"/>
+                      <label class="h6" for="weekdays[]">星期五，時段：</label>
+                      <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                      <span>～</span>
+                      <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">代購物品</label>
-                      <div class="">
-                        <span class="sub-font">代買生活必需品以有發票或收據為主；代購物品期間服務者無法負責安全維護，家屬需自行評估被照顧者狀況</span>
-                      </div>
+                      <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="6"/>
+                      <label class="h6" for="weekdays[]">星期六，時段：</label>
+                      <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                      <span>～</span>
+                      <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value="" />
-                      <label class="h6 mb-0" for="flexCheckChecked">簡易備餐</label>
-                      <div class="">
-                        <span class="sub-font">依現有食材簡易煮粥、麵食或加熱即食品；僅提供被照顧者與一位家屬餐食</span>
-                      </div>
+                      <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="0"/>
+                      <label class="h6" for="weekdays[]">星期日，時段：</label>
+                      <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                      <span>～</span>
+                      <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
                     </div>
-                    <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">家務協助</label>
-                      <div class="">
-                        <span class="sub-font">簡易掃地拖地，清洗衣物、床單 <br>服務範圍僅限被照顧者主要生活環境，照服員非專業清潔人員無提供刷洗環境、移動家具、大掃除等服務；清洗衣物、床單，需提供洗衣機或付費使用投幣式洗衣機，超出以上服務範圍服務者有權利拒絕服務</span>
-                      </div>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">鼻胃管灌食</label>
-                      <div class="">
-                        <!-- <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span> -->
-                      </div>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">管路清潔</label>
-                      <div class="">
-                        <!-- <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span> -->
-                      </div>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">翻身拍背</label>
-                      <div class="">
-                        <span class="sub-font">僅提供長期臥床或手術無法自行翻身的病人</span>
-                      </div>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">被動關節運動</label>
-                      <div class="">
-                        <span class="sub-font">僅提供長期臥床、癱瘓、昏迷或關節炎的病人；病人有骨質疏鬆症、骨折病史請告知</span>
-                      </div>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" id="flexCheckChecked" type="checkbox" value=""  />
-                      <label class="h6 mb-0" for="flexCheckChecked">協助移位</label>
-                      <div class="">
-                        <!-- <span class="sub-font">預防跌倒、陪同散步、推輪椅、心靈陪伴</span> -->
-                      </div>
-                    </div>
-                  </div>
-
-                  <p class="custom-card-font mt-3"><strong>特殊狀況加價項目，自設時薪 % 數：</strong></p>
-                  <div>
-                    <div class="form-check">
-                      <input class="form-check-input mt-2" id="flexCheckChecked" type="checkbox" value="" />
-                      <label class="h6 mb-0" for="flexCheckChecked">急診室患者：</label>
-                      <input class="service-setting-input" style="width: 60px;" id="emergency-patient" type="text" placeholder="" />
-                      <span class="h6">%</span> 
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input mt-2" id="flexCheckChecked" type="checkbox" value="" />
-                      <label class="h6 mb-0" for="flexCheckChecked">傳染性疾病：</label>
-                      <input class="service-setting-input" style="width: 60px;" id="infectious-diseases" type="text" placeholder="" />
-                      <span class="h6">%</span> 
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input mt-2" id="flexCheckChecked" type="checkbox" value="" />
-                      <label class="h6 mb-0" for="flexCheckChecked">體重超過 70 公斤：</label>
-                      <input class="service-setting-input" style="width: 60px;" id="over-70kg" type="text" placeholder="" />
-                      <span class="h6">%</span> 
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input mt-2" id="flexCheckChecked" type="checkbox" value="" />
-                      <label class="h6 mb-0" for="flexCheckChecked">體重超過 90 公斤：</label>
-                      <input class="service-setting-input" style="width: 60px;" id="over-80kg" type="text" placeholder="" />
-                      <span class="h6">%</span> 
-                    </div>
-                    <span class="h6">例：服務費用一天 2600 加價 5% = 每日增加 $130</span>
-                  </div>
                     
-                  <div class="col-4 mt-7 mx-auto text-center">
-                    <button class="full-purple-button ">儲存</button>
-                  </div>
-              </div>
+                    <p class="custom-card-font mt-5"><strong>可溝通語言</strong></p>
+                    <div>
+                      {% for language in languages %}
+                        {% if language.id == 5 %}
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}" />
+                            <label class="h6" for="aboriginal">原住民語，族語名：</label>
+                            <input class="service-setting-input " id="lan-aboriginal" name="lan_aboriginal" type="text" placeholder="" />
+                          </div>
+                        {% elif language.id == 8 %}
+                          <div class=" form-check-inline">
+                            <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}" />
+                            <label class="h6" for="aboriginal">其他，請填寫：</label>
+                            <input class="service-setting-input" id="lan-other" name="lan_other" type="text" placeholder="" />
+                          </div>
+                        {% else %}
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" id="chinese" name="languages[]" type="checkbox" value="{{language.id}}" />
+                          <label class="h6" for="chinese">{{language}}</label>                
+                        </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+
+                    <div class="col-4 mt-7 mx-auto text-center">
+                      <button class="full-purple-button " type="submit" name="submit">儲存</button>
+                    </div>
+                    
+                </div>
+                
+                <!-- tab 服務項目 -->
+                <div class="tab-pane fade" id="pill-tab-profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <p class="custom-card-font"><strong>服務類型</strong></p>
+
+                    <div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="inlineCheckbox1" type="checkbox" name="care_type_home" value="home" />
+                        <label class="form-check-label" for="inlineCheckbox1">居家照顧</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="inlineCheckbox2" type="checkbox" name="care_type_hospital" value="hospital" />
+                        <label class="form-check-label" for="inlineCheckbox2">醫院照護</label>
+                      </div>
+                    </div>
+
+                    <p class="custom-card-font mt-3"><strong>居家照顧 服務費用</strong></p>
+                    <div>
+                        <span class="h6">時薪&ensp;</span>
+                        <input class="service-setting-input" style="width: 60px;" id="home-hour" name="home_hour" type="text"/>
+                        <span class="h6 form-check-inline">&ensp;元</span>
+                        <span class="news-content">( 未滿 12 小時以每小時<u>時薪</u>計價 )</span>
+                    </div>
+                    <div class="mt-2">
+                        <span class="h6">半天&ensp;</span>
+                        <input class="service-setting-input" style="width: 60px;" id="home-half-day" name="home_half_day" type="text"/>
+                        <span class="h6 form-check-inline">&ensp;元</span>
+                        <span class="news-content">( 12 ~ 24 小時以<u>半天價格之時薪</u>計價 )</span>
+                    </div>
+                    <div class="mt-2">
+                        <span class="h6">全天&ensp;</span>
+                        <input class="service-setting-input" style="width: 60px;" id="home-full-day" name="home_full_day" type="text"/>
+                        <span class="h6 form-check-inline">&ensp;元</span>
+                        <span class="news-content">( 24 小時以上以<u>全天價格</u>計價 )</span>
+                    </div>
+
+                    <p class="custom-card-font mt-3"><strong>醫院照顧 服務費用</strong></p>
+                    <div>
+                        <span class="h6">時薪&ensp;</span>
+                        <input class="service-setting-input" style="width: 60px;" id="hospital_hour" name="hospital_hour" type="text" placeholder="" />
+                        <span class="h6 form-check-inline">&ensp;元</span>
+                        <span class="news-content">( 未滿 12 小時以每小時<u>時薪</u>計價 )</span>
+                    </div>
+                    <div class="mt-2">
+                        <span class="h6">半天&ensp;</span>
+                        <input class="service-setting-input" style="width: 60px;" id="hospital_half_day" name="hospital_half_day" type="text" placeholder="" />
+                        <span class="h6 form-check-inline">&ensp;元</span>
+                        <span class="news-content">( 12 ~ 24 小時以<u>半天價格之時薪</u>計價 )</span>
+                    </div>
+                    <div class="mt-2">
+                        <span class="h6">全天&ensp;</span>
+                        <input class="service-setting-input" style="width: 60px;" id="hospital_full_day" name="hospital_full_day" type="text" placeholder="" />
+                        <span class="h6 form-check-inline">&ensp;元</span>
+                        <span class="news-content">( 24 小時以上以<u>全天價格</u>計價 )</span>
+                    </div>
+
+                    <p class="custom-card-font mt-3"><strong>服務地區</strong></p>
+                    <div>
+                      <div class="btn-group">
+                        <select class="dropdown-button" id="city_select_0" name="city_0" onchange="listCities(this.id)" select>
+                        
+                          {% for city in citys %}
+                            <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                            <!-- <option value="醫院看護">醫院看護</option> -->
+                          {% endfor %}
+                        </select>
+                      </div>
+                      &ensp;
+                      <div class="btn-group">
+                        <select class="dropdown-button" id="county_select_0" name="county_0" >
+                          <option style="text-align: center" value="全區">全區</option>
+                          {% for county in counties %}
+                            <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county.name == county_name %} selected="selected" {% endif %}>{{county}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      &ensp;
+                      <span class="h6 ml-3">
+                        交通費&ensp;
+                        <input class="service-setting-input" style="width: 60px;" id="traffic-fee" name="tranfer_fee_0" type="text" placeholder="" />
+                        元／趟
+                      </span>
+                    </div>
+                    <input type="hidden" id="hidden_locations" name="hidden_locations[]">
+                    <div id="locations_add" ></div>
+                    <button class="small-green-button mt-3" onclick="AddLocations()">+ 增加地區</button>
+
+                    <p class="custom-card-font mt-3"><strong>服務項目</strong></p>
+                    <div>
+                      {% for service in services %}
+                        <div class="form-check">
+                          <input class="form-check-input" id="flexCheckChecked" name="services[]" type="checkbox" value="{{service.id}}" />
+                          <label class="h6 mb-0" for="flexCheckChecked">{{service}}</label>
+                          <div class="">
+                            {% if service.remark %}
+                              <span class="sub-font">{{service.remark}}</span>
+                            {% endif %}
+                          </div>
+                        </div>
+                      {% endfor %}
+                      
+                    </div>
+
+                    <p class="custom-card-font mt-3"><strong>特殊狀況加價項目，自設時薪 % 數：</strong></p>
+                    <div>
+                      {% for increase_service in increase_services %}
+                      <div class="form-check">
+                        <input class="form-check-input mt-2" id="{{increase_service}}" name="increases[]" type="checkbox" value="{{increase_service.id}}" />
+                        <label class="h6 mb-0" for="flexCheckChecked">{{increase_service}}：</label>
+                        <input class="service-setting-input" style="width: 60px;" name="{{increase_service}}percent" type="text" placeholder="" />
+                        <span class="h6">%</span> 
+                      </div>
+                      {% endfor %}
+                      <!-- <div class="form-check">
+                        <input class="form-check-input mt-2" id="flexCheckChecked" type="checkbox" value="" />
+                        <label class="h6 mb-0" for="flexCheckChecked">傳染性疾病：</label>
+                        <input class="service-setting-input" style="width: 60px;" id="infectious-diseases" type="text" placeholder="" />
+                        <span class="h6">%</span> 
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input mt-2" id="flexCheckChecked" type="checkbox" value="" />
+                        <label class="h6 mb-0" for="flexCheckChecked">體重超過 70 公斤：</label>
+                        <input class="service-setting-input" style="width: 60px;" id="over-70kg" type="text" placeholder="" />
+                        <span class="h6">%</span> 
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input mt-2" id="flexCheckChecked" type="checkbox" value="" />
+                        <label class="h6 mb-0" for="flexCheckChecked">體重超過 90 公斤：</label>
+                        <input class="service-setting-input" style="width: 60px;" id="over-80kg" type="text" placeholder="" />
+                        <span class="h6">%</span> 
+                      </div> -->
+                      <span class="h6">例：服務費用一天 2600 加價 5% = 每日增加 $130</span>
+                    </div>
+                      
+                    <div class="col-4 mt-7 mx-auto text-center">
+                      <button class="full-purple-button " type="submit" name="submit">儲存</button>
+                    </div>
+                </div>
               
               <!-- tab 關於我 -->
-              <div class="tab-pane fade" id="pill-tab-contact" role="tabpanel" aria-labelledby="contact-tab">
-                
+              <div class="tab-pane fade" id="pill-tab-contact" role="tabpanel" aria-labelledby="contact-tab">               
                 <p class="custom-card-font mt-3"><strong>相關文件</strong></p>
                 <div>
-                  <div class="row mt-2">
-                    <div class="col align-self-center">
-                      <span class="h6">COVID-19 疫苗接種記錄卡<br><span class="sub-font">若未提供，服務者頁面會顯示「未提供」供預訂者參考</span></span>
-                    </div>
-                    <div class="col-3 text-end align-self-center">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col">
-                      <span class="h6">一年內良民證-警察刑事紀錄證明書<br><span class="sub-font">若未提供，服務者頁面會顯示「未提供」供預訂者參考</span></span>
-                    </div>
-                    <div class="col-3 text-end">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col">
-                      <span class="h6">一年內體檢表（需有B肝表面抗原 & 胸部 X 光）<br><span class="sub-font">若未提供，服務者頁面會顯示「未提供」供預訂者參考</span></span>
-                    </div>
-                    <div class="col-3 text-end">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col align-self-center">
-                      <span class="h6">照服員結業證書</span>
-                    </div>
-                    <div class="col text-end">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col align-self-center">
-                      <span class="h6">照服員單一級證照</span>
-                    </div>
-                    <div class="col text-end">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col align-self-center">
-                      <span class="h6">護理師證書</pspan>
-                    </div>
-                    <div class="col text-end">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col align-self-center">
-                      <span class="h6">護理相關畢業證書</span>
-                    </div>
-                    <div class="col text-end">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col align-self-center">
-                      <span class="h6">長照證明卡</span>
-                    </div>
-                    <div class="col text-end ">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col align-self-center">
-                      <span class="h6">失智症 20 小時課程</span>
-                    </div>
-                    <div class="col text-end ">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col align-self-center">
-                      <span class="h6">身心障礙 20 小時課程</span>
-                    </div>
-                    <div class="col text-end ">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col align-self-center">
-                      <span class="h6">物理治療師證照</span>
-                    </div>
-                    <div class="col text-end ">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row mt-2 ">
-                    <div class="col align-self-center">
-                      <span class="h6">職能治療師證照</span>
-                    </div>
-                    <div class="col text-end ">
-                      <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
-                  </div>
-                  <hr>
+                  {% for licenseImageShip in licenseImageShips %}   
+                    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                      <div class="row mt-2">
+                        <div class="col align-self-center">
+                          <span class="h6">{{licenseImageShip.license}}{% if licenseImageShip.license.remark %}<br><span class="sub-font">{{licenseImageShip.license.remark}}</span>{% endif %}</span>
+                        </div>
+                        <div class="col-5 text-end align-self-center">
+                          <input type="hidden" id="licenseId" name="licenseId" value="{{licenseImageShip.license.id}}">
+                          <input type="hidden" id="userId" name="userId" value={{user}}>
+                          {{ form.user.as_hidden }}
+                          {{ form.image }}
+                          <div class="text-end">
+                            <button class=" small-purple-button" type="submit" name="submit" ><span class="fas fa-plus-circle"></span>上傳照片</button>
+                          </div>
+                        </div>
+                      </div>
+                      <hr>
+                    </form>
+                  {% endfor %}
                 </div>
 
                 <p class="custom-card-font mt-5"><strong>關於我</strong></p>
-                <textarea class="custom-form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="about_me" rows="3"></textarea>
 
                 <div class="row mt-5 ">
-                  <div class="col align-self-center">
-                    <span class="custom-card-font mt-5"><strong>上傳背景照片</strong></span>
-                  </div>
-                  <div class="col text-end ">
-                    <button class="small-purple-button"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                  </div>
+                  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="col align-self-center">
+                      <span class="custom-card-font mt-5"><strong>上傳背景照片</strong></span>
+                    </div>
+                    <div class="col text-end ">
+                      <input type="hidden" id="userId" name="userId" value={{user.phone}}>
+                      {{ userform.as_hidden }}
+                      {{ userform.background_image }}
+                      <button class="small-purple-button" name="submit"><span class="fas fa-plus-circle"></span>上傳照片</button>
+                    </div>
+                  </form>
                 </div>
 
                 <div class="col-4 mt-7 mx-auto text-center">
-                  <button class="full-purple-button" type="submit">儲存</button>
+                  <button class="full-purple-button" type="submit" name="submit">儲存</button>
                 </div>
 
               </div>
@@ -532,7 +330,139 @@
           </div>
         </div>
       </form>
-      
+    <script>
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                      }
+                  }
+              }
+            return cookieValue;
+      }
+        const csrftoken = getCookie('csrftoken');    
+      function listCities(city_select_num){
+          num = city_select_num.split('city_select_')[1]
+          console.log(num)
+          var cityid = $("#city_select_"+String(num)).val();
+          console.log(cityid)
+          $('#county_select_'+String(num)).html('');
+          $.ajax({
+            type: "POST",
+            data: {'city_id':cityid,
+                    'action':'refresh_county'},
+            headers: {'X-CSRFToken': csrftoken},
+            url: "{% url 'ajax_refresh_county' %}",
+            success: function(response)
+            {
+              const data = response.data
+              // var resultObj = JSON.parse(response);
+              var dataHandler = $('#county_select_'+String(num));
+              var county_all = `<option style="text-align: center" value="全區">全區</option>`
+              dataHandler.append(county_all);
+              data.forEach(el =>
+              {
+                  var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+                  dataHandler.append(newRow);
+              });
+            }
+
+          });
+        }
+
+      locations_add_count = 0
+      locations_add_html = document.getElementById('locations_add');
+      let location_list = [0];
+
+      const hidden_locations = document.getElementById('hidden_locations')
+      function AddLocations(){
+        event.preventDefault();        
+        locations_add_count += 1;
+        button_id = locations_add_count;
+        location_list.push(locations_add_count);
+        console.log(location_list)
+        hidden_locations.value = location_list
+        locations_id = 'locations_'+ String(locations_add_count);
+        name_city = 'city_' + String(locations_add_count)
+        name_county = 'county_' + String(locations_add_count)
+        id_city = 'city_select_' + String(locations_add_count)
+        id_county = 'county_select_' + String(locations_add_count)
+        tranfer_fee_name = 'tranfer_fee_' + String(locations_add_count)
+        locations_add_html.innerHTML += `<div class="mt-2" id="${locations_id}">`
+        location_html = document.getElementById(locations_id)
+        location_html.innerHTML = `
+                    <div class="btn-group ">
+                      <select class="dropdown-button" id="${id_city}" name="${name_city}" onchange="listCities(this.id)" select>
+                      
+                        {% for city in citys %}
+                          <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                          <!-- <option value="醫院看護">醫院看護</option> -->
+                        {% endfor %}
+                      </select>
+                    </div>
+                    &ensp;
+                    <div class="btn-group">
+                      <select class="dropdown-button" id="${id_county}" name="${name_county}" >
+                        <option style="text-align: center" value="全區">全區</option>
+                        {% for county in counties %}
+                          <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county.name == county_name %} selected="selected" {% endif %}>{{county}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    &ensp;
+                    <span class="h6 ml-3">
+                      交通費&ensp;
+                      <input class="service-setting-input" style="width: 60px;" id="${tranfer_fee_name}" name="${tranfer_fee_name}" type="text" placeholder="" />
+                      元／趟
+                    </span>
+                    <button type="button" id="${button_id}" class="btn-close btn-sm " aria-label="Close" onClick="Cancel(this.id)"></button>
+                  `;
+      }
+      function Cancel(button_id){
+        location_list = location_list.filter(function(item) {
+            return item !== Number(button_id)
+        })
+        console.log(location_list)
+        hidden_locations.value = location_list
+        cancel_html = document.getElementById('locations_'+String(button_id))
+        cancel_html.innerHTML = ``
+      }
+      $( document ).ready(function() {
+        hidden_locations.value = location_list;
+      });
+      function post_image(){
+        event.preventDefault();    
+        // var license_id = $('#licenseId');
+        // var user = $('#userId');
+        // var myformData = new FormData();
+        // var image_file = $("input[name='image']")[0].files[0]
+        // myformData.append("file",$("input[name='image']")[0].files[0]);
+        // // myformData.append('license_id',license_id);
+        // // myformData.append('user',user)
+        // console.log(myformData);
+        // $.ajax({
+        //   type: 'post',
+        //   processData: false,
+        //   contentType: false,
+        //   cache: false,
+        //   data: myformData,
+        //   enctype: 'multipart/form-data',
+        //   headers: {'X-CSRFToken': csrftoken},
+        //   url: "{% url 'ajax_post_image' %}",
+        //   success: function(data)
+        //   {
+        //     console.log('success')
+        //   }
+
+        // });
+      }
+    </script>
      
 </main>
 {% endblock %}

@@ -214,7 +214,8 @@ class UserServiceShip(models.Model):
     )
     service = models.ForeignKey(
         Service,
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        related_name='service_ships'
     )
     increase_percent = models.FloatField(default=0, blank = True, null=True)
     
@@ -285,6 +286,8 @@ class UserServiceLocation(models.Model):
     county =  models.ForeignKey(
         County,
         on_delete=models.RESTRICT,
+        null=True,
+        blank=True
     )
     tranfer_fee = models.IntegerField(default=0, blank=True, null=True)
 
