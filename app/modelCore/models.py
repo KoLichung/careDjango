@@ -810,3 +810,19 @@ class BlogPostCategoryShip(models.Model):
         on_delete=models.CASCADE,
         related_name='ship_posts',
     )
+
+class MonthSummary(models.Model):
+    month_date = models.DateField(null=True)
+
+    # 訂單產生就計營收
+    month_revenue = models.IntegerField(default=0)
+    # 訂單最終沒付款成功, 就是 cancel 的訂單, cancel 的訂單金額總和
+    month_cancel_amount = models.IntegerField(default=0)
+
+    # 成功請款的訂單金額總和
+    month_pay_amount = models.IntegerField(default=0)
+    # 退款的訂單金額總和
+    month_refound_amount = models.IntegerField(default=0)
+
+    # 平台收入, 成功請款的訂單, 依平台比例收取費用之總和
+    month_platform_revenue = models.IntegerField(default=0)

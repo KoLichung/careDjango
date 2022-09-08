@@ -7,7 +7,7 @@
     <div class="card h-lg-100">
       <div class="card-header">
         <div class="mb-3">
-          本月統計(2022/02)
+          本月統計( {{this_month_day.year }} / {{this_month_day.month}} )
         </div>
         <table class="table">
           <thead class="bill-thead">
@@ -21,18 +21,18 @@
           </thead>
           <tbody>
             <tr>
-              <td>326,000</td>
-              <td>124,000</td>
-              <td>326,000</td>
-              <td>326,000</td>
-              <td>124,000</td>
+              <td class="text-nowrap">{{ summarys.0.month_revenue }}</td>
+              <td class="text-nowrap">{{ summarys.0.month_cancel_amount }}</td>
+              <td class="text-nowrap">{{ summarys.0.month_pay_amount }}</td>
+              <td class="text-nowrap">{{ summarys.0.month_refound_amount }}</td>
+              <td class="text-nowrap">{{ summarys.0.month_platform_revenue }}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="card-header">
         <div class="mb-3">
-          上月統計(2022/01)
+          上月統計( {{ last_month_day.year }} / {{ last_month_day.month }} )
         </div>
         <table class="table">
           <thead class="bill-thead">
@@ -46,11 +46,11 @@
           </thead>
           <tbody>
             <tr>
-              <td>326,000</td>
-              <td>124,000</td>
-              <td>326,000</td>
-              <td>326,000</td>
-              <td>124,000</td>
+              <td class="text-nowrap">{{ summarys.1.month_revenue }}</td>
+              <td class="text-nowrap">{{ summarys.1.month_cancel_amount }}</td>
+              <td class="text-nowrap">{{ summarys.1.month_pay_amount }}</td>
+              <td class="text-nowrap">{{ summarys.1.month_refound_amount }}</td>
+              <td class="text-nowrap">{{ summarys.1.month_platform_revenue }}</td>
              </tr>
           </tbody>
         </table>

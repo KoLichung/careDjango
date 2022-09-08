@@ -8,7 +8,7 @@ from pytz import tzinfo
 from django.db.models import Avg ,Sum 
 from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
-from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService, BlogCategory, BlogPost
+from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService, BlogCategory, BlogPost, MonthSummary
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -511,6 +511,25 @@ def fake_blog_post():
     blogPost.create_date = timezone.now()
     blogPost.publish_date = timezone.now()
     blogPost.save()
+
+def fake_month_summary():
+    summary = MonthSummary()
+    summary.month_date = datetime.datetime(2022,7,1).replace(tzinfo=pytz.UTC)
+    summary.month_revenue = 70000
+    summary.month_cancel_amount = 10000
+    summary.month_pay_amount = 55000
+    summary.month_refound_amount = 3000
+    summary.month_platform_revenue = 230000
+    summary.save()
+
+    summary = MonthSummary()
+    summary.month_date = datetime.datetime(2022,8,1).replace(tzinfo=pytz.UTC)
+    summary.month_revenue = 80000
+    summary.month_cancel_amount = 10000
+    summary.month_pay_amount = 55000
+    summary.month_refound_amount = 3000
+    summary.month_platform_revenue = 230000
+    summary.save()
 
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start

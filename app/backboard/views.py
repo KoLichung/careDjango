@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 import datetime
 from modelCore.forms import BlogPostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
-from modelCore.models import OrderIncreaseService
+from modelCore.models import OrderIncreaseService, MonthSummary
 
 def all_cases(request):
     cases = Case.objects.all()
@@ -14,7 +14,11 @@ def all_members(request):
     return render(request, 'backboard/all_members.html')
 
 def bills(request):
-    return render(request, 'backboard/bills.html')
+    summarys = MonthSummary.objects.all().order_by('-id')[:2]
+    this_month_day = summarys[0].month_date
+    last_month_day = this_month_day - datetime.timedelta(days=30)
+
+    return render(request, 'backboard/bills.html', {'summarys':summarys,  'this_month_day':this_month_day, 'last_month_day':last_month_day})
 
 def case_detail(request):
     case_id = request.GET.get('case')

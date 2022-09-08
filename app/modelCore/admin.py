@@ -6,7 +6,7 @@ from .models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMess
 from .models import BlogPostCategoryShip
 from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
-from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore ,TempCase
+from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore ,TempCase, MonthSummary
 
 
 
@@ -134,3 +134,6 @@ class BlogAdmin(admin.ModelAdmin):
 class BlogPostCategoryShipAdmin(admin.ModelAdmin):
     list_display = ('id', 'post', 'category')
 
+@admin.register(MonthSummary)
+class MonthSummaryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'month_date', 'month_revenue')
