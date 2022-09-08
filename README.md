@@ -185,6 +185,10 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220908
+1.訂單計算金額有 bug(訂單時間重複?!)
+2.
+
 20220906
 1.blog => 全部, blog_detail => tab items
 2.預訂單 

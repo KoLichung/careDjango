@@ -87,11 +87,26 @@ def new_blog(request):
     form = BlogPostCoverImageForm()
     return render(request, 'backboard/new_blog.html', {'categories':categories, 'form':form})
 
-
 def all_categories(request):
-    return render(request, 'backboard/all_categories.html')
+    if request.GET.get('delete_id') != None:
+        try:
+            BlogCategory.objects.get(id=request.GET.get('delete_id')).delete()
+        except:
+            print("no such category")
+
+    categories = BlogCategory.objects.all()
+    return render(request, 'backboard/all_categories.html', {'categories':categories})
 
 def new_edit_category(request):
+
+    if request.method == 'POST':
+        if request.POST.get('post') == 'save':
+            if request.POST.get('name') != None and request.POST.get('name') != '':
+                BlogCategory.objects.create(name=request.POST.get('name'))
+        return redirect('all_categories')
+
+    # if request.GET.get('post_id')
+
     return render(request, 'backboard/new_edit_category.html')
 
 def member_data_review(request):

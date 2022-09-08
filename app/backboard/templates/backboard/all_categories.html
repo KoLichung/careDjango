@@ -23,18 +23,15 @@
                   </tr>
                 </thead>
                 <tbody class="list">
-                  <tr>
-                    <td>分類一</td>
-                    <td class="alnright">                    
-                      <a class="custom-purple-btn text-white btn-sm " href="{% url 'new_edit_category' %}">編輯類別</a>
-                    </td>
-                  </tr> 
-                  <tr>
-                    <td>分類二</td>
-                    <td class="alnright">                    
-                      <a class="custom-purple-btn text-white btn-sm " href="{% url 'new_edit_category' %}">編輯類別</a>
-                    </td>
-                  </tr> 
+                  {% for category in categories %}
+                    <tr>
+                      <td>{{category.name}}</td>
+                      <td class="alnright">                    
+                        <a class="custom-purple-btn text-white btn-sm " href="{% url 'new_edit_category' %}?category_id={{category.id}}">編輯類別</a>
+                        <a class="bg-danger text-white btn-sm" href="{% url 'all_categories' %}?delete_id={{category.id}}" >刪除</a>
+                      </td>
+                    </tr> 
+                  {% endfor %}
                 </tbody>
               </table>
             </div>

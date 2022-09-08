@@ -12,23 +12,24 @@
           </div>
           <div class="border border-1 mb-3"></div>
 
-          <div class="mb-3">
-            <input class="form-control" type="text" placeholder="" aria-label="default input example" />
-          </div>
+          <form method="post" enctype="multipart/form-data">{% csrf_token %}
+          
+            <div class="mb-3">
+              <input class="form-control" type="text" placeholder="輸入類別名稱" name="name" value=""/>
+            </div>
 
-          <div class="mb-3 d-flex justify-content-between">
-            <button class="btn btn-danger  btn-sm" type="submit" name="post" value='draft'>
-              刪除
-            </button>
-            <div>
-              <button class="btn btn-success  btn-sm" type="submit" name="post" value='draft'>
+            <div class="mb-3 d-flex justify-content-between">
+              <button class="btn btn-danger  btn-sm" type="submit" name="post" value='cancel'>
                 取消
               </button>
-              <button class="btn purple-button btn-sm" type="submit" name="post" value='publish'>
-                儲存
-              </button>
+              <div>
+                <button class="btn purple-button btn-sm" type="submit" name="post" value='save'>
+                  儲存
+                </button>
+              </div>
             </div>
-          </div>
+
+          </form>
         
         </div>
       </div>
