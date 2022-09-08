@@ -72,6 +72,10 @@ class OrderViewSet(viewsets.GenericViewSet,
         user = self.request.user
         if order.case.user == user:
             order.related_case = order.case
+            
+            service_ids = list(CaseServiceShip.objects.filter(case=order.related_case).values_list('service', flat=True))
+            order.related_case.services = Service.objects.filter(id__in=service_ids)
+
             order.servant = order.case.servant
             order.increase_services = order.order_increase_services
 
@@ -297,9 +301,11 @@ class SearchServantViewSet(viewsets.GenericViewSet,
                     queryset = queryset.order_by('-home_hour_wage')
                 else:
                     queryset = queryset.order_by('-hospital_hour_wage')
+
             for i in range(len(queryset)):
                 queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
                 queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+                queryset[i].rating_nums = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -313,11 +319,15 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             if user.services[i].id <= 4:
                 user.services[i].increase_percent = UserServiceShip.objects.get(user=user, service=user.services[i]).increase_percent
 
-        license_ids = list(UserLicenseShipImage.objects.filter(user=user).values_list('license', flat=True))
-        user.licences = License.objects.filter(id__in=license_ids)
+        # license_ids = list(UserLicenseShipImage.objects.filter(user=user).values_list('license', flat=True))
+        # user.licences = License.objects.filter(id__in=license_ids)
 
-        language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
-        user.languages = Language.objects.filter(id__in=language_ids)
+        user.licences = UserLicenseShipImage.objects.filter(user=user)
+
+        # language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
+        # user.languages = Language.objects.filter(id__in=language_ids)
+
+        user.languages = UserLanguage.objects.filter(user=user)
 
         user.avg_rate = Review.objects.filter(servant=user,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
         user.about_me = User.objects.get(phone=user).about_me
@@ -344,9 +354,10 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(is_hospital=True)
 
         if city != None:
-            queryset = queryset.filter(user_locations__city=City.objects.get(id=city))
+            queryset = queryset.filter(user_locations__city=City.objects.get(id=city)).distinct()
+
         if county != None:
-            queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
+            queryset = queryset.filter(user_locations__county=County.objects.get(id=county)).distinct()
 
         for i in range(len(queryset)):
             queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
@@ -472,8 +483,10 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
         queryset = self.queryset.filter(user=user)
         
         for i in range(len(queryset)):
-            language_ids = list(UserLanguage.objects.filter(user=queryset[i].user.id).values_list('language', flat=True))
-            queryset[i].servant.languages = Language.objects.filter(id__in=language_ids)
+            # language_ids = list(UserLanguage.objects.filter(user=queryset[i].user.id).values_list('language', flat=True))
+            # queryset[i].servant.languages = Language.objects.filter(id__in=language_ids)
+            
+            queryset[i].servant.languages = UserLanguage.objects.filter(user=queryset[i].user.id)
 
         return queryset
 
@@ -497,8 +510,10 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             service_ids = list(CaseServiceShip.objects.filter(case=case.user.id).values_list('service', flat=True)) 
             case.services  = Service.objects.filter(id__in=service_ids)
 
-            language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
-            case.servant.languages = Language.objects.filter(id__in=language_ids)
+            # language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
+            # case.servant.languages = Language.objects.filter(id__in=language_ids)
+
+            case.servant.languages = UserLanguage.objects.filter(user=user)
 
             case.order = Order.objects.get(case=case)
             case.order.increase_services = OrderIncreaseService.objects.filter(order=case.order)
@@ -551,7 +566,6 @@ class ReviewViewSet(viewsets.GenericViewSet,
             queryset[i].end_datetime = queryset[i].case.end_datetime
             queryset[i].user_avg_rate = queryset.filter(case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
             queryset[i].user_rating_nums = queryset.filter(case_offender_rating__gte=1).aggregate(Count('case_offender_rating'))['case_offender_rating__count']
-            queryset[i].servant_name = queryset[i].servant.name
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -562,7 +576,6 @@ class ReviewViewSet(viewsets.GenericViewSet,
             # review.is_continuous_time = review.case.is_continuous_time
             review.start_datetime = review.case.start_datetime
             review.end_datetime = review.case.end_datetime
-            review.servant_name = review.servant.name
             serializer = self.get_serializer(review)
             return Response(serializer.data)
         else:

@@ -1,6 +1,7 @@
 from asyncore import read
 from email.policy import default
 from unittest import case
+from attr import field
 from rest_framework import serializers
 
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
@@ -94,7 +95,9 @@ class ReviewSerializer(serializers.ModelSerializer):
     end_datetime = serializers.CharField(default='')
     user_avg_rate = serializers.IntegerField(default=0)
     user_rating_nums= serializers.IntegerField(default=0)
+
     servant_name = serializers.CharField(default='')
+    servant_image = serializers.CharField(default='')
 
     needer_image = serializers.CharField(read_only=True)
     needer_name = serializers.CharField(read_only=True)
@@ -106,24 +109,56 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
+
         rep['needer_name'] = instance.case.user.name
         if instance.case.user.image:
             rep['needer_image'] = instance.case.user.image.url
+        
+        rep['servant_name'] = instance.servant.name
+        if instance.servant.image:
+            rep['servant_image'] = instance.servant.image.url
+
         rep['care_type'] = instance.case.care_type
         rep['is_continuous_time'] =  instance.case.is_continuous_time
         return rep
+
+class LanguageRemarkSerializer(serializers.ModelSerializer):
+    language_name = serializers.CharField(default='')
     
+    class Meta:
+        model = UserLanguage
+        fields = ('language','remark','language_name')
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['language_name'] = instance.language.name
+        return rep
+
+class LicenseShipSerializer(serializers.ModelSerializer):
+    license_name = serializers.CharField(default='')
+
+    class Meta:
+        model = UserLicenseShipImage
+        fields = ('license','isPassed','license_name')
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['license_name'] = instance.license.name
+        return rep
+
 
 class ServantSerializer(serializers.ModelSerializer):
     locations = UserServiceLocationSerializer(read_only=True, many=True)
     avg_rate = serializers.IntegerField(default=0)
     background_image_url = serializers.ImageField(max_length=None, use_url=True, allow_null=True, required=False)
     services = ServiceSerializer(read_only=True, many=True)
-    licences = LicenseSerializer(read_only=True, many=True)
+    
     about_me = serializers.CharField(default='')
     reviews = ReviewSerializer(read_only=True, many=True)
     rating_nums = serializers.IntegerField(default=0)
-    languages = LangaugeSerializer(read_only=True, many=True)
+
+    licences = LicenseShipSerializer(read_only=True, many=True)
+    languages = LanguageRemarkSerializer(read_only=True, many=True)
     
     class Meta:
         model = User
