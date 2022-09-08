@@ -586,6 +586,9 @@ class Order(models.Model):
     
     created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
 
+    refound_money = models.IntegerField(default=0, blank=True, null=True)
+    refound_apply_date = models.DateTimeField(auto_now=True, blank = True,null=True)
+
 class OrderIncreaseService(models.Model):
     order =  models.ForeignKey(
         Order,
@@ -749,6 +752,8 @@ class Message(models.Model):
     is_this_message_only_case = models.BooleanField(default=False)
     content = models.TextField(default='', blank = True, null=True)
     create_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
+
+    is_read_by_other_side = models.BooleanField(default=False)
 
 class SystemMessage(models.Model):
     user = models.ForeignKey(

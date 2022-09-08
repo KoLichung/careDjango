@@ -1401,7 +1401,7 @@ def my_service_setting(request):
         hospital_hour = request.POST.get('hospital_hour')
         hospital_half_day = request.POST.get('hospital_half_day')
         hospital_full_day = request.POST.get('hospital_full_day')
-        if home_hour != ('' or None):
+        if home_hour != None and home_hour != '':
             user.home_hour_wage = int(home_hour)
         if home_half_day != ('' or None):
             user.home_half_day_wage = int(home_half_day)

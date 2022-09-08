@@ -187,7 +187,16 @@ vultr:
 
 20220908
 1.訂單計算金額有 bug(訂單時間重複?!)
-2.
+2.修正 my_service_setting 的 bug
+並且分三頁：
+a.my_service_setting_time
+b.my_service_setting_services
+c.my_service_setting_about
+========
+3.後台的 cases, case_detail, refound
+http://localhost:8000/backboard/refunds?case_id=1&order_id=2
+========
+4.後台的 users, user_detail, user 
 
 20220906
 1.blog => 全部, blog_detail => tab items

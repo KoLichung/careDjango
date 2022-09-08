@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 import datetime
 from modelCore.forms import BlogPostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
-
+from modelCore.models import OrderIncreaseService
 
 def all_cases(request):
     cases = Case.objects.all()
@@ -22,17 +22,10 @@ def case_detail(request):
     servant = case.servant
     order = Order.objects.get(case=case)
     review = Review.objects.get(case=case)
-    increase_services_list = list(Service.objects.filter(is_increase_price=True).values_list('service_ships', flat=True))
-    increase_services_ships = CaseServiceShip.objects.filter(case=case,id__in=increase_services_list)
-    increase_data_list = []
-    print(increase_services_ships)
-    for case_increase_ship in increase_services_ships:
-        increase_percent = UserServiceShip.objects.get(user=servant,service=case_increase_ship.service).increase_percent
-        increase_money = order.work_hours * increase_percent
-        data = {'case_increase_ship':case_increase_ship,'increase_percent':increase_percent,'increase_money':increase_money}
-        increase_data_list.append(data)
-    print(increase_data_list)
-    return render(request, 'backboard/case_detail.html',{'case':case,'review':review,'order':order,'increase_data_list':increase_data_list})
+
+    order_increase_services = OrderIncreaseService.objects.filter(order=order)
+
+    return render(request, 'backboard/case_detail.html',{'case':case,'review':review,'order':order, 'order_increase_services':order_increase_services})
 
 def member_detail(request):
     return render(request, 'backboard/member_detail.html')
