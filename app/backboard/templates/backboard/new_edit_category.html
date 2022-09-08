@@ -15,7 +15,11 @@
           <form method="post" enctype="multipart/form-data">{% csrf_token %}
           
             <div class="mb-3">
-              <input class="form-control" type="text" placeholder="輸入類別名稱" name="name" value=""/>
+              {% if category %}
+                <input class="form-control" type="text" placeholder="輸入類別名稱" name="name" value={{category.name}} />
+              {% else %}
+                <input class="form-control" type="text" placeholder="輸入類別名稱" name="name" value="" />
+              {% endif %}
             </div>
 
             <div class="mb-3 d-flex justify-content-between">

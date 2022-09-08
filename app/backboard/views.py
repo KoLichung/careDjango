@@ -111,10 +111,17 @@ def new_edit_category(request):
     if request.method == 'POST':
         if request.POST.get('post') == 'save':
             if request.POST.get('name') != None and request.POST.get('name') != '':
-                BlogCategory.objects.create(name=request.POST.get('name'))
+                if request.GET.get('category_id') != None:
+                    category = BlogCategory.objects.get(id=request.GET.get('category_id'))
+                    category.name = request.POST.get('name')
+                    category.save()
+                else:
+                    BlogCategory.objects.create(name=request.POST.get('name'))
         return redirect('all_categories')
 
-    # if request.GET.get('post_id')
+    if request.GET.get('category_id') != None:
+        category = BlogCategory.objects.get(id=request.GET.get('category_id'))
+        return render(request, 'backboard/new_edit_category.html', {'category':category})
 
     return render(request, 'backboard/new_edit_category.html')
 
