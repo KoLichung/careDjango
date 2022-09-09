@@ -56,7 +56,7 @@ class AuthTokenSerializer(serializers.Serializer):
         """Validate and authenticate the user"""
         phone = attrs.get('phone')
         password = attrs.get('password')
-        # line_id = attrs.get('line_id')
+        line_id = attrs.get('line_id')
         
         user = None
 
@@ -67,11 +67,11 @@ class AuthTokenSerializer(serializers.Serializer):
                 password=password
             )
         
-        # if (line_id and line_id != ''):
-        #     try:
-        #         user = User.objects.get(phone=phone, line_id=line_id)
-        #     except Exception as e:
-        #         print('')
+        if (line_id and line_id != ''):
+            try:
+                user = User.objects.get(line_id=line_id)
+            except Exception as e:
+                print('')
             
         if not user:
             msg = 'Unable to authenticate with provided credentials'

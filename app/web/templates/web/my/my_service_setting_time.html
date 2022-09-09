@@ -9,17 +9,13 @@
 
       <!-- tab -->
       <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        <div class="row text-center mt-3 " style="font-weight: 600;">
-          <div class="col-9 row mx-auto">
-            <div class="col-6 col-md-4" style="color: #BB6BD9;">
-              ① 時段語言
-            </div>
-            <div class="col-6 col-md-4" style="color: #CCCCCC;">
-              ② 服務項目
-            </div>
-            <div class="col-6 col-md-4" style="color: #CCCCCC;">
-              ③ 關於我
-            </div>
+        <div class="row">
+          <div class="col-10 col-sm-7 col-md-6 col-lg-4 col-xl-4 mx-auto">
+            <ul class="nav custom-nav-tabs mt-2" id="myTab" role="tablist">
+              <li class="nav-item mx-auto"><a class="nav-link active" href="{% url 'my_service_setting_time' %}">時段語言</a></li>
+              <li class="nav-item mx-auto"><a class="nav-link" href="{% url 'my_service_setting_services' %}">服務項目</a></li>
+              <li class="nav-item mx-auto"><a class="nav-link" href="{% url 'my_service_setting_about' %}">關於我</a></li>
+            </ul>
           </div>
         </div>
         <!-- tab content -->
@@ -117,7 +113,7 @@
                   {% endfor %}
                 </div>
                 <div class="col-4 mt-7 mx-auto text-center">
-                  <button class="full-purple-button " type="submit" >儲存，繼續下一頁</button>
+                  <button class="full-purple-button " type="submit" >儲存</button>
                 </div>                                 
             </div>
           </div>

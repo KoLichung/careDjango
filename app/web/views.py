@@ -1377,7 +1377,7 @@ def my_service_setting_time(request):
             if language_id == '8':
                 userlanguage.remark = request.POST.get('lan_other')
             userlanguage.save()
-            return redirect('my_service_setting_services')
+            return redirect('my_service_setting_time')
 
     return render(request, 'web/my/my_service_setting_time.html',{'user':user, 'languages':languages})
 
@@ -1417,6 +1417,7 @@ def my_service_setting_services(request):
             user.hospital_half_day_wage = int(hospital_half_day)
         if hospital_full_day != ('' or None):
             user.hospital_one_day_wage = int(hospital_full_day)
+        user.save()
 
         locations_nums = request.POST.get('hidden_locations[]')
         if locations_nums != None:
@@ -1470,7 +1471,7 @@ def my_service_setting_services(request):
             userserviceship.increase_percent = float(set_increase_percent)
             userserviceship.save()
 
-        return redirect('my_service_setting_about')
+        return redirect('my_service_setting_services')
     return render(request, 'web/my/my_service_setting_services.html',{'user':user, 'services':services,'increase_services':increase_services, 'citys':citys,'counties':counties,'cityName':city,'county_name':county_name})
 
 def my_service_setting_about(request):
