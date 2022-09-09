@@ -14,11 +14,11 @@
             <div class="collapse navbar-collapse" id="navbarLightExample">
               <ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto"> 
                 <li class="nav-item px-3">
-                  <a class="nav-link h5" href="{% url 'news_detail' %}" >全部</a>
+                  <a class="nav-link h5" href="{% url 'news' %}" >全部</a>
                 </li>
                 {% for category in categories %}
                   <li class="nav-item px-3">
-                    <a class="nav-link h5" href="{% url 'news_detail' %}?blogpost={{blogpost.id}}&category_id={{category.id}}">{{category.name}}</a>
+                    <a class="nav-link h5" href="{% url 'news' %}?category_id={{category.id}}">{{category.name}}</a>
                   </li>
                 {% endfor %}               
                 <!-- <li class="nav-item px-3">
