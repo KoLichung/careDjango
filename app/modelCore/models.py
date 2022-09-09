@@ -29,6 +29,7 @@ class UserManager(BaseUserManager):
         user = self.model(
             phone = phone, 
             name=extra_fields.get('name'),
+            line_id=extra_fields.get('line_id'),
         )
         user.set_password(password)
         user.save(using=self._db)

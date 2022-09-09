@@ -12,7 +12,7 @@ from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMes
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'phone')
+    list_display = ('id', 'name', 'phone', 'line_id')
 
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
