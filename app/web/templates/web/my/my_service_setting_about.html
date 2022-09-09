@@ -1,0 +1,211 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+      <div class="row text-center mx-3">
+        <h4 class="section-title-purple mt-5">我的服務設定</h4>
+      </div>
+
+      <!-- tab -->
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="row text-center mt-3 " style="font-weight: 600;">
+          <div class="col-9 row mx-auto">
+            <div class="col-6 col-md-4" style="color: #CCCCCC;">
+              ① 時段語言
+            </div>
+            <div class="col-6 col-md-4" style="color: #CCCCCC;">
+              ② 服務項目
+            </div>
+            <div class="col-6 col-md-4" style="color: #BB6BD9;">
+              ③ 關於我
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-7 mx-auto mt-3">
+            <div class="p-3 mt-3" >
+              <!-- tab 關於我 -->              
+                <p class="custom-card-font mt-3"><strong>相關文件</strong></p>
+                <div>
+                  {% for licenseImageShip in licenseImageShips %}   
+                    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                      <div class="row mt-2">
+                        <div class="col align-self-center">
+                          <span class="h6">{{licenseImageShip.license}}{% if licenseImageShip.license.remark %}<br><span class="sub-font">{{licenseImageShip.license.remark}}</span>{% endif %}</span>
+                        </div>
+                        <div class="col-5 text-end align-self-center">
+                          <input type="hidden" id="licenseId" name="licenseId" value="{{licenseImageShip.license.id}}">
+                          <input type="hidden" id="userId" name="userId" value={{user}}>
+                          {{ form.user.as_hidden }}
+                          {{ form.image }}
+                          <div class="text-end">
+                            <button class=" small-purple-button" type="submit" ><span class="fas fa-plus-circle"></span>上傳照片</button>
+                          </div>
+                        </div>
+                      </div>
+                      <hr>
+                    </form>
+                  {% endfor %}
+                </div>
+
+                <p class="custom-card-font mt-5"><strong>關於我</strong></p>
+                <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="about_me" rows="3"></textarea>
+
+                <div class="row mt-5 ">
+                  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="col align-self-center">
+                      <span class="custom-card-font mt-5"><strong>上傳背景照片</strong></span>
+                    </div>
+                    <div class="col text-end ">
+                      <input type="hidden" id="userId" name="userId" value={{user.phone}}>
+                      {{ userform.as_hidden }}
+                      {{ userform.background_image }}
+                      <button class="small-purple-button" name="submit"><span class="fas fa-plus-circle"></span>上傳照片</button>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="col-4 mt-7 mx-auto text-center">
+                  <button class="full-purple-button" type="submit" >儲存</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    <script>
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                      }
+                  }
+              }
+            return cookieValue;
+      }
+        const csrftoken = getCookie('csrftoken');    
+      function listCities(city_select_num){
+          num = city_select_num.split('city_select_')[1]
+          console.log(num)
+          var cityid = $("#city_select_"+String(num)).val();
+          console.log(cityid)
+          $('#county_select_'+String(num)).html('');
+          $.ajax({
+            type: "POST",
+            data: {'city_id':cityid,
+                    'action':'refresh_county'},
+            headers: {'X-CSRFToken': csrftoken},
+            url: "{% url 'ajax_refresh_county' %}",
+            success: function(response)
+            {
+              const data = response.data
+              // var resultObj = JSON.parse(response);
+              var dataHandler = $('#county_select_'+String(num));
+              var county_all = `<option style="text-align: center" value="全區">全區</option>`
+              dataHandler.append(county_all);
+              data.forEach(el =>
+              {
+                  var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+                  dataHandler.append(newRow);
+              });
+            }
+
+          });
+        }
+
+      locations_add_count = 0
+      locations_add_html = document.getElementById('locations_add');
+      let location_list = [0];
+
+      const hidden_locations = document.getElementById('hidden_locations')
+      function AddLocations(){
+        event.preventDefault();        
+        locations_add_count += 1;
+        button_id = locations_add_count;
+        location_list.push(locations_add_count);
+        console.log(location_list)
+        hidden_locations.value = location_list
+        locations_id = 'locations_'+ String(locations_add_count);
+        name_city = 'city_' + String(locations_add_count)
+        name_county = 'county_' + String(locations_add_count)
+        id_city = 'city_select_' + String(locations_add_count)
+        id_county = 'county_select_' + String(locations_add_count)
+        tranfer_fee_name = 'tranfer_fee_' + String(locations_add_count)
+        locations_add_html.innerHTML += `<div class="mt-2" id="${locations_id}">`
+        location_html = document.getElementById(locations_id)
+        location_html.innerHTML = `
+                    <div class="btn-group ">
+                      <select class="dropdown-button" id="${id_city}" name="${name_city}" onchange="listCities(this.id)" select>
+                      
+                        {% for city in citys %}
+                          <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                          <!-- <option value="醫院看護">醫院看護</option> -->
+                        {% endfor %}
+                      </select>
+                    </div>
+                    &ensp;
+                    <div class="btn-group">
+                      <select class="dropdown-button" id="${id_county}" name="${name_county}" >
+                        <option style="text-align: center" value="全區">全區</option>
+                        {% for county in counties %}
+                          <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county.name == county_name %} selected="selected" {% endif %}>{{county}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    &ensp;
+                    <span class="h6 ml-3">
+                      交通費&ensp;
+                      <input class="service-setting-input" style="width: 60px;" id="${tranfer_fee_name}" name="${tranfer_fee_name}" type="text" placeholder="" />
+                      元／趟
+                    </span>
+                    <button type="button" id="${button_id}" class="btn-close btn-sm " aria-label="Close" onClick="Cancel(this.id)"></button>
+                  `;
+      }
+      function Cancel(button_id){
+        location_list = location_list.filter(function(item) {
+            return item !== Number(button_id)
+        })
+        console.log(location_list)
+        hidden_locations.value = location_list
+        cancel_html = document.getElementById('locations_'+String(button_id))
+        cancel_html.innerHTML = ``
+      }
+      $( document ).ready(function() {
+        hidden_locations.value = location_list;
+      });
+      function post_image(){
+        event.preventDefault();    
+        // var license_id = $('#licenseId');
+        // var user = $('#userId');
+        // var myformData = new FormData();
+        // var image_file = $("input[name='image']")[0].files[0]
+        // myformData.append("file",$("input[name='image']")[0].files[0]);
+        // // myformData.append('license_id',license_id);
+        // // myformData.append('user',user)
+        // console.log(myformData);
+        // $.ajax({
+        //   type: 'post',
+        //   processData: false,
+        //   contentType: false,
+        //   cache: false,
+        //   data: myformData,
+        //   enctype: 'multipart/form-data',
+        //   headers: {'X-CSRFToken': csrftoken},
+        //   url: "{% url 'ajax_post_image' %}",
+        //   success: function(data)
+        //   {
+        //     console.log('success')
+        //   }
+
+        // });
+      }
+    </script>
+     
+</main>
+{% endblock %}

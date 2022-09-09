@@ -27,8 +27,9 @@ urlpatterns = [
     path('requirement_list', views.requirement_list, name = 'requirement_list'),
     path('requirement_detail', views.requirement_detail, name = 'requirement_detail'),
 
-    path('become_carer', views.become_carer, name = 'become_carer'),
-    path('my_service_setting', views.my_service_setting, name = 'my_service_setting'),
+    path('my_service_setting_time', views.my_service_setting_time, name = 'my_service_setting_time'),
+    path('my_service_setting_services', views.my_service_setting_services, name = 'my_service_setting_services'),
+    path('my_service_setting_about', views.my_service_setting_about, name = 'my_service_setting_about'),
     
     path('my_bank_account', views.my_bank_account, name = 'my_bank_account'),
     path('my_bookings', views.my_bookings, name = 'my_bookings'),

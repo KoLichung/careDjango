@@ -133,6 +133,9 @@ def ajax_cal_rate(request):
         if is_continuous_time == 'True':
             print('b')
             servants = servants.filter(is_continuous_time=True)
+            if servant not in servants:
+                data = {'result':'1'}
+                return JsonResponse({'data':data})
             start_time = startTime.split(':')
             end_time = endTime.split(':')
             start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
@@ -148,6 +151,7 @@ def ajax_cal_rate(request):
             orders = orders.filter(order_condition).distinct()
             order_conflict_servants_id = list(orders.values_list('servant', flat=True))
             servants = servants.filter(~Q(id__in=order_conflict_servants_id))
+            print(servants)
             print('c')
             if servant in servants:
                 if care_type == 'hospital':
@@ -391,7 +395,6 @@ def search_list(request):
     citys = City.objects.all()
     counties = County.objects.all()
     servants = User.objects.filter(is_servant=True)
-
     county_name = request.GET.get('county')
     city_id = request.GET.get("city")
     care_type = request.GET.get('care_type')
@@ -459,10 +462,11 @@ def search_list(request):
         defaultEndDate = end_date
         defaultStartTime = start_time
         defaultEndTime = end_time
-
+        print(servants,'1')
+        print(is_continuous_time)
         if is_continuous_time == 'True':
                 servants = servants.filter(is_continuous_time=True)
-
+        print(servants,'2')
             #所選擇的周間跟時段 要符合 servant 的服務時段
         if weekdays != None:
             if (start_date != '') and (end_date != '') and (start_time != '') and (end_time != ''):
@@ -508,7 +512,7 @@ def search_list(request):
                 for weekdays_num in weekdays_num_list:
                     service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num)
                     servants = servants.filter(service_time_condition_1 | service_time_condition_2).distinct()
-    
+    print(servants,'3')
     if city_id == None:
         city_id = '8'
     city = City.objects.get(id=city_id)
@@ -523,12 +527,14 @@ def search_list(request):
             
         else:
             county_name = '全區'
+    print(servants,'4')
     if care_type == '居家照顧':
-            servants = servants.filter(is_home=True)
+        servants = servants.filter(is_home=True)
+        print('is_home',servants)
 
     elif care_type == '醫院看護':
         servants = servants.filter(is_hospital=True)
-
+    print(servants,'5')
     dict = {}
     dict['citys'] = citys
     dict['city'] = city
@@ -540,13 +546,15 @@ def search_list(request):
         print(dict['start_time'])
     if end_time != None and end_time != '' :
         dict['end_time'] = defaultEndTime
-    
+    print(servants)
     if county_name != None:
         if county_name != '全區':
             user_ids = list(UserServiceLocation.objects.filter(city=city_id,county=county_name).values_list('user', flat=True))
         else:
             user_ids = list(UserServiceLocation.objects.filter(city=city_id).values_list('user', flat=True))
+        print(user_ids)
         servants = servants.filter(id__in=user_ids)
+        print(servants)
     if is_continuous_time == 'True':
         time_type = '連續時間'
     else:
@@ -1319,30 +1327,11 @@ def requirement_detail(request):
 def become_carer(request):
     return render(request, 'web/become_carer.html')
 
-def my_service_setting(request):
+def my_service_setting_time(request):
     user = request.user
     languages = Language.objects.all()
-    citys = City.objects.all()
-    counties = County.objects.all()
-    city_id = '4'
-    city = City.objects.get(id=city_id)
-    counties = counties.filter(city=City.objects.get(id=city_id))
-    county_name = '全區'
-    services = Service.objects.filter(is_increase_price=False).order_by('id')
-    increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
-    licences = License.objects.all().order_by('id')[3:]
     
-    # UserLicenseImageShips 也許在 User Create 時就產生好
-    for license in licences:
-        if UserLicenseShipImage.objects.filter(user=user, license=license).count() == 0:
-            UserLicenseShipImage.objects.create(user=user,license=license)
-    
-    licenseImageShips = UserLicenseShipImage.objects.filter(user=user).order_by('license')[3:]
-
-    form = UserLicenseImageForm()
-    userform = UserImageForm()
-    # increase_service_ships = UserServiceShip.objects.filter(user=servant).order_by('service')[:4]
-    if request.method == 'POST' and 'submit' in request.POST:
+    if request.method == 'POST':
         gender = request.POST.get('gender')
         is_continuous_time = request.POST.get('is_continuous_time') 
         if gender != None:
@@ -1388,7 +1377,22 @@ def my_service_setting(request):
             if language_id == '8':
                 userlanguage.remark = request.POST.get('lan_other')
             userlanguage.save()
+            return redirect('my_service_setting_services')
 
+    return render(request, 'web/my/my_service_setting_time.html',{'user':user, 'languages':languages})
+
+def my_service_setting_services(request):
+    user = request.user
+    citys = City.objects.all()
+    counties = County.objects.all()
+    city_id = '4'
+    city = City.objects.get(id=city_id)
+    counties = counties.filter(city=City.objects.get(id=city_id))
+    county_name = '全區'
+    services = Service.objects.filter(is_increase_price=False).order_by('id')
+    increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
+    
+    if request.method == 'POST' :
         care_type_home = request.POST.get('care_type_home')
         care_type_hospital = request.POST.get('care_type_hospital')
         if care_type_home == 'home':
@@ -1465,7 +1469,23 @@ def my_service_setting(request):
             userserviceship.service = increase_item
             userserviceship.increase_percent = float(set_increase_percent)
             userserviceship.save()
-        
+
+        return redirect('my_service_setting_about')
+    return render(request, 'web/my/my_service_setting_services.html',{'user':user, 'services':services,'increase_services':increase_services, 'citys':citys,'counties':counties,'cityName':city,'county_name':county_name})
+
+def my_service_setting_about(request):
+    user = request.user
+    licences = License.objects.all().order_by('id')[3:]
+
+    for license in licences:
+        if UserLicenseShipImage.objects.filter(user=user, license=license).count() == 0:
+            UserLicenseShipImage.objects.create(user=user,license=license)
+    
+    licenseImageShips = UserLicenseShipImage.objects.filter(user=user).order_by('license')[3:]
+    form = UserLicenseImageForm()
+    userform = UserImageForm()
+    # increase_service_ships = UserServiceShip.objects.filter(user=servant).order_by('service')[:4]
+    if request.method == 'POST':     
         license_id = request.POST.get('licenseId')
         if license_id != None:
             print(type(license_id))
@@ -1503,8 +1523,7 @@ def my_service_setting(request):
         user.phone = user.phone
         user.save()
 
-
-    return render(request, 'web/my/service_setting.html',{'user':user,'form':form,'userform':userform, 'licenseImageShips':licenseImageShips, 'services':services,'increase_services':increase_services, 'languages':languages,'citys':citys,'counties':counties,'cityName':city,'county_name':county_name})
+    return render(request, 'web/my/my_service_setting_about.html',{'user':user,'form':form,'userform':userform, 'licenseImageShips':licenseImageShips})
 
 def my_bank_account(request):
     

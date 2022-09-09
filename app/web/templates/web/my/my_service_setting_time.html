@@ -1,0 +1,128 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+      <div class="row text-center mx-3">
+        <h4 class="section-title-purple mt-5">我的服務設定</h4>
+      </div>
+
+      <!-- tab -->
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="row text-center mt-3 " style="font-weight: 600;">
+          <div class="col-9 row mx-auto">
+            <div class="col-6 col-md-4" style="color: #BB6BD9;">
+              ① 時段語言
+            </div>
+            <div class="col-6 col-md-4" style="color: #CCCCCC;">
+              ② 服務項目
+            </div>
+            <div class="col-6 col-md-4" style="color: #CCCCCC;">
+              ③ 關於我
+            </div>
+          </div>
+        </div>
+        <!-- tab content -->
+        
+        <div class="row">
+          <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-7 mx-auto mt-3">
+            <div class=" p-3 mt-3" >
+                <p class="custom-card-font"><strong>您的性別</strong></p>
+
+                <div class="col-9 my-2 " style="display: flex;">
+                  <label class="custom-radio-parent">男
+                    <input type="radio" checked="checked" name="gender" value="M">
+                    <span class="checkmark"></span>
+                  </label>
+                  <label class="custom-radio-parent">女
+                    <input type="radio" name="gender" value="F">
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+                <p class="custom-card-font mt-4"><strong>服務時段</strong></p>
+                <div class="form-check">
+                  <input class="form-check-input" id="flexCheckDefault" type="checkbox" name="is_continuous_time" value="True" checked/>
+                  <label class="h6" for="flexCheckDefault">任何時段皆可</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="1"/>
+                  <label class="h6" for="weekdays[]">星期一，時段：</label>
+                  <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  <span>～</span>
+                  <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="2"/>
+                  <label class="h6" for="weekdays[]">星期二，時段：</label>
+                  <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  <span>～</span>
+                  <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="3"/>
+                  <label class="h6" for="weekdays[]">星期三，時段：</label>
+                  <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  <span>～</span>
+                  <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="4"/>
+                  <label class="h6" for="weekdays[]">星期四，時段：</label>
+                  <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  <span>～</span>
+                  <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="5"/>
+                  <label class="h6" for="weekdays[]">星期五，時段：</label>
+                  <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  <span>～</span>
+                  <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="6"/>
+                  <label class="h6" for="weekdays[]">星期六，時段：</label>
+                  <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  <span>～</span>
+                  <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="0"/>
+                  <label class="h6" for="weekdays[]">星期日，時段：</label>
+                  <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  <span>～</span>
+                  <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                </div>                   
+                <p class="custom-card-font mt-5"><strong>可溝通語言</strong></p>
+                <div>
+                  {% for language in languages %}
+                    {% if language.id == 5 %}
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}" />
+                        <label class="h6" for="aboriginal">原住民語，族語名：</label>
+                        <input class="service-setting-input " id="lan-aboriginal" name="lan_aboriginal" type="text" placeholder="" />
+                      </div>
+                    {% elif language.id == 8 %}
+                      <div class=" form-check-inline">
+                        <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}" />
+                        <label class="h6" for="aboriginal">其他，請填寫：</label>
+                        <input class="service-setting-input" id="lan-other" name="lan_other" type="text" placeholder="" />
+                      </div>
+                    {% else %}
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" id="chinese" name="languages[]" type="checkbox" value="{{language.id}}" />
+                      <label class="h6" for="chinese">{{language}}</label>                
+                    </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <div class="col-4 mt-7 mx-auto text-center">
+                  <button class="full-purple-button " type="submit" >儲存，繼續下一頁</button>
+                </div>                                 
+            </div>
+          </div>
+        </div>
+      </form>
+     
+</main>
+{% endblock %}
