@@ -15,10 +15,16 @@
         <div class="border"></div>
         <div class="d-flex justify-content-between mt-3">
           <div>
-            <span>姓名：張曉明</span>
-            <span class="mx-3">電話：0912345678</span>
-            <span>服務者 / 需求者</span>
-            <span style="color: red;">（服務者尚未審核）</span> 
+            <span>姓名：{{user.name}}</span>
+            <span class="mx-3">電話：{{user.phone}}</span>
+            {% if user.is_servant %}
+              <span>服務者 /需求者</span>
+              {% if user.is_servant_passed == False %}
+                <span style="color: red;">（服務者尚未審核）</span> 
+              {% endif %}
+            {% else %} 
+              <span>需求者</span>
+            {% endif %}
           </div>
           <div>
             <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_data_review' %}">資料審核</a>
@@ -47,36 +53,18 @@
                 </tr>
               </thead>
               <tbody class="list">
-                <tr>
-                  <td>2022/4/6</td>
-                  <td>2022/5/1~2022/5/12</td>
-                  <td>已承接</td>
-                  <td>2022/4/8</td>
-                  <td>$15,200</td>
-                  <td>                    
-                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2022/4/6</td>
-                  <td>2022/5/1~2022/5/12</td>
-                  <td>已承接</td>
-                  <td>2022/4/8</td>
-                  <td>$15,200</td>
-                  <td>                    
-                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2022/4/6</td>
-                  <td>2022/5/1~2022/5/12</td>
-                  <td>已承接</td>
-                  <td>2022/4/8</td>
-                  <td>$15,200</td>
-                  <td>                    
-                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
-                  </td>
-                </tr>           
+                {% for order in offend_orders %}
+                  <tr>
+                    <td>{{order.case.created_at.year}}/{{order.case.created_at.month}}/{{order.case.created_at.day}}</td>
+                    <td>{{order.start_datetime.year}}{{order.start_datetime.month}}{{order.start_datetime.day}}~{{order.end_datetime.year}}{{order.rnd_datetime.month}}{{order.end_datetime.day}}</td>
+                    <td>{% if order.case.state == 'unTaken' %}未承接{% elif order.case.state == 'unComplete' %}未完成{% elif order.case.state == 'Complete' %}已完成{% elif order.case.state == 'Canceled' %}取消{% elif order.case.state == 'endEarly' %}提早結束{% endif %}</td>
+                    <td>2022/4/8</td>
+                    <td>${{order.total_money}}</td>
+                    <td>                    
+                      <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}?case={{order.case.id}}">查看</a>
+                    </td>
+                  </tr>
+                {% endfor %}       
               </tbody>
             </table>
           </div>
@@ -98,46 +86,30 @@
             <table class="table table-striped fs--1 mb-0">
               <div class="border border-1"></div>
               <thead>
+                
                 <tr>
                   <th scope="col">發案日期</th>
                   <th scope="col">服務日期</th>
-                 <th scope="col">案件狀態</th>
-                 <th scope="col">接案日期</th>
-                 <th scope="col">訂單金額</th>
-                 <th scope="col">案件詳情</th>
+                  <th scope="col">案件狀態</th>
+                  <th scope="col">接案日期</th>
+                  <th scope="col">訂單金額</th>
+                  <th scope="col">案件詳情</th>
                </tr>
+               
               </thead>
               <tbody class="list">
+                {% for order in take_orders %}
                 <tr>
-                  <td>2022/4/6</td>
-                  <td>2022/5/1~2022/5/12</td>
-                  <td>已承接</td>
+                  <td>{{order.case.created_at.year}}/{{order.case.created_at.month}}/{{order.case.created_at.day}}</td>
+                  <td>{{order.start_datetime.year}}{{order.start_datetime.month}}{{order.start_datetime.day}}~{{order.end_datetime.year}}{{order.rnd_datetime.month}}{{order.end_datetime.day}}</td>
+                  <td>{% if order.case.state == 'unTaken' %}未承接{% elif order.case.state == 'unComplete' %}未完成{% elif order.case.state == 'Complete' %}已完成{% elif order.case.state == 'Canceled' %}取消{% elif order.case.state == 'endEarly' %}提早結束{% endif %}</td>
                   <td>2022/4/8</td>
-                  <td>$15,200</td>
+                  <td>${{order.total_money}}</td>
                   <td>                    
-                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
+                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}?case={{order.case.id}}">查看</a>
                   </td>
                 </tr>
-                <tr>
-                  <td>2022/4/6</td>
-                  <td>2022/5/1~2022/5/12</td>
-                  <td>已承接</td>
-                  <td>2022/4/8</td>
-                  <td>$15,200</td>
-                  <td>                    
-                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2022/4/6</td>
-                  <td>2022/5/1~2022/5/12</td>
-                  <td>已承接</td>
-                  <td>2022/4/8</td>
-                  <td>$15,200</td>
-                  <td>                    
-                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'case_detail' %}">查看</a>
-                  </td>
-                </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>

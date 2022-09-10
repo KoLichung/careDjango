@@ -9,7 +9,7 @@
         <div class="h5 mb-3"><b>案件明細</b></div>
         <div class="border"></div>
         <div class="d-flex mt-3">
-          <div><a href="#" class="custom-purple-border-btn btn-sm" role="button">已承接</a></div>
+          <div><a href="#" class="custom-purple-border-btn btn-sm" role="button">{% if case.state == 'unTaken' %}未承接{% elif case.state == 'unComplete' %}未完成{% elif case.state == 'Complete' %}已完成{% elif case.state == 'Canceled' %}取消{% elif case.state == 'endEarly' %}提早結束{% endif %}</a></div>
           <div class="mx-3">建立：{{case.created_at.year}}/{{case.created_at.month}}/{{case.created_at.day}}</div>
         </div>
         <div class="mt-4 mb-2"><b>案件資訊</b></div>
@@ -24,9 +24,9 @@
         <div>身體狀況：{% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}</div>
         <div>補充說明：</div>
         <div class="mt-4 mb-2"><b>需求服務項目</b></div>
-        <div>{% for caseservice in case.case_services.all %}{{caseservice.service}}{% endfor %}</div>
+        <div>{% for caseservice in case.case_services.all %} {{caseservice.service}} {% endfor %}</div>
         <div class="mt-4 mb-2"><b>服務者資訊</b></div>
-        <div>服務者：{{case.servant.name}}{{case.servant.phone}}</div>
+        <div>服務者：{{case.servant.name}} {{case.servant.phone}}</div>
         <div class="mb-3">服務者收到的評價：{{review.servant_comment}}</div>
       </div>
     </div>
@@ -38,12 +38,12 @@
 
         <div class="d-flex mt-3 justify-content-between">
           <div>
-            <a href="#" class="custom-purple-border-btn btn-sm" role="button">已承接</a>
-            <span class="mx-3">建立：2022/4/6 服務者：林小梅 金額：$15200</span>
+            <a href="#" class="custom-purple-border-btn btn-sm" role="button">{% if case.state == 'unTaken' %}未承接{% elif case.state == 'unComplete' %}未完成{% elif case.state == 'Complete' %}已完成{% elif case.state == 'Canceled' %}取消{% elif case.state == 'endEarly' %}提早結束{% endif %}</a>
+            <span class="mx-3">建立：{{case.created_at.year}}/{{case.created_at.month}}/{{case.created_at.day}} 服務者：{{case.servant.name}} </span>
           </div>
           <div>
-            (已退款 $7900)
-            <a href="{% url 'refunds' %}" class="custom-red-border-btn btn-sm" role="button">按我退款</a>
+            (已退款 ${{order.refund_money}})
+            <a href="{% url 'refunds' %}?case={{case.id}}" class="custom-red-border-btn btn-sm" role="button">按我退款</a>
           </div>
         </div>
 
@@ -53,10 +53,10 @@
           <div class="col alnright">${{order.base_money}}</div>
         </div>
         <div class="h6 mt-4 mb-2">加價項目</div>
-        {% for data in increase_data_list %}
+        {% for order_increase_service in order_increase_services %}
         <div class="row">
-          <div class="col">{{data.case_increase_ship.service}} 每小時加 {{data.case_increase_ship.increase_percent}}% x {{order.work_hours}} 小時 </div>
-          <div class="col alnright">${{data.case_increase_ship.increase_money}}</div>
+          <div class="col">{{order_increase_service.service}} 每小時加 {{order_increase_service.increase_percent}}% x {{order.work_hours}} 小時 </div>
+          <div class="col alnright">${{order_increase_service.increase_money}}</div>
         </div>
         {% endfor %}
         <!-- <div class="row">

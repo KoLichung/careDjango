@@ -587,8 +587,8 @@ class Order(models.Model):
     
     created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
 
-    refound_money = models.IntegerField(default=0, blank=True, null=True)
-    refound_apply_date = models.DateTimeField(auto_now=True, blank = True,null=True)
+    refund_money = models.IntegerField(default=0, blank=True, null=True)
+    refund_apply_date = models.DateTimeField(auto_now=True, blank = True,null=True)
 
 class OrderIncreaseService(models.Model):
     order =  models.ForeignKey(

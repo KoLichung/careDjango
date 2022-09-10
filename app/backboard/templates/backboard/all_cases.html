@@ -8,9 +8,12 @@
         <div class="card-header">
   
           <div class="mb-3">
-            <a href="#" class="custom-purple-btn btn-sm" role="button">所有案件</a>
-            <a href="#" class="custom-purple-border-btn btn-sm" role="button">未承接</a>
-            <a href="#" class="custom-purple-border-btn btn-sm" role="button">已承接</a>
+            <a href="{% url 'all_cases' %}" class="custom-purple-btn btn-sm" role="button">所有案件</a>
+            <a href="{% url 'all_cases' %}?state=unTaken"class="custom-purple-border-btn btn-sm" role="button">未承接</a>
+            <a href="{% url 'all_cases' %}?state=unComplete" class="custom-purple-border-btn btn-sm" role="button">未完成</a>
+            <a href="{% url 'all_cases' %}?state=Complete"class="custom-purple-border-btn btn-sm" role="button">已完成</a>
+            <a href="{% url 'all_cases' %}?state=Canceled" class="custom-purple-border-btn btn-sm" role="button">取消</a>
+            <a href="{% url 'all_cases' %}?state=endEarly"class="custom-purple-border-btn btn-sm" role="button">提早結束</a>
           </div>
                     
           <div id="tableExample2" data-list='{"valueNames":["name","email","age"],"page":10,"pagination":true}'>
@@ -32,7 +35,7 @@
                   {% for case in cases %}
                   <tr>
                     <td >
-                      <button type="button" class="custom-grey-border-btn btn-sm" disabled>{{case.state}}</button>
+                      <button type="button" class="custom-grey-border-btn btn-sm" disabled>{% if case.state == 'unTaken' %}未承接{% elif case.state == 'unComplete' %}未完成{% elif case.state == 'Complete' %}已完成{% elif case.state == 'Canceled' %}取消{% elif case.state == 'endEarly' %}提早結束{% endif %}</button>
                     </td>
                     <td>{{case.created_at.year}}/{{case.created_at.month}}/{{case.created_at.day}}</td>
                     <td>{{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}}</td>
