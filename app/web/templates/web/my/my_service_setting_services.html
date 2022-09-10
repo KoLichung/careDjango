@@ -1,5 +1,62 @@
 {% extends 'web/base.html' %} {% block content %}
 {% load static %}
+
+<script>
+  let location_list = [];
+  var locations_add_count = {{ user_service_locations|length }};
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                  }
+              }
+          }
+        return cookieValue;
+  }
+  const csrftoken = getCookie('csrftoken'); 
+
+  function listCities(city_select_id, county_name){
+      var num = city_select_id.split('city_select_')[1]
+
+      var cityid = $("#city_select_"+String(num)).val();
+      console.log(county_name);
+
+      $('#county_select_'+String(num)).html('');
+      $.ajax({
+        type: "POST",
+        data: {'city_id':cityid,
+                'action':'refresh_county'},
+        headers: {'X-CSRFToken': csrftoken},
+        url: "{% url 'ajax_refresh_county' %}",
+        success: function(response)
+        {
+          const data = response.data
+          // var resultObj = JSON.parse(response);
+          var dataHandler = $('#county_select_'+String(num));
+          var county_all = `<option style="text-align: center" value="全區">全區</option>`
+          dataHandler.append(county_all);
+          data.forEach(el =>
+          { 
+            var newRow;
+            if(el.county == county_name){
+              newRow = `<option style="text-align: center" value=${el.county} selected="selected">${el.county}</option>`;
+            }else{
+              newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+            }
+            dataHandler.append(newRow);
+          });
+        }
+      });
+  }
+</script>
+
 <!-- main -->
 <main class="main bg-white" id="top" >
 
@@ -27,11 +84,19 @@
 
                 <div>
                     <div class="form-check form-check-inline">
-                    <input class="form-check-input" id="inlineCheckbox1" type="checkbox" name="care_type_home" value="home" />
+                      {% if user.is_home %}
+                        <input class="form-check-input" id="inlineCheckbox1" type="checkbox" name="care_type_home" value="home" checked/>
+                      {% else %}
+                        <input class="form-check-input" id="inlineCheckbox1" type="checkbox" name="care_type_home" value="home"/>
+                      {% endif %}
                     <label class="form-check-label" for="inlineCheckbox1">居家照顧</label>
                     </div>
                     <div class="form-check form-check-inline">
-                    <input class="form-check-input" id="inlineCheckbox2" type="checkbox" name="care_type_hospital" value="hospital" />
+                      {% if user.is_hospital %}
+                        <input class="form-check-input" id="inlineCheckbox2" type="checkbox" name="care_type_hospital" value="hospital" checked/>
+                      {% else %}
+                        <input class="form-check-input" id="inlineCheckbox2" type="checkbox" name="care_type_hospital" value="hospital"/>
+                      {% endif %}
                     <label class="form-check-label" for="inlineCheckbox2">醫院照護</label>
                     </div>
                 </div>
@@ -39,19 +104,19 @@
                 <p class="custom-card-font mt-3"><strong>居家照顧 服務費用</strong></p>
                 <div>
                     <span class="h6">時薪&ensp;</span>
-                    <input class="service-setting-input" style="width: 60px;" id="home-hour" name="home_hour" type="text"/>
+                    <input class="service-setting-input" style="width: 60px;" id="home-hour" name="home_hour" type="text" value={{user.home_hour_wage}} />
                     <span class="h6 form-check-inline">&ensp;元</span>
                     <span class="news-content">( 未滿 12 小時以每小時<u>時薪</u>計價 )</span>
                 </div>
                 <div class="mt-2">
                     <span class="h6">半天&ensp;</span>
-                    <input class="service-setting-input" style="width: 60px;" id="home-half-day" name="home_half_day" type="text"/>
+                    <input class="service-setting-input" style="width: 60px;" id="home-half-day" name="home_half_day" type="text" value={{user.home_half_day_wage}} />
                     <span class="h6 form-check-inline">&ensp;元</span>
                     <span class="news-content">( 12 ~ 24 小時以<u>半天價格之時薪</u>計價 )</span>
                 </div>
                 <div class="mt-2">
                     <span class="h6">全天&ensp;</span>
-                    <input class="service-setting-input" style="width: 60px;" id="home-full-day" name="home_full_day" type="text"/>
+                    <input class="service-setting-input" style="width: 60px;" id="home-full-day" name="home_full_day" type="text" value={{user.home_one_day_wage}} />
                     <span class="h6 form-check-inline">&ensp;元</span>
                     <span class="news-content">( 24 小時以上以<u>全天價格</u>計價 )</span>
                 </div>
@@ -59,66 +124,130 @@
                 <p class="custom-card-font mt-3"><strong>醫院照顧 服務費用</strong></p>
                 <div>
                     <span class="h6">時薪&ensp;</span>
-                    <input class="service-setting-input" style="width: 60px;" id="hospital_hour" name="hospital_hour" type="text" placeholder="" />
+                    <input class="service-setting-input" style="width: 60px;" id="hospital_hour" name="hospital_hour" type="text" placeholder="" value={{user.hospital_hour_wage}} />
                     <span class="h6 form-check-inline">&ensp;元</span>
                     <span class="news-content">( 未滿 12 小時以每小時<u>時薪</u>計價 )</span>
                 </div>
                 <div class="mt-2">
                     <span class="h6">半天&ensp;</span>
-                    <input class="service-setting-input" style="width: 60px;" id="hospital_half_day" name="hospital_half_day" type="text" placeholder="" />
+                    <input class="service-setting-input" style="width: 60px;" id="hospital_half_day" name="hospital_half_day" type="text" placeholder="" value={{user.hospital_half_day_wage}} />
                     <span class="h6 form-check-inline">&ensp;元</span>
                     <span class="news-content">( 12 ~ 24 小時以<u>半天價格之時薪</u>計價 )</span>
                 </div>
                 <div class="mt-2">
                     <span class="h6">全天&ensp;</span>
-                    <input class="service-setting-input" style="width: 60px;" id="hospital_full_day" name="hospital_full_day" type="text" placeholder="" />
+                    <input class="service-setting-input" style="width: 60px;" id="hospital_full_day" name="hospital_full_day" type="text" placeholder="" value={{user.hospital_one_day_wage}} />
                     <span class="h6 form-check-inline">&ensp;元</span>
                     <span class="news-content">( 24 小時以上以<u>全天價格</u>計價 )</span>
                 </div>
 
                 <p class="custom-card-font mt-3"><strong>服務地區</strong></p>
-                <div>
-                    <div class="btn-group">
-                    <select class="dropdown-button" id="city_select_0" name="city_0" onchange="listCities(this.id)" select>
-                    
-                        {% for city in citys %}
-                        <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
-                        <!-- <option value="醫院看護">醫院看護</option> -->
-                        {% endfor %}
-                    </select>
-                    </div>
-                    &ensp;
-                    <div class="btn-group">
-                    <select class="dropdown-button" id="county_select_0" name="county_0" >
-                        <option style="text-align: center" value="全區">全區</option>
-                        {% for county in counties %}
-                        <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county.name == county_name %} selected="selected" {% endif %}>{{county}}</option>
-                        {% endfor %}
-                    </select>
-                    </div>
-                    &ensp;
-                    <span class="h6 ml-3">
-                    交通費&ensp;
-                    <input class="service-setting-input" style="width: 60px;" id="traffic-fee" name="tranfer_fee_0" type="text" placeholder="" />
-                    元／趟
-                    </span>
-                </div>
+
                 <input type="hidden" id="hidden_locations" name="hidden_locations[]">
-                <div id="locations_add" ></div>
-                <button class="small-green-button mt-3" onclick="AddLocations()">+ 增加地區</button>
+                <div id="">
+                  {% for service_location in user_service_locations %}
+                    <div class="mt-2" id="locations_{{forloop.counter0}}" >
+                      <div class="btn-group">
+                        <select class="dropdown-button" id="city_select_{{forloop.counter0}}" name="city_{{forloop.counter0}}" onchange="listCities(this.id, '')" >
+                          {% for city in citys %}
+                            <option style="text-align: center" name="city_option" value="{{city.id}}" 
+                              {% if city.id == service_location.city.id %} 
+                                selected="selected" 
+                              {% endif %} >
+                                {{city}}
+                            </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      &ensp;
+
+                      <div class="btn-group">
+                        <select class="dropdown-button" id="county_select_{{forloop.counter0}}" name="county_{{forloop.counter0}}" >
+                            {% comment %} <option style="text-align: center" value="全區">全區</option>
+                            {% for county in counties %}
+                              <option style="text-align: center" name="county_option" value="{{county.name}}" 
+                                {% if county.id == service_location.county.id %} 
+                                  selected="selected" 
+                                {% endif %} >
+                                {{county}}
+                              </option>
+                            {% endfor %} {% endcomment %}
+                        </select>
+                      </div>
+                      &ensp;
+                      <script>
+                        location_list.push({{forloop.counter0}});
+                        console.log(location_list);
+
+                        listCities("city_select_{{forloop.counter0}}", "{{service_location.county.name}}");
+                      </script>
+
+                      <span class="h6 ml-3">
+                        交通費&ensp;
+                          <input class="service-setting-input" style="width: 60px;" id="traffic-fee_{{forloop.counter0}}" name="tranfer_fee_{{forloop.counter0}}" type="text" placeholder="" value={{service_location.tranfer_fee}} />
+                        元／趟
+                      </span>
+                      <button type="button" id="{{forloop.counter0}}" class="btn-close btn-sm " aria-label="Close" onClick="Cancel(this.id)"></button>
+                    </div>
+                  {% endfor %}
+                </div>
+                
+                <div id="locations_add">
+                  {% for i in location_range %}
+                    <div class="mt-2" id="locations_{{i}}" hidden>
+                      <div class="btn-group">
+                        <select class="dropdown-button" id="city_select_{{i}}" name="city_{{i}}" onchange="listCities(this.id, '')" >
+                          {% for city in citys %}
+                            <option style="text-align: center" name="city_option" value="{{city.id}}" 
+                              {% if city.id == 4 %} 
+                                selected="selected" 
+                              {% endif %} >
+                                {{city}}
+                            </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      &ensp;
+
+                      <div class="btn-group">
+                        <select class="dropdown-button" id="county_select_{{i}}" name="county_{{i}}" >
+                            <option style="text-align: center" value="全區">全區</option>
+                            {% for county in counties %}
+                              <option style="text-align: center" name="county_option" value="{{county.name}}" >
+                                {{county}}
+                              </option>
+                            {% endfor %}
+                        </select>
+                      </div>
+                      &ensp;
+
+                      <span class="h6 ml-3">
+                        交通費&ensp;
+                          <input class="service-setting-input" style="width: 60px;" id="traffic-fee_{{i}}" name="tranfer_fee_{{i}}" type="text" placeholder="" value="0" />
+                        元／趟
+                      </span>
+                      <button type="button" id="{{i}}" class="btn-close btn-sm " aria-label="Close" onClick="Cancel(this.id)"></button>
+                    </div>
+                  {% endfor %}
+                </div>
+                <button class="small-green-button mt-3" onclick="showHidden()">+ 增加地區</button>
 
                 <p class="custom-card-font mt-3"><strong>服務項目</strong></p>
                 <div>
                     {% for service in services %}
-                    <div class="form-check">
-                        <input class="form-check-input" id="flexCheckChecked" name="services[]" type="checkbox" value="{{service.id}}" />
-                        <label class="h6 mb-0" for="flexCheckChecked">{{service}}</label>
-                        <div class="">
-                        {% if service.remark %}
-                            <span class="sub-font">{{service.remark}}</span>
-                        {% endif %}
-                        </div>
-                    </div>
+                      <div class="form-check">
+                          {% if service.id in user_services_ids%}
+                            <input class="form-check-input" id="flexCheckChecked" name="services[]" type="checkbox" value="{{service.id}}" checked/>
+                          {% else %}
+                            <input class="form-check-input" id="flexCheckChecked" name="services[]" type="checkbox" value="{{service.id}}" />
+                          {% endif %}
+                          <label class="h6 mb-0" for="flexCheckChecked">{{service}}</label>
+                          <div class="">
+                          {% if service.remark %}
+                              <span class="sub-font">{{service.remark}}</span>
+                          {% endif %}
+                          </div>
+                      </div>
                     {% endfor %}
                     
                 </div>
@@ -127,10 +256,25 @@
                 <div>
                     {% for increase_service in increase_services %}
                     <div class="form-check">
-                    <input class="form-check-input mt-2" id="{{increase_service}}" name="increases[]" type="checkbox" value="{{increase_service.id}}" />
-                    <label class="h6 mb-0" for="flexCheckChecked">{{increase_service}}：</label>
-                    <input class="service-setting-input" style="width: 60px;" name="{{increase_service}}percent" type="text" placeholder="" />
-                    <span class="h6">%</span> 
+                      {% if increase_service.id in user_services_ids %}
+                        <input class="form-check-input mt-2" id="{{increase_service}}" name="increases[]" type="checkbox" value="{{increase_service.id}}" checked/>
+                      {% else %}
+                        <input class="form-check-input mt-2" id="{{increase_service}}" name="increases[]" type="checkbox" value="{{increase_service.id}}" />
+                      {% endif %}
+                      
+                      <label class="h6 mb-0" for="flexCheckChecked">{{increase_service}}：</label>
+
+                      {% if increase_service.id in user_services_ids %}
+                        {% for ship in user_service_ships %}
+                          {% if ship.service.id == increase_service.id %}
+                            <input class="service-setting-input" style="width: 60px;" name="{{increase_service}}percent" type="text" placeholder="" value={{ship.increase_percent}} />
+                          {% endif %}
+                        {% endfor %}
+                      {% else %}
+                        <input class="service-setting-input" style="width: 60px;" name="{{increase_service}}percent" type="text" placeholder="" value='0' />
+                      {% endif %}
+                      
+                      <span class="h6">%</span> 
                     </div>
                     {% endfor %}
                     <span class="h6">例：服務費用一天 2600 加價 5% = 每日增加 $130</span>
@@ -144,78 +288,46 @@
         </div>
       </form>
     <script>
-      function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                      }
-                  }
-              }
-            return cookieValue;
-      }
-        const csrftoken = getCookie('csrftoken');    
-      function listCities(city_select_num){
-          num = city_select_num.split('city_select_')[1]
-          console.log(num)
-          var cityid = $("#city_select_"+String(num)).val();
-          console.log(cityid)
-          $('#county_select_'+String(num)).html('');
-          $.ajax({
-            type: "POST",
-            data: {'city_id':cityid,
-                    'action':'refresh_county'},
-            headers: {'X-CSRFToken': csrftoken},
-            url: "{% url 'ajax_refresh_county' %}",
-            success: function(response)
-            {
-              const data = response.data
-              // var resultObj = JSON.parse(response);
-              var dataHandler = $('#county_select_'+String(num));
-              var county_all = `<option style="text-align: center" value="全區">全區</option>`
-              dataHandler.append(county_all);
-              data.forEach(el =>
-              {
-                  var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-                  dataHandler.append(newRow);
-              });
-            }
-
-          });
-        }
-
-      locations_add_count = 0
       locations_add_html = document.getElementById('locations_add');
-      let location_list = [0];
 
       const hidden_locations = document.getElementById('hidden_locations')
+
+      function showHidden(){
+        event.preventDefault();
+        document.getElementById("locations_"+locations_add_count).hidden = false;
+        
+        location_list.push(locations_add_count);
+        console.log(location_list)
+        hidden_locations.value = location_list
+
+        locations_add_count ++;
+      }
+
       function AddLocations(){
-        event.preventDefault();        
-        locations_add_count += 1;
+        event.preventDefault();
+        
+        locations_add_count ++;
+
         button_id = locations_add_count;
         location_list.push(locations_add_count);
         console.log(location_list)
         hidden_locations.value = location_list
-        locations_id = 'locations_'+ String(locations_add_count);
-        name_city = 'city_' + String(locations_add_count)
-        name_county = 'county_' + String(locations_add_count)
-        id_city = 'city_select_' + String(locations_add_count)
-        id_county = 'county_select_' + String(locations_add_count)
-        tranfer_fee_name = 'tranfer_fee_' + String(locations_add_count)
+        
+        var locations_id = 'locations_'+ String(locations_add_count);
+        var name_city = 'city_' + String(locations_add_count)
+        var name_county = 'county_' + String(locations_add_count)
+        var id_city = 'city_select_' + String(locations_add_count)
+        var id_county = 'county_select_' + String(locations_add_count)
+        var tranfer_fee_name = 'tranfer_fee_' + String(locations_add_count)
+
         locations_add_html.innerHTML += `<div class="mt-2" id="${locations_id}">`
         location_html = document.getElementById(locations_id)
         location_html.innerHTML = `
-                    <div class="btn-group ">
-                      <select class="dropdown-button" id="${id_city}" name="${name_city}" onchange="listCities(this.id)" select>
+                    <div class="btn-group">
+                      <select class="dropdown-button" id="${id_city}" name="${name_city}" onchange="listCities(this.id, '')" >
                       
                         {% for city in citys %}
-                          <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
-                          <!-- <option value="醫院看護">醫院看護</option> -->
+                          <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city.id == 4 %} selected="selected" {% endif %}>{{city}}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -231,12 +343,13 @@
                     &ensp;
                     <span class="h6 ml-3">
                       交通費&ensp;
-                      <input class="service-setting-input" style="width: 60px;" id="${tranfer_fee_name}" name="${tranfer_fee_name}" type="text" placeholder="" />
+                      <input class="service-setting-input" style="width: 60px;" id="${tranfer_fee_name}" name="${tranfer_fee_name}" type="text" placeholder="" value="${locations_add_count}"/>
                       元／趟
                     </span>
                     <button type="button" id="${button_id}" class="btn-close btn-sm " aria-label="Close" onClick="Cancel(this.id)"></button>
                   `;
       }
+
       function Cancel(button_id){
         location_list = location_list.filter(function(item) {
             return item !== Number(button_id)
@@ -246,35 +359,11 @@
         cancel_html = document.getElementById('locations_'+String(button_id))
         cancel_html.innerHTML = ``
       }
+
       $( document ).ready(function() {
         hidden_locations.value = location_list;
       });
-      function post_image(){
-        event.preventDefault();    
-        // var license_id = $('#licenseId');
-        // var user = $('#userId');
-        // var myformData = new FormData();
-        // var image_file = $("input[name='image']")[0].files[0]
-        // myformData.append("file",$("input[name='image']")[0].files[0]);
-        // // myformData.append('license_id',license_id);
-        // // myformData.append('user',user)
-        // console.log(myformData);
-        // $.ajax({
-        //   type: 'post',
-        //   processData: false,
-        //   contentType: false,
-        //   cache: false,
-        //   data: myformData,
-        //   enctype: 'multipart/form-data',
-        //   headers: {'X-CSRFToken': csrftoken},
-        //   url: "{% url 'ajax_post_image' %}",
-        //   success: function(data)
-        //   {
-        //     console.log('success')
-        //   }
 
-        // });
-      }
     </script>
      
 </main>

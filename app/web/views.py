@@ -60,8 +60,6 @@ def index(request):
 
         return render(request, 'web/index.html',{'dict':dict})
 
-    # elif request.is_ajax():
-    #     return JsonResponse({'text':'hello world'})
 
 def ajax_post_image(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
@@ -74,18 +72,18 @@ def ajax_post_image(request):
 
 def ajax_refresh_county(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'refresh_county':
-            updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
-            city_id = updatedData['city_id'][0]
-            counties = County.objects.filter(city=City.objects.get(id=city_id))
-            # countylist = serializers.serialize('json', list(counties))
-            data=[]
-            for county in counties:
-                item = {
-                    'id':county.id,
-                    'county':county.name,
-                }
-                data.append(item)
-            return JsonResponse({'data':data})
+        updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
+        city_id = updatedData['city_id'][0]
+        counties = County.objects.filter(city=City.objects.get(id=city_id))
+        # countylist = serializers.serialize('json', list(counties))
+        data=[]
+        for county in counties:
+            item = {
+                'id':county.id,
+                'county':county.name,
+            }
+            data.append(item)
+        return JsonResponse({'data':data})
 
 def ajax_return_wage(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'return_wage':
@@ -1383,16 +1381,24 @@ def my_service_setting_time(request):
 
 def my_service_setting_services(request):
     user = request.user
-    citys = City.objects.all()
-    counties = County.objects.all()
-    city_id = '4'
-    city = City.objects.get(id=city_id)
-    counties = counties.filter(city=City.objects.get(id=city_id))
-    county_name = '全區'
+    
     services = Service.objects.filter(is_increase_price=False).order_by('id')
     increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
+    user_services_ids = list(UserServiceShip.objects.filter(user=user).values_list("service", flat=True))
+    user_service_ships = UserServiceShip.objects.filter(user=user)
+
+    city_id = '4'
+    citys = City.objects.all()
+    city = City.objects.get(id=city_id)
+    counties = County.objects.filter(city=City.objects.get(id=city_id))
     
+    county_name = '全區'
+
+    user_service_locations = UserServiceLocation.objects.filter(user=user)
+    location_range = range(user_service_locations.count(),user_service_locations.count()+20)
+
     if request.method == 'POST' :
+        # care type and wage
         care_type_home = request.POST.get('care_type_home')
         care_type_hospital = request.POST.get('care_type_hospital')
         if care_type_home == 'home':
@@ -1419,11 +1425,15 @@ def my_service_setting_services(request):
             user.hospital_one_day_wage = int(hospital_full_day)
         user.save()
 
+        # locations
+        submit_user_locations = []
+
         locations_nums = request.POST.get('hidden_locations[]')
         if locations_nums != None:
             location_list = locations_nums.split(',')
         else:
             location_list = []
+
         for num in location_list:
             set_city = request.POST.get('city_'+str(num))
             set_county = request.POST.get('county_'+str(num))
@@ -1451,28 +1461,49 @@ def my_service_setting_services(request):
                 if set_tranfer_fee != '':
                     userlocation.tranfer_fee = int(set_tranfer_fee)
                 userlocation.save()
+            submit_user_locations.append(userlocation)
+        # print(submit_user_locations)
 
-        services_ids = request.POST.getlist('services[]')
-        for service_id in services_ids :
-            service = Service.objects.get(id=service_id)
-            if UserServiceShip.objects.filter(user=user,service=service).exists() != True:
-                UserServiceShip.objects.create(user=user,service=service)
+        for user_location in user_service_locations:
+            if user_location not in submit_user_locations:
+                user_location.delete()
 
-        increase_ids = request.POST.getlist('increases[]')
-        for increase_service_id in increase_ids:
-            increase_item = increase_services.get(id=increase_service_id)
-            set_increase_percent = request.POST.get(increase_item.name + 'percent')
-            if UserServiceShip.objects.filter(user=user,service=increase_item).exists():
-                userserviceship = UserServiceShip.objects.get(user=user,service=increase_item)
+        # services
+        services_ids = list(map(int, request.POST.getlist('services[]'))) 
+
+        for service in services:
+            if service.id in services_ids:
+                if not UserServiceShip.objects.filter(user=user,service=service).exists():
+                    UserServiceShip.objects.create(user=user,service=service)
             else:
-                userserviceship = UserServiceShip()
-            userserviceship.user = user
-            userserviceship.service = increase_item
-            userserviceship.increase_percent = float(set_increase_percent)
-            userserviceship.save()
+                if UserServiceShip.objects.filter(user=user,service=service).exists():
+                    UserServiceShip.objects.filter(user=user,service=service).delete()
+
+        increase_ids = list(map(int, request.POST.getlist('increases[]')))
+        for increase_service in increase_services:
+            if increase_service.id in increase_ids:
+                set_increase_percent = request.POST.get(increase_service.name + 'percent')
+
+                if UserServiceShip.objects.filter(user=user,service=increase_service).exists():
+                    userserviceship = UserServiceShip.objects.get(user=user,service=increase_service)
+                else:
+                    userserviceship = UserServiceShip()
+                    userserviceship.user = user
+                    userserviceship.service = increase_service
+                userserviceship.increase_percent = float(set_increase_percent)
+                userserviceship.save()
+            else:
+                if UserServiceShip.objects.filter(user=user,service=increase_service).exists():
+                    UserServiceShip.objects.filter(user=user,service=increase_service).delete()
 
         return redirect('my_service_setting_services')
-    return render(request, 'web/my/my_service_setting_services.html',{'user':user, 'services':services,'increase_services':increase_services, 'citys':citys,'counties':counties,'cityName':city,'county_name':county_name})
+
+    return render(request, 'web/my/my_service_setting_services.html',
+                    {
+                        'user':user, 
+                        'services':services,'increase_services':increase_services,'user_services_ids':user_services_ids,'user_service_ships':user_service_ships,
+                        'citys':citys,'counties':counties,'cityName':city,'county_name':county_name, 'user_service_locations':user_service_locations, 'location_range':location_range,
+                    })
 
 def my_service_setting_about(request):
     user = request.user
