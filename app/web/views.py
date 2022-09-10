@@ -1552,7 +1552,7 @@ def my_service_setting_about(request):
     form = UserLicenseImageForm()
     userform = UserImageForm()
     # increase_service_ships = UserServiceShip.objects.filter(user=servant).order_by('service')[:4]
-    if request.method == 'POST':     
+    if request.method == 'POST':
         license_id = request.POST.get('licenseId')
         if license_id != None:
             print(type(license_id))
@@ -1576,9 +1576,10 @@ def my_service_setting_about(request):
             userLicenseShipImage.license = License.objects.get(id=license_id)
             userLicenseShipImage.save()
 
-        about_me = request.POST.get('about_me')
-        user.about_me = about_me
-        user.save()
+        if request.POST.get('about_me')!= None:
+            about_me = request.POST.get('about_me')
+            user.about_me = about_me
+            user.save()
 
         userform = UserImageForm(request.POST or None, request.FILES or None, instance=user)
         if userform.is_valid():
