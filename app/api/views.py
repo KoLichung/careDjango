@@ -165,6 +165,8 @@ class MessageViewSet(viewsets.GenericViewSet,
                     queryset[i].message_is_mine = True
                 if queryset[i].case != None:
                     queryset[i].orders = Order.objects.filter(case=queryset[i].case)
+                if queryset[i].case != None and queryset[i].is_this_message_only_case:
+                    queryset[i].case_detail = queryset[i].case
             return queryset
         return Response({'message': "have no authority"})
 

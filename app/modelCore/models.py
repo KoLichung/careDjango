@@ -756,6 +756,7 @@ class Message(models.Model):
     content = models.TextField(default='', blank = True, null=True)
     create_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
 
+    image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
     is_read_by_other_side = models.BooleanField(default=False)
 
 class SystemMessage(models.Model):

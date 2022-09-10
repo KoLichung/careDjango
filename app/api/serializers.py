@@ -224,6 +224,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     message_is_mine = serializers.BooleanField(default=False)
     order = OrderSerializer(read_only=True)
+    case_detail = CaseSerializer(read_only=True)
     class Meta:
         model = Message
         fields = '__all__'
