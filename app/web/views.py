@@ -1327,42 +1327,67 @@ def become_carer(request):
 
 def my_service_setting_time(request):
     user = request.user
-    languages = Language.objects.all()
     
+    languages = Language.objects.all()
+    user_languages = UserLanguage.objects.filter(user=user)
+    user_language_ids = list(user_languages.values_list('language',flat=True))
+
+    user_weekday_times = UserWeekDayTime.objects.filter(user=user)
+    user_weekdays = list(UserWeekDayTime.objects.filter(user=user).values_list('weekday',flat=True))
+
     if request.method == 'POST':
         gender = request.POST.get('gender')
-        is_continuous_time = request.POST.get('is_continuous_time') 
         if gender != None:
             user.gender = gender
+        
+        is_continuous_time = request.POST.get('is_continuous_time') 
         if is_continuous_time == 'True':
             user.is_continuous_time = True
         else:
             user.is_continuous_time = False
+
+        user.save()
+
+        # handle weekdays
         weekday_id_list = request.POST.getlist('weekdays[]')
         weekday_str_list = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']
         weekday_list = []
         for num in weekday_id_list:
             weekday_list.append(int(num))
+        
         weekday_list.sort()
         for i in weekday_list:
             start_time = request.POST.get(weekday_str_list[int(i)][:3]+'_start_time')
             end_time = request.POST.get(weekday_str_list[int(i)][:3]+'_end_time')
-            start_time = start_time.split(':')
-            end_time = end_time.split(':')
-            start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
-            end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
+            
+            start_time_hour = int(start_time.split(':')[0])
+            start_time_min = int(start_time.split(':')[1])
+
+            end_time_hour = int(end_time.split(':')[0])
+            end_time_min = int(end_time.split(':')[1])
+
             if UserWeekDayTime.objects.filter(user=user,weekday=str(i)).exists():
                 userweekdaytime = UserWeekDayTime.objects.get(user=user,weekday=str(i))
             else:
                 userweekdaytime = UserWeekDayTime()
             userweekdaytime.user = user
             userweekdaytime.weekday = str(i)
-            userweekdaytime.start_time = start_time_int
-            userweekdaytime.end_time = end_time_int
+            userweekdaytime.start_time_hour = start_time_hour
+            userweekdaytime.start_time_min = start_time_min
+            userweekdaytime.end_time_hour = end_time_hour
+            userweekdaytime.end_time_min = end_time_min
             userweekdaytime.save()
+        
+        for user_weekday_time in user_weekday_times:
+            if user_weekday_time.weekday not in weekday_id_list:
+                user_weekday_time.delete()
 
-        language_idlist = request.POST.getlist('languages[]')
-        for language_id in language_idlist:
+
+        # handle languages
+        selected_languages = []
+        language_ids = request.POST.getlist('languages[]')
+
+        for language_id in language_ids:
             language = Language.objects.get(id=language_id)
             if UserLanguage.objects.filter(user=user,language=language).exists():
                 userlanguage = UserLanguage.objects.get(user=user,language=language)
@@ -1375,9 +1400,19 @@ def my_service_setting_time(request):
             if language_id == '8':
                 userlanguage.remark = request.POST.get('lan_other')
             userlanguage.save()
-            return redirect('my_service_setting_time')
+            selected_languages.append(language)
+        
+        for user_language in user_languages:
+            if user_language.language not in selected_languages:
+                user_language.delete()
 
-    return render(request, 'web/my/my_service_setting_time.html',{'user':user, 'languages':languages})
+        return redirect('my_service_setting_time')
+
+    return render(request, 'web/my/my_service_setting_time.html',{
+        'user':user, 
+        'languages':languages, 'user_languages':user_languages, 'user_language_ids':user_language_ids,
+        'user_weekday_times':user_weekday_times, 'user_weekdays':user_weekdays,
+        })
 
 def my_service_setting_services(request):
     user = request.user

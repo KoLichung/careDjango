@@ -28,7 +28,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(UserWeekDayTime)
 class UserWeekDayTimeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'weekday', 'start_time', 'end_time')
+    list_display = ('id', 'user', 'weekday')
 
 @admin.register(UserServiceShip)
 class UserServiceShipAdmin(admin.ModelAdmin):

@@ -204,8 +204,10 @@ class UserWeekDayTime(models.Model):
         ('6', 'Saturday'),
     ]
     weekday = models.CharField(max_length=1, choices=WEEKDAY_CHOICES,)
-    start_time = models.FloatField(default=0, blank=True, null=True)
-    end_time = models.FloatField(default=24, blank=True, null=True)
+    start_time_hour = models.IntegerField(default=8, blank=True, null=True)
+    start_time_min = models.IntegerField(default=0, blank=True, null=True)
+    end_time_hour = models.IntegerField(default=17, blank=True, null=True)
+    end_time_min = models.IntegerField(default=0, blank=True, null=True)
 
 class UserServiceShip(models.Model):
     user = models.ForeignKey(

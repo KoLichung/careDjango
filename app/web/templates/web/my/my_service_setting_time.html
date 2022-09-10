@@ -27,88 +27,227 @@
 
                 <div class="col-9 my-2 " style="display: flex;">
                   <label class="custom-radio-parent">男
-                    <input type="radio" checked="checked" name="gender" value="M">
+                    <input type="radio"  name="gender" value="M"
+                      {% if user.gender == 'M' %}
+                        checked="checked"
+                      {% endif %}
+                    >
                     <span class="checkmark"></span>
                   </label>
                   <label class="custom-radio-parent">女
-                    <input type="radio" name="gender" value="F">
+                    <input type="radio" name="gender" value="F"
+                      {% if user.gender == 'F' %}
+                        checked="checked"
+                      {% endif %}
+                    >
                     <span class="checkmark"></span>
                   </label>
                 </div>
                 <p class="custom-card-font mt-4"><strong>服務時段</strong></p>
                 <div class="form-check">
-                  <input class="form-check-input" id="flexCheckDefault" type="checkbox" name="is_continuous_time" value="True" checked/>
-                  <label class="h6" for="flexCheckDefault">任何時段皆可</label>
+                  <input class="form-check-input" id="flexCheckDefault" type="checkbox" name="is_continuous_time" value="True" 
+                    {% if user.is_continuous_time %}
+                      checked
+                    {% endif %}
+                  />
+                  <label class="h6" for="flexCheckDefault">任何時段皆可(勾選任何時段，無需設置其他時段)</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="1"/>
-                  <label class="h6" for="weekdays[]">星期一，時段：</label>
-                  <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  <span>～</span>
-                  <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% if '1' in user_weekdays %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="1" checked/>
+                    <label class="h6" for="weekdays[]">星期一，時段：</label>
+                    {% for user_weekday_time in user_weekday_times %}
+                      {% if user_weekday_time.weekday == '1'%}
+                        <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                          value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
+                        <span>～</span>
+                        <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                          value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
+                      {% endif %}
+                    {% endfor %}                    
+                  {% else %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="1"/>
+                    <label class="h6" for="weekdays[]">星期一，時段：</label>
+                    <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <span>～</span>
+                    <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% endif %}
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="2"/>
-                  <label class="h6" for="weekdays[]">星期二，時段：</label>
-                  <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  <span>～</span>
-                  <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% if '2' in user_weekdays %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="2" checked/>
+                    <label class="h6" for="weekdays[]">星期二，時段：</label>
+                    {% for user_weekday_time in user_weekday_times %}
+                      {% if user_weekday_time.weekday == '2'%}
+                        <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                          value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
+                        <span>～</span>
+                        <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                          value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
+                      {% endif %}
+                    {% endfor %}   
+                  {% else %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="2"/>
+                    <label class="h6" for="weekdays[]">星期二，時段：</label>
+                    <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <span>～</span>
+                    <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% endif %}
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="3"/>
-                  <label class="h6" for="weekdays[]">星期三，時段：</label>
-                  <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  <span>～</span>
-                  <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% if '3' in user_weekdays %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="3" checked/>
+                    <label class="h6" for="weekdays[]">星期三，時段：</label>
+                    {% for user_weekday_time in user_weekday_times %}
+                      {% if user_weekday_time.weekday == '3'%}
+                        <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                          value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
+                        <span>～</span>
+                        <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                          value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
+                      {% endif %}
+                    {% endfor %}   
+                  {% else %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="3"/>
+                    <label class="h6" for="weekdays[]">星期三，時段：</label>
+                    <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <span>～</span>
+                    <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% endif %}
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="4"/>
-                  <label class="h6" for="weekdays[]">星期四，時段：</label>
-                  <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  <span>～</span>
-                  <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% if '4' in user_weekdays %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="4" checked/>
+                    <label class="h6" for="weekdays[]">星期四，時段：</label>
+                    {% for user_weekday_time in user_weekday_times %}
+                      {% if user_weekday_time.weekday == '4'%}
+                        <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                          value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
+                        <span>～</span>
+                        <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                          value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
+                      {% endif %}
+                    {% endfor %}   
+                  {% else %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="4"/>
+                    <label class="h6" for="weekdays[]">星期四，時段：</label>
+                    <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <span>～</span>
+                    <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% endif %}
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="5"/>
-                  <label class="h6" for="weekdays[]">星期五，時段：</label>
-                  <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  <span>～</span>
-                  <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% if '5' in user_weekdays %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="5" checked/>
+                    <label class="h6" for="weekdays[]">星期五，時段：</label>
+                    {% for user_weekday_time in user_weekday_times %}
+                      {% if user_weekday_time.weekday == '5'%}
+                        <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                          value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
+                        <span>～</span>
+                        <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                          value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
+                      {% endif %}
+                    {% endfor %}   
+                  {% else %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="5"/>
+                    <label class="h6" for="weekdays[]">星期五，時段：</label>
+                    <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <span>～</span>
+                    <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% endif %}
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="6"/>
-                  <label class="h6" for="weekdays[]">星期六，時段：</label>
-                  <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  <span>～</span>
-                  <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% if '6' in user_weekdays %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="6" checked/>
+                    <label class="h6" for="weekdays[]">星期六，時段：</label>
+                    {% for user_weekday_time in user_weekday_times %}
+                      {% if user_weekday_time.weekday == '6'%}
+                        <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                          value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
+                        <span>～</span>
+                        <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                          value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
+                      {% endif %}
+                    {% endfor %}   
+                  {% else %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="6"/>
+                    <label class="h6" for="weekdays[]">星期六，時段：</label>
+                    <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <span>～</span>
+                    <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% endif %}
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="0"/>
-                  <label class="h6" for="weekdays[]">星期日，時段：</label>
-                  <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                  <span>～</span>
-                  <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                </div>                   
+                  {% if '0' in user_weekdays %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="0" checked/>
+                      <label class="h6" for="weekdays[]">星期日，時段：</label>
+                      {% for user_weekday_time in user_weekday_times %}
+                        {% if user_weekday_time.weekday == '0'%}
+                          <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                            value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
+                          <span>～</span>
+                          <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                            value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
+                        {% endif %}
+                      {% endfor %}   
+                  {% else %}
+                    <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="0"/>
+                    <label class="h6" for="weekdays[]">星期日，時段：</label>
+                    <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <span>～</span>
+                    <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  {% endif %}
+                </div>
+
                 <p class="custom-card-font mt-5"><strong>可溝通語言</strong></p>
                 <div>
                   {% for language in languages %}
                     {% if language.id == 5 %}
                       <div class="form-check form-check-inline">
-                        <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}" />
+                        <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}"
+                          {% if language.id in user_language_ids%}
+                            checked
+                          {% endif %}
+                        />
                         <label class="h6" for="aboriginal">原住民語，族語名：</label>
-                        <input class="service-setting-input " id="lan-aboriginal" name="lan_aboriginal" type="text" placeholder="" />
+                        {% if language.id in user_language_ids%}
+                          {% for user_language in user_languages %}
+                            {% if user_language.language == language %}
+                              <input class="service-setting-input" id="lan-aboriginal" name="lan_aboriginal" type="text" placeholder="" value={{user_language.remark}} />
+                            {% endif %}
+                          {% endfor %}
+                        {% else %}
+                          <input class="service-setting-input " id="lan-aboriginal" name="lan_aboriginal" type="text" placeholder="" />
+                        {% endif %}
                       </div>
                     {% elif language.id == 8 %}
                       <div class=" form-check-inline">
-                        <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}" />
+                        <input class="form-check-input mt-2" id="aboriginal" name="languages[]" type="checkbox" value="{{language.id}}"
+                          {% if language.id in user_language_ids%}
+                            checked
+                          {% endif %}
+                        />
                         <label class="h6" for="aboriginal">其他，請填寫：</label>
-                        <input class="service-setting-input" id="lan-other" name="lan_other" type="text" placeholder="" />
+                        {% if language.id in user_language_ids%}
+                          {% for user_language in user_languages %}
+                            {% if user_language.language == language %}
+                              <input class="service-setting-input" id="lan-other" name="lan_other" type="text" placeholder="" value={{user_language.remark}} />
+                            {% endif %}
+                          {% endfor %}
+                        {% else %}
+                          <input class="service-setting-input" id="lan-other" name="lan_other" type="text" placeholder="" />
+                        {% endif %}
                       </div>
                     {% else %}
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="chinese" name="languages[]" type="checkbox" value="{{language.id}}" />
-                      <label class="h6" for="chinese">{{language}}</label>                
-                    </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="chinese" name="languages[]" type="checkbox" value="{{language.id}}" 
+                          {% if language.id in user_language_ids%}
+                            checked
+                          {% endif %}
+                        />
+                        <label class="h6" for="chinese">{{language}}</label>                
+                      </div>
                     {% endif %}
                   {% endfor %}
                 </div>
