@@ -19,7 +19,16 @@
                 </tr>
               </thead>
               <tbody class="list">
-                <tr>
+                {% for user in users %}
+                  <tr>
+                    <td>{{user.name}}</td>
+                    <td>{{user.phone}}</td>
+                    <td class="alnright">                    
+                      <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_detail'%}?user={{user.id}}">查看</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+                <!-- <tr>
                   <td>王小明</td>
                   <td>0912345678</td>
                   <td class="alnright">                    
@@ -32,14 +41,7 @@
                   <td class="alnright">                    
                     <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_detail'%}">查看</a>
                   </td>
-                </tr>
-                <tr>
-                  <td>王小明</td>
-                  <td>0912345678</td>
-                  <td class="alnright">                    
-                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_detail'%}">查看</a>
-                  </td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </div>

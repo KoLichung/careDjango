@@ -1,17 +1,21 @@
 from django.shortcuts import render,redirect
 from django.core.paginator import Paginator
-
+import urllib
 import datetime
 from modelCore.forms import BlogPostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
-from modelCore.models import OrderIncreaseService, MonthSummary
+from modelCore.models import OrderIncreaseService, MonthSummary ,User
 
 def all_cases(request):
     cases = Case.objects.all()
+    state = request.GET.get('state')
+    if state != None:
+        cases = cases.filter(state=state)
     return render(request, 'backboard/all_cases.html',{'cases':cases})
 
 def all_members(request):
-    return render(request, 'backboard/all_members.html')
+    users = User.objects.filter(is_staff=False)
+    return render(request, 'backboard/all_members.html',{'users':users})
 
 def bills(request):
     summarys = MonthSummary.objects.all().order_by('-id')[:2]
@@ -23,16 +27,18 @@ def bills(request):
 def case_detail(request):
     case_id = request.GET.get('case')
     case = Case.objects.get(id=case_id)
-    servant = case.servant
     order = Order.objects.get(case=case)
     review = Review.objects.get(case=case)
-
     order_increase_services = OrderIncreaseService.objects.filter(order=order)
 
-    return render(request, 'backboard/case_detail.html',{'case':case,'review':review,'order':order, 'order_increase_services':order_increase_services})
+    return render(request, 'backboard/case_detail.html',{'order_increase_services':order_increase_services, 'case':case,'review':review,'order':order, 'order_increase_services':order_increase_services})
 
 def member_detail(request):
-    return render(request, 'backboard/member_detail.html')
+    user_id = request.GET.get('user')
+    user = User.objects.get(id=user_id)
+    offend_orders = Order.objects.filter(user=user)
+    take_orders = Order.objects.filter(servant=user)
+    return render(request, 'backboard/member_detail.html',{'user':user,'offend_orders':offend_orders,'take_orders':take_orders})
 
 def all_blogs(request):
     if request.GET.get('delete_id') != None:
@@ -133,4 +139,22 @@ def member_data_review(request):
     return render(request, 'backboard/member_data_review.html')
 
 def refunds(request):
-    return render(request, 'backboard/refunds.html')
+    case_id = request.GET.get('case')
+    case = Case.objects.get(id=case_id)
+    order = Order.objects.get(case=case)
+    if request.method == 'POST':
+        refund_money = request.POST.get('refund_money')
+        if refund_money != '' and refund_money != None:
+            order.refund_money = int(refund_money)
+        order.refund_apply_date = datetime.datetime.now()
+        order.save()
+        return redirect_params('case_detail',{'case':case_id})
+        
+    return render(request, 'backboard/refunds.html',{'order':order})
+
+def redirect_params(url, params=None):
+    response = redirect(url)
+    if params:
+        query_string = urllib.parse.urlencode(params)
+        response['Location'] += '?' + query_string
+    return response
