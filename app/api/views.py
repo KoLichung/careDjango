@@ -158,7 +158,7 @@ class MessageViewSet(viewsets.GenericViewSet,
         chatroom= self.request.query_params.get('chatroom')
         user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
         if user.id in user_ids:
-            queryset = self.queryset.filter(chatroom=chatroom).order_by('-id')
+            queryset = self.queryset.filter(chatroom=chatroom).order_by('id')
 
             for i in range(len(queryset)):
                 if queryset[i].user == user:
