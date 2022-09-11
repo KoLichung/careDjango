@@ -121,11 +121,13 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
             other_side_user = ChatroomUserShip.objects.filter(chatroom=queryset[i]).filter(~Q(user=self.request.user)).first().user
             queryset[i].other_side_image_url = other_side_user.image
             queryset[i].other_side_name = other_side_user.name
-            print(other_side_user.name)
+            # print(other_side_user.name)
             if Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
-                print(Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count())
+                # print(Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count())
                 queryset[i].last_message = Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).order_by('-id').first().content[0:15]
-            queryset[i].unread_num = 1
+            
+            chat_rooms_not_read_messages = Message.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
+            queryset[i].unread_num = chat_rooms_not_read_messages.count()
 
         return queryset
 
@@ -160,6 +162,9 @@ class MessageViewSet(viewsets.GenericViewSet,
         if user.id in user_ids:
             queryset = self.queryset.filter(chatroom=chatroom).order_by('id')
 
+            #update is_read_by_other_side
+            queryset.filter(~Q(user=user)).update(is_read_by_other_side=True)
+
             for i in range(len(queryset)):
                 if queryset[i].user == user:
                     queryset[i].message_is_mine = True
@@ -167,6 +172,7 @@ class MessageViewSet(viewsets.GenericViewSet,
                     queryset[i].orders = Order.objects.filter(case=queryset[i].case)
                 if queryset[i].case != None and queryset[i].is_this_message_only_case:
                     queryset[i].case_detail = queryset[i].case
+
             return queryset
         return Response({'message': "have no authority"})
 

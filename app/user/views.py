@@ -1,4 +1,5 @@
-from modelCore.models import UserWeekDayTime ,Language ,UserLanguage ,County, UserServiceLocation ,Service ,UserServiceShip ,License ,UserLicenseShipImage
+from modelCore.models import UserWeekDayTime ,Language ,UserLanguage ,County, UserServiceLocation ,Service ,UserServiceShip ,License 
+from modelCore.models import ChatroomUserShip, UserLicenseShipImage, Message
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
@@ -9,6 +10,7 @@ from rest_framework import viewsets, mixins
 
 from user.serializers import UserSerializer, AuthTokenSerializer, UpdateUserSerializer ,GetUserSerializer, UserLicenceImageSerializer
 from api import serializers
+from django.db.models import Q
 
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system"""
@@ -33,8 +35,17 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         """Retrieve and return authentication user"""
-        if self.request.user.line_id != None and self.request.user.line_id != '':
-            self.request.user.is_gotten_line_id = True
+        # if self.request.user.line_id != None and self.request.user.line_id != '':
+        #     self.request.user.is_gotten_line_id = True
+        
+        user = self.request.user
+        
+        #total_unread_num
+        #找出有我的 chatrooms, 找出 unread messages id__in chatroom_ids, count()
+
+        chatroom_ids = list(ChatroomUserShip.objects.filter(user=user).values_list('chatroom', flat=True))
+        total_not_read_messages = Message.objects.filter(id__in=chatroom_ids,is_read_by_other_side=False).filter(~Q(user=user))
+        user.total_unread_num = total_not_read_messages.count()
 
         return self.request.user
 
