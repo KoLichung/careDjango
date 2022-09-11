@@ -42,9 +42,8 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
         
         #total_unread_num
         #找出有我的 chatrooms, 找出 unread messages id__in chatroom_ids, count()
-
         chatroom_ids = list(ChatroomUserShip.objects.filter(user=user).values_list('chatroom', flat=True))
-        total_not_read_messages = Message.objects.filter(id__in=chatroom_ids,is_read_by_other_side=False).filter(~Q(user=user))
+        total_not_read_messages = Message.objects.filter(chatroom__in=chatroom_ids,is_read_by_other_side=False).filter(~Q(user=user))
         user.total_unread_num = total_not_read_messages.count()
 
         return self.request.user
