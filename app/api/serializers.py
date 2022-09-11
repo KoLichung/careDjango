@@ -222,13 +222,13 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class MessageSerializer(serializers.ModelSerializer):
-    message_is_mine = serializers.BooleanField(default=False)
+    message_is_mine = serializers.BooleanField(read_only=True,default=False)
     order = OrderSerializer(read_only=True)
     case_detail = CaseSerializer(read_only=True)
     class Meta:
         model = Message
         fields = '__all__'
-        read_only_fields = ('id',)
+        read_only_fields = ('id','user','chatroom','is_this_message_only_case','is_read_by_other_side')
 
 class ChatRoomSerializer(serializers.ModelSerializer):
     other_side_image_url = serializers.CharField(default='')

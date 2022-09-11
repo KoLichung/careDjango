@@ -173,10 +173,13 @@ class MessageViewSet(viewsets.GenericViewSet,
     def create(self, request, *args, **kwargs):
         user = self.request.user
         chatroom_id = self.request.query_params.get('chatroom')
-        chatroom = ChatRoom.objects.get(id=chatroom_id)
-        user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
         case = request.data.get('case')
         content = request.data.get('content')
+        image = request.data.get('image')
+
+        chatroom = ChatRoom.objects.get(id=chatroom_id)
+        user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
+
         if user.id in user_ids:
             message = Message()
             message.chatroom = chatroom
@@ -185,8 +188,14 @@ class MessageViewSet(viewsets.GenericViewSet,
                 message.case = Case.objects.get(id=case)
                 message.order = Order.objects.filter(case=message.case).order_by('-created_at')[0]
                 message.is_this_message_only_case = True
-            else:
+            
+            if content != None:
                 message.content = content
+            
+            # upload image
+            if image != None:
+                message.image = image
+
             message.save()
             chatroom.update_at = datetime.datetime.now()
             chatroom.save()
