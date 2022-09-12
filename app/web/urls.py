@@ -54,6 +54,11 @@ urlpatterns = [
     path('ajax_return_wage', views.ajax_return_wage, name = 'ajax_return_wage'),
     path('ajax_cal_rate', views.ajax_cal_rate, name = 'ajax_cal_rate'),
     path('ajax_post_image', views.ajax_post_image, name = 'ajax_post_image'),
+
+    path('about', views.about, name = 'about'),
+    path('privacy_policy', views.privacy_policy, name = 'privacy_policy'),
+    path('terms_of_service', views.terms_of_service, name = 'terms_of_service'),
+
   
 ]
 
