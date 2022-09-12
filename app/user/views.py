@@ -322,18 +322,17 @@ class UserLicenseImagesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
         serializer = self.get_serializer(userlicences,many=True)
         return Response(serializer.data)
 
-class UpdateUserInfoImage(APIView):
+class UpdateUserBackgroundImage(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def put(self, request, format=None):
         user = self.request.user
-        about_me = request.data.get('about_me')
+
         background_image = request.data.get('background_image')
-        if about_me != None:
-            user.about_me = about_me
         if background_image != None:
             user.background_image = background_image
+            
         user.save()
         serializer = GetUserSerializer(user)
         return Response(serializer.data)

@@ -17,6 +17,6 @@ urlpatterns = [
     path('user_locations', views.UserLocationsViewSet.as_view()),
     path('user_services', views.UserServicesViewSet.as_view()),
     path('user_license_images', views.UserLicenseImagesViewSet.as_view()),
-    path('update_user_info_images', views.UpdateUserInfoImage.as_view()),
+    path('update_user_background_image', views.UpdateUserBackgroundImage.as_view()),
     path('update_user_images', views.UpdateUserImage.as_view()),
 ]
