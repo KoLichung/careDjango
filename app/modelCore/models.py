@@ -330,7 +330,7 @@ class Case(models.Model):
     care_type = models.CharField(max_length=10, choices=CARETYPE_CHOICES,default='')
 
     name = models.CharField(max_length= 100, blank=True, null=True)
-
+    
     MALE = 'M'
     FEMALE = 'F'
     GENDER_CHOICES = [
@@ -370,7 +370,7 @@ class Case(models.Model):
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True, blank=True, null=True)
-
+    taken_at = models.DateTimeField(auto_now=True, blank=True, null=True)
     emergencycontact_name = models.CharField(max_length=100,blank=True, null=True)
     emergencycontact_relation = models.CharField(max_length=100,blank=True, null=True)
     emergencycontact_phone = models.CharField(max_length=10,blank=True, null=True)
