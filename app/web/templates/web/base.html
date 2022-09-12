@@ -197,14 +197,12 @@
             <!-- Grid column 關於 -->
             <div class="col-md-2 col-lg-2 col-xl-2 mb-3 ml-5">
               <h6 class="title-font pb-2" style="color:white">關於</h6>
-            
-              <p class="custom-footer-link" >
-                <a class=" " href="#!" style="color: white;" >關於我們</a>
-              </p>
-
-              <p class="custom-footer-link">
-                <a class="" href="#!" style="color: white;">最新資訊</a>
-              </p>
+              <ul style="list-style: none; padding:0px;">
+                <li><a class="" href="{% url 'about' %}" style="color: white; text-decoration: none;" >關於我們</a></li>
+                <li><a class="" href="{% url 'news' %}" style="color: white; text-decoration: none;">最新資訊</a></li>
+                <li><a class="" href="{% url 'terms_of_service' %}" style="color: white; text-decoration: none;" >使用條款</a></li>
+                <li><a class="" href="{% url 'privacy_policy' %}" style="color: white; text-decoration: none;" >隱私權政策</a></li>
+              </ul>
             </div>
               
             <!-- Grid column 客服時間 -->
