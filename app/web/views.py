@@ -60,7 +60,6 @@ def index(request):
 
         return render(request, 'web/index.html',{'dict':dict})
 
-
 def ajax_post_image(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
         print(request.files)

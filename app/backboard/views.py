@@ -4,18 +4,34 @@ import urllib
 import datetime
 from modelCore.forms import BlogPostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
-from modelCore.models import OrderIncreaseService, MonthSummary ,User
+from modelCore.models import OrderIncreaseService, MonthSummary ,User ,UserLicenseShipImage ,License
 
 def all_cases(request):
     cases = Case.objects.all()
     state = request.GET.get('state')
     if state != None:
         cases = cases.filter(state=state)
-    return render(request, 'backboard/all_cases.html',{'cases':cases})
+    paginator = Paginator(cases, 10)
+    if request.GET.get('page') != None:
+        page_number = request.GET.get('page') 
+    else:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+
+    page_obj.adjusted_elided_pages = paginator.get_elided_page_range(page_number)
+    return render(request, 'backboard/all_cases.html',{'cases':page_obj})
 
 def all_members(request):
     users = User.objects.filter(is_staff=False)
-    return render(request, 'backboard/all_members.html',{'users':users})
+    paginator = Paginator(users, 10)
+    if request.GET.get('page') != None:
+        page_number = request.GET.get('page') 
+    else:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+
+    page_obj.adjusted_elided_pages = paginator.get_elided_page_range(page_number)
+    return render(request, 'backboard/all_members.html',{'users':page_obj})
 
 def bills(request):
     summarys = MonthSummary.objects.all().order_by('-id')[:2]
@@ -136,7 +152,28 @@ def new_edit_category(request):
     return render(request, 'backboard/new_edit_category.html')
 
 def member_data_review(request):
-    return render(request, 'backboard/member_data_review.html')
+    user_id = request.GET.get('user')
+    user = User.objects.get(id=user_id)
+    licences = License.objects.all().order_by('id')[:3]
+    for license in licences:
+        if UserLicenseShipImage.objects.filter(user=user, license=license).count() == 0:
+            UserLicenseShipImage.objects.create(user=user,license=license)
+    userLicenseImages = UserLicenseShipImage.objects.filter(user=user).order_by('license')[:3]
+    if request.method == 'POST' :
+        if 'post' in request.POST:
+            if request.POST.get('checkIsServant') == 'True':
+                user.is_servant_passed = True
+            user.save()
+            for userLicenseImage in userLicenseImages:
+                checkLicenseImage = request.POST.get('check'+str(userLicenseImage.license.id))
+                if checkLicenseImage == 'True':
+                    userLicenseImage.isPassed = True
+                    userLicenseImage.save()
+            return redirect_params('member_detail',{'user':user.id})
+        else:
+            return redirect_params('member_detail',{'user':user.id})
+
+    return render(request, 'backboard/member_data_review.html',{'user':user,'userLicenseImages':userLicenseImages})
 
 def refunds(request):
     case_id = request.GET.get('case')

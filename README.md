@@ -185,6 +185,12 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220912
+1.退款頁案件編號 case id
+2.後台pager
+3.會員資訊 服務者審核通過
+4.資料審核頁
+
 20220908
 1.訂單計算金額有 bug(訂單時間重複?!)
 2.修正 my_service_setting 的 bug
