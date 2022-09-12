@@ -1447,15 +1447,15 @@ def my_service_setting_services(request):
         hospital_full_day = request.POST.get('hospital_full_day')
         if home_hour != None and home_hour != '':
             user.home_hour_wage = int(home_hour)
-        if home_half_day != ('' or None):
+        if home_half_day != None and home_half_day != '':
             user.home_half_day_wage = int(home_half_day)
-        if home_full_day != ('' or None):
+        if home_full_day != None and home_full_day != '':
             user.home_one_day_wage = int(home_full_day)
-        if hospital_hour != ('' or None):
+        if hospital_hour != None and hospital_hour != '':
             user.hospital_hour_wage = int(hospital_hour)
-        if hospital_half_day != ('' or None):
+        if hospital_half_day != None and hospital_half_day != '':
             user.hospital_half_day_wage = int(hospital_half_day)
-        if hospital_full_day != ('' or None):
+        if hospital_full_day != None and hospital_full_day != '':
             user.hospital_one_day_wage = int(hospital_full_day)
         user.save()
 
