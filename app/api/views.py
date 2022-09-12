@@ -979,6 +979,11 @@ class CreateServantOrder(APIView):
         serializer = self.serializer_class(order)
         return Response(serializer.data)
 
+class BlogCategoryViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin):
+    queryset = BlogCategory.objects.all()
+    serializer_class = serializers.BlogCategorySerializer
+
 class BlogPostViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin):
@@ -993,9 +998,11 @@ class BlogPostViewSet(viewsets.GenericViewSet,
             queryset = self.queryset.filter(id__in=post_ids,state="publish").order_by('-publish_date')
         else:
             queryset = self.queryset.filter(state="publish").order_by('-publish_date')
+
         for i in range(len(queryset)):
             ids = list(BlogPostCategoryShip.objects.filter(post=queryset[i]).values_list('category', flat=True))
             queryset[i].categories = BlogCategory.objects.filter(id__in=ids)
+            
         return queryset
 
     def retrieve(self, request, *args, **kwargs):

@@ -2231,3 +2231,12 @@ def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]
     return len([day for day in days if day.weekday() in weekdays])
+
+def about(request):
+    return render(request, 'web/about.html')
+
+def privacy_policy(request):
+    return render(request, 'web/privacy_policy.html')
+
+def terms_of_service(request):
+    return render(request, 'web/terms_of_service.html')
