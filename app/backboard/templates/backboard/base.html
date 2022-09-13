@@ -150,13 +150,13 @@
               <div class="d-flex align-items-center"><span class="text-900">Care168照護</span></div>
             </a>
             <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <a class="nav-link pe-0 ps-2" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="material-icons md-24">account_circle</span>
                 </a>
-              </li>
+              </li> -->
               <li class="nav-item">
-                <a class="nav-link pe-0 ps-2 mb-1" id="navbarLogOut" role="button" href="*">登出</a>
+                <a class="nav-link pe-0 ps-2 mb-1" id="navbarLogOut" role="button" href="{% url 'logout' %}">登出</a>
               </li>
             </ul>
           </nav>

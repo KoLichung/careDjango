@@ -5,6 +5,25 @@ import datetime
 from modelCore.forms import BlogPostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
 from modelCore.models import OrderIncreaseService, MonthSummary ,User ,UserLicenseShipImage ,License
+from django.contrib import auth
+from django.contrib.auth import authenticate
+
+def login(request):
+    if request.method == 'POST':
+        phone = request.POST['phone']
+        password = request.POST['password']
+        user = authenticate(request, phone=phone, password=password)
+        if user is not None:
+            auth.login(request, user)
+            return redirect('/backboard/all_cases')
+        else:
+            return redirect('/backboard/')
+
+    return render(request, 'backboard/login.html')
+
+def logout(request):
+    auth.logout(request)
+    return redirect('/backboard/')
 
 def all_cases(request):
     cases = Case.objects.all()
