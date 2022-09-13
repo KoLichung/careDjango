@@ -50,29 +50,35 @@
               <div class="mx-auto" style="border: 1.5px solid #CCADE9;border-radius: 6px;">
                 <!-- 文章連結 -->
                 <a class="custom-card-link" href="{% url 'news_detail' %}?blogpost={{blogpost.id}}">
-                  <div class="p-4 row" >
+                  
+                  <div class="p-4 row align-items-center" >
+
                   <div class=" col-xl-3 col-md-4 col-5">
-                    <div class="card mx-auto" >
+                    <div class="mx-auto" >
                       {% if blogpost.cover_image.url != None %}
-                        <img src="{{ blogpost.cover_image.url }}" style="width:200px;">
+                        <img src="{{ blogpost.cover_image.url }}" style="width:200px;" class="img-fluid rounded">
                       {% else %}
-                        <img src="{% static 'web/assets/img/new/Rectangle78.png' %}" style="width:200px;">
+                        <img src="{% static 'web/assets/img/new/Rectangle78.png' %}" style="width:200px;" class="img-fluid rounded">
                       {% endif %}
                       </div>
                   </div>
+
                   <div class=" col-7 col-md-8 col-xl-9">
                     <div class="row  justify-content-between">
+
                       <div class="col align-item-center">
-                        
                         <p class="news-date">{{blogpost.create_date.year}}/{{blogpost.create_date.month}}/{{blogpost.create_date.day}}</p>
                       </div>
+
                       <div class="col-auto align-item-center">
                         <button class="purple-border-tag">精選文章</button>
                       </div>
+
                     </div>
                     <p class="news-title">{{blogpost.title}}</p>
                     {% comment %} <p class="news-content">{{blogpost.body}}</p> {% endcomment %}
                   </div>
+                  
                   </div>
   
                 </a>

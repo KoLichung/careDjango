@@ -27,38 +27,63 @@
                 <div>
                   {% for licenseImageShip in licenseImageShips %}   
                     <form method="post" enctype="multipart/form-data">{% csrf_token %}
-                      <div class="row mt-2">
-                        <div class="col align-self-center">
-                          <span class="h6">
-                            {{licenseImageShip.license}}
-                            {% if licenseImageShip.license.remark %}
-                              <br><span class="sub-font">{{licenseImageShip.license.remark}}</span>
-                            {% endif %}
-                            {% if licenseImageShip.isPassed %}
-                              <br>
-                              {% if licenseImageShip.image %}
-                                <a href={{licenseImageShip.image.url}} > 文件圖片連結 </a>
+                    
+                        <div class="row mt-2 justify-content-between">
+
+                          <div class="col-sm-12 col-md-4 align-self-center">
+                            <span class="h6">
+                              {{licenseImageShip.license}}
+                              {% if licenseImageShip.license.remark %}
+                                <br><span class="sub-font">{{licenseImageShip.license.remark}}</span>
                               {% endif %}
-                              (通過審核)
-                            {% else %}
-                              <br>
-                              {% if licenseImageShip.image %}
-                                <a href={{licenseImageShip.image.url}} > 文件圖片連結 </a>
+                              {% if licenseImageShip.isPassed %}
+                                <br>
+                                {% if licenseImageShip.image %}
+                                  <a href={{licenseImageShip.image.url}} > 文件圖片連結 </a>
+                                {% endif %}
+                                (通過審核)
+                              {% else %}
+                                <br>
+                                {% if licenseImageShip.image %}
+                                  <a href={{licenseImageShip.image.url}} > 文件圖片連結 </a>
+                                {% endif %}
+                                (尚未通過審核)
                               {% endif %}
-                              (尚未通過審核)
-                            {% endif %}
-                          </span>
-                        </div>
-                        <div class="col-5 text-end align-self-center">
-                          <input type="hidden" id="licenseId" name="licenseId" value="{{licenseImageShip.license.id}}">
-                          <input type="hidden" id="userId" name="userId" value={{user}}>
-                          {{ form.user.as_hidden }}
-                          <input type="file" name="image" accept="image/*" id="id_image">
-                          <div class="text-end">
-                            <button class="small-purple-button" type="submit" ><span class="fas fa-plus-circle"></span>上傳照片</button>
+                            </span>
                           </div>
+  
+                          <div class="col-sm-12 col-md-8 align-self-center">
+                              
+                                <input type="hidden" id="licenseId" name="licenseId" value="{{licenseImageShip.license.id}}">
+                                <input type="hidden" id="userId" name="userId" value={{user}}>
+                                {{ form.user.as_hidden }}
+                                <!-- <input type="file" name="image" accept="image/*" id="id_image">  -->
+                                
+                                <div class="d-flex justify-content-end">
+                                  <div class="text-end">
+                                    <!-- 原本的 choose file -->
+                                    <input type="file" name="image" accept="image/*" id="id_image" style="padding-right: 0; margin-right: 0;">
+                                    
+                                    <!-- 美化過的 choose file -->
+                                    <!-- <label class="btn btn-info rounded-pill">
+                                      <input type="file" name="image" accept="image/*" id="id_image" style="display:none;">
+                                      選擇圖片
+                                    </label> -->
+                                    <!--  If you want to display the file name, you need to add a span between the label and the hidden input: 
+                                    <span id="file-selected"></span>. 
+                                    Then update the span on the change event: 
+                                    $('#file-upload').bind('change', function() { var fileName = ''; fileName = $(this).val(); $('#file-selected').html(fileName); }) -->
+  
+                                  </div>
+                                  <div class="text-end">
+                                    <button class="small-purple-button" type="submit" ><span class="fas fa-cloud-upload-alt"></span> 上傳</button>
+                                  </div>
+                                </div>
+                                
+                          </div>
+  
                         </div>
-                      </div>
+                      
                       <hr>
                     </form>
                   {% endfor %}
@@ -67,22 +92,38 @@
                 <p class="custom-card-font mt-5"><strong>關於我</strong></p>
                 <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="about_me" rows="3">{{user.about_me}}</textarea>
                 
-                <div class="row mt-5 ">
+                <div>
                   <form method="post" enctype="multipart/form-data">{% csrf_token %}
-                    <div class="col align-self-center">
-                      <span class="custom-card-font mt-5">
+                    
+                    <div class="row mt-5 justify-content-between">
+
+                      <div class="col-sm-12 col-md-4 align-self-center">
+                    
+                      <span class="custom-card-font">
                         <strong>上傳背景照片</strong>
                         {% if user.background_image %}
                           <br><a href={{user.background_image.url}} > 背景圖片連結 </a>
                         {% endif %}
                       </span>
+                      </div>
+
+                      <div class="col-sm-12 col-md-8 text-end align-self-center">
+                        <div class="d-flex justify-content-end">
+
+                        <div class="me-2">
+                          <input type="hidden" id="userId" name="userId" value={{user.phone}}>
+                          {{ userform.as_hidden }}
+                          <input type="file" name="background_image" accept="image/*" id="id_background_image">
+                        </div>
+  
+                        <div class="text-end">
+                          <button class="small-purple-button" type="submit" ><span class="fas fa-cloud-upload-alt"></span> 上傳</button>
+                        </div>
+  
+                        </div>
+                      </div>
                     </div>
-                    <div class="col text-end ">
-                      <input type="hidden" id="userId" name="userId" value={{user.phone}}>
-                      {{ userform.as_hidden }}
-                      <input type="file" name="background_image" accept="image/*" id="id_background_image">
-                      <button class="small-purple-button" name="submit"><span class="fas fa-plus-circle"></span>上傳照片</button>
-                    </div>
+                    
                   </form>
                 </div>
 

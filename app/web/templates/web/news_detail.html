@@ -6,12 +6,12 @@
   <h4 class="text-center pt-5 pb-2" style="color:#BB6BD9;">Care 168 最新資訊</h4>
 
   <!-- 導覽目錄 -->
-  <nav class="navbar navbar-expand-lg  navbar-light">
-          <div class="container-fluid">
+  <nav class="navbar navbar-expand-md  navbar-light">
+          <div class="container-fluid d-none d-md-block">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLightExample" aria-controls="navbarLightExample" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarLightExample">
+            <div class="collapse navbar-collapse " id="navbarLightExample">
               <ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto"> 
                 <li class="nav-item px-3">
                   <a class="nav-link h5" href="{% url 'news' %}" >全部</a>
@@ -57,17 +57,16 @@
         <hr>
 
         <p class="news-subtitle">看更多相關文章：</p>
-
-       
+        
         <div class="row">
           
           {% for post in blogposts%}          
-            <div class="col-4 col-sm-1 col-md-4 col-lg-3 col-xl-4">
+            <div class="col-md-4 col-lg-3 col-xl-4">
               <a  href="{% url 'news_detail' %}?blogpost={{post.id}}">
               {% if blogpost.cover_image.url != None %}
-                <img src="{{ blogpost.cover_image.url }}" style="width:300px;">
+                <img src="{{ blogpost.cover_image.url }}"  class="img-fluid img-thumbnail" style="object-fit: cover;">
               {% else %}
-                <img src="{% static 'web/assets/img/new/index_bg_hands.jpg' %}" class="img-fluid img-thumbnail" style="object-fit: cover;">
+                <img src="{% static 'web/assets/img/new/index_bg_hands.jpg' %}"  class="img-fluid img-thumbnail" style="object-fit: cover;">
               {% endif %}
               <p class="news-subtitle mt-2">{{post.title}}</p>
               </a>
