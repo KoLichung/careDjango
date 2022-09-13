@@ -28,18 +28,20 @@
         </div>
         
         {% for userLicenseImage in userLicenseImages %}
-          {% if userLicenseImage.image.url != None %}
           <div class="mt-3 d-flex align-items-center">  
-            <div>
-              <img class="img-fluid rounded" src="{{userLicenseImage.image.url}}" alt="" width="300" />
-            </div>
+            {% if userLicenseImage.image.url != None %}
+              <div>
+                <img class="img-fluid rounded" src="{{userLicenseImage.image.url}}" alt="" width="300" />
+              </div>
+            {% else %}
+            {% endif %}
             <div>
               &emsp;{{userLicenseImage.license}}&emsp;
               <input class="form-check-input" id="checkIsServantConfirm" name="check{{userLicenseImage.license.id}}" type="checkbox" value="True" />
               <label class="" for="checkIsServantConfirm">審核通過</label>
             </div>
           </div>
-          {% endif %}
+          
         {% endfor %}
           <!-- <div class="mt-3 d-flex align-items-center">  
             <div>

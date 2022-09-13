@@ -154,11 +154,11 @@ def new_edit_category(request):
 def member_data_review(request):
     user_id = request.GET.get('user')
     user = User.objects.get(id=user_id)
-    licences = License.objects.all().order_by('id')[:3]
+    licences = License.objects.all().order_by('id')
     for license in licences:
         if UserLicenseShipImage.objects.filter(user=user, license=license).count() == 0:
             UserLicenseShipImage.objects.create(user=user,license=license)
-    userLicenseImages = UserLicenseShipImage.objects.filter(user=user).order_by('license')[:3]
+    userLicenseImages = UserLicenseShipImage.objects.filter(user=user).order_by('license')
     if request.method == 'POST' :
         if 'post' in request.POST:
             if request.POST.get('checkIsServant') == 'True':
