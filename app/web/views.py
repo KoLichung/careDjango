@@ -1212,27 +1212,29 @@ def booking_confirm(request):
     return render(request, 'web/booking/confirm.html',{'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'servant_phone':servant_phone, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant,})
 
 def news(request):
-    blogposts = BlogPost.objects.all()
+    blogposts = BlogPost.objects.filter(state='publish')
     categories = BlogCategory.objects.all()
 
     if request.GET.get('category_id'):
         category_id = request.GET.get('category_id')
         the_category = BlogCategory.objects.get(id=category_id)
         post_ids = list(BlogPostCategoryShip.objects.filter(category=the_category).values_list('post', flat=True))
-        blogposts = BlogPost.objects.filter(id__in=post_ids)
+        blogposts = blogposts.filter(id__in=post_ids)
 
     return render(request, 'web/news.html',{'blogposts':blogposts,'categories':categories})
 
 def news_detail(request):
     categories = BlogCategory.objects.all()
-    blogposts = BlogPost.objects.all()
+    blogposts = BlogPost.objects.filter(state='publish')
+
     blogpost_id = request.GET.get('blogpost')
     blogpost = BlogPost.objects.get(id=blogpost_id)
+
     if request.GET.get('category_id'):
         category_id = request.GET.get('category_id')
         the_category = BlogCategory.objects.get(id=category_id)
         post_ids = list(BlogPostCategoryShip.objects.filter(category=the_category).values_list('post', flat=True))
-        blogposts = BlogPost.objects.filter(id__in=post_ids)[:3]
+        blogposts = blogposts.filter(id__in=post_ids)[:3]
 
     return render(request, 'web/news_detail.html',{'blogpost':blogpost, 'categories':categories,'blogposts':blogposts})
 

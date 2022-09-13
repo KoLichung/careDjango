@@ -4,7 +4,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 urlpatterns = [
-    path('', views.all_cases, name = 'all_cases'), 
+    path('all_cases', views.all_cases, name = 'all_cases'), 
+    path('', views.login, name='login'),
     path('all_members', views.all_members, name = 'all_members'), 
     path('bills', views.bills, name = 'bills'), 
     path('case_detail', views.case_detail, name = 'case_detail'), 
@@ -15,6 +16,7 @@ urlpatterns = [
     path('new_edit_category', views.new_edit_category, name = 'new_edit_category'),
     path('member_data_review', views.member_data_review, name = 'member_data_review'),
     path('refunds', views.refunds, name = 'refunds'),
+    path('logout', views.logout, name='logout')
 
 
 
