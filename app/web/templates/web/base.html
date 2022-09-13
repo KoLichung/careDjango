@@ -96,9 +96,9 @@
             <li class="nav-item">
               <a class="nav-link-custom" href="{% url 'recommend_carer' %}">服務者推薦</a>
             </li>
-            <li class="nav-item">
+            {% comment %} <li class="nav-item">
               <a class="nav-link-custom" href="{% url 'my_service_setting_time' %}">成為服務者</a>
-            </li>
+            </li> {% endcomment %}
           </ul>
         </div>
         {% if request.user.is_authenticated %}
