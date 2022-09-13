@@ -161,7 +161,7 @@ nav-justified  a:hover {
 .bg-frontpage-cover{
   background-size: cover;
   background-position: center center;
-  background-image: url('http://127.0.0.1:8000/static/web/assets/img/new/index_bg_hands.jpg');
+  background-image: url('/static/web/assets/img/new/index_bg_hands.jpg');
   background-repeat: no-repeat;
   width: 100vw;
 }
@@ -179,7 +179,7 @@ register_line.html
 register_phone.html */
 
 .bg-login-cover{
-  background-image: url('http://127.0.0.1:8000/static/web/assets/img/new/login_bg.png');
+  background-image: url('/static/web/assets/img/new/login_bg.png');
   background-position: 100% 100%;
   background-size: cover;
   background-position: center center;
