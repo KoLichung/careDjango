@@ -1,165 +1,7 @@
 # careDjango
-
-License 列表
-http://localhost:8000/api/licenses/
-Language 列表
-http://localhost:8000/api/languages/
-Service 列表
-http://localhost:8000/api/services/
-DiseaseCondition 列表
-http://localhost:8000/api/disease_conditions/
-BodyCondition 列表
-http://localhost:8000/api/body_conditions/
-City 列表
-http://localhost:8000/api/citys/
-County 列表
-http://localhost:8000/api/countys/
-
-Order 的列表, 查詢, 新增, 修改
-http://localhost:8000/api/orders/
-UserServiceLocation 的列表, 查詢, 新增, 修改
-http://localhost:8000/api/userServiceLocations/
-CaseWeekDayTime 的列表, 查詢, 新增, 修改
-http://localhost:8000/api/caseWeekDayTimes/
-UserWeekDayTime 的列表, 查詢, 新增, 修改
-http://localhost:8000/api/userWeekDayTimes/
-Message 的列表, 新增,
-http://localhost:8000/api/messages/
-SystemMessage 的列表, 新增,
-http://localhost:8000/api/systemMessages/
-
-Search Servant 的列表, 查詢 用於首頁
-http://localhost:8000/api/search_servants/?care_type=home&city=3&county=35&is_continuous_time=True&weekdays=1,3,5&start_end_time=6:9&start_datetime=2022-07-21T00:00:00Z&end_datetime=2022-08-20T00:00:00Z
-RecommendServantViewSet 的列表
-http://localhost:8000/api/recommend_servants/
-
-CaseSearch 的列表, 查詢, 新增, 修改
-http://localhost:8000/api/search_cases/?city=6&county=77&start_datetime=2022-07-10T00:00:00Z&end_datetime=2022-08-05T00:00:00Z&care_type=hospital
-ServantCaseViewSet 的列表, 查詢
-http://localhost:8000/api/servant_cases/
-NeedCaseViewSet 的列表, 查詢
-http://localhost:8000/api/need_cases/
-
-ReviewViewSet 的列表, 查詢, 修改
-#review_type=unrated, given, received
-http://localhost:8000/api/reviews/?review_type=unrated
-Get
-http://localhost:8000/api/reviews/1
-Put 
-http://localhost:8000/api/reviews/1
-body_params
-
-ServantPutReviewView 的修改
-body form-data: case_offender_rating : 5 , case_offender_comment : Test
-http://localhost:8000/api/servant_put_review/1
-
-ChatRoomViewSet 的列表, 新增
-body form-data: users : 2,4
-http://localhost:8000/api/chatroom
-
-MessageViewSet 的列表, 新增
-body form-data: case : 1 , content : Ok
-http://localhost:8000/api/messages/?chatroom=1
-
-SystemMessageViewSet 的列表
-http://localhost:8000/api/system_messages
-
-OrderViewSet 的列表, 查詢
-http://localhost:8000/api/orders
-
-UpdateATMInfo 的修改
-body form-data:ATMInfoBankCode : xxx  ATMInfoBranchBankCode: xxx accounts: xxx
-http://localhost:8000/api/user/update_ATM_info
-
-CreateCase 的新增
-http://localhost:8000/api/create_case?county=57&start_date=2022-07-22&end_date=2022-08-15&weekday=1,3,5&start_time=08:30&end_time=17:30
-body form-data: care_type: home name: 王老明 gender: M  age: 69  weight: 79  disease: 1711  disease_remark: test  body_condition: 2,8,10  conditions_remark: test  service: 1,4,7  emergencycontact_name: 王大明  emergencycontact_relation: 父  emergencycontact_phone: 0987654321
-ChooseServantViewSet 的 查詢 修改
-http://localhost:8000/api/choose_servant
-
-CreateServantOrder 的新增
-http://localhost:8000/api/create_servant_order?county=57&start_date=2022-07-22&end_date=2022-08-15&weekday=1,3,5&start_time=08:30&end_time=17:30&servant_id=3
-body form-data: care_type: home name: 王老明 gender: M  age: 69  weight: 79  disease: 1,7,11  disease_remark: test  body_condition: 2,8,10  conditions_remark: test  service: 1,4,7  emergencycontact_name: 王大明  emergencycontact_relation: 父  emergencycontact_phone: 0987654321
-
-CreateMerchant 
-http://202.182.105.11/newebpayApi/create_merchant
-
-MpgTrade
-http://127.0.0.1:8000/newebpayApi/mpg_trade
-http://202.182.105.11/newebpayApi/mpg_trade
-
-SearchTradeInfo
-http://127.0.0.1:8000/newebpayApi/search_tradeinfo
-http://202.182.105.11/newebpayApi/search_tradeinfo
-
-CancelAuthorization
-http://127.0.0.1:8000/newebpayApi/cancel_authorization
-http://202.182.105.11/newebpayApi/cancel_authorization
-
-Invoice
-http://127.0.0.1:8000/newebpayApi/invoice
-http://202.182.105.11/newebpayApi/invoice
-
-Appropriation
-http://127.0.0.1:8000/newebpayApi/appropriation
-http://202.182.105.11/newebpayApi/appropriation
-
-
-Debit
-http://127.0.0.1:8000/newebpayApi/debit
-http://202.182.105.11/newebpayApi/debit
-
-NotifyUrlCallback
-http://localhost:80/newebpayApi/notifyurl_callback
-http://202.182.105.11/newebpayApi/notifyurl_callback
-
-index
-http://127.0.0.1:8000/web/index
-
-search_list
-http://127.0.0.1:8000/web/search_list
-
-search_carer_detail
-http://127.0.0.1:8000/web/search_carer_detail?servant=0985463816
-
-register_line
-http://202.182.105.11/web/register_line?next=/web/index
-
-我的需求列表
-http://127.0.0.1:8000/web/my_bookings
-
-我的需求詳細
-http://127.0.0.1:8000/web/my_booking_detail?order=2
-
-收款方式
-http://127.0.0.1:8000/web/my_bank_account
-
-我的接案
-http://127.0.0.1:8000/web/my_cases
-
-我接的案詳細
-http://127.0.0.1:8000/web/my_case_detail?case=1
-
-我的基本資料
-http://127.0.0.1:8000/web/my_profile
-
-修改基本資料
-http://127.0.0.1:8000/web/my_edit_profile
-
-我的文件
-http://127.0.0.1:8000/web/my_files
-
-看護證明
-http://127.0.0.1:8000/web/my_care_certificate?case=1
-
-照護員推薦
-http://127.0.0.1:8000/web/recommend_carer
-
-
 !暫定, 未處理：
 a.ChatRoom 在 申請預訂並聊聊/需求單詢問服務者/服務者"我可以接案" 時產生~
 b.CreateCase 時, 如果有選 Servant, 要產生訂單訊息並推播
-c.web/index 的每週時間預定沒有工作日的選項
 
 藍新測試後台網址
 https://cwww.newebpay.com/
@@ -184,6 +26,21 @@ HashIV：CeYa8zoA0mX4qBpP
 
 vultr:
 8k-TPf]CT964,--R
+
+20220914
+1.http://localhost:8000/web/my_service_setting_about
+=> 選擇完文件, 直接上傳
+http://localhost:8000/web/my_edit_profile
+=> 選擇完文件, 直接上傳
+2.後台審核狀態修改有誤
+http://localhost:8000/backboard/member_data_review?user=2
+3.
+a. Create User, 要 Create UserLicenseShip
+=> Create User 時, 寫一個 create for loop
+=> User 可能是改寫 UserManager 下的 create_user 即可~
+b. Create License 時, 要 Create UserLicenseShip
+https://stackoverflow.com/questions/4269605/django-override-save-for-model
+4.backboard/all_members => 所有會員(120), 需求者(40), 服務者(80) 列表出現(是否審核通過為服務者)
 
 20220913
 1.後台的 login 頁面

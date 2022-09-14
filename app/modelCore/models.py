@@ -251,6 +251,9 @@ class License(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        print("maybe save user_license_ship here")
+
 class UserLicenseShipImage(models.Model):
     user = models.ForeignKey(
         User,
