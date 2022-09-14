@@ -13,19 +13,20 @@
           {% else %}
             <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
           {% endif %}
-          <!-- <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" /> -->
         </div>
 
         <div>
-          <form method="post" enctype="multipart/form-data">
+          <form method="post" id="image_post" enctype="multipart/form-data">
             {% csrf_token %}
-            <button class="small-green-button mt-3" type="submit" name="image">
+            <button class="small-green-button mt-3" type="button" id="ImageBtn" >
               <span class="fas fa-image"></span>
               上傳頭像
             </button><br><br>
             <input type="hidden" id="userId" name="userId" value={{user.phone}}>
-            {{ form.as_hidden }}
-            {{ form.image }}</br></br>
+            {{ userform.as_hidden }}
+            <div id="form2-container" type="hidden">
+              {{userform.image}}
+            </div>
           </form>
           
         </div>
@@ -124,18 +125,26 @@
                   儲存
                 </button>
               </div>
-
-            </div>
-            
-            
-            
+            </div>           
           </div>
           
         </div>
       </form>
-
-      
-
+      <script>
+        const ImageBtn = document.getElementById('ImageBtn');
+        const id_image = document.getElementById('id_image');
+        const image_post = document.getElementById('image_post');
+        console.log(id_image)
+        ImageBtn.addEventListener('click',function(){
+          id_image.click();
+          console.log('click')
+        })
+        id_image.addEventListener('change',function(){
+          console.log('submit')
+          image_post.submit();
+          
+        });
+      </script>
      
 </main>
 {% endblock %}

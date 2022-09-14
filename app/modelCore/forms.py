@@ -1,12 +1,17 @@
 from django import forms
 from .models import User ,UserLicenseShipImage, BlogPost
 
-class UserImageForm(forms.ModelForm):
+class UserBackGroundImageForm(forms.ModelForm):
   
     class Meta:
         model = User
-        fields = ['phone','background_image', 'image']
+        fields = ['phone','background_image']
 
+class UserImageForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ['phone', 'image']
 class UserLicenseImageForm(forms.ModelForm):
   
     class Meta:
