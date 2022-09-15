@@ -89,7 +89,8 @@
                   {% endfor %}
                 </div>
 
-                <p class="custom-card-font mt-5"><strong>關於我</strong></p>
+                <p class="custom-card-font mt-5"><strong>關於我</strong><span> *確保會員權益請勿填寫個人聯絡方式</span></p>
+                
                 <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="about_me" rows="3">{{user.about_me}}</textarea>
                 
                 <div>
@@ -100,11 +101,12 @@
                       <div class="col-sm-12 col-md-4 align-self-center">
                     
                       <span class="custom-card-font">
-                        <strong>上傳背景照片</strong>
+                        <strong>上傳背景照片 </strong>
                         {% if user.background_image %}
                           <br><a href={{user.background_image.url}} > 背景圖片連結 </a>
                         {% endif %}
                       </span>
+                      
                       </div>
 
                       <div class="col-sm-12 col-md-8 text-end align-self-center">
@@ -125,6 +127,7 @@
                     </div>
                     
                   </form>
+                  <span>* 確保會員權益請勿上傳個人聯絡方式之圖片</span>
                 </div>
 
                 <div class="col-4 mt-7 mx-auto text-center">

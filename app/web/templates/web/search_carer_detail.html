@@ -178,7 +178,7 @@
                 <span class="news-subtitle mt-2">時間類型</span><br>
                 <div class="my-2 " style="display: flex;">
                   <div class="btn-group">
-                    <button class="dropdown-button dropdown-toggle " type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"  id="time_type" aria-expanded="false">{% if is_continuous_time == 'True' %}連續時間{% else %}每週固定{% endif %}</button>
+                    <button class="dropdown-button dropdown-toggle " type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"  id="time_type" aria-expanded="false">{% if is_continuous_time == 'True' %}連續時間{% else %}指定時段{% endif %}</button>
                     
                     <div class="dropdown-menu py-0">
                       <div class="card shadow-none border-0" style="width: 15rem;">
@@ -201,7 +201,7 @@
       
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input "  id="select_time" type="radio" name="is_continuous_time" value="False" {% if is_continuous_time == 'False' %} checked {% endif %}/>
-                                <label class="h6" for="inlineRadio2">  每週固定</label>
+                                <label class="h6" for="inlineRadio2">  指定時段</label>
                               </div>
       
                             </div>
@@ -393,7 +393,7 @@
     })
 
     document.getElementById('select_time').addEventListener('click', function(e) {
-      document.getElementById('time_type').innerHTML = '每週固定' ;
+      document.getElementById('time_type').innerHTML = '指定時段' ;
       $('#time').value  = 'False';
       console.log($('#time').val())
     })
