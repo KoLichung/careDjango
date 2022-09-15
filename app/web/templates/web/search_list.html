@@ -2,176 +2,180 @@
 {% load static %}
 <!-- main -->
 <main class="main bg-white" id="top" >
+
   <!-- 篩選  -->
   <div class="row">
     <div class="col mx-5 mt-4">
-      <div class="accordion" id="accordionExample">    
+      <div class="accordion" id="accordionExample"> 
+
         <button class="custom-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
           <span class="fas fa-plus-circle"></span> 展開篩選條件
         </button>
-        <form method="post" enctype="multipart/form-data">{% csrf_token %}
-          <div class="accordion-collapse collapse show" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
-            <div class="row mx-3" >
-              <!-- 開始&結束日期 -->
-              <div class="col-xl-3 col-lg-5 col-md-6 row mt-3 ">
-                      <div class="col my-3">
-                        <!-- picker -->
-                        <label class="h5 mb-2" for="datepicker_startDate">開始日期</label>
-                        <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" name="datepicker_startDate" type="text"  placeholder="年-月-日" data-options='{"disableMobile":true}' value="{{defaultStartDate}}" />
-                      </div>
-                      <div class="col my-3">
-                        <!-- picker -->
-                        <label class="h5 mb-2" for="datepicker_endDate">結束日期</label>
-                        <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" name="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' value="{{defaultEndDate}}"  />
-                      </div>
-              </div>
-              <!-- 開始&結束時間 -->
-              <div class="col-xl-3 col-lg-5 col-md-6 row mt-3  ">
 
-                      <div class="col my-3">
-                        <!-- picker -->
-                        <label class="h5 mb-2" for="timepicker_startTime">開始時間</label>
-                        <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" name="timepicker_startTime" type="text" placeholder="時:分" value="{{dict.start_time}}" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                      </div>
-
-                      <div class="col my-3">
-                        <!-- picker -->
-                        <label class="h5 mb-2" for="timepicker_endTime">結束時間</label>
-                        <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" name="timepicker_endTime" type="text" placeholder="時:分" value="{{dict.end_time}}" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
-                      </div>
-
-              </div>
-            
-              <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
-                      
-                      <!-- 照護類型 -->
-                      <div class="col-sm-4 my-3">
-                        <h5 class="mb-2">照護類型</h5>
-                        <select class="dropdown-button" id="care_type" name="care_type">
-                          <option style="text-align: center" value="居家照顧" {% if dict.care_type == "居家照顧" %} selected="selected" {% endif %}>居家照顧</option>
-                           <option style="text-align: center" value="醫院看護" {% if dict.care_type == "醫院看護"  %} selected="selected" {% endif %}>醫院看護</option>
-                        </select>
-  
-                      </div>
-              
-                        
-                        
-                          
-                               
-                <!-- 照護地點 -->
-                <div class="col-sm-4 my-3">
-                  <h5 class=" mb-2">照護地點</h5>
-                  <div class="btn-group mb-2">
-                    <select class="dropdown-button" name="city" onchange="listCities()">
-                      {% for city in dict.citys %}
-                        <option style="text-align: center" value="{{city.id}}" {% if city == dict.city %} selected="selected" {% endif %}>{{city}}</option>
-                        <!-- <option value="醫院看護">醫院看護</option> -->
-                      {% endfor %}
-                    </select>
-
-                  </div>
-                  <div class="btn-group mb-2">
-                    <select class="dropdown-button" id="countylist" name="county">
-                      <option style="text-align: center" value="全區">全區</option>
-                      {% for county in dict.counties %}
-                        <option style="text-align: center" value="{{county.name}}" {% if county == dict.county %} selected="selected" {% endif %}>{{county}}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
+        <div  class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+          <form method="post" enctype="multipart/form-data">{% csrf_token %}
+            <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+              <div class="row mx-3" >
+                <!-- 開始&結束日期 -->
+                <div class="col-xl-3 col-lg-5 col-md-6 row mt-3 ">
+                        <div class="col my-3">
+                          <!-- picker -->
+                          <label class="h5 mb-2" for="datepicker_startDate">開始日期</label>
+                          <input class="modal-timePicker-button datetimepicker" id="datepicker_startDate" name="datepicker_startDate" type="text"  placeholder="年-月-日" data-options='{"disableMobile":true}' value="{{defaultStartDate}}" />
+                        </div>
+                        <div class="col my-3">
+                          <!-- picker -->
+                          <label class="h5 mb-2" for="datepicker_endDate">結束日期</label>
+                          <input class="modal-timePicker-button datetimepicker" id="datepicker_endDate" name="datepicker_endDate" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' value="{{defaultEndDate}}"  />
+                        </div>
                 </div>
-      
-                <!-- 時間類型 -->
-                <div class="col-sm-4 my-3">
-                  <h5 class="mb-2">時間類型</h5>
-                
-                    <!-- dropdown form -->
-                    <div class="btn-group">
-                      <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"  aria-expanded="false">{{dict.time_type}}</button>
-                      
-                      <div class="dropdown-menu py-0">
-                        <div class="card shadow-none border-0" style="width: 15rem;">
-      
-                          <div class="card-body">
-      
-                            <div class="row text-start justify-content-between align-items-center mb-2">
-                              <div class="col-auto">
-                                <h6 class="mb-0">時間類型</h6>
+                <!-- 開始&結束時間 -->
+                <div class="col-xl-3 col-lg-5 col-md-6 row mt-3  ">
+  
+                        <div class="col my-3">
+                          <!-- picker -->
+                          <label class="h5 mb-2" for="timepicker_startTime">開始時間</label>
+                          <input class="modal-timePicker-button datetimepicker" id="timepicker_startTime" name="timepicker_startTime" type="text" placeholder="時:分" value="{{dict.start_time}}" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                        </div>
+  
+                        <div class="col my-3">
+                          <!-- picker -->
+                          <label class="h5 mb-2" for="timepicker_endTime">結束時間</label>
+                          <input class="modal-timePicker-button datetimepicker" id="timepicker_endTime" name="timepicker_endTime" type="text" placeholder="時:分" value="{{dict.end_time}}" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                        </div>
+  
+                </div>
+              
+                <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
+                        
+                  <!-- 照護類型 -->
+                  <div class="col-sm-4 my-3">
+                    <h5 class="mb-2">照護類型</h5>
+                      <select class="dropdown-button" id="care_type" name="care_type">
+                        <option style="text-align: center" value="居家照顧" {% if dict.care_type == "居家照顧" %} selected="selected" {% endif %}>居家照顧</option>
+                        <option style="text-align: center" value="醫院看護" {% if dict.care_type == "醫院看護"  %} selected="selected" {% endif %}>醫院看護</option>
+                      </select>
+                  </div>
+                                 
+                  <!-- 照護地點 -->
+                  <div class="col-sm-4 my-3">
+                    <h5 class=" mb-2">照護地點</h5>
+                    <div class="btn-group mb-2">
+                      <select class="dropdown-button" name="city" onchange="listCities()">
+                        {% for city in dict.citys %}
+                          <option style="text-align: center" value="{{city.id}}" {% if city == dict.city %} selected="selected" {% endif %}>{{city}}</option>
+                          <!-- <option value="醫院看護">醫院看護</option> -->
+                        {% endfor %}
+                      </select>
+                    </div>
+  
+                    <div class="btn-group mb-2">
+                      <select class="dropdown-button" id="countylist" name="county">
+                        <option style="text-align: center" value="全區">全區</option>
+                        {% for county in dict.counties %}
+                          <option style="text-align: center" value="{{county.name}}" {% if county == dict.county %} selected="selected" {% endif %}>{{county}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+        
+                  <!-- 時間類型 -->
+                  <div class="col-sm-4 my-3">
+                    <h5 class="mb-2">時間類型</h5>
+                  
+                      <!-- dropdown form -->
+                      <div class="btn-group">
+                        <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"  aria-expanded="false">{{dict.time_type}}</button>
+                        
+                        <div class="dropdown-menu py-0">
+                          <div class="card shadow-none border-0" style="width: 15rem;">
+        
+                            <div class="card-body">
+        
+                              <div class="row text-start justify-content-between align-items-center mb-2">
+                                <div class="col-auto">
+                                  <h6 class="mb-0">時間類型</h6>
+                                </div>
                               </div>
+                              <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                                <!-- 時間類型選項 radio -->
+                                <div class="col-auto">
+          
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="True" {% if is_continuous_time == 'True' %} checked {% endif %} />
+                                    <label class="h6" for="inlineRadio2">  連續時間</label>
+                                  </div>
+          
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="False" {% if is_continuous_time == 'False' %} checked {% endif %} />
+                                    <label class="h6" for="inlineRadio2">  指定時段</label>
+                                  </div>
+          
+                                </div>
+          
+                                <!-- 週間星期 checkbox -->
+                                <div class="col-auto">
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="1" {% if "1" in weekday_list %} checked="" {% endif %} />
+                                    <label class="h6" for="weekdays[]">星期一</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="2" {% if "2" in weekday_list %} checked="" {% endif %} />
+                                    <label class="h6" for="weekdays[]">星期二</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="3" {% if "3" in weekday_list %} checked="" {% endif %} />
+                                    <label class="h6" for="weekdays[]">星期三</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="4" {% if "4" in weekday_list %} checked="" {% endif %} />
+                                    <label class="h6" for="weekdays[]">星期四</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="5" {% if "5" in weekday_list %} checked="" {% endif %} />
+                                    <label class="h6" for="weekdays[]">星期五</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="6" {% if "6" in weekday_list %} checked="" {% endif %} />
+                                    <label class="h6" for="weekdays[]">星期六</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="0" {% if "0" in weekday_list %} checked="" {% endif %} />
+                                    <label class="h6" for="weekdays[]">星期日</label>
+                                  </div>
+                                </div>
+                              </form>
                             </div>
-                            <form method="post" enctype="multipart/form-data">{% csrf_token %}
-                              <!-- 時間類型選項 radio -->
-                              <div class="col-auto">
-        
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="True" {% if is_continuous_time == 'True' %} checked {% endif %} />
-                                  <label class="h6" for="inlineRadio2">  連續時間</label>
-                                </div>
-        
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="inlineRadio2" type="radio" name="is_continuous_time" value="False" {% if is_continuous_time == 'False' %} checked {% endif %} />
-                                  <label class="h6" for="inlineRadio2">  每週固定</label>
-                                </div>
-        
-                              </div>
-        
-                              <!-- 週間星期 checkbox -->
-                              <div class="col-auto">
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="1" {% if "1" in weekday_list %} checked="" {% endif %} />
-                                  <label class="h6" for="weekdays[]">星期一</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="2" {% if "2" in weekday_list %} checked="" {% endif %} />
-                                  <label class="h6" for="weekdays[]">星期二</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="3" {% if "3" in weekday_list %} checked="" {% endif %} />
-                                  <label class="h6" for="weekdays[]">星期三</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="4" {% if "4" in weekday_list %} checked="" {% endif %} />
-                                  <label class="h6" for="weekdays[]">星期四</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="5" {% if "5" in weekday_list %} checked="" {% endif %} />
-                                  <label class="h6" for="weekdays[]">星期五</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="6" {% if "6" in weekday_list %} checked="" {% endif %} />
-                                  <label class="h6" for="weekdays[]">星期六</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" id="weekdays[]" name="weekdays[]" type="checkbox" value="0" {% if "0" in weekday_list %} checked="" {% endif %} />
-                                  <label class="h6" for="weekdays[]">星期日</label>
-                                </div>
-                              </div>
-                            </form>
                           </div>
                         </div>
                       </div>
-                    </div>
-                
+                  
+                  </div>
+  
                 </div>
-              </div>
-                <button class="col-xl-4 col-md-6 mt-4 mx-auto full-purple-button" type="submit" name="submit" >
-                  搜尋
-                </button> 
-            <hr>
-          </div>
-        </form>
+              <button class="col-xl-4 col-md-6 mt-4 mx-auto full-purple-button" type="submit" name="submit" >
+                搜尋
+              </button> 
+              <hr class="mt-2">
+            </div>
+            </div>
+          </form>
+        </div>
+        
       </div>
     </div>
   </div>
-      
-  <div class="mx-5 my-3">
-    <h5 >搜尋結果</h5>
+    
+  <div class="row">
+    <div class="col mx-5 my-3">
+      <h5 >搜尋結果</h5>
+    </div>
   </div>
       
   <!-- 搜尋結果 -->
-  
-  <div class="row g-3 mx-5 d-flex" >
+  <div class="row g-3 mx-5 pb-5" >
       {% for servant in servants %}
-      <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
+      <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 ">
         <div class="border border-600" style="border-radius: 6px;">
           <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant}}&care_type={{care_type}}&is_continuous_time={{is_continuous_time}}&weekdays={{weekdays}}&StartDate={{defaultStartDate}}&EndDate={{defaultEndDate}}&start_time={{dict.start_time}}&end_time={{dict.end_time}}&city={{dict.city.id}}&county={{dict.county}}">
             {% if servant.background_image.url != None %}
@@ -180,18 +184,20 @@
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖"> 
             {% endif %}
             <div class="card-body">
+
               <div class="d-flex">
                 <div class="avatar avatar-xl" style="margin-right: 5px;">
                   <!-- <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >   -->
                   {% if servant.image.url != None %}
                     <img class="rounded-circle" src="{{servant.image.url}}" alt="" > 
                   {% else %}
-                    <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >
+                    <img class="rounded-circle" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" >
                   {% endif %}
+                  <!-- cat_horizontal.jpg -->
                 </div>
-                  <!-- 4.8, 對 4 做 for loop, 對 0.8 做判斷, if > 0.5 給 1 顆星, <= 0.5, 就給 半顆星 -->
-                  <span class="carer-name" style="margin-right: 5px;">{{servant.name}}</span >
-                    <div class="col align-self-center " style="color: yellow;">
+                <!-- 4.8, 對 4 做 for loop, 對 0.8 做判斷, if > 0.5 給 1 顆星, <= 0.5, 就給 半顆星 -->
+                <span class="carer-name" style="margin-right: 5px;">{{servant.name}}</span >
+                <div class="col align-self-center " style="color: yellow;">
                       {% for i in servant.servant_avg_rate_range %}
                         <span class="fas fa-star" ></span>
                       {% endfor %}
@@ -202,7 +208,7 @@
                         <i class="fa-regular fa-star"></i>  
                       {% endfor %}
                       <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價{{servant.servant_rate_nums}}</span>
-                    </div>
+                </div>
                   <!-- <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
                   <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
                   <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
@@ -215,7 +221,7 @@
                   <span class="purple-border-tag">居家照顧</span>
                 {% endif %}
                 {% if servant.is_hospital == True %}
-                  <span class="purple-border-tag">醫院照護</span>
+                  <span class="purple-border-tag">醫院看護</span>
                 {% endif %}
               </div>
     
@@ -238,10 +244,7 @@
           </a>   
         </div>
       </div>
-    {% endfor %}
-
- 
-
+      {% endfor %}
   </div>
 
   <!-- 搜尋沒有結果 -->

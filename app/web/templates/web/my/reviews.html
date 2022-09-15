@@ -28,10 +28,10 @@
                   <div class="row justify-content-between">
                     
                     <div class="col-10 col-sm-7 col-md-7 col-lg-6 col-xl-7">
-                      <div class="purple-border-tag mt-2">{% if order.case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</div>
+                      <div class="purple-border-tag mt-2">{% if order.case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</div>
                       <p class="custom-card-font mt-2">
                         日期：{{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} <br> 
-                        時間類型：{% if order.case.is_continuous_time == True %}連續時間{% else %}每週預定{% endif %} <br>
+                        時間類型：{% if order.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %} <br>
                       </p>
                     </div>
         
@@ -81,12 +81,12 @@
                     <p class="custom-card-font mt-2">
                       照顧者：{{review.servant.name}} <br>
                       日期：{{review.case.start_datetime.year}}/{{review.case.start_datetime.month}}/{{review.case.start_datetime.day}} ~ {{review.case.end_datetime.year}}/{{review.case.end_datetime.month}}/{{review.case.end_datetime.day}} <br> 
-                      時間類型：{% if review.case.is_continuous_time == True %}連續時間{% else %}每週預定{% endif %}  
+                      時間類型：{% if review.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}  
                     </p>
                   </div>
 
                   <div class="col-sm-2 col-md-3 col-lg-4 col-xl-2 align-self-start">
-                    <p class="purple-border-tag">{% if review.case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</p>
+                    <p class="purple-border-tag">{% if review.case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
                   </div>
                 </div>
 
@@ -155,12 +155,12 @@
                     <p class="custom-card-font mt-2">
                       照顧者：{{review.servant.name}} <br>
                       日期：{{review.case.start_datetime.year}}/{{review.case.start_datetime.month}}/{{review.case.start_datetime.day}} ~ {{review.case.end_datetime.year}}/{{review.case.end_datetime.month}}/{{review.case.end_datetime.day}} <br> 
-                      時間類型：{% if review.case.is_continuous_time == True %}連續時間{% else %}每週預定{% endif %}  
+                      時間類型：{% if review.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}  
                     </p>
                   </div>
 
                   <div class="col-sm-2 col-md-3 col-lg-4 col-xl-2 align-self-start">
-                    <p class="purple-border-tag">{% if review.case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</p>
+                    <p class="purple-border-tag">{% if review.case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
                   </div>
                 </div>
 

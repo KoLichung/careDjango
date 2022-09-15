@@ -50,7 +50,7 @@ def seedData():
     License.objects.create(name="物理治療師證照")
     License.objects.create(name="職能治療師證照")
 
-    Service.objects.create(name="急診室患者",is_increase_price=True)
+    Service.objects.create(name="急診室",is_increase_price=True)
     Service.objects.create(name="傳染性疾病",is_increase_price=True)
     Service.objects.create(name="體重超過 70 公斤",is_increase_price=True)
     Service.objects.create(name="體重超過 90 公斤",is_increase_price=True)
@@ -81,7 +81,7 @@ def seedData():
     DiseaseCondition.objects.create(name='無')
     DiseaseCondition.objects.create(name='關節炎')
     DiseaseCondition.objects.create(name='癌症')
-    DiseaseCondition.objects.create(name='骨質酥鬆症')
+    DiseaseCondition.objects.create(name='骨質疏鬆症')
     DiseaseCondition.objects.create(name='手術照顧')
     DiseaseCondition.objects.create(name='心臟病')
     DiseaseCondition.objects.create(name='骨折')

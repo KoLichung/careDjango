@@ -27,7 +27,7 @@
                 <div class="case-info-font mt-2">
                   <p>照護類型：{% if care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
                   <p>日期：{{start_date_str}}~{{end_date_str}}</p>
-                  <p>時間類型：{% if is_continuous_time == True %}連續時間{% else %}每週固定{% endif %}</p>
+                  <p>時間類型：{% if is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}</p>
                   <p>開始時間：{{start_time}}</p>
                   <p>結束時間：{{end_time}}</p>
                 </div>

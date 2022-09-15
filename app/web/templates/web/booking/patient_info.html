@@ -181,7 +181,7 @@
                     <input type="radio" name="is_continuous_time" value="True" id="continuous_time" {% if is_continuous_time == 'True' %}checked=""{% endif %} onchange="continuous_timeSelect()"> 
                     <span class="checkmark"></span>
                   </label>
-                  <label class="custom-radio-parent">每週時段預定
+                  <label class="custom-radio-parent">指定時段
                     <input type="radio" name="is_continuous_time" id="weekly_time" value="False" {% if is_continuous_time == 'False' %}checked=""{% endif %} onchange="WeekdaySelect()">
                     <span class="checkmark"></span>
                   </label>           
@@ -287,7 +287,7 @@
   function WeekdaySelect(){
       weekday_select.innerHTML = ` 
               <div class="row" style="display: flex;">
-                <p class="col-auto "><b>每週時段：</b></p>
+                <p class="col-auto "><b>指定時段</b></p>
                 <div class="weekdayCheck col-auto h6">
                   <div class="form-check form-check-inline ">
                     <input class="form-check-input" id="1" name="weekdays[]" type="checkbox" value="1" {% if "1" in weekday_list %} checked="" {% endif %} />
