@@ -1,0 +1,83 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+      <h4 class="text-center pt-5 pb-2 section-title-purple">Care 168 最新資訊</h4>
+      <!-- 導覽目錄 -->
+      <nav class="navbar navbar-expand-lg  navbar-light">
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLightExample" aria-controls="navbarLightExample" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+
+            
+
+            <div class="collapse navbar-collapse" id="navbarLightExample">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">   
+                <!-- <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#post-all">最新文章</a>
+                </li> -->
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="{% url 'news' %}" >全部</a>
+                </li>
+                <!-- {% for category in categories %}
+                  <li class="nav-item px-3">
+                    <a class="nav-link h5" href="{% url 'news' %}?category_id={{category.id}}">{{category.name}}</a>
+                  </li>
+                {% endfor %} -->
+
+              </ul>
+            </div>
+          </div>
+      </nav>
+      <!-- 文章列表 -->
+      <div class="content row ">
+        <div class="tab-pane fade show active" id="post-all" role="tabpanel" aria-labelledby="home-tab">
+          {% for assistance_post in assistance_posts %}
+          <div class="col-lg-8 col-11 my-3 mx-auto" >
+              <div class="mx-auto" style="border: 1.5px solid #CCADE9;border-radius: 6px;">
+                <!-- 文章連結 -->
+                <a class="custom-card-link" href="{% url 'assistance_detail' %}?assistance_post={{assistance_post.id}}">
+                  
+                  <div class="p-4 row align-items-center" >
+
+                  <div class=" col-xl-3 col-md-4 col-5">
+                    <div class="mx-auto" >
+                      {% if blogpost.cover_image.url != None %}
+                        <img src="{{ assistance_post.cover_image.url }}" style="width:200px;" class="img-fluid rounded">
+                      {% else %}
+                        <img src="{% static 'web/assets/img/new/Rectangle78.png' %}" style="width:200px;" class="img-fluid rounded">
+                      {% endif %}
+                      </div>
+                  </div>
+
+                  <div class=" col-7 col-md-8 col-xl-9">
+                    <div class="row  justify-content-between">
+
+                      <!-- <div class="col align-item-center">
+                        <p class="news-date">{{blogpost.create_date.year}}/{{blogpost.create_date.month}}/{{blogpost.create_date.day}}</p>
+                      </div> -->
+
+                      <div class="col-auto align-item-center">
+                        <button class="purple-border-tag">精選文章</button>
+                      </div>
+
+                    </div>
+                    <p class="news-title">{{assistance_post.title}}</p>
+                    {% comment %} <p class="news-content">{{assistance_post.body}}</p> {% endcomment %}
+                  </div>
+                  
+                  </div>
+  
+                </a>
+              
+              </div>            
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+</main>
+{% endblock %}
+
+    

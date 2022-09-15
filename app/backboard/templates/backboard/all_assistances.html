@@ -1,0 +1,65 @@
+{% extends 'backboard/base.html' %} {% block content %}
+{% load static %}
+
+<!-- 內容 -->
+  <div class="mb-3">
+    <div class="col-lg-12 ps-lg-2 mb-3">
+      <div class="card h-lg-100">
+        <div class="card-header">
+  
+          <div class="mb-3 d-flex justify-content-between">
+            文章列表
+            <a class="custom-purple-btn text-white btn-sm " href="{% url 'new_assistance' %}">新增文章</a>
+          </div>
+                    
+          <div id="tableExample2" data-list='{"valueNames":["name","email","age"],"page":10,"pagination":true}'>
+            <div class="table-responsive scrollbar">
+              <table class="table  table-striped fs--1 mb-0">
+                <div class="border border-1"></div>
+                <thead>
+                  <tr>
+                    <th scope="col">發布狀態</th>
+                    <th scope="col">文章標題</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  {% for post in assistancePosts %}
+                    <tr>
+                      <td >
+                        {% if post.state == 'draft' %}
+                          <button type="button" class="custom-grey-border-btn btn-sm" disabled>草稿</button>
+                        {% else %}
+                          <button type="button" class="custom-grey-border-btn btn-sm" disabled>已發布</button>
+                        {% endif %}
+                      </td>
+                      <td>{{post.title}}</td>
+                      <td class="alnright">                    
+                        <a class="custom-purple-btn text-white btn-sm " href="{% url 'new_assistance' %}?post_id={{post.id}}">編輯</a>
+                        <a class="bg-danger text-white btn-sm" href="{% url 'all_assistances' %}?delete_id={{post.id}}" >刪除</a>
+                      </td>
+                    </tr> 
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <br>
+            <div class="text-center">
+              {% for page_number in blogPosts.adjusted_elided_pages %} 
+                {% if page_number == blogPosts.paginator.ELLIPSIS %} 
+                  {{page_number}} 
+                {% else %}
+                  <a href="?page={{page_number}}" class="{% if page_number == blogPosts.number %}current{% endif %}">&nbsp;&nbsp;{{page_number}}&nbsp;&nbsp;</a>
+                {% endif %} 
+              {% endfor %}
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div> 
+        
+{% endblock %}

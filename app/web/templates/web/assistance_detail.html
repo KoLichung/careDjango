@@ -1,0 +1,82 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+  <h4 class="text-center pt-5 pb-2" style="color:#BB6BD9;">Care 168 最新資訊</h4>
+
+  <!-- 導覽目錄 -->
+  <nav class="navbar navbar-expand-md  navbar-light">
+          <div class="container-fluid d-none d-md-block">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLightExample" aria-controls="navbarLightExample" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse " id="navbarLightExample">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto"> 
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="{% url 'news' %}" >全部</a>
+                </li>
+                {% for category in categories %}
+                  <li class="nav-item px-3">
+                    <a class="nav-link h5" href="{% url 'news' %}?category_id={{category.id}}">{{category.name}}</a>
+                  </li>
+                {% endfor %}               
+                <!-- <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">最新文章</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">全部</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">居家照顧</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">接案資訊</a>
+                </li>
+                <li class="nav-item px-3">
+                  <a class="nav-link h5" href="#">其他分類</a>
+                </li> -->
+              </ul>
+            </div>
+          </div>
+  </nav>
+      <!-- 文章內容 -->
+      <!-- title -->
+      <div class="row justify-content-center">
+        
+        <div class="col-7 text-center">
+          <p class="news-title">{{blogpost.title}}</p>
+        </div>
+        
+      </div>
+
+      <div class="row justify-content-center">  
+        <div class="col-9">
+          <p class="news-content">{{blogpost.body|safe}}</p>
+
+        <hr>
+
+        <p class="news-subtitle">看更多相關文章：</p>
+        
+        <div class="row">
+          
+          {% for post in blogposts%}          
+            <div class="col-md-4 col-lg-3 col-xl-4">
+              <a  href="{% url 'news_detail' %}?blogpost={{post.id}}">
+              {% if post.cover_image.url != None %}
+                <img src="{{ post.cover_image.url }}"  class="img-fluid img-thumbnail" style="object-fit: cover;">
+              {% else %}
+                <img src="{% static 'web/assets/img/new/index_bg_hands.jpg' %}"  class="img-fluid img-thumbnail" style="object-fit: cover;">
+              {% endif %}
+              <p class="news-subtitle mt-2">{{post.title}}</p>
+              </a>
+            </div>
+          {% endfor %}
+          
+        </div>
+      </div>
+      
+      
+</main>
+{% endblock %}
+

@@ -16,8 +16,8 @@ urlpatterns = [
     path('new_edit_category', views.new_edit_category, name = 'new_edit_category'),
     path('member_data_review', views.member_data_review, name = 'member_data_review'),
     path('refunds', views.refunds, name = 'refunds'),
-    path('logout', views.logout, name='backboard_logout')
-
-
+    path('logout', views.logout, name='backboard_logout'),
+    path('all_assistances', views.all_assistances, name = 'all_assistances'), 
+    path('new_assistance', views.new_assistance, name = 'new_assistance'), 
 
 ]

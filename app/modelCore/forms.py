@@ -1,5 +1,5 @@
 from django import forms
-from .models import User ,UserLicenseShipImage, BlogPost
+from .models import User ,UserLicenseShipImage, BlogPost ,AssistancePost
 
 class UserBackGroundImageForm(forms.ModelForm):
   
@@ -22,4 +22,10 @@ class BlogPostCoverImageForm(forms.ModelForm):
   
     class Meta:
         model = BlogPost
+        fields = ['id', 'body','cover_image']
+
+class AssistancePostCoverImageForm(forms.ModelForm):
+  
+    class Meta:
+        model = AssistancePost
         fields = ['id', 'body','cover_image']

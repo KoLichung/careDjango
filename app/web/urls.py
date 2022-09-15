@@ -23,6 +23,8 @@ urlpatterns = [
     
     path('news', views.news, name = 'news'),
     path('news_detail', views.news_detail, name = 'news_detail'),
+    path('assistances', views.news, name = 'news'),
+    path('assistance_detail', views.news_detail, name = 'news_detail'),
 
     path('requirement_list', views.requirement_list, name = 'requirement_list'),
     path('requirement_detail', views.requirement_detail, name = 'requirement_detail'),

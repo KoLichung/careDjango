@@ -20,7 +20,7 @@ from modelCore.forms import *
 from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service ,UserWeekDayTime
-from modelCore.models import UserLicenseShipImage ,License ,Case ,OrderIncreaseService ,TempCase ,DiseaseCondition ,BodyCondition ,CaseServiceShip
+from modelCore.models import UserLicenseShipImage ,License ,Case ,OrderIncreaseService ,TempCase ,DiseaseCondition ,BodyCondition ,CaseServiceShip ,AssistancePost
 from modelCore.models import CaseBodyConditionShip, CaseDiseaseShip ,BlogCategory, BlogPostCategoryShip ,OrderWeekDay ,ChatRoom ,ChatroomUserShip ,Message
 # Create your views here.
 
@@ -1224,6 +1224,26 @@ def news(request):
     return render(request, 'web/news.html',{'blogposts':blogposts,'categories':categories})
 
 def news_detail(request):
+    categories = BlogCategory.objects.all()
+    blogposts = BlogPost.objects.filter(state='publish')
+
+    blogpost_id = request.GET.get('blogpost')
+    blogpost = BlogPost.objects.get(id=blogpost_id)
+
+    if request.GET.get('category_id'):
+        category_id = request.GET.get('category_id')
+        the_category = BlogCategory.objects.get(id=category_id)
+        post_ids = list(BlogPostCategoryShip.objects.filter(category=the_category).values_list('post', flat=True))
+        blogposts = blogposts.filter(id__in=post_ids)[:3]
+
+    return render(request, 'web/news_detail.html',{'blogpost':blogpost, 'categories':categories,'blogposts':blogposts})
+
+def assistances(request):
+    assistance_posts = AssistancePost.objects.all()
+
+    return render(request, 'web/news.html',{'assistance_posts':assistance_posts})
+
+def new_assistance(request):
     categories = BlogCategory.objects.all()
     blogposts = BlogPost.objects.filter(state='publish')
 

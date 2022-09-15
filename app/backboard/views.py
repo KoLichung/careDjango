@@ -2,9 +2,9 @@ from django.shortcuts import render,redirect
 from django.core.paginator import Paginator
 import urllib
 import datetime
-from modelCore.forms import BlogPostCoverImageForm
+from modelCore.forms import BlogPostCoverImageForm ,AssistancePostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
-from modelCore.models import OrderIncreaseService, MonthSummary ,User ,UserLicenseShipImage ,License
+from modelCore.models import OrderIncreaseService, MonthSummary ,User ,UserLicenseShipImage ,License ,AssistancePost
 from django.contrib import auth
 from django.contrib.auth import authenticate
 
@@ -247,6 +247,60 @@ def refunds(request):
         return redirect_params('case_detail',{'case':case_id})
         
     return render(request, 'backboard/refunds.html',{'order':order})
+
+def all_assistances(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('/backboard/')
+
+    if request.GET.get('delete_id') != None:
+        AssistancePost.objects.get(id=request.GET.get('delete_id')).delete()
+
+    assistancePosts = AssistancePost.objects.all().order_by('-id')
+
+    paginator = Paginator(assistancePosts, 20)
+    if request.GET.get('page') != None:
+        page_number = request.GET.get('page') 
+    else:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+
+    page_obj.adjusted_elided_pages = paginator.get_elided_page_range(page_number)
+
+    return render(request, 'backboard/all_assistances.html', {'assistancePosts':page_obj})
+
+# edit 跟 new 同一頁
+def new_assistance(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('/backboard/')
+
+    if request.method == 'POST':
+        
+        if request.GET.get('post_id') != None:
+            assistancePost = AssistancePost.objects.get(id=request.GET.get('post_id'))
+        else:
+            assistancePost = AssistancePost()
+            assistancePost.create_date = datetime.datetime.now()
+
+        assistancePost.title = request.POST.get('title') 
+        assistancePost.body = request.POST.get('body') 
+        
+        
+        if assistancePost.title != None and assistancePost.title != '':
+
+            if request.FILES.get('cover_image', False):
+                assistancePost.cover_image = request.FILES['cover_image']
+
+            assistancePost.save()
+
+        return redirect('all_assistances')
+
+    if request.GET.get('post_id') != None:
+        assistancePost = AssistancePost.objects.get(id=request.GET.get('post_id'))
+        form = AssistancePostCoverImageForm(instance=assistancePost)
+        return render(request, 'backboard/new_assistance.html', { 'post':assistancePost,'form':form})
+
+    form = AssistancePostCoverImageForm()
+    return render(request, 'backboard/new_assistance.html', {'form':form})
 
 def redirect_params(url, params=None):
     response = redirect(url)

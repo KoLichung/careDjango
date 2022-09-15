@@ -255,12 +255,12 @@
                 <p class="custom-card-font mt-3"><strong>特殊狀況加價項目，自設時薪 % 數：</strong></p>
                 <div>
                     {% for increase_service in increase_services %}
-                    <div class="form-check">
+                    <!-- <div class="form-check">
                       {% if increase_service.id in user_services_ids %}
                         <input class="form-check-input mt-2" id="{{increase_service}}" name="increases[]" type="checkbox" value="{{increase_service.id}}" checked/>
                       {% else %}
                         <input class="form-check-input mt-2" id="{{increase_service}}" name="increases[]" type="checkbox" value="{{increase_service.id}}" />
-                      {% endif %}
+                      {% endif %} -->
                       
                       <label class="h6 mb-0" for="flexCheckChecked">{{increase_service}}：</label>
 
@@ -274,8 +274,8 @@
                         <input class="service-setting-input" style="width: 60px;" name="{{increase_service}}percent" type="text" placeholder="" value='0' />
                       {% endif %}
                       
-                      <span class="h6">%</span> 
-                    </div>
+                      <span class="h6">%</span> <br>
+                    <!-- </div> -->
                     {% endfor %}
                     <span class="h6">例：服務費用一天 2600 加價 5% = 每日增加 $130</span>
                 </div>
