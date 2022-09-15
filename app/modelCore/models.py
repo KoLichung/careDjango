@@ -94,6 +94,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'phone'
 
+    def save(self, *args, **kwargs):
+        super(User, self).save(*args, **kwargs)
+        licenses = License.objects.all()
+        for license in licenses:
+            if UserLicenseShipImage.objects.filter(user=self,license=license).count == 0:
+                instance = UserLicenseShipImage.objects.create(user=self,license=license)
+                print(instance)
+
     @property
     def needer_avg_rating(self):
         avg_rating = Review.objects.filter(case__user=self,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
@@ -252,6 +260,12 @@ class License(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        super(License, self).save(*args, **kwargs)
+        users = User.objects.all()
+        for user in users:
+            if UserLicenseShipImage.objects.filter(user=user,license=self).count == 0:
+                license_image_ship = UserLicenseShipImage.objects.create(user=user,license=self)
+                print(license_image_ship)
         print("maybe save user_license_ship here")
 
 class UserLicenseShipImage(models.Model):
@@ -262,7 +276,8 @@ class UserLicenseShipImage(models.Model):
         )
     license = models.ForeignKey(
         License,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='license_image_ships',
     )
     image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
     isPassed = models.BooleanField(default=False)
@@ -838,3 +853,7 @@ class MonthSummary(models.Model):
 
     # 平台收入, 成功請款的訂單, 依平台比例收取費用之總和
     month_platform_revenue = models.IntegerField(default=0)
+
+class AssistancePost(models.Model):
+    title = models.CharField(max_length = 255, blank = True, null=True)
+    body = RichTextUploadingField(config_name='default')

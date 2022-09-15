@@ -1551,7 +1551,7 @@ def my_service_setting_about(request):
     
     licenseImageShips = UserLicenseShipImage.objects.filter(user=user).order_by('license')[3:]
     form = UserLicenseImageForm()
-    userform = UserImageForm()
+    userform = UserBackGroundImageForm()
     # increase_service_ships = UserServiceShip.objects.filter(user=servant).order_by('service')[:4]
     if request.method == 'POST':
         license_id = request.POST.get('licenseId')
@@ -1582,7 +1582,7 @@ def my_service_setting_about(request):
             user.about_me = about_me
             user.save()
 
-        userform = UserImageForm(request.POST or None, request.FILES or None, instance=user)
+        userform = UserBackGroundImageForm(request.POST or None, request.FILES or None, instance=user)
         if userform.is_valid():
             print('valid')
             user = userform.save(commit=False)
@@ -1703,20 +1703,19 @@ def my_profile(request):
 
 def my_edit_profile(request):
     user = request.user 
-    form = UserImageForm()
-    
-    if request.method == 'POST' and 'image' in request.POST :
-        form = UserImageForm(request.POST or None, request.FILES or None, instance=user)
-        if form.is_valid():
+    userform = UserImageForm()
+    if request.method == 'POST' :
+        userform = UserImageForm(request.POST or None, request.FILES or None, instance=user)
+        if userform.is_valid():
             print('valid')
-            new = form.save(commit=False)
-            new.phone = user.phone
-            new.save()
-        img_obj = form.instance
-        img_obj.phone = user.phone
-        img_obj.save()
+            user = userform.save(commit=False)
+            user.phone = user.phone
+            user.save()
+        user = userform.instance
+        user.phone = user.phone
+        user.save()
 
-    elif request.method == 'POST' and 'line_bind' in request.POST:
+    if request.method == 'POST' and 'line_bind' in request.POST:
         auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
         # call_back = 'http://202.182.105.11/' + redirect_to
         call_back = 'http://127.0.0.1:8000/web/login_line?next=/web/index'
@@ -1732,7 +1731,7 @@ def my_edit_profile(request):
         login_url = auth_url + query_str
         print(login_url)
         return redirect(login_url) 
-    elif request.method == 'POST' and 'post' in request.POST:
+    if request.method == 'POST' and 'post' in request.POST:
         print('post2')
         user_name = request.POST.get('user_name')
         gender = request.POST.get('gender')
@@ -1744,7 +1743,7 @@ def my_edit_profile(request):
         user.email = email
         user.save()
     
-    return render(request, 'web/my/edit_profile.html',{'user':user,'form':form})
+    return render(request, 'web/my/edit_profile.html',{'user':user,'userform':userform})
 
 def my_reviews(request):
     user = request.user

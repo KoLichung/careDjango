@@ -12,7 +12,7 @@
           <div class="col-10 col-sm-10 col-md-9 col-lg-8 col-xl-7 mx-auto mt-3">
             <div class="p-3 custom-card-font">
               <p style="font-weight: 700;">給照顧者 {{order.servant.name}} 評價</p>
-              <p class="">{{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}}  |  {% if order.case.is_continuous_time == True %}連續時間{% else %}每週預定{% endif %}  |  {% if order.case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</p>
+              <p class="">{{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}}  |  {% if order.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}  |  {% if order.case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
               
               <div class="">我給照顧者幾顆星：</div>
               <div id='myRater' class="d-block"></div>

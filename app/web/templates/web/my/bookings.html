@@ -17,7 +17,7 @@
              
             <div class="d-none d-md-block col-md-3 col-lg-3 col-xl-2">
               <div class="green-border-tag mt-2 ">{% if order.state == 'PAID' %}已付款{% elif order.state == 'UNPAID' %}未付款{% else %}已取消{% endif %}</div>
-              <div class="purple-border-tag mt-2">{% if order.case.care_type == 'home' %}居家照顧{% else %}醫院照護{% endif %}</div>
+              <div class="purple-border-tag mt-2">{% if order.case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</div>
             </div>
 
             <div class="d-block d-md-none ">
@@ -28,7 +28,7 @@
             <div class="col-md-6 col-lg-6 col-xl-8">
               <p class="custom-card-font mt-2">
                 {{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} <br> 
-                時間類型：{% if order.case.is_continuous_time == True %}連續時間{% else %}每週預定{% endif %}  <br>
+                時間類型：{% if order.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}  <br>
                 照顧者：{{order.servant.name}} <br>
                 地點：{{order.case.city}} {{order.case.county}}
               </p>

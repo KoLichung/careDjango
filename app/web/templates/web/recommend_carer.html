@@ -14,64 +14,66 @@
             
         <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
           <form method="post" enctype="multipart/form-data">{% csrf_token %}
-          <div class="row mx-3 justify-content-between">
-            <div class="col-md-10 col-lg-8 col-xl-5 row mt-3 ">
+            <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+            
+              <div class="row mx-3">
+                <!-- col-md-10 col-lg-8 col-xl-5 row mt-3  -->
+                <div class="row col-11 mt-3">
+                  
+                  <!-- 照護類型 -->
+                  <div class="col-sm-4 col-md-3 col-lg-2 my-3">
+                    <h5 class="mb-2">照護類型</h5>
+                    <div class="dropdown font-sans-serif d-inline-block mb-2">
+                      <select class="dropdown-button" id="care_type" name="care_type">
+                        <option style="text-align: center" value="home" {% if care_type == "home" %} selected="selected" {% endif %}>居家照顧</option>
+                        <option style="text-align: center" value="hospital" {% if care_type == "hospital"  %} selected="selected" {% endif %}>醫院看護</option>
+                      </select>
+                    </div>
+                  </div>
               
-                    <!-- 照護類型 -->
-                    <div class="col-sm-4 my-3">
-                      <h5 class="mb-2">照護類型</h5>
-                      <div class="dropdown font-sans-serif d-inline-block mb-2">
-                        <select class="dropdown-button" id="care_type" name="care_type">
-                          <option style="text-align: center" value="home" {% if care_type == "home" %} selected="selected" {% endif %}>居家照顧</option>
-                          <option style="text-align: center" value="hospital" {% if care_type == "hospital"  %} selected="selected" {% endif %}>醫院看護</option>
-                        </select>
+                  <!-- 照護地點 -->
+                  <div class="col-sm-4 col-md-3 col-lg-2 my-3">
+                    <h5 class=" mb-2">照護地點</h5>
+                    <div class=" btn-group mb-2">
+                      <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
+                        {% for city in citys %}
+                        <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                        <!-- <option value="醫院看護">醫院看護</option> -->
+                        {% endfor %}
+                      </select>
+                    </div>
+                    
+                    <div class=" btn-group mb-2">
+                      <select class="dropdown-button" id="county_select" name="county" >
+                        <option style="text-align: center" value="全區">全區</option>
+                        {% for county in counties %}
+                        <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>  
+                  </div>
+              
+                  <!-- 排序 -->
+                  <div class="col-sm-3 my-3">
+                    <h5 class="mb-2">排序</h5>
+                    <div class="btn-group mb-2">
+                      <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">自然推薦</button>
+                      <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
+                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
                       </div>
                     </div>
+                  </div>
           
-                    <!-- 照護地點 -->
-                    <div class="col-sm-4 my-3">
-                      <h5 class=" mb-2">照護地點</h5>
-                      <div class=" btn-group mb-2">
-                        <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
-                          {% for city in citys %}
-                            <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
-                            <!-- <option value="醫院看護">醫院看護</option> -->
-                          {% endfor %}
-                        </select>
-                      </div>
-                      <div class=" btn-group mb-2">
-                        <select class="dropdown-button" id="county_select" name="county" >
-                          <option style="text-align: center" value="全區">全區</option>
-                          {% for county in counties %}
-                            <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
-                          {% endfor %}
-                        </select>
-                      </div>  
-                    </div>
-          
-                    <!-- 時間類型 -->
-                    <div class="col-sm-4 my-3">
-                      <h5 class="mb-2">排序</h5>
-                      <div class="btn-group mb-2">
-                        <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">自然推薦</button>
-                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
-                          <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
-                        </div>
-                      </div>
-                    </div>
-
-                   
+                </div>
+                <!-- 篩選button -->
+                <button class="col-xl-4 col-md-6 mt-4 mx-auto full-purple-button" type="submit" name="submit" >
+                  搜尋
+                </button>
+                <hr class="mt-2">
+              </div>
             </div>
-             <!-- 篩選button -->
-            <div class="col-1 mt-3 align-self-end" >
-              <a href="">
-                <button class="small-purple-button align-bottom" type="submit">篩選</button>
-              </a>
-            </div>
-          </div>
           </form>
-          <hr>
         </div>
             
       </div>
@@ -80,7 +82,7 @@
 
   <div class="row">
     <div class="col mx-5 my-3">
-      <h5 >照護員推薦</h5>
+      <h5 >照服員推薦</h5>
     </div>
   </div>
 
@@ -88,14 +90,14 @@
   <div class="row g-3 mx-5 pb-5" >
     {% for servant in servants %}
       <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-        <div class="border border-600" style="border-radius: 6px;">
+        <div class="border border-600" style="border-radius: 6px;" >
           <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
             {% if servant.background_image.url != None %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖"> 
             {% endif %}
-            <div class="card-body">
+            <div class="card-body" >
               <div class="d-flex">
                 <div class="avatar avatar-xl" style="margin-right: 5px;">
                   <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
@@ -251,8 +253,8 @@
         </a>   
       </div>
     </div> -->
-
   </div>
+
   <script>
     function getCookie(name) {
       let cookieValue = null;

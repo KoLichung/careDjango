@@ -15,60 +15,62 @@
             <div class="row mx-3" >
       
               <div class="row col-11 mt-3">
-                <!-- 照護類型&地點 -->
-                <div class="col-lg-6 col-xl-4 row ">
-                  <div class="col-sm-10 col-lg-6">
-                    <p class="h5">照護類型</p>
-                    <div class="btn-group my-2">
-                      <select class="dropdown-button" id="care_type" name="care_type">
-                        <option style="text-align: center" value="home" {% if care_type == "home" %} selected="selected" {% endif %}>居家照顧</option>
-                        <option style="text-align: center" value="hospital" {% if care_type == "hospital"  %} selected="selected" {% endif %}>醫院看護</option>
-                      </select>
-                    </div>
+
+                <!-- 照護類型 -->
+                <div class="col-sm-4 col-md-3 col-lg-2 my-3">
+                  <h5 class="mb-2">照護類型</h5>
+                  <div class="dropdown font-sans-serif d-inline-block mb-2">
+                    <select class="dropdown-button" id="care_type" name="care_type">
+                      <option style="text-align: center" value="home" {% if care_type == "home" %} selected="selected" {% endif %}>居家照顧</option>
+                      <option style="text-align: center" value="hospital" {% if care_type == "hospital"  %} selected="selected" {% endif %}>醫院看護</option>
+                    </select>
                   </div>
-                  <div class="col-sm-10 col-lg-6">
-                        <p class="h5">照護地點</p>
-                        <div class=" btn-group my-2">
-                          <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
-                            {% for city in citys %}
-                              <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
-                              <!-- <option value="醫院看護">醫院看護</option> -->
-                            {% endfor %}
-                          </select>
-                        </div>
-                        <div class=" btn-group my-2">
-                          <select class="dropdown-button" id="county_select" name="county" >
-                            <option style="text-align: center" value="全區">全區</option>
-                            {% for county in counties %}
-                              <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
-                            {% endfor %}
-                          </select>
-                        </div>  
+                </div>
+      
+                <!-- 照護地點 -->
+                <div class="col-sm-4 col-md-3 col-lg-2 my-3">
+                  <h5 class=" mb-2">照護地點</h5>
+                  <div class=" btn-group mb-2">
+                    <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
+                      {% for city in citys %}
+                      <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                      <!-- <option value="醫院看護">醫院看護</option> -->
+                      {% endfor %}
+                    </select>
                   </div>
-                </div> 
+                  
+                  <div class=" btn-group mb-2">
+                    <select class="dropdown-button" id="county_select" name="county" >
+                      <option style="text-align: center" value="全區">全區</option>
+                      {% for county in counties %}
+                      <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>  
+                </div>
 
                 <!-- 開始&結束日期 -->
-                <div class="col-lg-6 col-xl-4 row">
-                  <div class="col-sm-10 col-lg-6 ">
+                <div class="col-sm-4 col-md-6 col-lg-8 my-3 row justify-content-start">
+
+                  <div class="col-sm-10 col-md-6 ">
                     <label class="h5" for="datepicker_startDate">開始日期</label>
                     <input class="modal-timePicker-button datetimepicker my-2" id="datepicker_startDate" name="datepicker_startDate" value="{{start_date}}" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
                   </div>
-                  <div class="col-sm-10 col-lg-6 ">
+                  <div class="col-sm-10 col-md-6 ">
                     <label class="h5" for="datepicker_endDate">結束日期</label>
                     <input class="modal-timePicker-button datetimepicker my-2" id="datepicker_endDate" name="datepicker_endDate" value="{{end_date}}" type="text" placeholder="年-月-日" data-options='{"disableMobile":true}' />
                   </div>
+
                 </div>
+
               </div>
           
               <!-- 篩選button -->
-              <div class="col-1 mt-3 align-self-end" >
-                    <a href="">
-                      <button class="small-purple-button align-bottom" type="submit">篩選</button>
-                    </a>
-              </div> 
-      
+              <button class="col-xl-4 col-md-6 mt-4 mx-auto full-purple-button" type="submit" name="submit" >
+                搜尋
+              </button>
+              <hr class="mt-2">
             </div>
-            <hr>
           </div>
         </form>
       </div>
@@ -96,7 +98,7 @@
               <span class="purple-border-tag">連續時間</span>
               {% endif %}
               {% if case.is_continuous_time == False %}
-              <span class="purple-border-tag">每週固定</span>
+              <span class="purple-border-tag">指定時段</span>
               {% endif %}
             </div>
             <p class="require-info my-2">開始時間：<br> {{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ({{case.startTimeformat}}) </p>

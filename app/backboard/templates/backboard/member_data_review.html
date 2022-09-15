@@ -18,7 +18,7 @@
           <div>
             <span>姓名：{{user.name}}</span>
             <span class="mx-3">電話：{{user.phone}}</span>
-            <input class="form-check-input" id="checkIsServantConfirm" name="checkIsServant" type="checkbox" value="True" />
+            <input class="form-check-input" id="checkIsServantConfirm" name="checkIsServant" type="checkbox" value="True" {% if user.is_servant_passed == True %}checked{% endif %}/>
             <label class="" for="checkIsServantConfirm">審核通過為服務者</label>
           </div>
           <div>
@@ -37,7 +37,7 @@
             {% endif %}
             <div>
               &emsp;{{userLicenseImage.license}}&emsp;
-              <input class="form-check-input" id="checkIsServantConfirm" name="check{{userLicenseImage.license.id}}" type="checkbox" value="True" />
+              <input class="form-check-input" id="checkIsServantConfirm" name="check{{userLicenseImage.license.id}}" type="checkbox" value="True" {% if userLicenseImage.isPassed == True %}checked{% endif %}/>
               <label class="" for="checkIsServantConfirm">審核通過</label>
             </div>
           </div>

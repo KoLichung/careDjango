@@ -27,6 +27,14 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220915
+1.http://localhost:8000/web/my_service_setting_services
+=> 加價項目去除勾選, 如果沒填, 預設 0%
+2.http://localhost:8000/web/request_form_patient_info
+=> 超過 70/90~ 要自動勾選加價, 且不能反勾
+3.幫助中心訊息
+=> 後台 列表/新增/編輯/刪除
+
 20220914
 1.http://localhost:8000/web/my_service_setting_about
 => 選擇完文件, 直接上傳
