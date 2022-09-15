@@ -6,7 +6,12 @@
   <div class="col-lg-12 ps-lg-2 mb-3">
     <div class="card h-lg-100">
       <div class="card-header">
-        <div class="h5 mb-3"><b>所有會員</b></div>
+        <div class="mb-3">
+          <a href="{% url 'all_members' %}" class="custom-purple-btn btn-sm" role="button">所有會員({{members_num}}人)</a>
+          <a href="{% url 'all_members' %}?member=needer"class="custom-purple-border-btn btn-sm" role="button">需求者({{needers_num}}人)</a>
+          <a href="{% url 'all_members' %}?member=servant" class="custom-purple-border-btn btn-sm" role="button">服務者({{servants_num}}人)</a>
+        </div>
+        <!-- <div class="h5 mb-3"><b>所有會員</b></div> -->
         <div class="border"></div>
         <div id="tableExample2" data-list='{"valueNames":["name","email","age"],"page":10,"pagination":true}'>
           <div class="table-responsive scrollbar">
@@ -15,6 +20,7 @@
                 <tr>
                   <th scope="col">姓名</th>
                   <th scope="col">電話</th>
+                  <th scope="col">是否審核通過為服務者</th>
                   <th class="text-end" scope="col">歷史訂單</th>
                 </tr>
               </thead>
@@ -23,6 +29,7 @@
                   <tr>
                     <td>{{user.name}}</td>
                     <td>{{user.phone}}</td>
+                    <td class="px-5">{% if user.is_servant_passed == True %}是{% else %}否{% endif %}</td>
                     <td class="alnright">                    
                       <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_detail'%}?user={{user.id}}">查看</a>
                     </td>

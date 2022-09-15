@@ -48,6 +48,14 @@ def all_members(request):
         return redirect('/backboard/')
 
     users = User.objects.filter(is_staff=False)
+    members_num = users.count()
+    needers_num = users.filter(is_servant=False).count()
+    servants_num = users.filter(is_servant=True).count()
+    member = request.GET.get('member')
+    if member == 'needer':
+        users = users.filter(is_servant=False)
+    elif member == 'servant':
+        users = users.filter(is_servant=True)
     paginator = Paginator(users, 10)
     if request.GET.get('page') != None:
         page_number = request.GET.get('page') 
@@ -56,7 +64,7 @@ def all_members(request):
     page_obj = paginator.get_page(page_number)
 
     page_obj.adjusted_elided_pages = paginator.get_elided_page_range(page_number)
-    return render(request, 'backboard/all_members.html',{'users':page_obj})
+    return render(request, 'backboard/all_members.html',{'users':page_obj,'members_num':members_num,'needers_num':needers_num,'servants_num':servants_num})
 
 def bills(request):
     if not request.user.is_authenticated or not request.user.is_staff:

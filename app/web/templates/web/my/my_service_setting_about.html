@@ -26,7 +26,8 @@
                 <p class="custom-card-font mt-3"><strong>相關文件</strong></p>
                 <div>
                   {% for licenseImageShip in licenseImageShips %}   
-                    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                  
+                    <form method="post" id="license_{{licenseImageShip.license.id}}_post" enctype="multipart/form-data">{% csrf_token %}
                     
                         <div class="row mt-2 justify-content-between">
 
@@ -57,12 +58,13 @@
                                 <input type="hidden" id="licenseId" name="licenseId" value="{{licenseImageShip.license.id}}">
                                 <input type="hidden" id="userId" name="userId" value={{user}}>
                                 {{ form.user.as_hidden }}
-                                <!-- <input type="file" name="image" accept="image/*" id="id_image">  -->
-                                
                                 <div class="d-flex justify-content-end">
                                   <div class="text-end">
                                     <!-- 原本的 choose file -->
-                                    <input type="file" name="image" accept="image/*" id="id_image" style="padding-right: 0; margin-right: 0;">
+                                    <div id="form-container" type="hidden">
+                                      <input type="file" name="image" accept="image/*" id="id_{{licenseImageShip.license.id }}_image"  style="padding-right: 0; margin-right: 0;">
+                                    </div>
+                                    
                                     
                                     <!-- 美化過的 choose file -->
                                     <!-- <label class="btn btn-info rounded-pill">
@@ -76,25 +78,26 @@
   
                                   </div>
                                   <div class="text-end">
-                                    <button class="small-purple-button" type="submit" ><span class="fas fa-cloud-upload-alt"></span> 上傳</button>
+                                    <button class="small-purple-button" type="button" id="license_{{licenseImageShip.license.id }}_image_submit" ><span class="fas fa-cloud-upload-alt"></span> 上傳</button>
                                   </div>
-                                </div>
-                                
-                          </div>
-  
-                        </div>
-                      
+                                </div>                               
+                          </div> 
+                        </div>                  
                       <hr>
                     </form>
                   {% endfor %}
                 </div>
+<<<<<<< HEAD
 
                 <p class="custom-card-font mt-5"><strong>關於我</strong><span> *確保會員權益請勿填寫個人聯絡方式</span></p>
                 
+=======
+                <p class="custom-card-font mt-5"><strong>關於我</strong></p>
+>>>>>>> f2301022c3d306a38f0f59dccc8957c0ad198b6e
                 <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="about_me" rows="3">{{user.about_me}}</textarea>
                 
                 <div>
-                  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                  <form method="post" id="background_image_post" enctype="multipart/form-data">{% csrf_token %}
                     
                     <div class="row mt-5 justify-content-between">
 
@@ -115,11 +118,14 @@
                         <div class="me-2">
                           <input type="hidden" id="userId" name="userId" value={{user.phone}}>
                           {{ userform.as_hidden }}
-                          <input type="file" name="background_image" accept="image/*" id="id_background_image">
+                          <div id="form2-container" type="hidden">
+                            <input type="file" name="background_image" accept="image/*" id="id_background_image">
+                          </div>
+                          
                         </div>
   
                         <div class="text-end">
-                          <button class="small-purple-button" type="submit" ><span class="fas fa-cloud-upload-alt"></span> 上傳</button>
+                          <button class="small-purple-button" id="backgroundImageBtn" type="button" ><span class="fas fa-cloud-upload-alt"></span> 上傳</button>
                         </div>
   
                         </div>
@@ -137,6 +143,40 @@
           </div>
         </div>
       </form>
-     
+     <script>
+      const licenseImageCount = Number("{{licenseImageShips|length}}") + 3
+      $( document ).ready(function() {
+        for (var i = 4; i <= licenseImageCount; i++){
+        const license_image_submit = document.getElementById('license_'+String(i)+'_image_submit');
+        const id_image = document.getElementById('id_'+String(i)+'_image');
+        const form_submit = document.getElementById('license_'+String(i)+'_post')
+        license_image_submit.addEventListener('click',function(){
+          console.log('click')
+          id_image.click();
+        });
+        // function upload_license_image(){
+        //   // id_image_name = id_image.id;
+        //   // num = id_image_name.split('id_')[1].split('_image')[0];
+        //   // console.log(num);
+        //   // document.getElementById('license_'+String(i)+'_post').submit();
+        // }
+        id_image.addEventListener("change",function(){
+          form_submit.submit();
+        });
+      }
+      });
+      
+      const backgroundImageBtn = document.getElementById('backgroundImageBtn');
+      const id_background_image = document.getElementById('id_background_image');
+      const background_image_post = document.getElementById('background_image_post');
+
+      backgroundImageBtn.addEventListener('click',function(){
+        id_background_image.click();
+      })
+      id_background_image.addEventListener('change',function(){
+        background_image_post.submit();
+      });
+
+     </script>
 </main>
 {% endblock %}
