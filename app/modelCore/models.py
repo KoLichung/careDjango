@@ -98,8 +98,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
         licenses = License.objects.all()
         for license in licenses:
-            instance = UserLicenseShipImage.objects.create(user=self,license=license)
-            print(instance)
+            if UserLicenseShipImage.objects.filter(user=self,license=license).count == 0:
+                instance = UserLicenseShipImage.objects.create(user=self,license=license)
+                print(instance)
 
     @property
     def needer_avg_rating(self):
@@ -262,8 +263,9 @@ class License(models.Model):
         super(License, self).save(*args, **kwargs)
         users = User.objects.all()
         for user in users:
-            license_image_ship = UserLicenseShipImage.objects.create(user=user,license=self)
-            print(license_image_ship)
+            if UserLicenseShipImage.objects.filter(user=user,license=self).count == 0:
+                license_image_ship = UserLicenseShipImage.objects.create(user=user,license=self)
+                print(license_image_ship)
         print("maybe save user_license_ship here")
 
 class UserLicenseShipImage(models.Model):
