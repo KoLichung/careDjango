@@ -109,7 +109,7 @@
                           <div class="increaseService">
                             {% for increase_service_ship in increase_service_ships %}
                             <div class="form-check ">
-                              <input class="form-check-input " id="increaseServiceChecked" type="checkbox" name="increase_services[]" {% if increase_service_ship in increase_service_list %}checked=""{% endif %} value="{{increase_service_ship.service.id}}" />
+                              <input class="form-check-input " id="increase_service_{{increase_service_ship.service.id}}" type="checkbox" name="increase_services[]" {% if increase_service_ship in increase_service_list %}checked=""{% endif %} value="{{increase_service_ship.service.id}}" />
                               <label class="h6 mb-0" for="increase_services[]">{{increase_service_ship.service}}，每小時的時薪加 <span style="color:red">{{increase_service_ship.increase_percent}}% </span></label>
                             </div>
                             {% endfor %}
@@ -501,6 +501,20 @@
         }
     });
   }
+  let weight_change = document.getElementById('patient_weight')
+  const over_70 = document.getElementById('increase_service_3')
+  const over_90 = document.getElementById('increase_service_4')
+  weight_change.addEventListener('input',function(){
+    if(Number(weight_change.value) >= 70 && Number(weight_change.value) < 90 ){
+      over_70.checked = true;
+      over_90.checked = false;
+      console.log(over_70.checked,1)
+    }else if(Number(weight_change.value) >= 90){
+      over_90.checked = true;
+      over_70.checked = false;
+      console.log(over_70.checked,2)
+    }
+  })
   $( document ).ready(function() {
     get_weekdays.call();
     increase_service_check.call();

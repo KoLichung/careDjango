@@ -28,4 +28,4 @@ class AssistancePostCoverImageForm(forms.ModelForm):
   
     class Meta:
         model = AssistancePost
-        fields = ['id', 'body','cover_image']
+        fields = ['id', 'body']
