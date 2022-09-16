@@ -1917,6 +1917,9 @@ def request_form_patient_info(request):
         else:
             disease_none = False
         disease_list = []
+
+        #diseaseId=''
+        #Field 'id' expected a number but got ''
         for diseaseId in disease_Idlist:
             disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
 

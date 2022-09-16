@@ -27,6 +27,38 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220916
+1.http://localhost:8000/web/recommend_carer
+這個漏傳值到下一頁, 而且不要用 phone
+2.http://localhost:8000/web/request_form_patient_info
+Field 'id' expected a number but got ''.
+1921 disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
+=> 都不選的情況下這頁會出錯(or 下一頁回上一頁出錯?!)
+http://localhost:8000/web/booking_patient_info?servant=0985463816
+769 Field 'id' expected a number but got ''.
+=> 同問題
+=> 此頁的 Ajax 如果資料不全, "申請預訂"的 Button 先不反應
+3.地址
+（縣市）（地區）
+路名：我是框框
+※為確保您的隱私，居家照顧此欄位只需填”路名”。
+
+醫院名（機構名稱）及 注意事項：我是框框
+※為確保您的隱私，請勿在此處填寫病房號或住家詳細地址，請用聊聊告知接案服務者即可。
+http://localhost:8000/web/request_form_service_type
+http://localhost:8000/web/booking_location?servant=0985463816
+4.改用 id (其他頁面也要檢查)
+http://localhost:8000/web/search_carer_detail?servant=0985463816
+並且資訊不全時, 不要按申請預訂
+=> 會當機!
+http://localhost:8000/web/booking_location?servant=0985463816
+5.修改名稱, 顯示 林先生, 黃小姐
+http://localhost:8000/web/requirement_detail?case=1
+http://localhost:8000/web/recommend_carer
+http://localhost:8000/web/search_list?weekday_list=%5B%5D&city=3&county=%E5%85%A8%E5%8D%80&care_type=%E5%B1%85%E5%AE%B6%E7%85%A7%E9%A1%A7&is_continuous_time=True
+http://localhost:8000/web/search_carer_detail?servant=0985463816
+{{ obj.name|slice:"0:3" }}
+
 20220915
 1.http://localhost:8000/web/my_service_setting_services
 => 加價項目去除勾選, 如果沒填, 預設 0%
