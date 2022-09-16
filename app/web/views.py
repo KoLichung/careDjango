@@ -115,7 +115,7 @@ def ajax_return_wage(request):
 def ajax_cal_rate(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'ajax_cal_rate' :
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
-        servants = User.objects.filter(is_servant=True)
+        servants = User.objects.filter(is_servant_passed=True)
         print(updatedData)
         servant = updatedData['servant'][0]
         servant = User.objects.get(phone=servant)
@@ -391,7 +391,7 @@ def search_list(request):
     
     citys = City.objects.all()
     counties = County.objects.all()
-    servants = User.objects.filter(is_servant=True)
+    servants = User.objects.filter(is_servant_passed=True)
     county_name = request.GET.get('county')
     city_id = request.GET.get("city")
     care_type = request.GET.get('care_type')
@@ -1535,9 +1535,9 @@ def my_service_setting_services(request):
                 if UserServiceShip.objects.filter(user=user,service=service).exists():
                     UserServiceShip.objects.filter(user=user,service=service).delete()
 
-        increase_ids = list(map(int, request.POST.getlist('increases[]')))
+        # increase_ids = list(map(int, request.POST.getlist('increases[]')))
         for increase_service in increase_services:
-            if increase_service.id in increase_ids:
+            # if increase_service.id in increase_ids:
                 set_increase_percent = request.POST.get(increase_service.name + 'percent')
 
                 if UserServiceShip.objects.filter(user=user,service=increase_service).exists():
@@ -1548,9 +1548,9 @@ def my_service_setting_services(request):
                     userserviceship.service = increase_service
                 userserviceship.increase_percent = float(set_increase_percent)
                 userserviceship.save()
-            else:
-                if UserServiceShip.objects.filter(user=user,service=increase_service).exists():
-                    UserServiceShip.objects.filter(user=user,service=increase_service).delete()
+            # else:
+            #     if UserServiceShip.objects.filter(user=user,service=increase_service).exists():
+            #         UserServiceShip.objects.filter(user=user,service=increase_service).delete()
 
         return redirect('my_service_setting_services')
 
@@ -2047,7 +2047,7 @@ def request_form_contact(request):
 
 def request_form_confirm(request):
     user = request.user
-    servants = User.objects.filter(is_servant=True)
+    servants = User.objects.filter(is_servant_passed=True)
     tempcase = TempCase.objects.get(user=user,is_booking=False)
     care_type = tempcase.care_type
     start_date = tempcase.start_datetime
@@ -2201,7 +2201,7 @@ def request_form_confirm(request):
     return render(request, 'web/request_form/confirm.html',{'servants':servants, 'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list, 'tempcase':tempcase, 'care_type':care_type,'start_date_str':start_date_str,'end_date_str':end_date_str,'time_type':time_type,'start_time_str':start_time_str,'end_time_str':end_time_str})
     
 def recommend_carer(request):
-    servants = User.objects.filter(is_servant=True)
+    servants = User.objects.filter(is_servant_passed=True)
     citys = City.objects.all()
     counties = County.objects.all()
     city_id = ''

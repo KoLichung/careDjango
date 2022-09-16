@@ -67,8 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
     line_id = models.CharField(max_length= 100, blank = True, null=True, unique=True)
 
-    is_servant = models.BooleanField(default=False)
-    is_passed = models.BooleanField(default=False)
+    is_apply_servant = models.BooleanField(default=False)
     is_servant_passed = models.BooleanField(default=False)
 
     is_home = models.BooleanField(default=False)
@@ -857,5 +856,4 @@ class MonthSummary(models.Model):
 class AssistancePost(models.Model):
     title = models.CharField(max_length = 255, blank = True, null=True)
     body = RichTextUploadingField(config_name='default')
-    cover_image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
     create_date = models.DateField(blank = True, null=True)

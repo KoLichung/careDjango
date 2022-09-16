@@ -116,6 +116,7 @@ def fakeData():
     user = User()
     user.name = 'user01'
     user.phone = '0915323131'
+    user.is_apply_servant = True
     user.gender = 'M'
     user.save()
 
@@ -123,7 +124,8 @@ def fakeData():
     user.name = 'user02'
     user.phone = '0985463816'
     user.gender = 'M'
-    user.is_servant = True
+    user.is_apply_servant = True
+    user.is_servant_passed = True
     user.is_home = True
     user.home_hour_wage = 300
     user.home_half_day_wage = 1600
@@ -137,7 +139,8 @@ def fakeData():
     user.name = 'user03'
     user.phone = '0985463888'
     user.gender = 'F'
-    user.is_servant = True
+    user.is_apply_servant = True
+    user.is_servant_passed = True
     user.is_hospital = True
     user.hospital_hour_wage = 320
     user.hospital_half_day_wage = 1750

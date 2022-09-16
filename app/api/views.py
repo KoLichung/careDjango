@@ -243,7 +243,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         start_end_time = self.request.query_params.get('start_end_time')
         order = self.request.query_params.get('order')
 
-        queryset = User.objects.filter(is_servant=True)
+        queryset = User.objects.filter(is_servant_passed=True)
         if care_type == 'home':
             queryset = queryset.filter(is_home=True)
         elif care_type == 'hospital':
@@ -364,7 +364,7 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
         city = self.request.query_params.get('city')
         county = self.request.query_params.get('county')
 
-        queryset = User.objects.filter(is_servant=True)
+        queryset = User.objects.filter(is_servant_passed=True)
         if care_type == 'home':
             queryset = queryset.filter(is_home=True)
         elif care_type == 'hospital':

@@ -20,6 +20,7 @@
                 <tr>
                   <th scope="col">姓名</th>
                   <th scope="col">電話</th>
+                  <th scope="col">是否申請成為服務者</th>
                   <th scope="col">是否審核通過為服務者</th>
                   <th class="text-end" scope="col">歷史訂單</th>
                 </tr>
@@ -29,6 +30,7 @@
                   <tr>
                     <td>{{user.name}}</td>
                     <td>{{user.phone}}</td>
+                    <td class="px-5">{% if user.is_apply_servant == True %}是{% else %}否{% endif %}</td>
                     <td class="px-5">{% if user.is_servant_passed == True %}是{% else %}否{% endif %}</td>
                     <td class="alnright">                    
                       <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_detail'%}?user={{user.id}}">查看</a>

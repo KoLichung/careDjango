@@ -49,13 +49,13 @@ def all_members(request):
 
     users = User.objects.filter(is_staff=False)
     members_num = users.count()
-    needers_num = users.filter(is_servant=False).count()
-    servants_num = users.filter(is_servant=True).count()
+    needers_num = users.filter(is_servant_passed=False).count()
+    servants_num = users.filter(is_servant_passed=True).count()
     member = request.GET.get('member')
     if member == 'needer':
-        users = users.filter(is_servant=False)
+        users = users.filter(is_servant_passed=False)
     elif member == 'servant':
-        users = users.filter(is_servant=True)
+        users = users.filter(is_servant_passed=True)
     paginator = Paginator(users, 10)
     if request.GET.get('page') != None:
         page_number = request.GET.get('page') 

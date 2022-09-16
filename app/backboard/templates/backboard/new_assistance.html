@@ -31,49 +31,6 @@
         </div>   
       </div>
 
-      <!-- 選擇封面圖片 -->
-      <div class="card h-lg-100 mb-2">
-        <div class="row my-2 gx-5" style="padding: 1rem 1rem;">
-          <div class="col">
-            <div class=""><b>封面圖片</b> (建議尺寸 800 x 600 px)</div>
-              {% if post.cover_image %}
-                <img src="{{ post.cover_image.url }}" alt="{{post.title}}" class="customImageSize rounded mb-2" width="300"> <br>
-              {% endif %}
-
-              <input type="hidden" id="post" name="post" value={{post.id}}>
-              {{ form.id.as_hidden }}
-              {{ form.cover_image }}
-          </div>
-
-          <div class="col alnleft">
-          </div>
-        </div>
-      </div>
-
-      <!-- 文章分類 -->
-      <!-- <div class="card h-lg-100 mb-4">
-        <div class="row mb-3 gx-5" style="padding: 1rem 1rem;">
-          <div class="col">
-            <b>文章分類</b>
-          </div>
-          <div class="col text-end">
-            <a class="custom-purple-btn text-white btn-sm " href="{% url 'all_categories' %}" role="button">編輯分類</a>
-          </div>  
-        </div>
-        <div class="mx-3">
-          {% for category in categories %}
-            <div class="form-check form-check-inline">
-              {% if category in checkedCatories %}
-                <input class="form-check-input" type="checkbox" id="check_category_{{category.id}}"+ name="check_category_{{category.id}}"  value={{category.id}} checked/>
-              {% else %}
-                <input class="form-check-input" type="checkbox" id="check_category_{{category.id}}"+ name="check_category_{{category.id}}"  value={{category.id}} />
-              {% endif %}
-              <label class="form-check-label" for="check_category_{{category.id}}">{{category.name}}</label>
-            </div>
-          {% endfor %}
-        </div>
-      </div> -->
-
       <!-- 按鈕欄 -->
       <div class="row">
         <div class="col">
@@ -81,11 +38,7 @@
         </div>
         <div class="col text-end">
           <button class="btn btn-success" type="submit" name="post" value='draft'>
-            儲存草稿
-          </button>
-
-          <button class="btn purple-button" type="submit" name="post" value='publish'>
-            發布文章
+            儲存
           </button>
         </div>
       </div>
