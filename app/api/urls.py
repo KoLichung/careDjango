@@ -15,7 +15,7 @@ router.register('orders', views.OrderViewSet)
 router.register('userServiceLocations', views.UserServiceLocationViewSet)
 router.register('userWeekDayTimes', views.UserWeekDayTimeViewSet)
 router.register('chatroom', views.ChatRoomViewSet)
-router.register('messages', views.MessageViewSet)
+
 router.register('system_messages', views.SystemMessageViewSet)
 router.register('search_servants', views.SearchServantViewSet)
 router.register('recommend_servants', views.RecommendServantViewSet)
@@ -33,4 +33,5 @@ urlpatterns = [
     path('servant_put_review/<int:pk>', views.ServantPutReviewView.as_view()),
     path('create_case', views.CreateCase.as_view()),
     path('create_servant_order', views.CreateServantOrder.as_view()),
+    path('messages', views.MessageViewSet.as_view()),
 ]
