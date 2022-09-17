@@ -177,7 +177,7 @@
       {% for servant in servants %}
       <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 ">
         <div class="border border-600" style="border-radius: 6px;">
-          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant}}&care_type={{care_type}}&is_continuous_time={{is_continuous_time}}&weekdays={{weekdays}}&StartDate={{defaultStartDate}}&EndDate={{defaultEndDate}}&start_time={{dict.start_time}}&end_time={{dict.end_time}}&city={{dict.city.id}}&county={{dict.county}}">
+          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant.id}}&care_type={{care_type}}&is_continuous_time={{is_continuous_time}}&weekdays={{weekdays}}&StartDate={{defaultStartDate}}&EndDate={{defaultEndDate}}&start_time={{dict.start_time}}&end_time={{dict.end_time}}&city={{dict.city.id}}&county={{dict.county}}">
             {% if servant.background_image.url != None %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
@@ -196,7 +196,7 @@
                   <!-- cat_horizontal.jpg -->
                 </div>
                 <!-- 4.8, 對 4 做 for loop, 對 0.8 做判斷, if > 0.5 給 1 顆星, <= 0.5, 就給 半顆星 -->
-                <span class="carer-name" style="margin-right: 5px;">{{servant.name}}</span >
+                <span class="carer-name" style="margin-right: 5px;">{{servant.name|slice:"0:1"}}{% if servant.gender == 'M' %}先生{% else %}小姐{% endif %}</span >
                 <div class="col align-self-center " style="color: yellow;">
                       {% for i in servant.servant_avg_rate_range %}
                         <span class="fas fa-star" ></span>

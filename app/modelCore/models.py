@@ -385,6 +385,8 @@ class Case(models.Model):
 
     is_taken = models.BooleanField(default=False)
     is_open_for_search = models.BooleanField(default=False)
+    road_name = models.CharField(max_length= 255,default='')
+    hospital_name = models.CharField(max_length= 255, default='')
 
     weekday = models.CharField(max_length=100, blank=True, null=True)
     start_time = models.FloatField(default=0, blank=True, null=True)
@@ -510,6 +512,8 @@ class TempCase(models.Model):
     disease = models.CharField(max_length=255, blank=True, null=True)
     service = models.CharField(max_length=255, blank=True, null=True)
     increase_service = models.CharField(max_length=255, blank=True, null=True)
+    road_name = models.CharField(max_length= 255,default='')
+    hospital_name = models.CharField(max_length= 255, default='')
 
     address = models.CharField(max_length=255, default='')
     tranfer_info = models.CharField(max_length=255, default='')

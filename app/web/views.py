@@ -117,16 +117,19 @@ def ajax_cal_rate(request):
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
         servants = User.objects.filter(is_servant_passed=True)
         print(updatedData)
-        servant = updatedData['servant'][0]
-        servant = User.objects.get(phone=servant)
+        servant_id = updatedData['servant'][0]
+        servant = User.objects.get(id=servant_id)
+        
         care_type = updatedData['care_type'][0]
+        print('a')
         start_end_date = updatedData['start_end_date'][0]
         is_continuous_time = updatedData['is_continuous_time'][0]
+        
         startTime = updatedData['startTime'][0]
         endTime = updatedData['endTime'][0]
         start_date = '20' + start_end_date.split(' to ')[0].replace('/','-')
         end_date = '20' +start_end_date.split(' to ')[1].replace('/','-')
-        print('a')
+        
         if is_continuous_time == 'True':
             print('b')
             servants = servants.filter(is_continuous_time=True)
@@ -583,7 +586,7 @@ def search_carer_detail(request):
             county_name = '全區'
     start_date = ''
     end_date = ''
-    servant_phone = request.GET.get('servant')
+    servant_id = request.GET.get('servant')
     reviews_all = request.GET.get('reviews')
     care_type = request.GET.get('care_type')
     is_continuous_time = request.GET.get('is_continuous_time')
@@ -607,7 +610,7 @@ def search_carer_detail(request):
     else:
         weekday_list = []
     
-    servant = User.objects.get(phone=servant_phone)
+    servant = User.objects.get(id=servant_id)
         
     servant_care_type = []
     if servant.is_home == True:
@@ -688,7 +691,7 @@ def search_carer_detail(request):
                 tempcase.weekday = weekday_str
             tempcase.save()
             print(tempcase.county)
-            return redirect_params('booking_patient_info',{'weekdays':weekday_str, 'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_end_date':start_end_date,'start_time':start_time,'end_time':end_time,'servant':servant})
+            return redirect_params('booking_patient_info',{'weekdays':weekday_str, 'city':city,'county':county,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_end_date':start_end_date,'start_time':start_time,'end_time':end_time,'servant':servant.id})
         else:
             return redirect('login')
     defaultStartTime = start_time
@@ -697,8 +700,8 @@ def search_carer_detail(request):
 
 def booking_patient_info(request):
     user = request.user
-    servant_phone = request.GET.get('servant')
-    servant = User.objects.get(phone=servant_phone)
+    servant_id = request.GET.get('servant')
+    servant = User.objects.get(id=servant_id)
     citys = City.objects.all()
     counties = County.objects.all()
     if TempCase.objects.filter(user=user,servant=servant,is_booking=True).exists() :
@@ -760,7 +763,8 @@ def booking_patient_info(request):
             body_condition_none = True
         else:
             body_condition_none = False
-        if service != None:
+
+        if service != None and service != '' :
             service_Idlist = service.split(',')
         else:
             service_Idlist = []
@@ -768,7 +772,7 @@ def booking_patient_info(request):
         for service_id in service_Idlist:
             service_list.append(Service.objects.get(id=service_id))
         
-        if increase_service != None:
+        if increase_service != None and increase_service != '' :
             increase_service_Idlist = increase_service.split(',')
         else:
             increase_service_Idlist = []
@@ -902,13 +906,13 @@ def booking_patient_info(request):
                     increase_service_str += ','
             tempcase.increase_service = increase_service_str
         tempcase.save()
-        return redirect_params('booking_location',{'servant':servant})
+        return redirect_params('booking_location',{'servant':servant.id})
     print('county_name',county_name)
     return render(request, 'web/booking/patient_info.html',{'start_end_date':start_end_date, 'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight,'weekday_str':weekday_str, 'increase_service_ships':increase_service_ships, 'weekday_list':weekday_list, 'servant':servant, 'care_type':care_type, 'start_time':start_time,'end_time':end_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'cityName':city,'citys':citys,'county_name':county_name,'counties':counties, 'is_continuous_time':is_continuous_time, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'disease_none':disease_none, 'diseases':diseases,'body_conditions':body_conditions})
 
 def booking_location(request):
-    servant_phone = request.GET.get('servant')
-    servant = User.objects.get(phone=servant_phone)
+    servant_id= request.GET.get('servant')
+    servant = User.objects.get(id=servant_id)
     user = request.user
     citys = City.objects.all()
     counties = County.objects.all()
@@ -920,13 +924,14 @@ def booking_location(request):
         city = City.objects.get(name=city)
         county_name = last_tempcase.county
         care_type = last_tempcase.care_type
-        print(care_type)
         if county_name != '全區':
                 county_name = County.objects.get(city=city,name=county_name)
         else:
             county_name = '全區'
         start_date = last_tempcase.start_datetime.date()
         end_date = last_tempcase.end_datetime.date()
+        road_name = last_tempcase.road_name
+        hospital_name = last_tempcase.hospital_name
         start_date_str = start_date.strftime("%m/%d")
         end_date_str = end_date.strftime("%m/%d")
         is_continuous_time = last_tempcase.is_continuous_time
@@ -965,21 +970,26 @@ def booking_location(request):
         address = request.POST.get('address')
         tranfer_info = request.POST.get('tranfer_info')
         care_type = request.POST.get('care_type')
-        print(tranfer_info)
+        road_name = request.POST.get('road_name')
+        hospital_name = request.POST.get('hospital_name')
         tempcase = TempCase.objects.get(user=user,servant=servant)
         tempcase.city = City.objects.get(id=city).name
         tempcase.county = county
         tempcase.address = address
         tempcase.tranfer_info = tranfer_info
+        if road_name != None and road_name != '':
+            tempcase.road_name = road_name
+        if hospital_name != None and hospital_name != '':
+            tempcase.hospital_name = hospital_name
         tempcase.save()
-        return redirect_params('booking_contact',{'servant':servant_phone})
+        return redirect_params('booking_contact',{'servant':servant_id})
     elif request.method == 'POST' and 'previous' in request.POST:
-        return redirect_params('booking_patient_info',{'servant':servant_phone})
-    return render(request, 'web/booking/location.html',{'address':address,'tranfer_info':tranfer_info, 'start_end_date':start_end_date, 'servant_phone':servant_phone, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'citys':citys,'countyName':county_name,'counties':counties,})
+        return redirect_params('booking_patient_info',{'servant':servant_id})
+    return render(request, 'web/booking/location.html',{'road_name':road_name,'hospital_name':hospital_name, 'address':address,'tranfer_info':tranfer_info, 'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'citys':citys,'countyName':county_name,'counties':counties,})
 
 def booking_contact(request):
-    servant_phone = request.GET.get('servant')
-    servant = User.objects.get(phone=servant_phone)
+    servant_id = request.GET.get('servant')
+    servant = User.objects.get(id=servant_id)
     user = request.user
     if TempCase.objects.filter(user=user,servant=servant,is_booking=True).exists() :
         last_tempcase = TempCase.objects.get(user=user,servant=servant,is_booking=True)
@@ -1039,14 +1049,15 @@ def booking_contact(request):
         tempcase.emergencycontact_relation = emergencycontact_relation
         tempcase.emergencycontact_phone = emergencycontact_phone
         tempcase.save()
-        return redirect_params('booking_confirm',{'servant':servant_phone})
+        return redirect_params('booking_confirm',{'servant':servant_id})
     elif request.method == 'POST' and 'previous' in request.POST:
-        return redirect_params('booking_location',{'servant':servant_phone})
-    return render(request, 'web/booking/contact.html',{'user':user,'emergencycontact_phone':emergencycontact_phone,'emergencycontact_relation':emergencycontact_relation,'emergencycontact_name':emergencycontact_name,'start_end_date':start_end_date, 'servant_phone':servant_phone, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'countyName':county_name})
+        return redirect_params('booking_location',{'servant':servant_id})
+    return render(request, 'web/booking/contact.html',{'user':user,'emergencycontact_phone':emergencycontact_phone,'emergencycontact_relation':emergencycontact_relation,'emergencycontact_name':emergencycontact_name,'start_end_date':start_end_date, 'servant_id':servant_id, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'countyName':county_name})
 
 def booking_confirm(request):
-    servant_phone = request.GET.get('servant')
-    servant = User.objects.get(phone=servant_phone)
+    servant_id = request.GET.get('servant')
+    servant = User.objects.get(id=servant_id)
+    servant_phone = servant.phone
     user = request.user
     if TempCase.objects.filter(user=user,servant=servant,is_booking=True).exists() :
         tempcase = TempCase.objects.get(user=user,servant=servant,is_booking=True)
@@ -1085,31 +1096,34 @@ def booking_confirm(request):
             if count < len(weekday_list):
                 weekday_str += ','
         disease = tempcase.disease
-        disease_Idlist = disease.split(',')
         disease_list = []
-        for diseaseId in disease_Idlist:
-            disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
+        if disease != None and disease != '':
+            disease_Idlist = disease.split(',')
+            for diseaseId in disease_Idlist:
+                disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
 
         body_condition = tempcase.body_condition
-        body_condition_Idlist = body_condition.split(',')
         body_condition_list = []
-        for body_condition_id in body_condition_Idlist:
-            body_condition_list.append(BodyCondition.objects.get(id=body_condition_id))
+        if body_condition != None and body_condition != '':
+            body_condition_Idlist = body_condition.split(',')
+            
+            for body_condition_id in body_condition_Idlist:
+                body_condition_list.append(BodyCondition.objects.get(id=body_condition_id))
 
         service = tempcase.service
-        service_Idlist = service.split(',')
         service_list = []
-        for service_id in service_Idlist:
-            service_list.append(Service.objects.get(id=service_id))
-            servant_ids = list(UserServiceShip.objects.filter(service=Service.objects.get(id=service_id)).values_list('user', flat=True))
-            print(servant_ids)
-
+        if service != None and service != '':
+            service_Idlist = service.split(',')
+            for service_id in service_Idlist:
+                service_list.append(Service.objects.get(id=service_id))
+                servant_ids = list(UserServiceShip.objects.filter(service=Service.objects.get(id=service_id)).values_list('user', flat=True))
+        
         increase_service = tempcase.increase_service
-        increase_service_Idlist = increase_service.split(',')
         increase_service_list = []
-
-        for increase_service_id in increase_service_Idlist:
-            increase_service_list.append(Service.objects.get(id=increase_service_id))
+        if increase_service != None and increase_service != '':
+            increase_service_Idlist = increase_service.split(',')
+            for increase_service_id in increase_service_Idlist:
+                increase_service_list.append(Service.objects.get(id=increase_service_id))
     else:
         return redirect_params('search_carer_detail',{'servant':servant})
     if request.method == 'POST' and 'pay' in request.POST:
@@ -1208,8 +1222,8 @@ def booking_confirm(request):
         order_id = order.id
         return redirect_params('http://202.182.105.11/newebpayApi/mpg_trade',{'order_id':order_id})
     elif request.method == 'POST' and 'previous' in request.POST:
-        return redirect_params('booking_contact',{'servant':servant_phone})
-    return render(request, 'web/booking/confirm.html',{'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'servant_phone':servant_phone, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant,})
+        return redirect_params('booking_contact',{'servant':servant_id})
+    return render(request, 'web/booking/confirm.html',{'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant})
 
 def news(request):
     blogposts = BlogPost.objects.filter(state='publish')
@@ -1809,6 +1823,8 @@ def request_form_service_type(request):
         start_end_date = start_date[0].split('20')[1] + "/" + start_date[1] + "/" + start_date[2] + " to " + end_date[0].split('20')[1] + "/" + end_date[1] + "/" + end_date[2]
         city = City.objects.get(name=last_tempcase.city)
         county_name = last_tempcase.county
+        road_name = last_tempcase.road_name
+        hospital_name = last_tempcase.hospital_name
         counties = counties.filter(city=city)
         # county = County.objects.get(city=city,name=county_name)
         is_continuous_time = last_tempcase.is_continuous_time
@@ -1839,6 +1855,8 @@ def request_form_service_type(request):
         is_continuous_time = True
         start_end_date = ''
         care_type = 'home'
+        road_name = ''
+        hospital_name = ''
 
     if request.method == 'POST':
         care_type = request.POST.get('care_type')
@@ -1848,6 +1866,8 @@ def request_form_service_type(request):
         is_continuous_time = request.POST.get('time_type')
         start_time = request.POST.get('timepicker_startTime')
         end_time = request.POST.get('timepicker_endTime')
+        road_name = request.POST.get('road_name')
+        hospital_name = request.POST.get('hospital_name')
         start_date ='20'+ start_end_date.split(' to ')[0]
         end_date = '20' + start_end_date.split(' to ')[1]
         start_date = datetime.datetime.strptime(start_date, "%Y/%m/%d")
@@ -1868,6 +1888,10 @@ def request_form_service_type(request):
         tempcase.end_datetime = end_date
         tempcase.start_time = start_time_int
         tempcase.end_time = end_time_int
+        if road_name != None and road_name != '':
+            tempcase.road_name = road_name
+        if hospital_name != None and hospital_name != '':
+            tempcase.hospital_name = hospital_name
         if is_continuous_time == 'True':
             tempcase.is_continuous_time = True
         else:
@@ -1884,7 +1908,7 @@ def request_form_service_type(request):
         tempcase.save()
         return redirect('request_form_patient_info')
     
-    return render(request, 'web/request_form/service_type.html',{'start_time':start_time,'end_time':end_time, 'weekday_list':weekday_list,'is_continuous_time':is_continuous_time, 'start_end_date':start_end_date,'care_type':care_type, 'countyName':county_name,'cityName':city,'citys':citys,'counties':counties})
+    return render(request, 'web/request_form/service_type.html',{'road_name':road_name,'hospital_name':hospital_name, 'start_time':start_time,'end_time':end_time, 'weekday_list':weekday_list,'is_continuous_time':is_continuous_time, 'start_end_date':start_end_date,'care_type':care_type, 'countyName':county_name,'cityName':city,'citys':citys,'counties':counties})
 
 def request_form_patient_info(request):
     user = request.user
@@ -1908,34 +1932,31 @@ def request_form_patient_info(request):
         conditions_remark = last_tempcase.conditions_remark
         service = last_tempcase.service
         increase_service = last_tempcase.increase_service
-        if disease != None:
+        disease_list = []
+        if disease != None and disease != '':
             disease_Idlist = disease.split(',')
+            for diseaseId in disease_Idlist:
+                disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
         else:
             disease_Idlist = []
         if '1' in disease_Idlist:
             disease_none = True
         else:
             disease_none = False
-        disease_list = []
-
-        #diseaseId=''
-        #Field 'id' expected a number but got ''
-        for diseaseId in disease_Idlist:
-            disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
-
-        if body_condition != None:
+        
+        body_condition_list = []
+        if body_condition != None and body_condition != '' :
             body_condition_Idlist = body_condition.split(',')
+            for body_condition_id in body_condition_Idlist:
+                body_condition_list.append(BodyCondition.objects.get(id=body_condition_id))
         else:
             body_condition_Idlist = []
         if '1' in body_condition_Idlist:
             body_condition_none = True
         else:
             body_condition_none = False
-        body_condition_list = []
-        for body_condition_id in body_condition_Idlist:
-            body_condition_list.append(BodyCondition.objects.get(id=body_condition_id))
-        
-        if service != None:
+
+        if service != None and service != '' :
             service_Idlist = service.split(',')
         else:
             service_Idlist = []
@@ -1943,13 +1964,14 @@ def request_form_patient_info(request):
         for service_id in service_Idlist:
             service_list.append(Service.objects.get(id=service_id))
         
-        if increase_service != None:
+        if increase_service != None and increase_service != '' :
             increase_service_Idlist = increase_service.split(',')
         else:
             increase_service_Idlist = []
         increase_service_list = []
         for increase_service_id in increase_service_Idlist:
-            increase_service_list.append(Service.objects.get(id=increase_service_id))
+            increase_service_list.append(UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=increase_service_id)))
+        print(increase_service_list)
         
     if request.method == 'POST' and 'next' in request.POST:
         print('post')
@@ -2071,32 +2093,34 @@ def request_form_confirm(request):
     end_time_str = end_time.strftime("%H:%M")
 
     disease = tempcase.disease
-    disease_Idlist = disease.split(',')
     disease_list = []
-    for diseaseId in disease_Idlist:
-        disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
+    if disease != None and disease != '':
+        disease_Idlist = disease.split(',')
+        for diseaseId in disease_Idlist:
+            disease_list.append(DiseaseCondition.objects.get(id=diseaseId))
 
     body_condition = tempcase.body_condition
-    body_condition_Idlist = body_condition.split(',')
     body_condition_list = []
-    for body_condition_id in body_condition_Idlist:
-        body_condition_list.append(BodyCondition.objects.get(id=body_condition_id))
+    if body_condition != None and body_condition != '':
+        body_condition_Idlist = body_condition.split(',')
+        
+        for body_condition_id in body_condition_Idlist:
+            body_condition_list.append(BodyCondition.objects.get(id=body_condition_id))
 
     service = tempcase.service
-    service_Idlist = service.split(',')
     service_list = []
-    for service_id in service_Idlist:
-        service_list.append(Service.objects.get(id=service_id))
-        servant_ids = list(UserServiceShip.objects.filter(service=Service.objects.get(id=service_id)).values_list('user', flat=True))
-        servants = servants.filter(id__in=servant_ids)
-        print(servant_ids)
-
+    if service != None and service != '':
+        service_Idlist = service.split(',')
+        for service_id in service_Idlist:
+            service_list.append(Service.objects.get(id=service_id))
+            servant_ids = list(UserServiceShip.objects.filter(service=Service.objects.get(id=service_id)).values_list('user', flat=True))
+    
     increase_service = tempcase.increase_service
-    increase_service_Idlist = increase_service.split(',')
     increase_service_list = []
-
-    for increase_service_id in increase_service_Idlist:
-        increase_service_list.append(Service.objects.get(id=increase_service_id))
+    if increase_service != None and increase_service != '':
+        increase_service_Idlist = increase_service.split(',')
+        for increase_service_id in increase_service_Idlist:
+            increase_service_list.append(Service.objects.get(id=increase_service_id))
     
     is_continuous_time = tempcase.is_continuous_time
     weekdays = tempcase.weekday

@@ -58,6 +58,8 @@ http://localhost:8000/web/recommend_carer
 http://localhost:8000/web/search_list?weekday_list=%5B%5D&city=3&county=%E5%85%A8%E5%8D%80&care_type=%E5%B1%85%E5%AE%B6%E7%85%A7%E9%A1%A7&is_continuous_time=True
 http://localhost:8000/web/search_carer_detail?servant=0985463816
 {{ obj.name|slice:"0:3" }}
+{{case.user.name|slice:"0:1"}}{% if case.user.gender == 'M' %}先生{% else %}小姐{% endif %}
+{{servant.name|slice:"0:1"}}{% if servant.gender == 'M' %}先生{% else %}小姐{% endif %}
 
 20220915
 1.http://localhost:8000/web/my_service_setting_services

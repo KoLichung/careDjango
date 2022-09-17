@@ -22,7 +22,7 @@
                     </div>
 
                     <div class="mx-3">
-                      <span class="h5">{{case.user.name}}</span>
+                      <span class="h5">{{case.user.name|slice:"0:1"}}{% if case.user.gender == 'M' %}先生{% else %}小姐{% endif %}</span>
                       <div>
                         {% for i in case.user.needer_avg_rate_range %}
                           <span class="fas fa-star" style="color: yellow;"></span>

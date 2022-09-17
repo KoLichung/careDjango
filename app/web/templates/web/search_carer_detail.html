@@ -27,7 +27,7 @@
               </div>
 
               <div class="mx-3 align-self-center">
-                <span class="h5">{{servant.name}}</span>
+                <span class="h5">{{servant.name|slice:"0:1"}}{% if servant.gender == 'M' %}先生{% else %}小姐{% endif %}</span>
                   <div class="mt-2">
                     {% for care_type in servant_care_type %}
                     <span class="purple-border-tag">{{care_type}}</span>
@@ -106,7 +106,7 @@
             </div>
             {% endfor %}
             
-            <p class=" text-center" style="color: black;" type="button" onclick="location.href='{% url 'search_carer_detail' %}?servant={{servant}}&reviews=all'"><u>看所有評價</u></p>
+            <p class=" text-center" style="color: black;" type="button" onclick="location.href='{% url 'search_carer_detail' %}?servant={{servant.id}}&reviews=all'"><u>看所有評價</u></p>
 
           </div>
 
@@ -138,12 +138,12 @@
               <div class="mb-3" style="margin: 0; display: flex;">
 
                 <div class="segment__item">
-                  <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="home.call_backend()" value="home" {% if care_type == 'home' %} checked {% endif %} >
+                  <input type="radio" class="segment__input"  id="care_type_home" name="care_type" onclick="home.call_backend()" value="home" {% if care_type == 'home' %} checked {% endif %} >
                   <div class="segment__button" >居家照顧</div>
                 </div>
           
                 <div class="segment__item">
-                  <input type="radio" class="segment__input"  id="care_type" name="care_type" onclick="hospital.call_backend()" value="hospital" {% if care_type == 'hospital' %} checked {% endif %} >
+                  <input type="radio" class="segment__input"  id="care_type_hospital" name="care_type" onclick="hospital.call_backend()" value="hospital" {% if care_type == 'hospital' %} checked {% endif %} >
                   <div class="segment__button">醫院看護</div>
                 </div>
               </div>
@@ -284,7 +284,7 @@
 
                 <div class="mt-3">
                   <a href="{% url 'booking_patient_info' %}">
-                    <button class="full-green-button">申請預訂</button>
+                    <button class="full-green-button" id="submit_button">申請預訂</button>
                   </a>
                 </div>
                 <input type="hidden" id="time" >
@@ -343,6 +343,9 @@
     const servant = urlParams.get('servant');
     const post_html = document.getElementById('post_html');
     is_continuous_time = urlParams.get('is_continuous_time');
+    const care_type_home = document.getElementById('care_type_home');
+    const care_type_hospital = document.getElementById('care_type_hospital')
+    const submit_button = document.getElementById('submit_button')
     
     var home = {
       call_backend : function (){
@@ -416,15 +419,15 @@
       
       calculate_rate.call();
     })
-    document.querySelector('input[name="is_continuous_time"]:checked').addEventListener('change', event => {
+    document.getElementById('continuous_time').addEventListener('change', event => {
       event.preventDefault();
-      is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
+      is_continuous_time = 'True';
       
       calculate_rate.call();
     })
 
     document.querySelector('.weekdayCheck').addEventListener('change', event => {
-      is_continuous_time = document.querySelector('input[name="is_continuous_time"]:checked').value;
+      is_continuous_time = 'False';
       weekdays = []
       checkboxes = $('input[type=checkbox]:checked')
 
@@ -434,9 +437,26 @@
       console.log('weekdayCheck')
       calculate_rate.call();
     });
-    
+    $( document ).ready(function() {
+      submit_button.disabled = true;
+      if (!care_type){
+        var care_type = 'home'
+        document.getElementById('care_type_home').checked = true;
+      }
+      start_end_date = "{{defaultStartEndDate}}";
+      weekdays = "{{weekdays}}".split(',');
+      startTime = "{{defaultStartTime}}";
+      endTime = "{{defaultEndTime}}";
+      calculate_rate.call();
+      console.log(start_end_date,is_continuous_time,weekdays,startTime,endTime)
+    });
     function calculate_rate(){
-      care_type = document.querySelector('input[name="care_type"]:checked').value;
+      if(care_type_home.checked == true){
+        var care_type = 'home'
+      }else if (care_type_hospital.checked == true ){
+        var care_type = 'hospital'
+      }
+      console.log(care_type)
       return $.ajax({
         type: "POST",
         data: { 'servant':servant,
@@ -459,11 +479,14 @@
                 </div>
                 <div class="col text-end">
                   <strong>$ </strong><span class="section-title-purple"><strong>${data.base_money}</strong></span><span class="h6"> 起</span> 
-                </div>
-            `}else if (data.result == '1'){
-              post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`
+                </div>`;
+                submit_button.disabled = false;
+              }else if (data.result == '1'){
+              post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`;
+              submit_button.disabled = true;
             }else if (data.result == '2'){
-              post_html.innerHTML = `<span>所選時段與該服務者已有訂單時間重複</span>`
+              post_html.innerHTML = `<span>所選時段與該服務者已有訂單時間重複</span>`;
+              submit_button.disabled = true;
             }
             
           },
@@ -475,12 +498,7 @@
           }
       });
     }
-    start_end_date = "{{defaultStartEndDate}}";
-    weekdays = "{{weekdays}}".split(',');
-    startTime = "{{defaultStartTime}}";
-    endTime = "{{defaultEndTime}}";
-    calculate_rate.call();
-    console.log(start_end_date,is_continuous_time,weekdays,startTime,endTime)
+    
     
   </script>
 </main>

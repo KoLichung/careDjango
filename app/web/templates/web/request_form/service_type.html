@@ -25,17 +25,17 @@
         </div>
       </div>
       <form method="post" enctype="multipart/form-data">{% csrf_token %}
-      <div class="row">
+      <div class="row check_input ">
         <div class="col-11 mx-auto mt-3">
           
           <div class="mt-3 h6" style="display: flex;">
-            <label class="h6" for="home_care" name="care_type" style="padding-top: 2px; padding-right: 10px;">需求類型：</label>
+            <label class="h6" for="home_care"  name="care_type" style="padding-top: 2px; padding-right: 10px;">需求類型：</label>
             <label class="custom-radio-parent">居家照顧
-              <input type="radio" checked="checked" name="care_type" {% if care_type == 'home' %} checked {% endif %} id="home_care" value="home"> 
+              <input type="radio" checked="checked" id="care_home" name="care_type" {% if care_type == 'home' %} checked {% endif %} id="home_care" value="home"> 
               <span class="checkmark"></span>
             </label>
             <label class="custom-radio-parent">醫院看護
-              <input type="radio" name="care_type" id="hospital_care" {% if care_type == 'hospital' %} checked {% endif %}  value="hospital">
+              <input type="radio" name="care_type" id="care_hospital" {% if care_type == 'hospital' %} checked {% endif %}  value="hospital">
               <span class="checkmark"></span>
             </label>           
           </div>
@@ -61,7 +61,9 @@
                   {% endfor %}
                 </select>
               </div>
-          </div>     
+          </div>    
+          <div id="hidden_input"></div>
+          
           <div class="mt-2 h6" style="display: flex;">
             <p class="mt-2 h6">需求日期：</p>
             <input class="modal-timePicker-button datetimepicker " style="width: 200px;" id="start_end_date" name="start_end_date" type="text" value="{{start_end_date}}" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
@@ -99,7 +101,7 @@
         </div>
         <div class="col-5 col-md-4 mx-auto">
           <a href="{% url 'request_form_patient_info' %}">
-            <button class="full-purple-button">下一頁繼續 <span class="far fa-arrow-alt-circle-right" type="submit"></span></button>
+            <button class="full-purple-button" id="submit_button">下一頁繼續 <span class="far fa-arrow-alt-circle-right" type="submit"></span></button>
           </a>
         </div>
       </div>
@@ -111,113 +113,156 @@
           bottom: .09em; /* this is a better value for different fonts! */
         }
       </style>
-      <script>
-        function getCookie(name) {
-          let cookieValue = null;
-          if (document.cookie && document.cookie !== '') {
-              const cookies = document.cookie.split(';');
-              for (let i = 0; i < cookies.length; i++) {
-                  const cookie = cookies[i].trim();
-                  // Does this cookie string begin with the name we want?
-                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                      break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-        const csrftoken = getCookie('csrftoken');
-        
-        function listCities(){
-          var cityid = $("[name='city']").val();
-          $('#county_select').html('');
-          $.ajax({
-            type: "POST",
-            data: {'city_id':cityid,
-                    'action':'refresh_county'},
-            headers: {'X-CSRFToken': csrftoken},
-            url: "{% url 'ajax_refresh_county' %}",
-            success: function(response)
+    <script>
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                      }
+                  }
+              }
+              return cookieValue;
+          }
+      const csrftoken = getCookie('csrftoken');
+      
+      function listCities(){
+        var cityid = $("[name='city']").val();
+        $('#county_select').html('');
+        $.ajax({
+          type: "POST",
+          data: {'city_id':cityid,
+                  'action':'refresh_county'},
+          headers: {'X-CSRFToken': csrftoken},
+          url: "{% url 'ajax_refresh_county' %}",
+          success: function(response)
+          {
+            const data = response.data
+            console.log(data)
+            // var resultObj = JSON.parse(response);
+            var dataHandler = $("#county_select");
+            var county_all = `<option style="text-align: center" value="全區">全區</option>`
+            dataHandler.append(county_all);
+            data.forEach(el =>
             {
-              const data = response.data
-              console.log(data)
-              // var resultObj = JSON.parse(response);
-              var dataHandler = $("#county_select");
-              var county_all = `<option style="text-align: center" value="全區">全區</option>`
-              dataHandler.append(county_all);
-              data.forEach(el =>
-              {
-                  var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-                  dataHandler.append(newRow);
-              });
+                var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+                dataHandler.append(newRow);
+            });
 
-            }
-          });
-    }
-    const weekday_select = document.getElementById('time_type_select')
-    const select_continuous_time = document.getElementById('time_type_select')
-    function continuous_timeSelect(){
-      console.log('delete')
-      select_continuous_time.innerHTML = ``
-    }
-    function WeekdaySelect(){
-        weekday_select.innerHTML = ` 
-                <div class="h6" style="display: flex;">
-                    <p class="h6">指定時段：</p>
-                  <div class="weekdayCheck ">
-                    <div class="form-check form-check-inline ">
-                      <input class="form-check-input" id="1" name="weekdays[]" type="checkbox" value="1" {% if "1" in weekday_list %} checked="" {% endif %} />
-                      <label class="h6" for="weekdays[]">星期一</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="2" name="weekdays[]" type="checkbox" value="2" {% if "2" in weekday_list %} checked="" {% endif %} />
-                      <label class="h6" for="weekdays[]">星期二</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="3" name="weekdays[]" type="checkbox" value="3" {% if "3" in weekday_list %} checked="" {% endif %} />
-                      <label class="h6" for="weekdays[]">星期三</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="4" name="weekdays[]" type="checkbox" value="4" {% if "4" in weekday_list %} checked="" {% endif %} />
-                      <label class="h6" for="weekdays[]">星期四</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="5" name="weekdays[]" type="checkbox" value="5" {% if "5" in weekday_list %} checked="" {% endif %} />
-                      <label class="h6" for="weekdays[]">星期五</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="6" name="weekdays[]" type="checkbox" value="6" {% if "6" in weekday_list %} checked="" {% endif %} />
-                      <label class="h6" for="weekdays[]">星期六</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" id="0" name="weekdays[]" type="checkbox" value="0" {% if "0" in weekday_list %} checked="" {% endif %} />
-                      <label class="h6" for="weekdays[]">星期日</label>
+          }
+        });
+  }
+      const weekday_select = document.getElementById('time_type_select');
+      const select_continuous_time = document.getElementById('time_type_select');
+      const submit_button = document.getElementById('submit_button');
+      function continuous_timeSelect(){
+        console.log('delete')
+        select_continuous_time.innerHTML = ``
+      }
+      function WeekdaySelect(){
+          weekday_select.innerHTML = ` 
+                  <div class="h6" style="display: flex;">
+                      <p class="h6">指定時段：</p>
+                    <div class="weekdayCheck ">
+                      <div class="form-check form-check-inline ">
+                        <input class="form-check-input" id="1" name="weekdays[]" type="checkbox" value="1" {% if "1" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期一</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="2" name="weekdays[]" type="checkbox" value="2" {% if "2" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期二</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="3" name="weekdays[]" type="checkbox" value="3" {% if "3" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期三</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="4" name="weekdays[]" type="checkbox" value="4" {% if "4" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期四</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="5" name="weekdays[]" type="checkbox" value="5" {% if "5" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期五</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="6" name="weekdays[]" type="checkbox" value="6" {% if "6" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期六</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="0" name="weekdays[]" type="checkbox" value="0" {% if "0" in weekday_list %} checked="" {% endif %} />
+                        <label class="h6" for="weekdays[]">星期日</label>
+                      </div>
                     </div>
                   </div>
-                </div>
-                  `
-        document.querySelector('.weekdayCheck').addEventListener('change', event => {
-          event.preventDefault();
-          weekdays = []
-          checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+                    `
+          document.querySelector('.weekdayCheck').addEventListener('change', event => {
+            event.preventDefault();
+            weekdays = []
+            checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
 
-          for (var i = 0; i < checkboxes.length; i++) {
-            weekdays.push(checkboxes[i].value)
-              };
-              console.log(weekdays)
+            for (var i = 0; i < checkboxes.length; i++) {
+              weekdays.push(checkboxes[i].value)
+                };
+                console.log(weekdays)
+          })
+          weekdays.forEach(e =>{
+            var element = document.getElementById(e)
+            element.checked = true;
+            console.log(element)
+          })
+          
+          }
+          if (document.getElementById('weekly_time').checked){
+            console.log('weekly_checked');
+            WeekdaySelect.call();
+          }
+      const care_home = document.getElementById('care_home');
+      const care_hospital = document.getElementById('care_hospital');
+      const hidden_input = document.getElementById('hidden_input');
+      const care_type = "{{care_type}}";
+      const start_end_date = document.getElementById('start_end_date');
+      const start_time = document.getElementById('timepicker_startTime');
+      const end_time = document.getElementById('timepicker_endTime');
+      $(document).ready(function() {
+        submit_button.disabled = true;
+        care_home.addEventListener('click',function(){
+          if(this.checked = true){
+            console.log('1')
+            hidden_input.innerHTML = ``;
+            hidden_input.innerHTML += `<div class="mt-2" style="display: flex;">
+          <label class="h6 mt-2" for="aboriginal">路名：</label>
+          <input class="booking-input" style="width: 300px;" id="aboriginal" name="road_name" value="{{road_name}}" type="text" placeholder="" />
+        </div> <div>※為確保您的隱私，居家照顧此欄位只需填”路名”。</div> `
+          }
         })
-        weekdays.forEach(e =>{
-          var element = document.getElementById(e)
-          element.checked = true;
-          console.log(element)
+        care_hospital.addEventListener('click',function(){
+           if(this.checked = true){
+            console.log('2')
+              hidden_input.innerHTML = ``;
+              hidden_input.innerHTML += `<div class="mt-2" style="display: flex;">
+            <label class="h6 mt-2" for="aboriginal">醫院名（機構名稱）及 注意事項：</label>
+            <input class="booking-input" style="width: 300px;" id="aboriginal" name="hospital_name" value="{{hospital_name}}" type="text" placeholder="" />
+          </div> <div>※為確保您的隱私，請勿在此處填寫病房號或住家詳細地址，請用聊聊告知接案服務者即可。</div>`
+            }
         })
-        
+        if(care_type == 'home'){
+          care_home.click();
+        }else{
+          care_hospital.click();
         }
-        if (document.getElementById('weekly_time').checked){
-          console.log('weekly_checked');
-          WeekdaySelect.call();
+        document.querySelector(' .check_input ').addEventListener('change',function(){
+        if ((care_type !== '') && (start_end_date.value !== '') && (start_time.value !== '') && (end_time.value !== '')){
+          console.log('query');
+          submit_button.disabled = false;
         }
-      </script>
+      })
+      });
+      
+    </script>
 </main>
 {% endblock %}

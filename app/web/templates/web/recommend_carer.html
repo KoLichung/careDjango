@@ -102,7 +102,7 @@
                 <div class="avatar avatar-xl" style="margin-right: 5px;">
                   <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
                 </div>
-                  <span class="carer-name" style="margin-right: 5px;">{{servant.name}}</span >
+                  <span class="carer-name" style="margin-right: 5px;">{{servant.name|slice:"0:1"}}{% if servant.gender == 'M' %}先生{% else %}小姐{% endif %}</span >
                     {% for i in servant.servant_avg_rate_range %}
                       <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
                     {% endfor %}
