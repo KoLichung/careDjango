@@ -147,20 +147,19 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
         else:
             return Response({'message': "have no authority"})
 
-class MessageViewSet(viewsets.GenericViewSet,
-                    mixins.ListModelMixin,
-                    mixins.CreateModelMixin):
-    queryset = Message.objects.all()
-    serializer_class = serializers.MessageSerializer
+class MessageViewSet(APIView):
+    # queryset = Message.objects.all()
+    # serializer_class = serializers.MessageSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
+    def get(self, request):
         user = self.request.user
         chatroom= self.request.query_params.get('chatroom')
         user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
+  
         if user.id in user_ids:
-            queryset = self.queryset.filter(chatroom=chatroom).order_by('id')
+            queryset = Message.objects.filter(chatroom=chatroom).order_by('id')
 
             #update is_read_by_other_side
             queryset.filter(~Q(user=user)).update(is_read_by_other_side=True)
@@ -173,10 +172,21 @@ class MessageViewSet(viewsets.GenericViewSet,
                 if queryset[i].case != None and queryset[i].is_this_message_only_case:
                     queryset[i].case_detail = queryset[i].case
 
-            return queryset
+            serializer = serializers.MessageSerializer(queryset, many=True)
+
+            # 把聊天室中兩人發過的案子都撈出來
+            # 如果其中一人接了對方其中一個案子, 即可發圖片
+            is_send_image = False
+            cases = Case.objects.filter(user__in = user_ids)
+            for case in cases:
+                if case.servant != None and case.servant.id in user_ids:
+                    is_send_image = True
+
+            return Response({'is_send_image':is_send_image,'messages': serializer.data})
+ 
         return Response({'message': "have no authority"})
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request):
         user = self.request.user
         chatroom_id = self.request.query_params.get('chatroom')
         case = request.data.get('case')
@@ -205,10 +215,74 @@ class MessageViewSet(viewsets.GenericViewSet,
             message.save()
             chatroom.update_at = datetime.datetime.now()
             chatroom.save()
-            serializer = self.get_serializer(message)
+            serializer = serializers.MessageSerializer(message)
             return Response(serializer.data)
         else:
             return Response({'message': "have no authority"})
+
+
+# class MessageViewSet(viewsets.GenericViewSet,
+#                     mixins.ListModelMixin,
+#                     mixins.CreateModelMixin):
+#     queryset = Message.objects.all()
+#     serializer_class = serializers.MessageSerializer
+#     authentication_classes = (TokenAuthentication,)
+#     permission_classes = (IsAuthenticated,)
+
+#     def get_queryset(self):
+#         user = self.request.user
+#         chatroom= self.request.query_params.get('chatroom')
+#         user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
+#         if user.id in user_ids:
+#             queryset = self.queryset.filter(chatroom=chatroom).order_by('id')
+
+#             #update is_read_by_other_side
+#             queryset.filter(~Q(user=user)).update(is_read_by_other_side=True)
+
+#             for i in range(len(queryset)):
+#                 if queryset[i].user == user:
+#                     queryset[i].message_is_mine = True
+#                 if queryset[i].case != None:
+#                     queryset[i].orders = Order.objects.filter(case=queryset[i].case)
+#                 if queryset[i].case != None and queryset[i].is_this_message_only_case:
+#                     queryset[i].case_detail = queryset[i].case
+                
+#             return queryset
+#         return Response({'message': "have no authority"})
+
+#     def create(self, request, *args, **kwargs):
+#         user = self.request.user
+#         chatroom_id = self.request.query_params.get('chatroom')
+#         case = request.data.get('case')
+#         content = request.data.get('content')
+#         image = request.data.get('image')
+
+#         chatroom = ChatRoom.objects.get(id=chatroom_id)
+#         user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
+
+#         if user.id in user_ids:
+#             message = Message()
+#             message.chatroom = chatroom
+#             message.user = user
+#             if case != None:
+#                 message.case = Case.objects.get(id=case)
+#                 message.order = Order.objects.filter(case=message.case).order_by('-created_at')[0]
+#                 message.is_this_message_only_case = True
+            
+#             if content != None:
+#                 message.content = content
+            
+#             # upload image
+#             if image != None:
+#                 message.image = image
+
+#             message.save()
+#             chatroom.update_at = datetime.datetime.now()
+#             chatroom.save()
+#             serializer = self.get_serializer(message)
+#             return Response(serializer.data)
+#         else:
+#             return Response({'message': "have no authority"})
 
 class SystemMessageViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -243,7 +317,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         start_end_time = self.request.query_params.get('start_end_time')
         order = self.request.query_params.get('order')
 
-        queryset = User.objects.filter(is_servant_passed=True)
+        queryset = User.objects.filter(is_servant=True)
         if care_type == 'home':
             queryset = queryset.filter(is_home=True)
         elif care_type == 'hospital':
@@ -364,7 +438,7 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
         city = self.request.query_params.get('city')
         county = self.request.query_params.get('county')
 
-        queryset = User.objects.filter(is_servant_passed=True)
+        queryset = User.objects.filter(is_servant=True)
         if care_type == 'home':
             queryset = queryset.filter(is_home=True)
         elif care_type == 'hospital':
