@@ -1016,20 +1016,50 @@ class CreateServantOrder(APIView):
         order.end_time = order.case.end_time
         order.save()
         weekdays = order.case.weekday.split(',')
-        for weekday in weekdays:
-            orderWeekday = OrderWeekDay()
-            orderWeekday.order = order
-            orderWeekday.weekday = weekday
-            orderWeekday.save()
-        weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
-        total_hours = 0
-        for i in weekday_list:
-            total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
-        order.work_hours = total_hours
-        if order.case.care_type == 'home':
-            order.base_money = order.work_hours * order.case.servant.home_hour_wage
-        elif order.case.care_type == 'hospital':
-            order.base_money = order.work_hours * order.case.servant.hospital_hour_wage
+        if order.case.is_continuous_time == False:
+            for weekday in weekdays:
+                orderWeekday = OrderWeekDay()
+                orderWeekday.order = order
+                orderWeekday.weekday = weekday
+                orderWeekday.save()
+            weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+            total_hours = 0
+            for i in weekday_list:
+                total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+            order.work_hours = total_hours
+            one_day_work_hours = order.end_time - order.start_time
+            if order.case.care_type == 'home':
+                if one_day_work_hours < 12:
+                    wage = order.case.servant.home_hour_wage
+                elif one_day_work_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.home_half_day_wage/12)
+            elif order.case.care_type == 'hospital':
+                if one_day_work_hours < 12:
+                    wage = order.case.servant.hospital_hour_wage
+                elif one_day_work_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.hospital_half_day_wage/12)
+        else:
+            diff = order.end_datetime - order.start_datetime
+            days, seconds = diff.days, diff.seconds
+            hours = days * 24 + seconds // 3600
+            minutes = (seconds % 3600) // 60
+            total_hours = hours + round(minutes/60)
+            if order.case.care_type == 'home':
+                if total_hours < 12:
+                    wage = order.case.servant.home_hour_wage
+                elif total_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.home_half_day_wage/12)
+                else:
+                    wage = round(order.case.servant.home_one_day_wage/24)
+            elif order.case.care_type == 'hospital':
+                if total_hours < 12:
+                    wage = order.case.servant.hospital_hour_wage
+                elif total_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                else:
+                    wage = round(order.case.servant.hospital_one_day_wage/24)
+
+        order.base_money = order.work_hours * wage
 
         # need to change in the future
         order.platform_percent = 15

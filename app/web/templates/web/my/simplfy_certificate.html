@@ -1,0 +1,147 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white" id="top" >
+
+  
+  <div class="col pt-4 text-center">
+    
+    <!-- <button class="small-green-button" name="PDFdownload">
+      <span class="fas fa-cloud-download-alt"></span>
+        下載PDF檔
+    </button> -->
+    
+    <button class="small-green-button" onclick="PrintData()">
+      <span class="fas fa-print"></span>
+        列印此頁
+    </button>
+  </div>
+  <div class="main-class" id="printdiv">
+      <h3 class="text-center mt-6">照顧服務證明書</h3>
+      
+      <div class="container pt-5">
+        <div class="row">
+            <div class="col-12">
+
+                <!-- <p class="h5 mt-2">看護資訊</p> -->
+                <div class="case-info-font mt-2 text-center" style="font-size: 18px;">
+                  <p style="letter-spacing: 3px;">茲  證  明<span style="border-bottom: 1px black solid; width: 100px">{{case.name}}</span> 因無法自理日常生活所需，</p>
+                  <p>自<span style="border-bottom: 1px black solid; width: 100px"> {{case.start_datetime.year}} </span>年<span style="border-bottom: 1px black solid; width: 100px">  {{case.start_datetime.month}}  </span>月<span style="border-bottom: 1px black solid; width: 100px">  {{case.start_datetime.day}}  </span>日起至<span style="border-bottom: 1px black solid; width: 100px"> {{case.end_datetime.year}} </span>年<span style="border-bottom: 1px black solid; width: 100px">  {{case.end_datetime.month}}  </span>月<span style="border-bottom: 1px black solid; width: 100px">  {{case.end_datetime.day}}  </span>日止，</p>
+                  <p class="text-indent-5" >確由<span style="border-bottom: 1px black solid; width: 100px">  {{case.servant.name}}  </span>進行照顧服務，共計新台幣<span style="border-bottom: 1px black solid; width: 100px"> {{total_fee}} </span>元整。</p>
+                </div>
+
+                <div class="row">
+                  <div class="col-2"></div><div class="col-3"><p class="h5 mt-5 ml-6 text-center">謹   致</p></div>
+                  </div>
+                <div class="case-info-font mt-2">
+                  
+                  <br>          
+                  <br>   
+                  <br>   
+                  <br>   
+                  <br>       
+                </div>
+                <div class="row" >
+                  <div class="col-3"></div>
+                  <div class="col-5">
+                    <h4 style="font-weight:400">被照顧者：</h4>
+                  </div>
+                  <div class="col-4">
+                    <h5 style="font-weight:400">( 簽張 )</h5>
+                  </div>
+                </div>
+                <br>
+                <div class="row" >
+                  <div class="col-3"></div>
+                  <div class="col">
+                    <h4 style="font-weight:400">身分證字號：</h4>
+                  </div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="row" >
+                  <div class="col-3"></div>
+                  <div class="col-5">
+                    <h4 style="font-weight:400">照顧服務人員：</h4>
+                  </div>
+                  <div class="col-4">
+                    <h5 style="font-weight:400">( 簽張 )</h5>
+                  </div>
+                </div>
+                <br>
+                <div class="row" >
+                  <div class="col-3"></div>
+                  <div class="col">
+                    <h4 style="font-weight:400">身分證字號：</h4>
+                  </div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="row">
+                  <div class="col-2"></div>
+                  <div class="col-3 "><h5 style="font-weight:400">中華民國</h5></div>
+                  <div class="col-2 "><h5 style="font-weight:400">年</h5></div>
+                  <div class="col-2 "><h5 style="font-weight:400">月</h5></div>
+                  <div class="col-2 "><h5 style="font-weight:400">日</h5></div>
+                </div>
+                <br>
+                <br>
+                <br>
+
+                <div style="page-break-after:always"></div>
+                
+            </div>
+        </div>
+      </div>
+  <style>
+    @media print{
+      html *{
+          height: auto;
+          width: auto;
+      }
+
+    /*assing myPagesClass to every div you want to print on single separate A4 page*/
+
+    body .main-class {
+        z-index: 100 !important;
+        visibility: visible !important;
+        position: relative !important;
+        display: block !important;
+        background-color: lightgray !important;
+        height: auto;
+        width: 100%;
+        position: relative !important;
+
+        padding: 0px;
+        top: 70px !important;
+        left: 0 !important;
+        margin: 0 !important;
+        orphans: 0!important;
+        widows: 0!important;
+        overflow: visible !important;
+              }
+    @page{
+        size: A4;
+        margin: 0mm ;
+        orphans: 0!important;
+        widows: 0!important;
+    }}
+      
+  </style>
+  <script>
+    function PrintData(){
+      html = document.body.innerHTML
+      document.body.innerHTML=document.getElementById('top').innerHTML ;
+      window.print(); 
+      document.body.innerHTML = html
+    }
+  </script>
+  </div>
+</main>
+{% endblock %}

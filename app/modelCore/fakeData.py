@@ -358,10 +358,30 @@ def fakeData():
     order.end_time = order.case.end_time
     order.start_datetime = order.case.start_datetime
     order.end_datetime = order.case.end_datetime
-    order.base_money =(((Case.objects.get(id=1).end_datetime) - (Case.objects.get(id=1).start_datetime)).days) * (Case.objects.get(id=1).servant.home_one_day_wage)
-    total_hours = 0
-    for i in range(7):
-        total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+    # order.base_money =(((Case.objects.get(id=1).end_datetime) - (Case.objects.get(id=1).start_datetime)).days) * (Case.objects.get(id=1).servant.home_one_day_wage)
+    diff = order.end_datetime - order.start_datetime
+    days, seconds = diff.days, diff.seconds
+    hours = days * 24 + seconds // 3600
+    minutes = (seconds % 3600) // 60
+    total_hours = hours + round(minutes/60)
+    if order.case.care_type == 'home':
+        if total_hours < 12:
+            wage = order.case.servant.home_hour_wage
+        elif total_hours >=12 and total_hours < 24:
+            wage = round(order.case.servant.home_half_day_wage/12)
+        else:
+            wage = round(order.case.servant.home_one_day_wage/24)
+    elif order.case.care_type == 'hospital':
+        if total_hours < 12:
+            wage = order.case.servant.hospital_hour_wage
+        elif total_hours >=12 and total_hours < 24:
+            wage = round(order.case.servant.hospital_half_day_wage/12)
+        else:
+            wage = round(order.case.servant.hospital_one_day_wage/24)
+    order.base_money = total_hours * wage
+    # total_hours = 0
+    # for i in range(7):
+    #     total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
     order.work_hours = total_hours
     order.platform_percent = 15
     order.save()
@@ -390,7 +410,19 @@ def fakeData():
     for i in weekday_list:
         total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
     order.work_hours = total_hours
-    order.base_money = order.work_hours * order.case.servant.hospital_hour_wage
+    one_day_work_hours = order.end_time - order.start_time
+    if order.case.care_type == 'home':
+        if one_day_work_hours < 12:
+            wage = order.case.servant.home_hour_wage
+        elif one_day_work_hours >=12 and total_hours < 24:
+            wage = round(order.case.servant.home_half_day_wage/12)
+    elif order.case.care_type == 'hospital':
+        if one_day_work_hours < 12:
+            wage = order.case.servant.hospital_hour_wage
+        elif one_day_work_hours >=12 and total_hours < 24:
+            wage = round(order.case.servant.hospital_half_day_wage/12)
+
+    order.base_money = order.work_hours * wage
     order.platform_percent = 15
     order.save()
     Review.objects.create(order=order,case=order.case,servant=order.case.servant)
@@ -413,14 +445,16 @@ def fakeData():
     orderIncreaseService.order = Order.objects.get(id=2)
     orderIncreaseService.service = Service.objects.get(id=1)
     orderIncreaseService.increase_percent = 20
-    orderIncreaseService.increase_money = (Order.objects.get(id=1).base_money) * (orderIncreaseService.increase_percent)/100
+    orderIncreaseService.increase_money = (Order.objects.get(id=2).base_money) * (orderIncreaseService.increase_percent)/100
+    print(orderIncreaseService.increase_money,(orderIncreaseService.increase_percent)/100,(Order.objects.get(id=2).base_money) )
     orderIncreaseService.save()
 
     orderIncreaseService = OrderIncreaseService()
     orderIncreaseService.order = Order.objects.get(id=2)
     orderIncreaseService.service = Service.objects.get(id=4)
     orderIncreaseService.increase_percent = 30
-    orderIncreaseService.increase_money = (Order.objects.get(id=1).base_money) * (orderIncreaseService.increase_percent)/100
+    orderIncreaseService.increase_money = (Order.objects.get(id=2).base_money) * (orderIncreaseService.increase_percent)/100
+    print(orderIncreaseService.increase_money,(orderIncreaseService.increase_percent)/100,(Order.objects.get(id=2).base_money) )
     orderIncreaseService.save()
 
     for order in Order.objects.all():

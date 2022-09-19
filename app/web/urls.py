@@ -39,6 +39,7 @@ urlpatterns = [
     path('my_cases', views.my_cases, name = 'my_cases'),
     path('my_case_detail', views.my_case_detail, name = 'my_case_detail'),
     path('my_care_certificate', views.my_care_certificate, name = 'my_care_certificate'),
+    path('my_simplfy_certificate', views.my_simplfy_certificate, name = 'my_simplfy_certificate'),
     path('my_files', views.my_files, name = 'my_files'),
     path('my_profile', views.my_profile, name = 'my_profile'),
     path('my_edit_profile', views.my_edit_profile, name = 'my_edit_profile'),

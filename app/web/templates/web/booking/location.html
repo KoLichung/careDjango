@@ -287,7 +287,7 @@
             hidden_input.innerHTML += `<div class="mt-2" style="display: flex;">
           <label class="h6 mt-2" for="aboriginal">路名：</label>
           <input class="booking-input" style="width: 300px;" id="aboriginal" name="road_name" value="{{road_name}}" type="text" placeholder="" />
-        </div> <div>※為確保您的隱私，居家照顧此欄位只需填”路名”。</div> `
+        </div> <div>※為確保您的隱私，此欄位只需填”路名”！請用聊聊告知接案服務者服務地址。</div> `
           }
         })
         care_hospital.addEventListener('click',function(){
@@ -297,7 +297,7 @@
               hidden_input.innerHTML += `<div class="mt-2" style="display: flex;">
             <label class="h6 mt-2" for="aboriginal">醫院名（機構名稱）及 注意事項：</label>
             <input class="booking-input" style="width: 300px;" id="aboriginal" name="hospital_name" value="{{hospital_name}}" type="text" placeholder="" />
-          </div> <div>※為確保您的隱私，請勿在此處填寫病房號或住家詳細地址，請用聊聊告知接案服務者即可。</div>`
+          </div> <div>※為確保您的隱私，請勿在此處填寫病房號！請用聊聊告知接案服務者病床號。</div>`
             }
         })
         if(care_type == 'home'){
