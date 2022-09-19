@@ -58,19 +58,19 @@
                     <label class="h6" for="weekdays[]">星期一，時段：</label>
                     {% for user_weekday_time in user_weekday_times %}
                       {% if user_weekday_time.weekday == '1'%}
-                        <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                        <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' 
                           value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
                         <span>～</span>
-                        <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                        <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}'
                           value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
                       {% endif %}
                     {% endfor %}                    
                   {% else %}
                     <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="1"/>
                     <label class="h6" for="weekdays[]">星期一，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="mon_start_time" name="mon_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                     <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="mon_end_time" name="mon_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                   {% endif %}
                 </div>
                 <div class="form-check">
@@ -79,19 +79,19 @@
                     <label class="h6" for="weekdays[]">星期二，時段：</label>
                     {% for user_weekday_time in user_weekday_times %}
                       {% if user_weekday_time.weekday == '2'%}
-                        <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                        <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' 
                           value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
                         <span>～</span>
-                        <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                        <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}'
                           value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
                       {% endif %}
                     {% endfor %}   
                   {% else %}
                     <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="2"/>
                     <label class="h6" for="weekdays[]">星期二，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="tue_start_time" name="tue_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                     <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="tue_end_time" name="tue_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                   {% endif %}
                 </div>
                 <div class="form-check">
@@ -100,19 +100,19 @@
                     <label class="h6" for="weekdays[]">星期三，時段：</label>
                     {% for user_weekday_time in user_weekday_times %}
                       {% if user_weekday_time.weekday == '3'%}
-                        <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                        <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' 
                           value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
                         <span>～</span>
-                        <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                        <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}'
                           value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
                       {% endif %}
                     {% endfor %}   
                   {% else %}
                     <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="3"/>
                     <label class="h6" for="weekdays[]">星期三，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="wed_start_time" name="wed_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                     <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="wed_end_time" name="wed_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                   {% endif %}
                 </div>
                 <div class="form-check">
@@ -121,19 +121,19 @@
                     <label class="h6" for="weekdays[]">星期四，時段：</label>
                     {% for user_weekday_time in user_weekday_times %}
                       {% if user_weekday_time.weekday == '4'%}
-                        <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                        <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' 
                           value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
                         <span>～</span>
-                        <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                        <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}'
                           value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
                       {% endif %}
                     {% endfor %}   
                   {% else %}
                     <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="4"/>
                     <label class="h6" for="weekdays[]">星期四，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="thu_start_time" name="thu_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                     <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="thu_end_time" name="thu_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                   {% endif %}
                 </div>
                 <div class="form-check">
@@ -142,19 +142,19 @@
                     <label class="h6" for="weekdays[]">星期五，時段：</label>
                     {% for user_weekday_time in user_weekday_times %}
                       {% if user_weekday_time.weekday == '5'%}
-                        <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                        <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' 
                           value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
                         <span>～</span>
-                        <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                        <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}'
                           value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
                       {% endif %}
                     {% endfor %}   
                   {% else %}
                     <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="5"/>
                     <label class="h6" for="weekdays[]">星期五，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="fri_start_time" name="fri_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                     <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="fri_end_time" name="fri_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                   {% endif %}
                 </div>
                 <div class="form-check">
@@ -163,19 +163,19 @@
                     <label class="h6" for="weekdays[]">星期六，時段：</label>
                     {% for user_weekday_time in user_weekday_times %}
                       {% if user_weekday_time.weekday == '6'%}
-                        <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                        <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' 
                           value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
                         <span>～</span>
-                        <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                        <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}'
                           value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
                       {% endif %}
                     {% endfor %}   
                   {% else %}
                     <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="6"/>
                     <label class="h6" for="weekdays[]">星期六，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="sat_start_time" name="sat_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                     <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="sat_end_time" name="sat_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                   {% endif %}
                 </div>
                 <div class="form-check">
@@ -184,19 +184,19 @@
                       <label class="h6" for="weekdays[]">星期日，時段：</label>
                       {% for user_weekday_time in user_weekday_times %}
                         {% if user_weekday_time.weekday == '0'%}
-                          <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' 
+                          <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' 
                             value="{{user_weekday_time.start_time_hour}}:{{user_weekday_time.start_time_min}}" />
                           <span>～</span>
-                          <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}'
+                          <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}'
                             value="{{user_weekday_time.end_time_hour}}:{{user_weekday_time.end_time_min}}" />
                         {% endif %}
                       {% endfor %}   
                   {% else %}
                     <input class="form-check-input mt-2" id="weekdays[]" name="weekdays[]" type="checkbox" value="0"/>
                     <label class="h6" for="weekdays[]">星期日，時段：</label>
-                    <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="sun_start_time" name="sun_start_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                     <span>～</span>
-                    <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker" id="sun_end_time" name="sun_end_time" type="text" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                   {% endif %}
                 </div>
 

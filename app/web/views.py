@@ -129,7 +129,7 @@ def ajax_cal_rate(request):
         endTime = updatedData['endTime'][0]
         start_date = '20' + start_end_date.split(' to ')[0].replace('/','-')
         end_date = '20' +start_end_date.split(' to ')[1].replace('/','-')
-        
+        print(is_continuous_time)
         if is_continuous_time == 'True':
             print('b')
             servants = servants.filter(is_continuous_time=True)
@@ -151,24 +151,38 @@ def ajax_cal_rate(request):
             orders = orders.filter(order_condition).distinct()
             order_conflict_servants_id = list(orders.values_list('servant', flat=True))
             servants = servants.filter(~Q(id__in=order_conflict_servants_id))
-            print(servants)
-            print('c')
-            if servant in servants:
-                if care_type == 'hospital':
-                    hour_wage = servant.hospital_hour_wage
-                elif care_type == 'home':
-                    hour_wage = servant.home_hour_wage
-                start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
-                end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
-                total_hours = 0
-                for i in range(7):
-                    total_hours += (days_count([int(i)], start_date, end_date)) * (end_time_int - start_time_int)                    
-                base_money = total_hours * hour_wage
+            StartDate = datetime.datetime.strptime(start_date,'%Y-%m-%d').date()
+            EndDate = datetime.datetime.strptime(end_date,'%Y-%m-%d').date()
+            StartTime = datetime.datetime.strptime(startTime,'%H:%M').time()
+            EndTime = datetime.datetime.strptime(endTime,'%H:%M').time()
+            start_datetime = datetime.datetime.combine(StartDate,StartTime)
+            end_datetime = datetime.datetime.combine(EndDate,EndTime)
+            if servant in servants:     
+                diff = end_datetime - start_datetime
+                days, seconds = diff.days, diff.seconds
+                hours = days * 24 + seconds // 3600
+                minutes = (seconds % 3600) // 60
+                total_hours = hours + round(minutes/60)
+                if care_type == 'home':
+                    if total_hours < 12:
+                        wage = servant.home_hour_wage
+                    elif total_hours >=12 and total_hours < 24:
+                        wage = round(servant.home_half_day_wage/12)
+                    else:
+                        wage = round(servant.home_one_day_wage/24)
+                elif care_type == 'hospital':
+                    if total_hours < 12:
+                        wage = servant.hospital_hour_wage
+                    elif total_hours >=12 and total_hours < 24:
+                        wage = round(servant.hospital_half_day_wage/12)
+                    else:
+                        wage = round(servant.hospital_one_day_wage/24)             
+                base_money = total_hours * wage
                 data = {
                     'result':'3',
                     'total_hours':total_hours,
                     'base_money':base_money,
-                    'hour_wage':hour_wage,
+                    'hour_wage':wage,
                 }
                 data['total_money'] = base_money
                 print(data)
@@ -200,7 +214,6 @@ def ajax_cal_rate(request):
                 data = {'result':'2'}
                 return JsonResponse({'data':data})
         else:
-            print('d')
             weekdays = updatedData['weekdays[]']
             print('e')
             if (start_date != '') | (end_date != '') | (startTime != '') | (endTime != ''):
@@ -243,24 +256,33 @@ def ajax_cal_rate(request):
                     order_conflict_servants_id = list(orders.values_list('servant', flat=True))
                     servants = servants.filter(~Q(id__in=order_conflict_servants_id))
                     if servant in servants:
-                        
-                        if care_type == 'hospital':
-                            hour_wage = servant.hospital_hour_wage
-                        elif care_type == 'home':
-                            hour_wage = servant.home_hour_wage
+                        print(servant)
+                        one_day_work_hours = float(end_time_int) - float(start_time_int)
+                        print(one_day_work_hours)
+                        if care_type == 'home':
+                            if one_day_work_hours < 12:
+                                wage = servant.home_hour_wage
+                            elif one_day_work_hours >=12 and total_hours < 24:
+                                wage = round(servant.home_half_day_wage/12)
+                        elif care_type == 'hospital':
+                            if one_day_work_hours < 12:
+                                wage = servant.hospital_hour_wage
+                            elif one_day_work_hours >=12 and total_hours < 24:
+                                wage = round(servant.hospital_half_day_wage/12)
+                        print(wage)
                         start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
                         end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
                         total_hours = 0
                         for i in weekdays_num_list:
                             total_hours += (days_count([int(i)], start_date, end_date)) * (end_time_int - start_time_int)
-                        base_money = total_hours * hour_wage
+                        base_money = total_hours * wage
                         data = {
                             'result':'3',
                             'total_hours':total_hours,
                             'base_money':base_money,
-                            'hour_wage':hour_wage,
+                            'hour_wage':wage,
                         }
-
+                        print(data)
                         if 'increase_service[]' in updatedData:
                             increase_service_ids = updatedData['increase_service[]']
                             print(increase_service_ids)
@@ -279,7 +301,7 @@ def ajax_cal_rate(request):
                                     'increase_money':increase_money,
                                 }
                                 increase_service_data['data'+str(count)] = increase_data
-                            print(increase_service_data)
+                           
                             data['total_money'] = total_money
                             return JsonResponse({'data':data,'increase_service_data':increase_service_data})
                         else:
@@ -1162,14 +1184,7 @@ def booking_confirm(request):
         order.end_time = order.case.end_time
         order.start_datetime = order.case.start_datetime
         order.end_datetime = order.case.end_datetime
-        order.base_money =(((Case.objects.get(id=1).end_datetime) - (Case.objects.get(id=1).start_datetime)).days) * (Case.objects.get(id=1).servant.home_one_day_wage)
-        if case.is_continuous_time == True:
-            total_hours = 0
-            for i in range(7):
-                total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
-            order.work_hours = total_hours
-        elif case.is_continuous_time == False:
-            weekdays = order.case.weekday.split(',')
+        if order.case.is_continuous_time == False:
             for weekday in weekdays:
                 orderWeekday = OrderWeekDay()
                 orderWeekday.order = order
@@ -1180,7 +1195,39 @@ def booking_confirm(request):
             for i in weekday_list:
                 total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
             order.work_hours = total_hours
-            order.base_money = order.work_hours * order.case.servant.hospital_hour_wage
+            one_day_work_hours = order.end_time - order.start_time
+            if order.case.care_type == 'home':
+                if one_day_work_hours < 12:
+                    wage = order.case.servant.home_hour_wage
+                elif one_day_work_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.home_half_day_wage/12)
+            elif order.case.care_type == 'hospital':
+                if one_day_work_hours < 12:
+                    wage = order.case.servant.hospital_hour_wage
+                elif one_day_work_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.hospital_half_day_wage/12)
+        else:
+            diff = order.end_datetime - order.start_datetime
+            days, seconds = diff.days, diff.seconds
+            hours = days * 24 + seconds // 3600
+            minutes = (seconds % 3600) // 60
+            total_hours = hours + round(minutes/60)
+            if order.case.care_type == 'home':
+                if total_hours < 12:
+                    wage = order.case.servant.home_hour_wage
+                elif total_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.home_half_day_wage/12)
+                else:
+                    wage = round(order.case.servant.home_one_day_wage/24)
+            elif order.case.care_type == 'hospital':
+                if total_hours < 12:
+                    wage = order.case.servant.hospital_hour_wage
+                elif total_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                else:
+                    wage = round(order.case.servant.hospital_one_day_wage/24)
+
+        order.base_money = order.work_hours * wage
         order.platform_percent = 10
         order.save()
         Review.objects.create(order=order,case=order.case,servant=order.case.servant)
@@ -1694,6 +1741,13 @@ def my_care_certificate(request):
     print(total_fee)
     return render(request, 'web/my/care_certificate.html',{'case':case,'order':order,'total_fee':total_fee})
 
+def my_simplfy_certificate(request):
+    servant = request.user
+    case_id = request.GET.get('case')
+    case = Case.objects.get(id=case_id)
+    order = Order.objects.get(case=case)
+    total_fee = order.total_money
+    return render(request, 'web/my/simplfy_certificate.html',{'case':case,'order':order,'total_fee':total_fee})
 def my_files(request):
     user = request.user
     licences = License.objects.all().order_by('id')[:3]

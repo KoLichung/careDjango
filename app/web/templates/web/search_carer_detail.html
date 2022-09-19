@@ -200,7 +200,7 @@
                               </div>
       
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input "  id="select_time" type="radio" name="is_continuous_time" value="False" {% if is_continuous_time == 'False' %} checked {% endif %}/>
+                                <input class="form-check-input "  id="select_time" type="radio" name="is_continuous_time"  value="False" {% if is_continuous_time == 'False' %} checked {% endif %}/>
                                 <label class="h6" for="inlineRadio2">  指定時段</label>
                               </div>
       
@@ -247,10 +247,10 @@
                 <span class="news-subtitle">開始時間 & 結束時間</span><br>
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
-                    <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{defaultStartTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{defaultStartTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                   </div>
                   <div class="mt-1 btn-group">
-                    <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                    <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
                   </div>
 
                 </div>
@@ -324,7 +324,6 @@
         success: function(response)
         {
           const data = response.data
-          console.log(data)
           // var resultObj = JSON.parse(response);
           var dataHandler = $("#county_select");
           var county_all = `<option style="text-align: center" value="全區">全區</option>`
@@ -344,8 +343,9 @@
     const post_html = document.getElementById('post_html');
     is_continuous_time = urlParams.get('is_continuous_time');
     const care_type_home = document.getElementById('care_type_home');
-    const care_type_hospital = document.getElementById('care_type_hospital')
-    const submit_button = document.getElementById('submit_button')
+    const care_type_hospital = document.getElementById('care_type_hospital');
+    const submit_button = document.getElementById('submit_button');
+    const select_time_Btn = document.getElementById('select_time');
     
     var home = {
       call_backend : function (){
@@ -390,15 +390,16 @@
       }
     }
 
-    document.getElementById('continuous_time').addEventListener('click', function(e) {
+    document.getElementById('continuous_time').addEventListener('change', function() {
       document.getElementById('time_type').innerHTML = '連續時間' ;
       $('#time').value = 'True';
     })
-
-    document.getElementById('select_time').addEventListener('click', function(e) {
+    
+    document.getElementById('select_time').addEventListener('change', function() {
       document.getElementById('time_type').innerHTML = '指定時段' ;
+      is_continuous_time = 'False';
       $('#time').value  = 'False';
-      console.log($('#time').val())
+      calculate_rate.call();
     })
 
     document.getElementById('start_end_date').addEventListener('change', event => {
@@ -425,16 +426,16 @@
       
       calculate_rate.call();
     })
-
     document.querySelector('.weekdayCheck').addEventListener('change', event => {
       is_continuous_time = 'False';
+      select_time_Btn.checked = true;
+      document.getElementById('time_type').innerHTML = '指定時段' ;
       weekdays = []
       checkboxes = $('input[type=checkbox]:checked')
 
       for (var i = 0; i < checkboxes.length; i++) {
         weekdays.push(checkboxes[i].value)
       };
-      console.log('weekdayCheck')
       calculate_rate.call();
     });
     $( document ).ready(function() {
@@ -448,7 +449,6 @@
       startTime = "{{defaultStartTime}}";
       endTime = "{{defaultEndTime}}";
       calculate_rate.call();
-      console.log(start_end_date,is_continuous_time,weekdays,startTime,endTime)
     });
     function calculate_rate(){
       if(care_type_home.checked == true){
@@ -456,7 +456,7 @@
       }else if (care_type_hospital.checked == true ){
         var care_type = 'hospital'
       }
-      console.log(care_type)
+      console.log(is_continuous_time)
       return $.ajax({
         type: "POST",
         data: { 'servant':servant,
@@ -472,7 +472,7 @@
         success: function(response)
           {
             const data = response.data;
-            console.log(data.result);
+            console.log(data);
             if (data.result == '3'){post_html.innerHTML = `
             <div class="col-12 align-self-center">
                   $${data.hour_wage}x${data.total_hours}小時 
