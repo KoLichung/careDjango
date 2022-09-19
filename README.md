@@ -27,6 +27,11 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220917
+1.改薪水算法
+2.不要 AM,PM 用 24hr
+3.新做一頁看護證明簡化版
+
 20220916
 1.http://localhost:8000/web/recommend_carer
 這個漏傳值到下一頁, 而且不要用 phone
