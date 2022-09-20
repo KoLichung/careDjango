@@ -9,10 +9,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('phone', 'password', 'name','line_id')
+        fields = ('phone', 'password', 'name', 'line_id', 'apple_id')
         extra_kwargs = {
             'password': {'write_only': True, 'min_length': 5},
             'line_id': {'write_only': True},
+            'apple_id': {'write_only': True},
         }
 
     def create(self, validated_data):
@@ -52,12 +53,19 @@ class AuthTokenSerializer(serializers.Serializer):
         allow_null=True,
         required=False,
     )
+    apple_id = serializers.CharField(
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        allow_null=True,
+        required=False,
+    )
 
     def validate(self, attrs):
         """Validate and authenticate the user"""
         phone = attrs.get('phone')
         password = attrs.get('password')
         line_id = attrs.get('line_id')
+        apple_id = attrs.get('apple_id')
         
         user = None
 
@@ -73,7 +81,13 @@ class AuthTokenSerializer(serializers.Serializer):
                 user = User.objects.get(line_id=line_id)
             except Exception as e:
                 print('')
-            
+        
+        if (apple_id and apple_id != ''):
+            try:
+                user = User.objects.get(apple_id=apple_id)
+            except Exception as e:
+                print('')
+
         if not user:
             msg = 'Unable to authenticate with provided credentials'
             raise serializers.ValidationError(msg, code='authentication')

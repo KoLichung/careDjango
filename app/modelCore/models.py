@@ -30,6 +30,7 @@ class UserManager(BaseUserManager):
             phone = phone, 
             name=extra_fields.get('name'),
             line_id=extra_fields.get('line_id'),
+            apple_id =extra_fields.get('apple_id'),
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -65,7 +66,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(max_length= 100, blank = True, null=True)
     address = models.CharField(max_length= 100, blank = True, null=True)
     image = models.ImageField(upload_to=image_upload_handler, blank=True, null=True)
+
     line_id = models.CharField(max_length= 100, blank = True, null=True, unique=True)
+    apple_id = models.CharField(max_length= 100, blank = True, null=True, unique=True)
 
     is_apply_servant = models.BooleanField(default=False)
     is_servant_passed = models.BooleanField(default=False)
