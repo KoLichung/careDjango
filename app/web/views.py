@@ -262,12 +262,12 @@ def ajax_cal_rate(request):
                         if care_type == 'home':
                             if one_day_work_hours < 12:
                                 wage = servant.home_hour_wage
-                            elif one_day_work_hours >=12 and total_hours < 24:
+                            elif one_day_work_hours >=12 and one_day_work_hours < 24:
                                 wage = round(servant.home_half_day_wage/12)
                         elif care_type == 'hospital':
                             if one_day_work_hours < 12:
                                 wage = servant.hospital_hour_wage
-                            elif one_day_work_hours >=12 and total_hours < 24:
+                            elif one_day_work_hours >=12 and one_day_work_hours < 24:
                                 wage = round(servant.hospital_half_day_wage/12)
                         print(wage)
                         start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
