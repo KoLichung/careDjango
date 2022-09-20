@@ -24,4 +24,4 @@ fontawesomefree==6.1.2
 # urllib3==1.26.10
 django-ckeditor==6.5.0
 celery==5.2.7
-
+fcm-django==1.0.12

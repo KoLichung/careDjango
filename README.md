@@ -27,7 +27,37 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
-20220917
+20220920
+1.request_form_patient_info => 有 bug
+servant is not difined 約 2027 行
+2.提前結束的 api
+提前結束按鈕~
+=> 放在 app 的訂單詳細頁~
+=> 提前結束 api
+ex.服務時間 9/5~9/10, 9/8  提前結束
+如果提前結束, 這個 api 是做給需求者使用的
+提前結束服務（提前取消服務），
+費用結算至服務截止時間及被取消第一日之服務費用的50%
+=>
+9/5,9/6, 9/7,9/8  的 hours
+再加上 9/8 的 hours 的一半
+= total hours
+=> 當我 call 這隻 api, 重新修改訂單
+params: order_id, user auth, end_time
+(看護證明, 如果訂單提前結束,看護證明的內容要修正正確~)
+======
+3.系統訊息的 task
+收到預訂單(web, api) => "(恭喜您，收到來自於 xxx 的預訂單，請利用聊聊與他聯絡！)"
+訂單成立 => "(恭喜您，來自於 xxx 的訂單編號 xx 已收款成立！)"
+訂單取消含提前結束服務 => "(來自於 xxx 的訂單編號 xx 已取消！)"
+訂單提前結束服務 => "(來自於 xxx 的訂單編號 xx 已提前結束服務！)"
+=>
+a.先在 shell 測試 (from message.tasks import *)
+b.塞到正確的地方, 再測試 
+from message.tasks import *
+test(user,order)
+
+20220919
 1.改薪水算法
 2.不要 AM,PM 用 24hr
 3.新做一頁看護證明簡化版

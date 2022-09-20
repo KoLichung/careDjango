@@ -1838,6 +1838,7 @@ def my_reviews(request):
     not_rated_orders = Order.objects.filter(user=user,order_reviews__servant_rating__lt=1)
     my_rating_reviews = Review.objects.filter(case__user=user,servant_rating__gte=1)
     my_reviews = Review.objects.filter(case__user=user,case_offender_rating__gte=1)
+    
     return render(request, 'web/my/reviews.html',{'user':user,'not_rated_orders':not_rated_orders,'my_rating_reviews':my_rating_reviews,'my_reviews':my_reviews})
 
 def my_write_review(request):

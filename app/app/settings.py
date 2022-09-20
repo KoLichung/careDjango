@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'newebpayApi',
     'backboard',
     'ckeditor',
+    'fcm_django',
 ]
 
 MIDDLEWARE = [
