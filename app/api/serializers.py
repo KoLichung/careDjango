@@ -183,7 +183,7 @@ class CaseSerializer(serializers.ModelSerializer):
     disease = DiseaseConditionSerializer(read_only=True, many=True)
     body_condition = BodyConditionSerializer(read_only=True, many=True)
     
-    status = serializers.CharField(default='')
+    # status = serializers.CharField(default='')
 
     # servant_name = serializers.CharField(default='')
     servant = ServantSerializer(read_only=True)

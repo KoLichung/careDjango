@@ -349,3 +349,21 @@ class UpdateUserImage(APIView):
         user.save()
         serializer = GetUserSerializer(user)
         return Response(serializer.data)
+
+class GetUpdateUserFCMNotify(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        user = self.request.user
+        return Response({'is_fcm_notify':user.is_fcm_notify})
+
+    def put(self, request, format=None):
+        user = self.request.user
+        is_fcm_notify = request.data.get('is_fcm_notify')
+        if is_fcm_notify =='true' or is_fcm_notify =='True':
+            user.is_fcm_notify = True
+        else:
+             user.is_fcm_notify = False
+        user.save()
+        return Response({'message':'ok'})

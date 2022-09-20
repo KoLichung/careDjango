@@ -489,10 +489,10 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
         case = self.get_object()
         case.num_offender_rating = Review.objects.filter(order__case=case,case_offender_rating__gte=1).aggregate(num_offender_rating=Count('case_offender_rating'))['num_offender_rating']
         case.avg_offender_rating  = Review.objects.filter(order__case=case,case_offender_rating__gte=1).aggregate(case_offender_rating =Avg('case_offender_rating'))['case_offender_rating']
-        if case.is_taken == True:
-            case.status = '案件已關閉'
-        else:
-            case.status = '尚未找到服務者'
+        # if case.is_taken == True:
+        #     case.status = '案件已關閉'
+        # else:
+        #     case.status = '尚未找到服務者'
         
         disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
         case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
