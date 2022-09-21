@@ -32,3 +32,6 @@ def setup_periodic_tasks(sender, **kwargs):
 def test(arg):
     dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     print(dt_string)
+
+    from message.tasks import test
+    test(1,2)
