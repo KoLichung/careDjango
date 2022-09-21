@@ -19,4 +19,5 @@ urlpatterns = [
     path('user_license_images', views.UserLicenseImagesViewSet.as_view()),
     path('update_user_background_image', views.UpdateUserBackgroundImage.as_view()),
     path('update_user_images', views.UpdateUserImage.as_view()),
+    path('get_update_user_fcm_notify', views.GetUpdateUserFCMNotify.as_view()),
 ]
