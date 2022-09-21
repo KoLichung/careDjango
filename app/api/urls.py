@@ -34,4 +34,5 @@ urlpatterns = [
     path('create_case', views.CreateCase.as_view()),
     path('create_servant_order', views.CreateServantOrder.as_view()),
     path('messages', views.MessageViewSet.as_view()),
+    path('earlytermination', views.EarlyTermination.as_view()),
 ]

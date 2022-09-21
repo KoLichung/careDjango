@@ -104,7 +104,7 @@
             <p class="require-info my-2">開始時間：<br> {{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ({{case.startTimeformat}}) </p>
             <p class="require-info my-2">結束時間：<br> {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}}) </p>
             <hr>
-            <p class="require-info my-2">地點： {{case.city}} {{case.county}} </p>
+            <p class="require-info my-2">地點： {{case.city}} {% if case.county %}{{case.county}}{% endif %} </p>
             <div class="pt-3 row justify-content-between">
               <div class="col-auto container">
                 <a href="{% url 'requirement_detail' %}?case={{case.id}}">

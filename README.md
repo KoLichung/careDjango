@@ -43,7 +43,7 @@ ex.服務時間 9/5~9/10, 9/8  提前結束
 再加上 9/8 的 hours 的一半
 = total hours
 => 當我 call 這隻 api, 重新修改訂單
-params: order_id, user auth, end_time
+params: order_id, user auth, end_time : 2022-09-08,15:00
 (看護證明, 如果訂單提前結束,看護證明的內容要修正正確~)
 ======
 3.系統訊息的 task

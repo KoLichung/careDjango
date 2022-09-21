@@ -114,10 +114,10 @@
                           
                           <p class="h6" style="font-weight: 600;">加價項目： <span style="color:#BB6BD9; font-weight: 400;">(價格 % 數依服務者自訂)</span> </p>
                           <div>
-                            {% for increase_service in increase_services %}
+                            {% for increase_service in increase_service_ships %}
                             <div class="form-check">
-                              <input class="form-check-input" id="increase_service_{{increase_service.id}}" type="checkbox" name="increase_services[]" {% if increase_service in increase_service_list %}checked=""{% endif %} value="{{increase_service.id}}" />
-                              <label class="h6 mb-0" for="increase_services[]">{{increase_service}}</label>
+                              <input class="form-check-input" id="increase_service_{{increase_service.service.id}}" type="checkbox" name="increase_services[]" {% if increase_service in increase_service_list %}checked=""{% endif %} value="{{increase_service.service.id}}" />
+                              <label class="h6 mb-0" for="increase_services[]">{{increase_service.service}}</label>
                             </div>
                             {% endfor %}
                           </div>
