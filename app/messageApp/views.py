@@ -10,7 +10,7 @@ from fcm_django.models import FCMDevice
 
 class TestFCMViewSet(APIView):
     def get(self, request, format=None):
-        from message.tasks import sendTest
+        from messageApp.tasks import sendTest
         sendTest()
         return Response({'message': "ok"})
 

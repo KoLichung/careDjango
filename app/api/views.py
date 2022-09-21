@@ -1202,6 +1202,7 @@ class EarlyTermination(APIView):
             orderCancel(order.servant,order)
             order.delete()
             return Response('delete order')
+            
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]

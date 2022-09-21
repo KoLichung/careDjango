@@ -27,6 +27,35 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220921
+1.我可以接案 chatroom 的檢查會出 bug (if 雙方 chatroom 沒有交集的話)
+2.http://localhost:8000/web/recommend_carer
+a.大頭貼沒寫到
+b.servant_id 沒傳入
+3.訂單成立的場景
+a.需求案件, 我可以接案
+b.申請預訂, 送出預訂單
+c.送出需求單
+4.把各個場景的訊息放對地方
+
+5.聊聊訊息
+a.當訂單狀態改變時, 要產生 case message ()
+訂單成立, 修改(x), 付款, 取消, 提前結束
+
+6.celery 任務排程
+*** 每隔 15mins check 當日的訂單的狀態
+=> 
+a.修改狀態 
+Case state => “unTaken”, “unComplete”,”Complete”, “Canceled”,“endEarly”
+b.發訊息(服務開始前3小時提醒 3hr~2:45 , 提醒您，某某某的預定即將開始，請您務必前往服務哦～) => 系統訊息
+
+使用 celery
+a.安裝 RabbitMq, 啟動 RabbitMQ server
+b.cd app (要在有 app/celery.py 的那個 module 檔案夾下, 接下面那個指令)
+celery -A app worker -l INFO (worker 負責做工作)
+celery -A app beat -l INFO (跑 schedule task, 負責派工)
+https://docs.google.com/document/d/1Ta4y_nuIvT_yzX15wx0ky09xPW42Yv8nEB3Ntv6cp0g/edit
+
 20220920
 1.request_form_patient_info => 有 bug
 servant is not difined 約 2027 行
