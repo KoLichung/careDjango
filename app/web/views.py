@@ -22,7 +22,7 @@ from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service ,UserWeekDayTime
 from modelCore.models import UserLicenseShipImage ,License ,Case ,OrderIncreaseService ,TempCase ,DiseaseCondition ,BodyCondition ,CaseServiceShip ,AssistancePost
-from modelCore.models import CaseBodyConditionShip, CaseDiseaseShip ,BlogCategory, BlogPostCategoryShip ,OrderWeekDay ,ChatRoom ,ChatroomUserShip ,Message
+from modelCore.models import CaseBodyConditionShip, CaseDiseaseShip ,BlogCategory, BlogPostCategoryShip ,OrderWeekDay ,ChatRoom ,ChatroomUserShip ,ChatroomMessage
 # Create your views here.
 
 logger = logging.getLogger(__file__)
@@ -1259,7 +1259,7 @@ def booking_confirm(request):
 
         chatroom = ChatRoom.objects.create(update_at=datetime.datetime.now())
         ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
-        message = Message()
+        message = ChatroomMessage()
         message.chatroom = chatroom
         message.user = user
         message.is_this_message_only_case = True
@@ -1482,14 +1482,14 @@ def requirement_detail(request):
             chatroom_id = list(chatroom_set)[0]
             print(chatroom_id)
             chatroom = ChatRoom.objects.get(id=chatroom_id)
-            message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+            message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
             message.save()
         elif list(chatroom_set) == []:
             chatroom = ChatRoom()
             chatroom.save()
             ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
             ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
-            message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+            message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
             message.save()
             
         chatroom.update_at = datetime.datetime.now()
@@ -2385,14 +2385,14 @@ def request_form_confirm(request):
                 chatroom_id = list(chatroom_set)[0]
                 print(chatroom_id)
                 chatroom = ChatRoom.objects.get(id=chatroom_id)
-                message = Message(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
             elif list(chatroom_set) == []:
                 chatroom = ChatRoom()
                 chatroom.save()
                 ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
                 ChatroomUserShip.objects.create(user=choose_servant,chatroom=chatroom)
-                message = Message(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
             chatroom = ChatRoom.objects.create(update_at=datetime.datetime.now())
             ChatroomUserShip.objects.create(user=case.user,chatroom=chatroom)

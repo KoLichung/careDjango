@@ -1,5 +1,5 @@
 from modelCore.models import UserWeekDayTime ,Language ,UserLanguage ,County, UserServiceLocation ,Service ,UserServiceShip ,License 
-from modelCore.models import ChatroomUserShip, UserLicenseShipImage, Message
+from modelCore.models import ChatroomUserShip, UserLicenseShipImage, ChatroomMessage
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
@@ -43,7 +43,7 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
         #total_unread_num
         #找出有我的 chatrooms, 找出 unread messages id__in chatroom_ids, count()
         chatroom_ids = list(ChatroomUserShip.objects.filter(user=user).values_list('chatroom', flat=True))
-        total_not_read_messages = Message.objects.filter(chatroom__in=chatroom_ids,is_read_by_other_side=False).filter(~Q(user=user))
+        total_not_read_messages = ChatroomMessage.objects.filter(chatroom__in=chatroom_ids,is_read_by_other_side=False).filter(~Q(user=user))
         user.total_unread_num = total_not_read_messages.count()
 
         return self.request.user

@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom
-from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderIncreaseService, BlogPost, BlogCategory, BlogPostCategoryShip
+from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage ,OrderIncreaseService, BlogPost, BlogCategory, BlogPostCategoryShip
 
 # class ServantSerializer(serializers.ModelSerializer):
 #     class Meta:
@@ -226,7 +226,7 @@ class MessageSerializer(serializers.ModelSerializer):
     order = OrderSerializer(read_only=True)
     case_detail = CaseSerializer(read_only=True)
     class Meta:
-        model = Message
+        model = ChatroomMessage
         fields = '__all__'
         read_only_fields = ('id','user','chatroom','is_this_message_only_case','is_read_by_other_side')
 

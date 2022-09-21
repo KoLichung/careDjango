@@ -764,7 +764,7 @@ class ChatroomUserShip(models.Model):
         on_delete=models.CASCADE,
     ) 
 
-class Message(models.Model):
+class ChatroomMessage(models.Model):
     chatroom = models.ForeignKey(
         ChatRoom,
         on_delete=models.CASCADE,

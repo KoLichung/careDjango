@@ -14,7 +14,7 @@ from functools import reduce
 from datetime import date ,timedelta
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom ,ChatroomUserShip
-from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage , OrderWeekDay ,OrderIncreaseService
+from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage , OrderWeekDay ,OrderIncreaseService
 from modelCore.models import BlogPost, BlogPostCategoryShip, BlogCategory
 from api import serializers
 from messageApp.tasks import *
@@ -123,14 +123,13 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
             queryset[i].other_side_image_url = other_side_user.image
             queryset[i].other_side_name = other_side_user.name
             # print(other_side_user.name)
-            print(Message.objects.all())
-            ggggg
-            # if Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
-            #     # print(Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count())
-            #     queryset[i].last_message = Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).order_by('-id').first().content[0:15]
+            # print(ChatroomMessage.objects.all())
             
-            # chat_rooms_not_read_messages = Message.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
-            # queryset[i].unread_num = chat_rooms_not_read_messages.count()
+            if ChatroomMessage.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
+                queryset[i].last_message = ChatroomMessage.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).order_by('-id').first().content[0:15]
+            
+            chat_rooms_not_read_messages = ChatroomMessage.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
+            queryset[i].unread_num = chat_rooms_not_read_messages.count()
 
         return queryset
 
@@ -162,7 +161,7 @@ class MessageViewSet(APIView):
         user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
   
         if user.id in user_ids:
-            queryset = Message.objects.filter(chatroom=chatroom).order_by('id')
+            queryset = ChatroomMessage.objects.filter(chatroom=chatroom).order_by('id')
 
             #update is_read_by_other_side
             queryset.filter(~Q(user=user)).update(is_read_by_other_side=True)
@@ -200,7 +199,7 @@ class MessageViewSet(APIView):
         user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
 
         if user.id in user_ids:
-            message = Message()
+            message = ChatroomMessage()
             message.chatroom = chatroom
             message.user = user
             if case != None:
@@ -1205,14 +1204,14 @@ class EarlyTermination(APIView):
                 chatroom_id = list(chatroom_set)[0]
                 print(chatroom_id)
                 chatroom = ChatRoom.objects.get(id=chatroom_id)
-                message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
             elif list(chatroom_set) == []:
                 chatroom = ChatRoom()
                 chatroom.save()
                 ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
                 ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
-                message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
                 
             chatroom.update_at = datetime.datetime.now()
@@ -1230,14 +1229,14 @@ class EarlyTermination(APIView):
                 chatroom_id = list(chatroom_set)[0]
                 print(chatroom_id)
                 chatroom = ChatRoom.objects.get(id=chatroom_id)
-                message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
             elif list(chatroom_set) == []:
                 chatroom = ChatRoom()
                 chatroom.save()
                 ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
                 ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
-                message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
                 
             chatroom.update_at = datetime.datetime.now()
@@ -1245,7 +1244,6 @@ class EarlyTermination(APIView):
             serializer = self.serializer_class(order)
             return Response(serializer.data)
     
-
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]

@@ -1,4 +1,4 @@
-from modelCore.models import ChatRoom ,Message ,ChatroomUserShip ,SystemMessage ,Order
+from modelCore.models import ChatRoom ,ChatroomMessage ,ChatroomUserShip ,SystemMessage ,Order
 from firebase_admin.messaging import Message, Notification
 from fcm_django.models import FCMDevice
 
