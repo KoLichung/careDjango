@@ -5,6 +5,7 @@ from django.core.files.storage import FileSystemStorage
 from io import StringIO
 from django.template.loader import get_template
 from django.template import Context
+from messageApp.tasks import *
 
 import urllib
 from datetime import date ,timedelta
@@ -1254,6 +1255,8 @@ def booking_confirm(request):
         order.platform_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * (order.platform_percent/100)
         order.save()
 
+        receiveBooking(servant,order)
+
         chatroom = ChatRoom.objects.create(update_at=datetime.datetime.now())
         ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
         message = Message()
@@ -1373,6 +1376,7 @@ def requirement_list(request):
 
 def requirement_detail(request):
     case_id = request.GET.get('case')
+    user = request.user
     case = Case.objects.get(id=case_id)
     if case.is_continuous_time == False and case.weekday != None:
         week_day = case.weekday
@@ -1400,8 +1404,72 @@ def requirement_detail(request):
                 weekday_str += '、'
     else:
         weekday_str = '星期一 ～ 星期日'
-    print(weekday_str)
 
+    if request.method == 'POST':
+        case.servant = user
+        order = Order(case=case,servant=user)
+        order.user = case.user 
+        order.start_datetime = case.start_datetime
+        order.end_datetime = case.end_datetime
+        order.start_time = case.start_time
+        order.end_time = case.end_time
+        if order.case.is_continuous_time == False:
+            weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+            total_hours = 0
+            for i in weekday_list:
+                total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+            order.work_hours = total_hours
+            one_day_work_hours = order.end_time - order.start_time
+            if order.case.care_type == 'home':
+                if one_day_work_hours < 12:
+                    wage = order.case.servant.home_hour_wage
+                elif one_day_work_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.home_half_day_wage/12)
+            elif order.case.care_type == 'hospital':
+                if one_day_work_hours < 12:
+                    wage = order.case.servant.hospital_hour_wage
+                elif one_day_work_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.hospital_half_day_wage/12)
+        else:
+            diff = order.end_datetime - order.start_datetime
+            days, seconds = diff.days, diff.seconds
+            hours = days * 24 + seconds // 3600
+            minutes = (seconds % 3600) // 60
+            total_hours = hours + round(minutes/60)
+            order.work_hours = total_hours
+            if order.case.care_type == 'home':
+                if total_hours < 12:
+                    wage = order.case.servant.home_hour_wage
+                elif total_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.home_half_day_wage/12)
+                else:
+                    wage = round(order.case.servant.home_one_day_wage/24)
+            elif order.case.care_type == 'hospital':
+                if total_hours < 12:
+                    wage = order.case.servant.hospital_hour_wage
+                elif total_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                else:
+                    wage = round(order.case.servant.hospital_one_day_wage/24)
+
+        order.base_money = order.work_hours * wage
+        order.save()
+
+        service_idList = list(CaseServiceShip.objects.filter(case=order.case).values_list('service', flat=True))
+        for service_id in service_idList:
+            if int(service_id) <= 4:
+                orderIncreaseService = OrderIncreaseService()
+                orderIncreaseService.order = order
+                orderIncreaseService.service = Service.objects.get(id=service_id)
+                orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=order.servant,service=Service.objects.get(id=service_id)).increase_percent
+                orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                orderIncreaseService.save()
+
+        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+        order.platform_money = order.total_money * (order.platform_percent/100)
+        order.save()
+        neederOrderEstablished(case.user,order)
+        servantOrderEstablished(case.servant,order)
     return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str})
 
 def become_carer(request):
@@ -1971,8 +2039,11 @@ def request_form_patient_info(request):
     body_conditions = BodyCondition.objects.all().order_by('id')[1:]
     services = Service.objects.all().order_by('id')[4:]
     increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
-
-
+    for increase_service in increase_services:
+        if UserServiceShip.objects.filter(user=user,service=increase_service).count() == 0:
+            obj = UserServiceShip.objects.create(user=user,service=increase_service)
+            print(obj)
+    increase_service_ships = UserServiceShip.objects.filter(user=user).order_by('service')[:4]
     if TempCase.objects.filter(user=user,is_booking=False).exists() :
 
         last_tempcase = TempCase.objects.get(user=user,is_booking=False)
@@ -2023,9 +2094,10 @@ def request_form_patient_info(request):
             increase_service_Idlist = increase_service.split(',')
         else:
             increase_service_Idlist = []
+        
         increase_service_list = []
         for increase_service_id in increase_service_Idlist:
-            increase_service_list.append(UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=increase_service_id)))
+            increase_service_list.append(UserServiceShip.objects.get(user=user,service=Service.objects.get(id=increase_service_id)))
         print(increase_service_list)
         
     if request.method == 'POST' and 'next' in request.POST:
@@ -2099,7 +2171,7 @@ def request_form_patient_info(request):
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect('request_form_service_type')
 
-    return render(request, 'web/request_form/patient_info.html',{'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'body_conditions':body_conditions, 'disease_none':disease_none,'diseases':diseases})
+    return render(request, 'web/request_form/patient_info.html',{'increase_service_ships':increase_service_ships,'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'body_conditions':body_conditions, 'disease_none':disease_none,'diseases':diseases})
 
 def request_form_contact(request):
     user = request.user
@@ -2123,7 +2195,7 @@ def request_form_contact(request):
         return redirect('request_form_confirm')
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect('request_form_patient_info')
-    return render(request, 'web/request_form/contact.html',{'user':user,'emergencycontact_phone':emergencycontact_phone,'emergencycontact_relation':emergencycontact_relation,'emergencycontact_name':emergencycontact_name})
+    return render(request, 'web/request_form/contact.html',{ 'user':user,'emergencycontact_phone':emergencycontact_phone,'emergencycontact_relation':emergencycontact_relation,'emergencycontact_name':emergencycontact_name})
 
 def request_form_confirm(request):
     user = request.user

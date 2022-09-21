@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.db.models import Avg , Count ,Sum
 from django.shortcuts import get_object_or_404
 import datetime
-import operator
+import pytz
 from functools import reduce
 from datetime import date ,timedelta
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
@@ -17,6 +17,7 @@ from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCon
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage , OrderWeekDay ,OrderIncreaseService
 from modelCore.models import BlogPost, BlogPostCategoryShip, BlogCategory
 from api import serializers
+from messageApp.tasks import *
 
 class LicenseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -1044,6 +1045,7 @@ class CreateServantOrder(APIView):
             hours = days * 24 + seconds // 3600
             minutes = (seconds % 3600) // 60
             total_hours = hours + round(minutes/60)
+            order.work_hours = total_hours
             if order.case.care_type == 'home':
                 if total_hours < 12:
                     wage = order.case.servant.home_hour_wage
@@ -1116,7 +1118,90 @@ class BlogPostViewSet(viewsets.GenericViewSet,
         serializer = serializers.BlogPostSerializer(post)
         return Response(serializer.data)
 
+class EarlyTermination(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    queryset = Order.objects.all()
+    serializer_class = serializers.OrderSerializer
 
+    def post(self, request, format=None):
+        user = self.request.user
+        end_datetime = self.request.query_params.get('end_datetime')
+        order_id = self.request.query_params.get('order_id')
+        order = Order.objects.get(id=order_id)
+        service_idList = list(CaseServiceShip.objects.filter(case=order.case).values_list('service', flat=True))
+        end_date = end_datetime.split(',')[0]
+        end_time = end_datetime.split(',')[1]
+        EndDate = datetime.datetime.strptime(end_date,'%Y-%m-%d').date()
+        EndTime = datetime.datetime.strptime(end_time,'%H:%M').time()
+        print(EndDate,EndTime)
+        end_datetime = datetime.datetime.combine(EndDate,EndTime)
+        timezone = pytz.timezone('UTC')
+        aware_datetime = timezone.localize(end_datetime) 
+        if aware_datetime >= order.start_datetime:
+            order.end_datetime = aware_datetime
+            order.save()
+            if order.case.is_continuous_time == False:
+                weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+                total_hours = 0
+                for i in weekday_list:
+                    total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+                order.work_hours = total_hours
+                one_day_work_hours = order.end_time - order.start_time
+                if order.case.care_type == 'home':
+                    if one_day_work_hours < 12:
+                        wage = order.case.servant.home_hour_wage
+                    elif one_day_work_hours >=12 and total_hours < 24:
+                        wage = round(order.case.servant.home_half_day_wage/12)
+                elif order.case.care_type == 'hospital':
+                    if one_day_work_hours < 12:
+                        wage = order.case.servant.hospital_hour_wage
+                    elif one_day_work_hours >=12 and total_hours < 24:
+                        wage = round(order.case.servant.hospital_half_day_wage/12)
+            else:
+                diff = order.end_datetime - order.start_datetime
+                days, seconds = diff.days, diff.seconds
+                hours = days * 24 + seconds // 3600
+                minutes = (seconds % 3600) // 60
+                total_hours = hours + round(minutes/60)
+                order.work_hours = total_hours
+                if order.case.care_type == 'home':
+                    if total_hours < 12:
+                        wage = order.case.servant.home_hour_wage
+                    elif total_hours >=12 and total_hours < 24:
+                        wage = round(order.case.servant.home_half_day_wage/12)
+                    else:
+                        wage = round(order.case.servant.home_one_day_wage/24)
+                elif order.case.care_type == 'hospital':
+                    if total_hours < 12:
+                        wage = order.case.servant.hospital_hour_wage
+                    elif total_hours >=12 and total_hours < 24:
+                        wage = round(order.case.servant.hospital_half_day_wage/12)
+                    else:
+                        wage = round(order.case.servant.hospital_one_day_wage/24)
+
+            order.base_money = order.work_hours * wage
+            order.save()
+
+            for service_id in service_idList:
+                if int(service_id) <= 4:
+                    orderIncreaseService = OrderIncreaseService()
+                    orderIncreaseService.order = order
+                    orderIncreaseService.service = Service.objects.get(id=service_id)
+                    orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=order.servant,service=Service.objects.get(id=service_id)).increase_percent
+                    orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                    orderIncreaseService.save()
+
+            order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+            order.platform_money = order.total_money * (order.platform_percent/100)
+            order.save()
+            orderEarlyTermination(order.servant,order)
+            serializer = self.serializer_class(order)
+            return Response(serializer.data)
+        elif aware_datetime < order.start_datetime:
+            orderCancel(order.servant,order)
+            order.delete()
+            return Response('delete order')
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]

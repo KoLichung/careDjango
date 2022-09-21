@@ -3,7 +3,7 @@
 
 <!-- main -->
 <main class="main bg-white" id="top" >
-
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
       <div class="container pt-5">
         
         <div class="alert alert-danger text-center" role="alert">委託人尚未找到服務者</div>
@@ -78,11 +78,11 @@
                     {{case.startTimeformat}} ~ {{endTimeformat}} 
                   </p>
             </div>
-            <button class="full-purple-button mt-3 mb-5">我可以接案</button>
+            <button class="full-purple-button mt-3 mb-5" type="submit">我可以接案</button>
           </div>
 
         </div>
       </div>
-     
+    </form>
 </main>
 {% endblock %}
