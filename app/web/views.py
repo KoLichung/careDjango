@@ -1255,7 +1255,7 @@ def booking_confirm(request):
         order.platform_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * (order.platform_percent/100)
         order.save()
 
-        receiveBooking(servant,order)
+        receiveBooking(servant,order.case)
 
         chatroom = ChatRoom.objects.create(update_at=datetime.datetime.now())
         ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
@@ -1475,14 +1475,25 @@ def requirement_detail(request):
         neederOrderEstablished(case.user,order)
         servantOrderEstablished(case.servant,order)
 
-        chatroom = ChatroomUserShip.objects.filter(user=user)
         chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
         chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
         chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
-        chatroom_id = list(chatroom_set)[0]
-        chatroom = ChatRoom.objects.get(id=chatroom_id)
-        message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
-        message.save()
+        if list(chatroom_set) != []:
+            chatroom_id = list(chatroom_set)[0]
+            print(chatroom_id)
+            chatroom = ChatRoom.objects.get(id=chatroom_id)
+            message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+            message.save()
+        elif list(chatroom_set) == []:
+            chatroom = ChatRoom()
+            chatroom.save()
+            ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
+            ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
+            message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+            message.save()
+            
+        chatroom.update_at = datetime.datetime.now()
+        chatroom.save()
 
     return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str})
 
@@ -2328,7 +2339,7 @@ def request_form_confirm(request):
                 servants = servants.filter(service_time_condition_1 | service_time_condition_2).distinct()
         
     if request.method == 'POST' and 'submit' in request.POST:
-        choose_servants = request.POST.getlist('choose_carer[]')
+        choose_servant_ids = request.POST.getlist('choose_carer[]')
         case = Case()
         case.user = user
         case.city = City.objects.get(name=city_name)
@@ -2363,6 +2374,30 @@ def request_form_confirm(request):
             CaseServiceShip.objects.create(case=case,service=service)
         for increase_service in increase_service_list:
             CaseServiceShip.objects.create(case=case,service=increase_service)
+        
+        for choose_servant_id in choose_servant_ids:
+            choose_servant = User.objects.get(id=choose_servant_id)
+            receiveBooking(choose_servant,case)
+            chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
+            chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=choose_servant).values_list('chatroom', flat=True))
+            chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
+            if list(chatroom_set) != []:
+                chatroom_id = list(chatroom_set)[0]
+                print(chatroom_id)
+                chatroom = ChatRoom.objects.get(id=chatroom_id)
+                message = Message(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+            elif list(chatroom_set) == []:
+                chatroom = ChatRoom()
+                chatroom.save()
+                ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
+                ChatroomUserShip.objects.create(user=choose_servant,chatroom=chatroom)
+                message = Message(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+            chatroom = ChatRoom.objects.create(update_at=datetime.datetime.now())
+            ChatroomUserShip.objects.create(user=case.user,chatroom=chatroom)
+            chatroom.update_at = datetime.datetime.now()
+            chatroom.save()
         return redirect('index')
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect('request_form_contact')

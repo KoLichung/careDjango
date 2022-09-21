@@ -80,11 +80,14 @@
                 <div class="card-body">
                   
                   <div>
-                    {% if servant.image.url != None %}
-                      <img class="rounded-circle" src="{{servant.image.url}}" alt="" > 
-                    {% else %}
-                      <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
-                    {% endif %}
+                    <div class="avatar avatar-xl" style="margin-right: 5px;">
+                      {% if servant.image.url != None %}
+                        <img class="rounded-circle" src="{{servant.image.url}}" alt="" > 
+                      {% else %}
+                        <img src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" width="55px">
+                      {% endif %}
+                    </div>
+                    
                     <span class="carer-name">{{servant.name}}</span >
                       {% for i in servant.servant_avg_rate_range %}
                         <span class="fas fa-star" style="color: yellow;"></span>

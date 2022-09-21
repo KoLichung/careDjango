@@ -1196,12 +1196,52 @@ class EarlyTermination(APIView):
             order.platform_money = order.total_money * (order.platform_percent/100)
             order.save()
             orderEarlyTermination(order.servant,order)
+            chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
+            chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
+            chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
+            if list(chatroom_set) != []:
+                chatroom_id = list(chatroom_set)[0]
+                print(chatroom_id)
+                chatroom = ChatRoom.objects.get(id=chatroom_id)
+                message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+            elif list(chatroom_set) == []:
+                chatroom = ChatRoom()
+                chatroom.save()
+                ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
+                ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
+                message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+                
+            chatroom.update_at = datetime.datetime.now()
+            chatroom.save()
             serializer = self.serializer_class(order)
             return Response(serializer.data)
         elif aware_datetime < order.start_datetime:
             orderCancel(order.servant,order)
-            order.delete()
-            return Response('delete order')
+            order.state = 'canceled'
+            order.save()
+            chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
+            chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
+            chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
+            if list(chatroom_set) != []:
+                chatroom_id = list(chatroom_set)[0]
+                print(chatroom_id)
+                chatroom = ChatRoom.objects.get(id=chatroom_id)
+                message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+            elif list(chatroom_set) == []:
+                chatroom = ChatRoom()
+                chatroom.save()
+                ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
+                ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
+                message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+                
+            chatroom.update_at = datetime.datetime.now()
+            chatroom.save()
+            serializer = self.serializer_class(order)
+            return Response(serializer.data)
             
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start

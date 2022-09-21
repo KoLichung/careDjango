@@ -1,4 +1,4 @@
-from modelCore.models import ChatRoom ,Message ,ChatroomUserShip ,SystemMessage
+from modelCore.models import ChatRoom ,Message ,ChatroomUserShip ,SystemMessage ,Order
 from firebase_admin.messaging import Message, Notification
 from fcm_django.models import FCMDevice
 
@@ -34,8 +34,8 @@ def sendTaskMessage(user):
 #====================================
 
 # [服務者]收到訂單
-def receiveBooking(user,order):
-    message = SystemMessage(case=order.case,user=user,content="您收到來自"+ order.servant.name +"的預訂申請，請利用聊聊與對方聯絡。")
+def receiveBooking(user,case):
+    message = SystemMessage(case=case,user=user,content="您收到來自"+ case.user.name +"的預訂申請，請利用聊聊與對方聯絡。")
     message.save()
     print(message)
 
@@ -62,3 +62,4 @@ def orderEarlyTermination(user,order):
     message = SystemMessage(case=order.case,user=user,content="請注意！"+ order.servant.name +"的定單已申請「提前結束」，確認交接完成，即可收班。")
     message.save()
     print(message)
+
