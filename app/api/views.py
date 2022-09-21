@@ -1219,7 +1219,6 @@ class EarlyTermination(APIView):
             return Response(serializer.data)
         elif aware_datetime < order.start_datetime:
             orderCancel(order.servant,order)
-<<<<<<< HEAD
             order.state = 'canceled'
             order.save()
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
@@ -1243,12 +1242,8 @@ class EarlyTermination(APIView):
             chatroom.save()
             serializer = self.serializer_class(order)
             return Response(serializer.data)
-            
-=======
-            order.delete()
-            return Response('delete order')
+    
 
->>>>>>> 3d4ca0da3f403b25590c67b791853faa8379eb87
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]
