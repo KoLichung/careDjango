@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'backboard',
     'ckeditor',
     'fcm_django',
-    
+    'messageApp',
 ]
 
 MIDDLEWARE = [

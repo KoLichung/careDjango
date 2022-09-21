@@ -91,7 +91,7 @@
     {% for servant in servants %}
       <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
         <div class="border border-600" style="border-radius: 6px;" >
-          <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
+          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant.id}}">
             {% if servant.background_image.url != None %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
@@ -100,7 +100,11 @@
             <div class="card-body" >
               <div class="d-flex">
                 <div class="avatar avatar-xl" style="margin-right: 5px;">
-                  <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+                  {% if servant.image.url != None %}
+                    <img class="rounded-circle"  src="{{servant.image.url}}" alt="照顧者大頭照">
+                  {% else %}
+                    <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+                  {% endif %}
                 </div>
                   <span class="carer-name" style="margin-right: 5px;">{{servant.name|slice:"0:1"}}{% if servant.gender == 'M' %}先生{% else %}小姐{% endif %}</span >
                     {% for i in servant.servant_avg_rate_range %}
@@ -152,107 +156,6 @@
         </div>
       </div>
     {% endfor %}
-    <!-- <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="border border-600" style="border-radius: 6px;">
-        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
-          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
-          <div class="card-body">
-            <div class="d-flex">
-              <div class="avatar avatar-xl" style="margin-right: 5px;">
-                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
-              </div>
-                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
-            </div>
-
-            <div class="mt-2">
-              <span class="purple-border-tag">居家照顧</span>
-              <span class="purple-border-tag">醫院看護</span>
-            </div>
-  
-            <div class="mt-3">
-              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6 text-800">服務地區：</p>
-              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
-            </div>
-                    
-          </div>
-        </a>   
-      </div>
-    </div>
-
-    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="border border-600" style="border-radius: 6px;">
-        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
-          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖">
-          <div class="card-body">
-            <div class="d-flex">
-              <div class="avatar avatar-xl" style="margin-right: 5px;">
-                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
-              </div>
-                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
-            </div>
-
-            <div class="mt-2">
-              <span class="purple-border-tag">居家照顧</span>
-              <span class="purple-border-tag">醫院看護</span>
-            </div>
-  
-            <div class="mt-3">
-              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6 text-800">服務地區：</p>
-              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
-            </div>
-                    
-          </div>
-        </a>   
-      </div>
-    </div>
-
-    <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-      <div class="border border-600" style="border-radius: 6px;">
-        <a class="custom-card-link" href="{% url 'search_carer_detail' %}">
-          <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="照顧者背景圖">
-          <div class="card-body">
-            <div class="d-flex">
-              <div class="avatar avatar-xl" style="margin-right: 5px;">
-                <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
-              </div>
-                <span class="carer-name" style="margin-right: 5px;">林瑜婷</span >
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="fas fa-star"  style="color: yellow; margin-top: 4px;"></span>
-                <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價7</span>
-            </div>
-
-            <div class="mt-2">
-              <span class="purple-border-tag">居家照顧</span>
-              <span class="purple-border-tag">醫院看護</span>
-            </div>
-  
-            <div class="mt-3">
-              <p class="h6 text-800">時薪 $400 | 半天 $3,600 | 一天 $4800</p>
-              <p class="h6 text-800">服務地區：</p>
-              <p class="h6 text-800">基隆市 台北市 宜蘭縣 新北市</p>
-            </div>
-                    
-          </div>
-        </a>   
-      </div>
-    </div> -->
   </div>
 
   <script>
