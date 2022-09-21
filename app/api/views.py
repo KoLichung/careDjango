@@ -123,12 +123,14 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
             queryset[i].other_side_image_url = other_side_user.image
             queryset[i].other_side_name = other_side_user.name
             # print(other_side_user.name)
-            if Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
-                # print(Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count())
-                queryset[i].last_message = Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).order_by('-id').first().content[0:15]
+            print(Message.objects.all())
+            ggggg
+            # if Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
+            #     # print(Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count())
+            #     queryset[i].last_message = Message.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).order_by('-id').first().content[0:15]
             
-            chat_rooms_not_read_messages = Message.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
-            queryset[i].unread_num = chat_rooms_not_read_messages.count()
+            # chat_rooms_not_read_messages = Message.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
+            # queryset[i].unread_num = chat_rooms_not_read_messages.count()
 
         return queryset
 
