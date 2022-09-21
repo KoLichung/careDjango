@@ -71,25 +71,25 @@ class OrderViewSet(viewsets.GenericViewSet,
     def retrieve(self, request, *args, **kwargs):
         order = self.get_object()
         user = self.request.user
-        if order.case.user == user:
-            order.related_case = order.case
-            
-            service_ids = list(CaseServiceShip.objects.filter(case=order.related_case).values_list('service', flat=True))
-            order.related_case.services = Service.objects.filter(id__in=service_ids)
 
-            order.servant = order.case.servant
-            order.increase_services = order.order_increase_services
+        order.related_case = order.case
+        order.related_case.user_detail = order.case.user
 
-            order.related_case.rating_nums= Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
-            order.related_case.servant_rating = Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
-            disease_ids = list(CaseDiseaseShip.objects.filter(case=order.case).values_list('disease', flat=True))
-            order.related_case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
-            body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=order.case).values_list('body_condition', flat=True))
-            order.related_case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
-            serializer = self.get_serializer(order)
-            return Response(serializer.data)
-        else:
-            return Response({'message': "have no authority"})
+        service_ids = list(CaseServiceShip.objects.filter(case=order.related_case).values_list('service', flat=True))
+        order.related_case.services = Service.objects.filter(id__in=service_ids)
+
+        order.servant = order.case.servant
+        order.increase_services = order.order_increase_services
+
+        order.related_case.rating_nums= Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
+        order.related_case.servant_rating = Review.objects.filter(servant=order.case.servant,servant_rating__gte=1).aggregate(servant_rating =Avg('servant_rating'))['servant_rating']
+        disease_ids = list(CaseDiseaseShip.objects.filter(case=order.case).values_list('disease', flat=True))
+        order.related_case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
+        body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=order.case).values_list('body_condition', flat=True))
+        order.related_case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
+        serializer = self.get_serializer(order)
+        return Response(serializer.data)
+
 
 class UserServiceLocationViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
@@ -1219,6 +1219,7 @@ class EarlyTermination(APIView):
             return Response(serializer.data)
         elif aware_datetime < order.start_datetime:
             orderCancel(order.servant,order)
+<<<<<<< HEAD
             order.state = 'canceled'
             order.save()
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
@@ -1243,6 +1244,11 @@ class EarlyTermination(APIView):
             serializer = self.serializer_class(order)
             return Response(serializer.data)
             
+=======
+            order.delete()
+            return Response('delete order')
+
+>>>>>>> 3d4ca0da3f403b25590c67b791853faa8379eb87
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]
