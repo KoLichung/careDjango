@@ -35,30 +35,30 @@ def sendTaskMessage(user):
 
 # [服務者]收到訂單
 def receiveBooking(user,order):
-    message = SystemMessage(case=order.case,user=user,content="您收到來自某某某的預訂申請，請利用聊聊與對方聯絡。")
+    message = SystemMessage(case=order.case,user=user,content="您收到來自"+ order.servant.name +"的預訂申請，請利用聊聊與對方聯絡。")
     message.save()
     print(message)
 
 # 需求者付款, [服務者]收到訂單成立
 def servantOrderEstablished(user,order):
-    message = SystemMessage(case=order.case,user=user,content="您已成功接案！某某某的預定已成立～您可前往會員中心-我接的案查詢詳情。")
+    message = SystemMessage(case=order.case,user=user,content="您已成功接案！"+ order.servant.name +"的預定已成立～您可前往會員中心-我接的案查詢詳情。")
     message.save()
     print(message)
 
 # [需求者] 收到服務者已接案
 def neederOrderEstablished(user,order):
-    message = SystemMessage(case=order.case,user=user,content="您已成功預定！某某某服務者已接案～您可前往會員中心-訂單管理查詢詳情。")
+    message = SystemMessage(case=order.case,user=user,content="您已成功預定！"+ order.servant.name +"服務者已接案～您可前往會員中心-訂單管理查詢詳情。")
     message.save()
     print(message)
 
 # [服務者] 收到訂單取消
 def orderCancel(user,order):
-    message = SystemMessage(case=order.case,user=user,content="很抱歉，某某某的定單已取消，請您不用前往服務!")
+    message = SystemMessage(case=order.case,user=user,content="很抱歉，"+ order.servant.name +"的定單已取消，請您不用前往服務!")
     message.save()
     print(message)
 
 # [服務者] 收到訂單提前結束
 def orderEarlyTermination(user,order):
-    message = SystemMessage(case=order.case,user=user,content="請注意！某某某的定單已申請「提前結束」，確認交接完成，即可收班。")
+    message = SystemMessage(case=order.case,user=user,content="請注意！"+ order.servant.name +"的定單已申請「提前結束」，確認交接完成，即可收班。")
     message.save()
     print(message)

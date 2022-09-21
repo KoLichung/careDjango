@@ -1455,6 +1455,10 @@ def requirement_detail(request):
         order.base_money = order.work_hours * wage
         order.save()
 
+        increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
+        for service in increase_services:
+            if UserServiceShip.objects.filter(user=order.servant, service=service).count() == 0:
+                UserServiceShip.objects.create(user=order.servant,service=service)
         service_idList = list(CaseServiceShip.objects.filter(case=order.case).values_list('service', flat=True))
         for service_id in service_idList:
             if int(service_id) <= 4:
@@ -1470,6 +1474,16 @@ def requirement_detail(request):
         order.save()
         neederOrderEstablished(case.user,order)
         servantOrderEstablished(case.servant,order)
+
+        chatroom = ChatroomUserShip.objects.filter(user=user)
+        chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
+        chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
+        chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
+        chatroom_id = list(chatroom_set)[0]
+        chatroom = ChatRoom.objects.get(id=chatroom_id)
+        message = Message(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+        message.save()
+
     return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str})
 
 def become_carer(request):
