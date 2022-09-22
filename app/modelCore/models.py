@@ -605,6 +605,13 @@ class Order(models.Model):
     ]
     state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
     
+    wage_hour = models.IntegerField(default=0, blank=True, null=True)
+    wage_half_day = models.IntegerField(default=0, blank=True, null=True)
+    wage_one_day = models.IntegerField(default=0, blank=True, null=True)
+    hours_hour_work = models.FloatField(default=0, blank = True, null=True)
+    hours_half_day_work = models.FloatField(default=0, blank = True, null=True)
+    hours_one_day_work = models.FloatField(default=0, blank = True, null=True)
+
     work_hours = models.FloatField(default=0, blank = True, null=True)
     base_money = models.IntegerField(default=0, blank=True, null=True)
     platform_percent = models.FloatField(default=0, blank = True, null=True)
