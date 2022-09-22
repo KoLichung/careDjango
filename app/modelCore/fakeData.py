@@ -8,7 +8,7 @@ from pytz import tzinfo
 from django.db.models import Avg ,Sum 
 from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
-from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,Message ,SystemMessage ,OrderWeekDay ,OrderIncreaseService, BlogCategory, BlogPost, MonthSummary
+from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage ,OrderWeekDay ,OrderIncreaseService, BlogCategory, BlogPost, MonthSummary
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -358,32 +358,6 @@ def fakeData():
     order.end_time = order.case.end_time
     order.start_datetime = order.case.start_datetime
     order.end_datetime = order.case.end_datetime
-    # order.base_money =(((Case.objects.get(id=1).end_datetime) - (Case.objects.get(id=1).start_datetime)).days) * (Case.objects.get(id=1).servant.home_one_day_wage)
-    diff = order.end_datetime - order.start_datetime
-    days, seconds = diff.days, diff.seconds
-    hours = days * 24 + seconds // 3600
-    minutes = (seconds % 3600) // 60
-    total_hours = hours + round(minutes/60)
-    if order.case.care_type == 'home':
-        if total_hours < 12:
-            wage = order.case.servant.home_hour_wage
-        elif total_hours >=12 and total_hours < 24:
-            wage = round(order.case.servant.home_half_day_wage/12)
-        else:
-            wage = round(order.case.servant.home_one_day_wage/24)
-    elif order.case.care_type == 'hospital':
-        if total_hours < 12:
-            wage = order.case.servant.hospital_hour_wage
-        elif total_hours >=12 and total_hours < 24:
-            wage = round(order.case.servant.hospital_half_day_wage/12)
-        else:
-            wage = round(order.case.servant.hospital_one_day_wage/24)
-    order.base_money = total_hours * wage
-    # total_hours = 0
-    # for i in range(7):
-    #     total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
-    order.work_hours = total_hours
-    order.platform_percent = 15
     order.save()
     Review.objects.create(order=order,case=order.case,servant=order.case.servant,
                         case_offender_rating=4.8,case_offender_comment='good',
@@ -405,26 +379,71 @@ def fakeData():
         orderWeekday.order = order
         orderWeekday.weekday = weekday
         orderWeekday.save()
-    weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
-    total_hours = 0
-    for i in weekday_list:
-        total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
-    order.work_hours = total_hours
-    one_day_work_hours = order.end_time - order.start_time
-    if order.case.care_type == 'home':
-        if one_day_work_hours < 12:
-            wage = order.case.servant.home_hour_wage
-        elif one_day_work_hours >=12 and total_hours < 24:
-            wage = round(order.case.servant.home_half_day_wage/12)
-    elif order.case.care_type == 'hospital':
-        if one_day_work_hours < 12:
-            wage = order.case.servant.hospital_hour_wage
-        elif one_day_work_hours >=12 and total_hours < 24:
-            wage = round(order.case.servant.hospital_half_day_wage/12)
 
-    order.base_money = order.work_hours * wage
-    order.platform_percent = 15
-    order.save()
+    orders = Order.objects.all()
+    for order in orders:
+        if order.case.is_continuous_time == False:
+            weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+            total_hours = 0
+            for i in weekday_list:
+                total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+            order.work_hours = total_hours
+            one_day_work_hours = order.end_time - order.start_time
+            if order.case.care_type == 'home':
+                if one_day_work_hours < 12:
+                    wage = order.case.servant.home_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
+                elif one_day_work_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.home_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
+            elif order.case.care_type == 'hospital':
+                if one_day_work_hours < 12:
+                    wage = order.case.servant.hospital_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
+                elif one_day_work_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
+        else:
+            diff = order.end_datetime - order.start_datetime
+            days, seconds = diff.days, diff.seconds
+            hours = days * 24 + seconds // 3600
+            minutes = (seconds % 3600) // 60
+            total_hours = hours + round(minutes/60)
+            order.work_hours = total_hours
+            if order.case.care_type == 'home':
+                if total_hours < 12:
+                    wage = order.case.servant.home_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
+                elif total_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.home_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
+                else:
+                    wage = round(order.case.servant.home_one_day_wage/24)
+                    order.wage_one_day = wage
+                    order.hours_one_day_work = total_hours
+            elif order.case.care_type == 'hospital':
+                if total_hours < 12:
+                    wage = order.case.servant.hospital_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
+                elif total_hours >=12 and total_hours < 24:
+                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
+                else:
+                    wage = round(order.case.servant.hospital_one_day_wage/24)
+                    order.wage_one_day = wage
+                    order.hours_one_day_work = total_hours
+
+        order.base_money = order.work_hours * wage
+        order.save()
+
     Review.objects.create(order=order,case=order.case,servant=order.case.servant)
 
     orderIncreaseService = OrderIncreaseService()
@@ -470,7 +489,7 @@ def fakeData():
     ChatroomUserShip.objects.create(user=User.objects.get(id=3),chatroom=ChatRoom.objects.get(id=2))
     ChatroomUserShip.objects.create(user=User.objects.get(id=4),chatroom=ChatRoom.objects.get(id=2))
     
-    message = Message()
+    message = ChatroomMessage()
     chatroom = ChatRoom.objects.get(id=1)
     message.chatroom = chatroom
     message.user = User.objects.get(id=3)
@@ -479,7 +498,7 @@ def fakeData():
     chatroom.save()
     message.save()
 
-    message = Message()
+    message = ChatroomMessage()
     chatroom = ChatRoom.objects.get(id=1)
     message.chatroom = chatroom
     message.user = User.objects.get(id=2)
@@ -489,7 +508,7 @@ def fakeData():
     chatroom.save()
     message.save()
 
-    message = Message()
+    message = ChatroomMessage()
     chatroom = ChatRoom.objects.get(id=2)
     message.chatroom = chatroom
     message.user = User.objects.get(id=3)

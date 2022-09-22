@@ -1,0 +1,21 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+
+<main class="main bg-white" id="top" >
+    <div style="height:50vh;">
+        <br>
+        <h3 class="mt-6"><center>您已經傳送接案訊息給發案者，請到 App 訂單訊息查看！</center></h3>
+        <br><br><br>
+        <div class="text-center ">
+                <div class="" >
+                    <img src="{% static 'web/assets/img/new/download_apple.png' %}" width="150" alt="" class="">
+                </div>
+        
+                <div class="" >
+                    <img src="{% static 'web/assets/img/new/download_google.png' %}" width="150" alt="">
+                </div>
+        </div>
+    </div>   
+</main>
+{% endblock %}

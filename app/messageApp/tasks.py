@@ -45,32 +45,40 @@ def receiveBooking(user,case):
     content_text = "您收到來自"+ case.user.name +"的預訂申請，請利用聊聊與對方聯絡。"
     message = SystemMessage(case=case,user=user,content=content_text)
     message.save()
-    sendFCMMessage(user, '收到訂單', content_text)
-    print(message)
+    sendFCMMessage(case.servant, '收到訂單', content_text)
+    
 
 # 需求者付款, [服務者]收到訂單成立
 def servantOrderEstablished(user,order):
-    message = SystemMessage(case=order.case,user=user,content="您已成功接案！"+ order.servant.name +"的預定已成立～您可前往會員中心-我接的案查詢詳情。")
+    content_text = "您已成功接案！"+ order.user.name +"的預定已成立～您可前往會員中心-我接的案查詢詳情。"
+    message = SystemMessage(case=order.case,user=user,content=content_text)
     message.save()
-    print(message)
+    sendFCMMessage(order.servant, '訂單成立', content_text)
+    
 
 # [需求者] 收到服務者已接案
 def neederOrderEstablished(user,order):
-    message = SystemMessage(case=order.case,user=user,content="您的定單已成立！您可前往會員中心-訂單管理查詢詳情。")
+    content_text = "您的定單已成立！您可前往會員中心-訂單管理查詢詳情。"
+    message = SystemMessage(case=order.case,user=order.user,content=content_text)
     message.save()
-    print(message)
+    sendFCMMessage(order.user, '訂單成立', content_text)
+    
 
 # [服務者] 收到訂單取消
 def orderCancel(user,order):
-    message = SystemMessage(case=order.case,user=user,content="很抱歉，"+ order.servant.name +"的定單已取消，請您不用前往服務!")
+    content_text = "很抱歉，"+ order.user.name +"的定單已取消，請您不用前往服務!"
+    message = SystemMessage(case=order.case,user=user,content=content_text)
     message.save()
-    print(message)
+    sendFCMMessage(order.servant, '訂單取消', content_text)
+    
 
 # [服務者] 收到訂單提前結束
 def orderEarlyTermination(user,order):
-    message = SystemMessage(case=order.case,user=user,content="請注意！"+ order.servant.name +"的定單已申請「提前結束」，確認交接完成，即可收班。")
+    content_text = "請注意！"+ order.user.name +"的定單已申請「提前結束」，確認交接完成，即可收班。"
+    message = SystemMessage(case=order.case,user=user,content=content_text)
     message.save()
-    print(message)
+    sendFCMMessage(order.servant, '訂單提前結束', content_text)
+    
 
 #====================================
 ### 聊聊訊息 1.order狀態改變(訂單成立, 修改(x), 付款, 取消, 提前結束) 2.發文字訊息 or 圖片訊息(不用, 因為這個只出現在 chatroom 的場景)

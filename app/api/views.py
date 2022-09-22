@@ -198,8 +198,9 @@ class MessageViewSet(APIView):
 
         chatroom = ChatRoom.objects.get(id=chatroom_id)
         user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
-
-        if user.id in user_ids:
+        chatroom_users = User.objects.filter(id__in=user_ids)
+        if user in chatroom_users:
+            other_side_user = chatroom_users.exclude(user)[0]
             message = ChatroomMessage()
             message.chatroom = chatroom
             message.user = user
@@ -210,11 +211,13 @@ class MessageViewSet(APIView):
             
             if content != None:
                 message.content = content
+                sendFCMMessage(other_side_user,None,content)
             
             # upload image
             if image != None:
                 message.image = image
-
+                title =  user.name + '傳送了一張新圖片'
+                sendFCMMessage(other_side_user,title)
             message.save()
             chatroom.update_at = datetime.datetime.now()
             chatroom.save()
@@ -750,6 +753,7 @@ class CreateCase(APIView):
 
         #searvant_ids=1,4,7 => 要產生 message, order
         servant_ids = request.data.get('servant_ids')
+        
 
         case = Case()
         case.user = user
@@ -816,6 +820,31 @@ class CreateCase(APIView):
                 caseserviceship.service = Service.objects.get(id=service_id)
                 caseserviceship.case = case
                 caseserviceship.save()
+        if servant_ids != None:
+            servant_id_list = servant_ids.split(',')
+            for servant_id in servant_id_list:
+                servant = User.objects.get(id=servant_id)
+                receiveBooking(servant,case)
+                chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
+                chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
+                chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
+                print(chatroom_set,1)
+                if list(chatroom_set) != []:
+                    chatroom_id = list(chatroom_set)[0]
+                    print(chatroom_id,2)
+                    chatroom = ChatRoom.objects.get(id=chatroom_id)
+                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                    message.save()
+                elif list(chatroom_set) == []:
+                    chatroom = ChatRoom()
+                    chatroom.save()
+                    print(chatroom_id,3)
+                    ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
+                    ChatroomUserShip.objects.create(user=servant,chatroom=chatroom)
+                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                    message.save()
+                chatroom.update_at = datetime.datetime.now()
+                chatroom.save()
 
         disease_idList = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
         case.disease = DiseaseCondition.objects.filter(id__in=disease_idList)

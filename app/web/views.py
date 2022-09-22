@@ -12,7 +12,6 @@ import urllib
 from datetime import date ,timedelta
 import datetime
 import json
-import pytz
 from urllib import parse
 import requests
 from time import time
@@ -119,11 +118,12 @@ def ajax_cal_rate(request):
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
         servants = User.objects.filter(is_servant_passed=True)
         print(updatedData)
+        
         servant_id = updatedData['servant'][0]
         servant = User.objects.get(id=servant_id)
-        
-        care_type = updatedData['care_type'][0]
         print('a')
+        care_type = updatedData['care_type'][0]
+        
         start_end_date = updatedData['start_end_date'][0]
         is_continuous_time = updatedData['is_continuous_time'][0]
         
@@ -198,7 +198,7 @@ def ajax_cal_rate(request):
                         count += 1
                         service = Service.objects.get(id=service_id)
                         increase_percent = UserServiceShip.objects.get(user=servant,service=service).increase_percent
-                        increase_money = total_money * increase_percent / 100
+                        increase_money = round(total_money * increase_percent / 100)
                         total_money += increase_money
                         increase_data = {
                             'service' : service.name,
@@ -295,7 +295,7 @@ def ajax_cal_rate(request):
                                 count += 1
                                 service = Service.objects.get(id=service_id)
                                 increase_percent = UserServiceShip.objects.get(user=servant,service=service).increase_percent
-                                increase_money = total_money * increase_percent / 100
+                                increase_money = round(total_money * increase_percent / 100)
                                 total_money += increase_money
                                 increase_data = {
                                     'service' : service.name,
@@ -1009,7 +1009,7 @@ def booking_location(request):
         return redirect_params('booking_contact',{'servant':servant_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_patient_info',{'servant':servant_id})
-    return render(request, 'web/booking/location.html',{'road_name':road_name,'hospital_name':hospital_name, 'address':address,'tranfer_info':tranfer_info, 'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'citys':citys,'countyName':county_name,'counties':counties,})
+    return render(request, 'web/booking/location.html',{'servant_id':servant_id, 'road_name':road_name,'hospital_name':hospital_name, 'address':address,'tranfer_info':tranfer_info, 'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'citys':citys,'countyName':county_name,'counties':counties,})
 
 def booking_contact(request):
     servant_id = request.GET.get('servant')
@@ -1076,7 +1076,7 @@ def booking_contact(request):
         return redirect_params('booking_confirm',{'servant':servant_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_location',{'servant':servant_id})
-    return render(request, 'web/booking/contact.html',{'user':user,'emergencycontact_phone':emergencycontact_phone,'emergencycontact_relation':emergencycontact_relation,'emergencycontact_name':emergencycontact_name,'start_end_date':start_end_date, 'servant_id':servant_id, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'countyName':county_name})
+    return render(request, 'web/booking/contact.html',{ 'servant_id':servant_id,'user':user,'emergencycontact_phone':emergencycontact_phone,'emergencycontact_relation':emergencycontact_relation,'emergencycontact_name':emergencycontact_name,'start_end_date':start_end_date, 'servant_id':servant_id, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'countyName':county_name})
 
 def booking_confirm(request):
     servant_id = request.GET.get('servant')
@@ -1201,13 +1201,21 @@ def booking_confirm(request):
             if order.case.care_type == 'home':
                 if one_day_work_hours < 12:
                     wage = order.case.servant.home_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
                 elif one_day_work_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
             elif order.case.care_type == 'hospital':
                 if one_day_work_hours < 12:
                     wage = order.case.servant.hospital_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
                 elif one_day_work_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
         else:
             diff = order.end_datetime - order.start_datetime
             days, seconds = diff.days, diff.seconds
@@ -1217,17 +1225,29 @@ def booking_confirm(request):
             if order.case.care_type == 'home':
                 if total_hours < 12:
                     wage = order.case.servant.home_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.home_one_day_wage/24)
+                    order.wage_one_day = wage
+                    order.hours_one_day_work = total_hours
             elif order.case.care_type == 'hospital':
                 if total_hours < 12:
                     wage = order.case.servant.hospital_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.hospital_one_day_wage/24)
+                    order.wage_one_day = wage
+                    order.hours_one_day_work = total_hours
 
         order.base_money = order.work_hours * wage
         order.platform_percent = 10
@@ -1274,7 +1294,7 @@ def booking_confirm(request):
         return redirect_params('http://202.182.105.11/newebpayApi/mpg_trade',{'order_id':order_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_contact',{'servant':servant_id})
-    return render(request, 'web/booking/confirm.html',{'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant})
+    return render(request, 'web/booking/confirm.html',{'servant_id':servant_id,'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant})
 
 def news(request):
     blogposts = BlogPost.objects.filter(state='publish')
@@ -1424,13 +1444,21 @@ def requirement_detail(request):
             if order.case.care_type == 'home':
                 if one_day_work_hours < 12:
                     wage = order.case.servant.home_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
                 elif one_day_work_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
             elif order.case.care_type == 'hospital':
                 if one_day_work_hours < 12:
                     wage = order.case.servant.hospital_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
                 elif one_day_work_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
         else:
             diff = order.end_datetime - order.start_datetime
             days, seconds = diff.days, diff.seconds
@@ -1441,17 +1469,29 @@ def requirement_detail(request):
             if order.case.care_type == 'home':
                 if total_hours < 12:
                     wage = order.case.servant.home_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.home_one_day_wage/24)
+                    order.wage_one_day = wage
+                    order.hours_one_day_work = total_hours
             elif order.case.care_type == 'hospital':
                 if total_hours < 12:
                     wage = order.case.servant.hospital_hour_wage
+                    order.wage_hour =wage
+                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
+                    order.wage_half_day = wage
+                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.hospital_one_day_wage/24)
+                    order.wage_one_day = wage
+                    order.hours_one_day_work = total_hours
 
         order.base_money = order.work_hours * wage
         order.save()
@@ -1497,6 +1537,9 @@ def requirement_detail(request):
         chatroom.save()
 
     return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str})
+
+def take_case_message(request):
+    return render(request, 'web/take_case_message.html')
 
 def become_carer(request):
     return render(request, 'web/become_carer.html')
@@ -2409,8 +2452,6 @@ def request_form_confirm(request):
                 ChatroomUserShip.objects.create(user=choose_servant,chatroom=chatroom)
                 message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
-            chatroom = ChatRoom.objects.create(update_at=datetime.datetime.now())
-            ChatroomUserShip.objects.create(user=case.user,chatroom=chatroom)
             chatroom.update_at = datetime.datetime.now()
             chatroom.save()
         return redirect('index')

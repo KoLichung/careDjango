@@ -28,6 +28,7 @@ urlpatterns = [
 
     path('requirement_list', views.requirement_list, name = 'requirement_list'),
     path('requirement_detail', views.requirement_detail, name = 'requirement_detail'),
+    path('take_case_message', views.take_case_message, name = 'take_case_message'),
 
     path('my_service_setting_time', views.my_service_setting_time, name = 'my_service_setting_time'),
     path('my_service_setting_services', views.my_service_setting_services, name = 'my_service_setting_services'),
