@@ -26,13 +26,14 @@ def setup_periodic_tasks(sender, **kwargs):
     
     # Calls test('hello') every 10 seconds.
     sender.add_periodic_task(
-        # crontab(minute=15), 
-        10.0,
-    remindOrderStart.s(0), name='remind order start')
+        crontab(minute=15), 
+        # 10.0,
+        remindOrderStart.s('0'), name='remind order start'
+    )
 
     sender.add_periodic_task(
-        # crontab(minute=15),
-        10.0,
+        crontab(minute=15),
+        # 10.0,
         changeOrderState.s(0), name='check state every 15 min'
     )
 

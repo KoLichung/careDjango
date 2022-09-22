@@ -27,6 +27,23 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220922
+1.推播任務 (api/views.py 191 行 => chatroom message post 跟 系統訊息)
+2.Model Order 欄位增加：
+wage_hour
+wage_half_day
+wage_one_day
+hours_hour_work
+hours_half_day_work
+hours_one_day_work
+=> 跟訂單有關的地方要改 ex.預訂單
+3.fakeData 修正
+4.網站首頁小字修正
+5.在 api create case (api/views.py 712 行)
+=> servant_ids 要依據 user 產生 ChatroomMessage 的 case message & Chatroom? ＆ SystemMessage
+7.我可以接案, 做一個接案訊息頁.
+=> "您已經傳送接案訊息給發案者，請到 App 訂單訊息查看！" + App 下載按鈕
+
 20220921
 1.我可以接案 chatroom 的檢查會出 bug (if 雙方 chatroom 沒有交集的話)
 2.http://localhost:8000/web/recommend_carer

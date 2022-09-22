@@ -1536,6 +1536,7 @@ def my_service_setting_time(request):
             start_time = request.POST.get(weekday_str_list[int(i)][:3]+'_start_time')
             end_time = request.POST.get(weekday_str_list[int(i)][:3]+'_end_time')
             
+            # 把底下的 start_time_hour/start_time_min, end_time_hour/end_time_min 做計算, 存回 start_time, end_time
             start_time_hour = int(start_time.split(':')[0])
             start_time_min = int(start_time.split(':')[1])
 
@@ -1552,6 +1553,10 @@ def my_service_setting_time(request):
             userweekdaytime.start_time_min = start_time_min
             userweekdaytime.end_time_hour = end_time_hour
             userweekdaytime.end_time_min = end_time_min
+
+            userweekdaytime.start_time = int(start_time_hour) + float(int(start_time_min)/60)
+            userweekdaytime.end_time = int(end_time_hour) + float(int(end_time_min)/60)
+
             userweekdaytime.save()
         
         for user_weekday_time in user_weekday_times:

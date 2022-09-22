@@ -4,7 +4,7 @@ from fcm_django.models import FCMDevice
 
 
 #====================================
-### 推播訊息
+### 推播訊息 1.收到訂單訊息(chatroom 文字圖片) 2.收到系統訊息
 #====================================
 #推播測試
 def sendTest():
@@ -29,14 +29,23 @@ def sendTaskMessage(user):
     devices.send_message(message)
     print("send fcm")
 
+def sendFCMMessage(user,title,text):
+    message = Message(
+        notification= Notification(title=title, body=text),
+    )
+    devices = FCMDevice.objects.filter(user=user)
+    devices.send_message(message)
+
 #====================================
 ### 系統訊息
 #====================================
 
 # [服務者]收到訂單
 def receiveBooking(user,case):
-    message = SystemMessage(case=case,user=user,content="您收到來自"+ case.user.name +"的預訂申請，請利用聊聊與對方聯絡。")
+    content_text = "您收到來自"+ case.user.name +"的預訂申請，請利用聊聊與對方聯絡。"
+    message = SystemMessage(case=case,user=user,content=content_text)
     message.save()
+    sendFCMMessage(user, '收到訂單', content_text)
     print(message)
 
 # 需求者付款, [服務者]收到訂單成立
@@ -47,7 +56,7 @@ def servantOrderEstablished(user,order):
 
 # [需求者] 收到服務者已接案
 def neederOrderEstablished(user,order):
-    message = SystemMessage(case=order.case,user=user,content="您已成功預定！"+ order.servant.name +"服務者已接案～您可前往會員中心-訂單管理查詢詳情。")
+    message = SystemMessage(case=order.case,user=user,content="您的定單已成立！您可前往會員中心-訂單管理查詢詳情。")
     message.save()
     print(message)
 
@@ -63,3 +72,10 @@ def orderEarlyTermination(user,order):
     message.save()
     print(message)
 
+#====================================
+### 聊聊訊息 1.order狀態改變(訂單成立, 修改(x), 付款, 取消, 提前結束) 2.發文字訊息 or 圖片訊息(不用, 因為這個只出現在 chatroom 的場景)
+#====================================
+
+# 這邊先不要給推播
+def changeOrderStateMessage(user,order,orderState):
+    print('code')

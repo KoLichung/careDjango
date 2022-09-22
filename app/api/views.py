@@ -188,6 +188,7 @@ class MessageViewSet(APIView):
  
         return Response({'message': "have no authority"})
 
+    # 上傳聊天室訊息 文字/圖片
     def post(self, request):
         user = self.request.user
         chatroom_id = self.request.query_params.get('chatroom')
@@ -742,12 +743,12 @@ class CreateCase(APIView):
         conditions_remark = request.data.get('conditions_remark')
         #1,7,9
         service = request.data.get('service')
-        
+
         emergencycontact_name = request.data.get('emergencycontact_name')
         emergencycontact_relation = request.data.get('emergencycontact_relation')
         emergencycontact_phone = request.data.get('emergencycontact_phone')
 
-        #searvant_ids=1,4,7
+        #searvant_ids=1,4,7 => 要產生 message, order
         servant_ids = request.data.get('servant_ids')
 
         case = Case()
