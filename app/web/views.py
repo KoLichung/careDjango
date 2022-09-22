@@ -5,13 +5,14 @@ from django.core.files.storage import FileSystemStorage
 from io import StringIO
 from django.template.loader import get_template
 from django.template import Context
+from django.utils import timezone
 from messageApp.tasks import *
 
 import urllib
 from datetime import date ,timedelta
 import datetime
 import json
-import io
+import pytz
 from urllib import parse
 import requests
 from time import time
@@ -1814,6 +1815,15 @@ def my_case_detail(request):
     work_hours = round(order.work_hours)
     review = Review.objects.get(case=case)
     total_money = order.total_money - order.platform_money
+    ##test
+    now = timezone.now()
+    # tzUtc = pytz.timezone('UTC')
+    remind_time_start = (case.start_datetime - timedelta(hours=3))
+    remind_time_end = (case.start_datetime - timedelta(hours=2,minutes=45))
+    print(now,remind_time_start,remind_time_end)
+    if now > remind_time_start and now < remind_time_end:
+        print('success')
+    ###
     if request.method == 'POST':
         rating = request.POST.get('myInput')
         comment = request.POST.get('comment')
