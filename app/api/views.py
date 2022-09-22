@@ -725,18 +725,24 @@ class CreateCase(APIView):
         start_time = start_time.split(':')
         end_time = self.request.query_params.get('end_time')
         end_time = end_time.split(':')
-
+        
+        #home, hospital
         care_type = request.data.get('care_type')
         is_continuous_time = request.data.get('is_continuous_time')
         name = request.data.get('name')
+        #M, F
         gender = request.data.get('gender')
         age = request.data.get('age')
         weight = request.data.get('weight')
+        #1,2,4
         disease = request.data.get('disease')
         disease_remark = request.data.get('disease_remark')
+        #1,4,6
         body_condition = request.data.get('body_condition')
         conditions_remark = request.data.get('conditions_remark')
+        #1,7,9
         service = request.data.get('service')
+        
         emergencycontact_name = request.data.get('emergencycontact_name')
         emergencycontact_relation = request.data.get('emergencycontact_relation')
         emergencycontact_phone = request.data.get('emergencycontact_phone')
@@ -755,14 +761,16 @@ class CreateCase(APIView):
         case.start_datetime = datetime.datetime.strptime(start_date, "%Y-%m-%d")
         case.end_datetime = datetime.datetime.strptime(end_date, "%Y-%m-%d")
         
+        # weekday = 1,3,5
         case.weekday = weekday
+
         case.start_time = int(start_time[0]) + float(int(start_time[1])/60)
         case.end_time = int(end_time[0]) + float(int(end_time[1])/60)
         if name != None:
             case.name = name
         if care_type != None:
             case.care_type = care_type
-        if is_continuous_time == "True":
+        if is_continuous_time == 'True' or is_continuous_time == 'true':
             case.is_continuous_time = True
         else:
             case.is_continuous_time = False
