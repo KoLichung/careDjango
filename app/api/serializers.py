@@ -1,7 +1,6 @@
 from asyncore import read
 from email.policy import default
 from unittest import case
-from attr import field
 from rest_framework import serializers
 
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
