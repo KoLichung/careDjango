@@ -28,7 +28,8 @@ ALLOWED_HOSTS = [
     "202.182.105.11",
     '127.0.0.1',
     'localhost',
-    'care168.com.tw'
+    'care168.com.tw',
+    '149.28.22.217',
 ]
 
 ADMINS = (
