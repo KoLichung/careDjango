@@ -753,12 +753,16 @@ class CreateCase(APIView):
 
         #searvant_ids=1,4,7 => 要產生 message, order
         servant_ids = request.data.get('servant_ids')
-        
 
         case = Case()
         case.user = user
         case.city = city
         case.county = County.objects.get(id=county)
+        
+        if care_type == 'home' and request.data.get('road_name')!=None:
+            case.road_name = request.data.get('road_name')
+        elif care_type == 'hospital' and request.data.get('hospital_name')!=None:
+            case.hospital_name = request.data.get('hospital_name')
 
         #start_datetime=2022-07-21
         #s = "2014-04-07"
