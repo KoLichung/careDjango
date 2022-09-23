@@ -1536,6 +1536,8 @@ def requirement_detail(request):
         chatroom.update_at = datetime.datetime.now()
         chatroom.save()
 
+        return redirect('take_case_message')
+
     return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str})
 
 def take_case_message(request):
