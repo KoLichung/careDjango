@@ -605,17 +605,23 @@ class Order(models.Model):
     ]
     state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
     
+    transfer_fee = models.IntegerField(default=0, blank=True, null=True)
+    number_of_transfer = models.IntegerField(default=0, blank=True, null=True)
+    amount_tranfer_fee = models.IntegerField(default=0, blank=True, null=True)
+
     wage_hour = models.IntegerField(default=0, blank=True, null=True)
-    wage_half_day = models.IntegerField(default=0, blank=True, null=True)
-    wage_one_day = models.IntegerField(default=0, blank=True, null=True)
-    hours_hour_work = models.FloatField(default=0, blank = True, null=True)
-    hours_half_day_work = models.FloatField(default=0, blank = True, null=True)
-    hours_one_day_work = models.FloatField(default=0, blank = True, null=True)
+    # wage_half_day = models.IntegerField(default=0, blank=True, null=True)
+    # wage_one_day = models.IntegerField(default=0, blank=True, null=True)
+    # hours_hour_work = models.FloatField(default=0, blank = True, null=True)
+    # hours_half_day_work = models.FloatField(default=0, blank = True, null=True)
+    # hours_one_day_work = models.FloatField(default=0, blank = True, null=True)
 
     work_hours = models.FloatField(default=0, blank = True, null=True)
     base_money = models.IntegerField(default=0, blank=True, null=True)
+
     platform_percent = models.FloatField(default=0, blank = True, null=True)
     platform_money = models.IntegerField(default=0, blank=True, null=True)
+    
     total_money = models.IntegerField(default=0, blank=True, null=True)
 
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
