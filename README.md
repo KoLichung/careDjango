@@ -27,6 +27,22 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220923
+24.刪除使用者資料 => api
+=> 如果使用者刪除, 訂單要顯示 [此用戶已刪除] 嗎?
+=> 
+不留的：
+reviews
+on_delete=models.CASCADE
+
+要留：
+Case => is_open_for_search = false, 後台 case user == null 要顯示 [此用戶已刪除]
+Order =>  後台 order user == null 要顯示 [此用戶已刪除]
+Payment => 要留
+Message => 要留
+ChatRoom => 要留
+on_delete=models.set_null
+
 20220922
 1.推播任務 (api/views.py 191 行 => chatroom message post 跟 系統訊息)
 2.Model Order 欄位增加：
