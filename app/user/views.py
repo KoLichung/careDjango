@@ -1,5 +1,5 @@
 from modelCore.models import UserWeekDayTime ,Language ,UserLanguage ,County, UserServiceLocation ,Service ,UserServiceShip ,License 
-from modelCore.models import ChatroomUserShip, UserLicenseShipImage, ChatroomMessage
+from modelCore.models import ChatroomUserShip, UserLicenseShipImage, ChatroomMessage ,User
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
@@ -367,3 +367,30 @@ class GetUpdateUserFCMNotify(APIView):
              user.is_fcm_notify = False
         user.save()
         return Response({'message':'ok'})
+
+class DeleteUser(generics.DestroyAPIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    # lookup_field = 'pk'
+    def delete(self, request, pk, format=None):
+        
+        auth_user = self.request.user
+        user = User.objects.get(id=pk)
+        if user == auth_user:
+            if qualifications_to_delete_user(user) == False:
+                return Response("continuous order exists")
+            else:
+                user.delete()
+                return Response('delete user')
+        else:
+            return Response('not auth')
+
+def qualifications_to_delete_user(user):
+    for order in user.user_orders.all():
+        if order.case.state == 'unComplete':
+            return False
+    for order in user.servant_orders.all():
+        if order.case.state == 'unComplete':
+            return False

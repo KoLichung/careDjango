@@ -211,13 +211,15 @@ class MessageViewSet(APIView):
             
             if content != None:
                 message.content = content
-                sendFCMMessage(other_side_user,None,content)
+                title = '新訊息'
+                sendFCMMessage(other_side_user,title,content)
             
             # upload image
             if image != None:
                 message.image = image
-                title =  user.name + '傳送了一張新圖片'
-                sendFCMMessage(other_side_user,title)
+                title = '新訊息'
+                content =  user.name + '傳送了一張新圖片'
+                sendFCMMessage(other_side_user,title,content)
             message.save()
             chatroom.update_at = datetime.datetime.now()
             chatroom.save()
@@ -1281,7 +1283,8 @@ class EarlyTermination(APIView):
             chatroom.save()
             serializer = self.serializer_class(order)
             return Response(serializer.data)
-    
+
+
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]

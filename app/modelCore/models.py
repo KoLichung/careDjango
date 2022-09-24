@@ -202,7 +202,7 @@ class Service(models.Model):
 class UserWeekDayTime(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         related_name='user_weekday'
     )
     WEEKDAY_CHOICES = [
@@ -228,7 +228,7 @@ class UserWeekDayTime(models.Model):
 class UserServiceShip(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         related_name='ship_services',
     )
     service = models.ForeignKey(
@@ -246,7 +246,7 @@ class Language(models.Model):
 class UserLanguage(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         related_name='user_languages'
     )
     language =  models.ForeignKey(
@@ -303,7 +303,7 @@ class County(models.Model):
 class UserServiceLocation(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         related_name='user_locations',
     )
     city = models.ForeignKey(
@@ -323,13 +323,13 @@ class UserServiceLocation(models.Model):
 class Case(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
-        default=''
+        on_delete = models.SET_NULL,
+        null=True
     )
 
     servant = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
+        on_delete = models.SET_NULL,
         blank = True,
         null=True,
         related_name='servant_cases'
@@ -456,12 +456,12 @@ class Case(models.Model):
 class TempCase(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
-        default=''
+        on_delete = models.SET_NULL,
+        null=True
     )
     servant = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
+        on_delete = models.SET_NULL,
         blank = True,
         null=True,
         related_name='servant_tempcase'
@@ -584,13 +584,14 @@ class Order(models.Model):
     )
     user = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
+        on_delete = models.SET_NULL,
         null=True,
         blank=True,
+        related_name='user_orders'
     )
     servant = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
+        on_delete = models.SET_NULL,
         null=True,
         blank=True,
         related_name='servant_orders'
@@ -780,7 +781,8 @@ class ChatroomMessage(models.Model):
     # user is the one who make message
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete = models.SET_NULL,
+        null=True
     )
     case = models.ForeignKey(
         Case,

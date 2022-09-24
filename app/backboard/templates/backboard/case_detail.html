@@ -26,8 +26,8 @@
         <div class="mt-4 mb-2"><b>需求服務項目</b></div>
         <div>{% for caseservice in case.case_services.all %} {{caseservice.service}} {% endfor %}</div>
         <div class="mt-4 mb-2"><b>服務者資訊</b></div>
-        <div>服務者：{{case.servant.name}} {{case.servant.phone}}</div>
-        <div class="mb-3">服務者收到的評價：{{review.servant_comment}}</div>
+        <div>服務者：{% if case.is_taken and case.servant == null %}[此用戶已刪除]{% else %}{{case.servant.name}} <br>服務者電話：{{case.servant.phone}}{% endif %} </div>
+        <div class="mb-3">服務者收到的評價：{% for review in case.case_reviews.all %}{{review.servant_comment}}{% endfor %}</div>
       </div>
     </div>
 

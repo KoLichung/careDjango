@@ -39,7 +39,7 @@
                     </td>
                     <td>{{case.created_at.year}}/{{case.created_at.month}}/{{case.created_at.day}}</td>
                     <td>{{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}}</td>
-                    <td>{{case.servant.name}}</td>
+                    <td>{% if case.is_taken and case.servant == null %}[此用戶已刪除]{% else %}{{case.servant.name}}{% endif %}</td>
                     <td>{{case.city}}{% if case.county %}{{case.county}}{% endif %}</td>
                     <td>{% for order in case.case_orders.all %}
                       {% if order.total_money %}
