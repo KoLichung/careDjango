@@ -207,7 +207,11 @@ class UserLocationsViewSet(generics.UpdateAPIView,generics.ListAPIView,):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = self.queryset.filter(user=user)
+        user_id = self.request.query_params.get('user_id')
+        if user_id == None:
+            queryset = self.queryset.filter(user=user)
+        else:
+            queryset = self.queryset.filter(user=User.objects.get(id=user_id))
         return queryset
 
     def update(self, request, *args, **kwargs):
