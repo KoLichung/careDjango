@@ -393,8 +393,8 @@
   }
   document.getElementById('timepicker_startTime').addEventListener('change', event => {
     event.preventDefault();
-    startTime = $('#timepicker_startTime').value;
-    
+    startTime = document.getElementById('timepicker_startTime').value;
+    console.log(startTime)
     calculate_rate.call();
   })
   document.getElementById('continuous_time').addEventListener('click', function(e) {
@@ -408,7 +408,7 @@
   })
   document.getElementById('timepicker_endTime').addEventListener('change', event => {
     event.preventDefault();
-    endTime = $('#timepicker_endTime').value;
+    endTime = document.getElementById('timepicker_endTime').value;
     
     calculate_rate.call();
   })
@@ -435,8 +435,8 @@
   }
   function calculate_rate(){
     care_type = document.querySelector('input[name="care_type"]:checked').value;
-    console.log(care_type)
-    console.log('increase_service_ids:',increase_service_ids)
+    // console.log(endTime)
+    // console.log('increase_service_ids:',increase_service_ids)
     return $.ajax({
       type: "POST",
       data: { 'servant':servant,

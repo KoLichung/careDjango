@@ -118,15 +118,12 @@ def ajax_cal_rate(request):
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
         servants = User.objects.filter(is_servant_passed=True)
         print(updatedData)
-        
         servant_id = updatedData['servant'][0]
         servant = User.objects.get(id=servant_id)
         print('a')
         care_type = updatedData['care_type'][0]
-        
         start_end_date = updatedData['start_end_date'][0]
         is_continuous_time = updatedData['is_continuous_time'][0]
-        
         startTime = updatedData['startTime'][0]
         endTime = updatedData['endTime'][0]
         start_date = '20' + start_end_date.split(' to ')[0].replace('/','-')
