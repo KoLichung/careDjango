@@ -318,7 +318,7 @@ class UserServiceLocation(models.Model):
         null=True,
         blank=True
     )
-    tranfer_fee = models.IntegerField(default=0, blank=True, null=True)
+    transfer_fee = models.IntegerField(default=0, blank=True, null=True)
 
 class Case(models.Model):
     user = models.ForeignKey(
@@ -608,7 +608,7 @@ class Order(models.Model):
     
     transfer_fee = models.IntegerField(default=0, blank=True, null=True)
     number_of_transfer = models.IntegerField(default=0, blank=True, null=True)
-    amount_tranfer_fee = models.IntegerField(default=0, blank=True, null=True)
+    amount_transfer_fee = models.IntegerField(default=0, blank=True, null=True)
 
     wage_hour = models.IntegerField(default=0, blank=True, null=True)
     # wage_half_day = models.IntegerField(default=0, blank=True, null=True)

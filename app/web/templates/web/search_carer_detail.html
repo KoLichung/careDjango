@@ -43,7 +43,7 @@
               <p class="text-indent-5 mt-2">
                 <span class="sub-purple-text">服務地區</span>&nbsp;&ensp;
                 {% for location in servant.user_locations.all %}
-                {{location.city}}{{location.county}}&emsp;<span class="sub-font">交通費 ${{location.tranfer_fee}}/趟</span><br>
+                {{location.city}}{{location.county}}&emsp;<span class="sub-font">交通費 ${{location.transfer_fee}}/趟</span><br>
                 {% endfor %}
               </p>
             </div>

@@ -245,7 +245,7 @@ class Migration(migrations.Migration):
             name='UserServiceLocation',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tranfer_fee', models.IntegerField(blank=True, default=0, null=True)),
+                ('transfer_fee', models.IntegerField(blank=True, default=0, null=True)),
                 ('city', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.RESTRICT, to='modelCore.city')),
                 ('county', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.RESTRICT, to='modelCore.county')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, related_name='user_locations', to=settings.AUTH_USER_MODEL)),

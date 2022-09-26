@@ -31,7 +31,7 @@ vultr:
 1.後台案件列表/案件詳細 [此用戶已刪除]
 2.常見問題
 3.Order 加入 
-tranfer_fee 每一趟交通費
+transfer_fee 每一趟交通費
 number_of_transfer 幾趟交通費
 amount_transfer_fee 總共的交通費
 留下：

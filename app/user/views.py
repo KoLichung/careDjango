@@ -214,10 +214,10 @@ class UserLocationsViewSet(generics.UpdateAPIView,generics.ListAPIView,):
         user = self.request.user
         queryset = self.queryset
         locations = request.data.get('locations')
-        tranfer_fee = request.data.get('tranfer_fee')
+        transfer_fee = request.data.get('transfer_fee')
         if locations != None:
             location_ids = locations.split(',')
-            tranfer_fee_list = tranfer_fee.split(',')
+            transfer_fee_list = transfer_fee.split(',')
             for i in range(len(location_ids)):
                 if queryset.filter(user=user,county=location_ids[i]).exists() != True:
                     userservicelocation = UserServiceLocation()
@@ -226,7 +226,7 @@ class UserLocationsViewSet(generics.UpdateAPIView,generics.ListAPIView,):
                 userservicelocation.user = user
                 userservicelocation.city = County.objects.get(id=location_ids[i]).city
                 userservicelocation.county = County.objects.get(id=location_ids[i])
-                userservicelocation.tranfer_fee = tranfer_fee_list[i]
+                userservicelocation.transfer_fee = transfer_fee_list[i]
                 userservicelocation.save()
             for userservicelocation in queryset.filter(user=user):
                 if str(userservicelocation.county.id) not in location_ids:

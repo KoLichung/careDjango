@@ -184,7 +184,7 @@
 
                       <span class="h6 ml-3">
                         交通費&ensp;
-                          <input class="service-setting-input" style="width: 60px;" id="traffic-fee_{{forloop.counter0}}" name="tranfer_fee_{{forloop.counter0}}" type="text" placeholder="" value={{service_location.tranfer_fee}} />
+                          <input class="service-setting-input" style="width: 60px;" id="traffic-fee_{{forloop.counter0}}" name="transfer_fee_{{forloop.counter0}}" type="text" placeholder="" value={{service_location.transfer_fee}} />
                         元／趟
                       </span>
                       <button type="button" id="{{forloop.counter0}}" class="btn-close btn-sm " aria-label="Close" onClick="Cancel(this.id)"></button>
@@ -223,7 +223,7 @@
 
                       <span class="h6 ml-3">
                         交通費&ensp;
-                          <input class="service-setting-input" style="width: 60px;" id="traffic-fee_{{i}}" name="tranfer_fee_{{i}}" type="text" placeholder="" value="0" />
+                          <input class="service-setting-input" style="width: 60px;" id="traffic-fee_{{i}}" name="transfer_fee_{{i}}" type="text" placeholder="" value="0" />
                         元／趟
                       </span>
                       <button type="button" id="{{i}}" class="btn-close btn-sm " aria-label="Close" onClick="Cancel(this.id)"></button>
@@ -318,7 +318,7 @@
         var name_county = 'county_' + String(locations_add_count)
         var id_city = 'city_select_' + String(locations_add_count)
         var id_county = 'county_select_' + String(locations_add_count)
-        var tranfer_fee_name = 'tranfer_fee_' + String(locations_add_count)
+        var transfer_fee_name = 'transfer_fee_' + String(locations_add_count)
 
         locations_add_html.innerHTML += `<div class="mt-2" id="${locations_id}">`
         location_html = document.getElementById(locations_id)
@@ -343,7 +343,7 @@
                     &ensp;
                     <span class="h6 ml-3">
                       交通費&ensp;
-                      <input class="service-setting-input" style="width: 60px;" id="${tranfer_fee_name}" name="${tranfer_fee_name}" type="text" placeholder="" value="${locations_add_count}"/>
+                      <input class="service-setting-input" style="width: 60px;" id="${transfer_fee_name}" name="${transfer_fee_name}" type="text" placeholder="" value="${locations_add_count}"/>
                       元／趟
                     </span>
                     <button type="button" id="${button_id}" class="btn-close btn-sm " aria-label="Close" onClick="Cancel(this.id)"></button>

@@ -1183,6 +1183,11 @@ def booking_confirm(request):
         order.end_time = order.case.end_time
         order.start_datetime = order.case.start_datetime
         order.end_datetime = order.case.end_datetime
+        order.save()
+        
+        transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city,county=order.case.county).transfer_fee
+        order.transfer_fee = transfer_fee
+        weekdays = order.case.weekday.split(',')
         if order.case.is_continuous_time == False:
             for weekday in weekdays:
                 orderWeekday = OrderWeekDay()
@@ -1191,60 +1196,47 @@ def booking_confirm(request):
                 orderWeekday.save()
             weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
             total_hours = 0
+            number_of_transfer = 0
             for i in weekday_list:
+                number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
                 total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
             order.work_hours = total_hours
+            order.number_of_transfer = number_of_transfer
+            order.amount_transfer_fee = transfer_fee * number_of_transfer
             one_day_work_hours = order.end_time - order.start_time
             if order.case.care_type == 'home':
                 if one_day_work_hours < 12:
                     wage = order.case.servant.home_hour_wage
-                    order.wage_hour =wage
-                    order.hours_hour_work = total_hours
                 elif one_day_work_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
-                    order.wage_half_day = wage
-                    order.hours_half_day_work = total_hours
             elif order.case.care_type == 'hospital':
                 if one_day_work_hours < 12:
                     wage = order.case.servant.hospital_hour_wage
-                    order.wage_hour =wage
-                    order.hours_hour_work = total_hours
                 elif one_day_work_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
-                    order.wage_half_day = wage
-                    order.hours_half_day_work = total_hours
         else:
+            order.number_of_transfer = 1
+            order.amount_transfer_fee = transfer_fee * 1
             diff = order.end_datetime - order.start_datetime
             days, seconds = diff.days, diff.seconds
             hours = days * 24 + seconds // 3600
             minutes = (seconds % 3600) // 60
             total_hours = hours + round(minutes/60)
+            order.work_hours = total_hours
             if order.case.care_type == 'home':
                 if total_hours < 12:
                     wage = order.case.servant.home_hour_wage
-                    order.wage_hour =wage
-                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
-                    order.wage_half_day = wage
-                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.home_one_day_wage/24)
-                    order.wage_one_day = wage
-                    order.hours_one_day_work = total_hours
             elif order.case.care_type == 'hospital':
                 if total_hours < 12:
                     wage = order.case.servant.hospital_hour_wage
-                    order.wage_hour =wage
-                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
-                    order.wage_half_day = wage
-                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.hospital_one_day_wage/24)
-                    order.wage_one_day = wage
-                    order.hours_one_day_work = total_hours
 
         order.base_money = order.work_hours * wage
         order.platform_percent = 10
@@ -1431,12 +1423,20 @@ def requirement_detail(request):
         order.end_datetime = case.end_datetime
         order.start_time = case.start_time
         order.end_time = case.end_time
+        order.save()
+
+        transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city,county=order.case.county).transfer_fee
+        order.transfer_fee = transfer_fee
         if order.case.is_continuous_time == False:
             weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
             total_hours = 0
+            number_of_transfer = 0
             for i in weekday_list:
+                number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
                 total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
             order.work_hours = total_hours
+            order.number_of_transfer = number_of_transfer
+            order.amount_transfer_fee = transfer_fee * number_of_transfer
             one_day_work_hours = order.end_time - order.start_time
             if order.case.care_type == 'home':
                 if one_day_work_hours < 12:
@@ -1457,6 +1457,8 @@ def requirement_detail(request):
                     order.wage_half_day = wage
                     order.hours_half_day_work = total_hours
         else:
+            order.number_of_transfer = 1
+            order.amount_transfer_fee = transfer_fee * 1
             diff = order.end_datetime - order.start_datetime
             days, seconds = diff.days, diff.seconds
             hours = days * 24 + seconds // 3600
@@ -1467,11 +1469,9 @@ def requirement_detail(request):
                 if total_hours < 12:
                     wage = order.case.servant.home_hour_wage
                     order.wage_hour =wage
-                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
                     order.wage_half_day = wage
-                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.home_one_day_wage/24)
                     order.wage_one_day = wage
@@ -1480,15 +1480,12 @@ def requirement_detail(request):
                 if total_hours < 12:
                     wage = order.case.servant.hospital_hour_wage
                     order.wage_hour =wage
-                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
                     order.wage_half_day = wage
-                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.hospital_one_day_wage/24)
                     order.wage_one_day = wage
-                    order.hours_one_day_work = total_hours
 
         order.base_money = order.work_hours * wage
         order.save()
@@ -1695,7 +1692,7 @@ def my_service_setting_services(request):
         for num in location_list:
             set_city = request.POST.get('city_'+str(num))
             set_county = request.POST.get('county_'+str(num))
-            set_tranfer_fee = request.POST.get('tranfer_fee_'+str(num))
+            set_transfer_fee = request.POST.get('transfer_fee_'+str(num))
             set_city = City.objects.get(id=set_city)
             if set_county != '全區':
                 set_county = County.objects.get(city=set_city,name=set_county) 
@@ -1706,8 +1703,8 @@ def my_service_setting_services(request):
                 userlocation.user = user
                 userlocation.city = set_city
                 userlocation.county = set_county
-                if set_tranfer_fee != '':
-                    userlocation.tranfer_fee = int(set_tranfer_fee)
+                if set_transfer_fee != '':
+                    userlocation.transfer_fee = int(set_transfer_fee)
                 userlocation.save()
             else:
                 if UserServiceLocation.objects.filter(user=user,city=set_city).exists():
@@ -1716,8 +1713,8 @@ def my_service_setting_services(request):
                     userlocation = UserServiceLocation()
                 userlocation.user = user
                 userlocation.city = set_city
-                if set_tranfer_fee != '':
-                    userlocation.tranfer_fee = int(set_tranfer_fee)
+                if set_transfer_fee != '':
+                    userlocation.transfer_fee = int(set_transfer_fee)
                 userlocation.save()
             submit_user_locations.append(userlocation)
         # print(submit_user_locations)
@@ -2521,4 +2518,5 @@ def terms_of_service(request):
     return render(request, 'web/terms_of_service.html')
 
 def faq(request):
-    return render(request, 'web/faq.html')
+    assistanceposts = AssistancePost.objects.all()
+    return render(request, 'web/faq.html',{'assistanceposts':assistanceposts})

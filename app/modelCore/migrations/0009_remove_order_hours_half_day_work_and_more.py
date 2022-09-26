@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='order',
-            name='amount_tranfer_fee',
+            name='amount_transfer_fee',
             field=models.IntegerField(blank=True, default=0, null=True),
         ),
         migrations.AddField(

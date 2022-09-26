@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore, BlogCategory, BlogPost
-from .models import BlogPostCategoryShip ,TempCase, MonthSummary
+from .models import BlogPostCategoryShip ,TempCase, MonthSummary ,AssistancePost
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -47,7 +47,7 @@ class UserLicenseShipImageAdmin(admin.ModelAdmin):
 
 @admin.register(UserServiceLocation)
 class UserServiceLocationAdmin(admin.ModelAdmin):
-    list_display = ('id','user', 'city', 'county', 'tranfer_fee')
+    list_display = ('id','user', 'city', 'county', 'transfer_fee')
 
 @admin.register(Case)
 class CaseAdmin(admin.ModelAdmin):
@@ -132,3 +132,7 @@ class BlogPostCategoryShipAdmin(admin.ModelAdmin):
 @admin.register(MonthSummary)
 class MonthSummaryAdmin(admin.ModelAdmin):
     list_display = ('id', 'month_date', 'month_revenue')
+
+@admin.register(AssistancePost)
+class AssistancePostAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'body','create_date')

@@ -236,21 +236,21 @@ def fakeData():
     userserviceLocation.user = User.objects.get(id=2)
     userserviceLocation.county = County.objects.get(id=20)
     userserviceLocation.city = userserviceLocation.county.city
-    userserviceLocation.tranfer_fee = 200
+    userserviceLocation.transfer_fee = 200
     userserviceLocation.save()
 
     userserviceLocation = UserServiceLocation()
     userserviceLocation.user = User.objects.get(id=3)
     userserviceLocation.county = County.objects.get(id=35)
     userserviceLocation.city = userserviceLocation.county.city
-    userserviceLocation.tranfer_fee = 300
+    userserviceLocation.transfer_fee = 300
     userserviceLocation.save()
 
     userserviceLocation = UserServiceLocation()
     userserviceLocation.user = User.objects.get(id=4)
     userserviceLocation.county = County.objects.get(id=77)
     userserviceLocation.city = userserviceLocation.county.city
-    userserviceLocation.tranfer_fee = 450
+    userserviceLocation.transfer_fee = 450
     userserviceLocation.save()
 
     case = Case()
@@ -382,12 +382,18 @@ def fakeData():
 
     orders = Order.objects.all()
     for order in orders:
+        transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city,county=order.case.county).transfer_fee
+        order.transfer_fee = transfer_fee
         if order.case.is_continuous_time == False:
             weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
             total_hours = 0
+            number_of_transfer = 0
             for i in weekday_list:
+                number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
                 total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
             order.work_hours = total_hours
+            order.number_of_transfer = number_of_transfer
+            order.amount_transfer_fee = transfer_fee * number_of_transfer
             one_day_work_hours = order.end_time - order.start_time
             if order.case.care_type == 'home':
                 if one_day_work_hours < 12:
@@ -408,6 +414,8 @@ def fakeData():
                     order.wage_half_day = wage
                     order.hours_half_day_work = total_hours
         else:
+            order.number_of_transfer = 1
+            order.amount_transfer_fee = transfer_fee * 1
             diff = order.end_datetime - order.start_datetime
             days, seconds = diff.days, diff.seconds
             hours = days * 24 + seconds // 3600
@@ -418,11 +426,9 @@ def fakeData():
                 if total_hours < 12:
                     wage = order.case.servant.home_hour_wage
                     order.wage_hour =wage
-                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
                     order.wage_half_day = wage
-                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.home_one_day_wage/24)
                     order.wage_one_day = wage
@@ -431,15 +437,12 @@ def fakeData():
                 if total_hours < 12:
                     wage = order.case.servant.hospital_hour_wage
                     order.wage_hour =wage
-                    order.hours_hour_work = total_hours
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
                     order.wage_half_day = wage
-                    order.hours_half_day_work = total_hours
                 else:
                     wage = round(order.case.servant.hospital_one_day_wage/24)
                     order.wage_one_day = wage
-                    order.hours_one_day_work = total_hours
 
         order.base_money = order.work_hours * wage
         order.save()
