@@ -682,7 +682,7 @@ class Review(models.Model):
     )
     servant = models.ForeignKey(
         User,
-        on_delete=models.RESTRICT,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='servant_reviews'
