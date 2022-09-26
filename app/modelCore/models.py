@@ -863,17 +863,17 @@ class BlogPostCategoryShip(models.Model):
 class MonthSummary(models.Model):
     month_date = models.DateField(null=True)
 
-    # 訂單產生就計營收
+    # 訂單產生就計營收(所有的當月訂單, 有paid, unPaid, canceled)
     month_revenue = models.IntegerField(default=0)
     # 訂單最終沒付款成功, 就是 cancel 的訂單, cancel 的訂單金額總和
     month_cancel_amount = models.IntegerField(default=0)
 
-    # 成功請款的訂單金額總和
+    # 成功請款的訂單金額總和(paid的當月訂單)
     month_pay_amount = models.IntegerField(default=0)
-    # 退款的訂單金額總和
+    # 退款的訂單金額總和(當月訂單的 refund money)
     month_refound_amount = models.IntegerField(default=0)
 
-    # 平台收入, 成功請款的訂單, 依平台比例收取費用之總和
+    # 平台收入, 成功請款的訂單, 依平台比例收取費用之總和 (paid 訂單的 paltform money 相加)
     month_platform_revenue = models.IntegerField(default=0)
 
 class AssistancePost(models.Model):
