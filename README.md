@@ -27,12 +27,31 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220926
+1.後台案件列表/案件詳細 [此用戶已刪除]
+2.常見問題
+3.Order 加入 
+tranfer_fee 每一趟交通費
+number_of_transfer 幾趟交通費
+amount_transfer_fee 總共的交通費
+留下：
+wage_hour
+刪除：
+wage_half_day
+wage_one_day
+hours_of_work
+hours_half_day_work
+hours_one_day_work
+4.背景任務 
+a.訂單 Order 如果超過 create_at 六小時未付款 "unPaid", 即 "canceled" (每隔 10 分鐘檢查)
+b.月帳單 Orders 統計(每天的凌晨一點執行)
+
+
 20220923
 24.刪除使用者資料 => api
 => 如果使用者刪除, 訂單要顯示 [此用戶已刪除] 嗎?
 => 
 不留的：
-reviews
 on_delete=models.CASCADE
 
 要留：
@@ -41,6 +60,7 @@ Order =>  後台 order user == null 要顯示 [此用戶已刪除]
 Payment => 要留
 Message => 要留
 ChatRoom => 要留
+Reviews => 要留
 on_delete=models.set_null
 
 20220922
