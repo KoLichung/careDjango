@@ -312,12 +312,12 @@ class UserServiceLocation(models.Model):
         null=True,
         blank=True
     )
-    county =  models.ForeignKey(
-        County,
-        on_delete=models.RESTRICT,
-        null=True,
-        blank=True
-    )
+    # county =  models.ForeignKey(
+    #     County,
+    #     on_delete=models.RESTRICT,
+    #     null=True,
+    #     blank=True
+    # )
     transfer_fee = models.IntegerField(default=0, blank=True, null=True)
 
 class Case(models.Model):

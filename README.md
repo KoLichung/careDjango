@@ -27,6 +27,21 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220927
+1.
+把 model user_service_location 的 county 拿掉
+web/index => 區域選擇拿掉
+web/my_service_setting_services => 改成只設縣市交通費
+/web/booking_location?servant=3 => 縣市不可改, 區域一樣下拉選單要存回 (需求單也要改到)
+地址與交通路線或注意事項 拿掉~
+2.算
+transfer_fee 每一趟交通費
+number_of_transfer 幾趟交通費
+amount_transfer_fee 總共的交通費
+===============
+3.Api CreateCase/CreateServantOrder 修正
+4.修改 Case 並產生新訂單的 api (EditCase, parasm{case_id}, auth 發case的人才能改)
+
 20220926
 1.後台案件列表/案件詳細 [此用戶已刪除]
 2.常見問題

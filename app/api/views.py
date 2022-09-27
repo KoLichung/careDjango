@@ -826,6 +826,8 @@ class CreateCase(APIView):
                 caseserviceship.service = Service.objects.get(id=service_id)
                 caseserviceship.case = case
                 caseserviceship.save()
+
+        # 這邊要針對個別 servant 產生訂單~ 要有系統訊息, 推播訊息, 並檢查 transferFee, roadName, hospitalName 等新欄位
         if servant_ids != None:
             servant_id_list = servant_ids.split(',')
             for servant_id in servant_id_list:
@@ -945,6 +947,7 @@ class CreateServantOrder(APIView):
     queryset = Order.objects.all()
     serializer_class = serializers.OrderSerializer
 
+    #要有系統訊息, 推播訊息, 並檢查 transferFee,roadName, hospitalName 等新欄位
     def post(self, request, format=None):
         user = self.request.user
         servant_id = self.request.query_params.get('servant_id')
@@ -994,7 +997,7 @@ class CreateServantOrder(APIView):
             case.name = name
         if care_type != None:
             case.care_type = care_type
-        if is_continuous_time == "True":
+        if is_continuous_time == "True" or is_continuous_time == "true":
             case.is_continuous_time = True
         else:
             case.is_continuous_time = False
@@ -1014,7 +1017,7 @@ class CreateServantOrder(APIView):
             case.emergencycontact_relation = emergencycontact_relation
         if emergencycontact_phone != None:
             case.emergencycontact_phone = emergencycontact_phone
-        if is_open_for_search == "True":
+        if is_open_for_search == "True" or is_continuous_time == "true":
             case.is_open_for_search = True
         else:
             case.is_open_for_search = False
@@ -1130,7 +1133,10 @@ class CreateServantOrder(APIView):
                 orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                 orderIncreaseService.save()
 
-        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+        if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
+            order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+        else:
+            order.total_money = order.base_money
         order.platform_money = order.total_money * (order.platform_percent/100)
         order.save()
         order.related_case = case
