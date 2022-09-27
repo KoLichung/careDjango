@@ -11,7 +11,7 @@
         <div class="case-info-font">
                   <p>照顧者：{{order.servant.name}}</p>
                   <p>案件類型：{% if order.case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
-                  <p>案件地點：{{order.case.city}} {{order.case.county}}</p>
+                  <p>案件地點：{{order.case.city}} </p>
                   <p class="text-indent-5" >案件時間：{% if order.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}<br>2022/04/18 晚上 8:00 ~ 2022/04/22 晚上 8:00</p>
                   <p>給業主的評價：{{review.case_offender_comment}}</p>
         </div>

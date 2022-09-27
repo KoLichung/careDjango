@@ -29,7 +29,7 @@
               <p class="custom-card-font mt-2">
                 {{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} <br> 
                 時間類型：{% if case.is_continuous_time == True %}連續時間{% else %} 指定時段{% endif %} <br>
-                地點：{{case.city}} {{case.county}}<br>
+                地點：{{case.city}} <br>
                 案主評價：{% if review.servant_comment %}{{review.servant_comment}}{% else %}案主尚未評價{% endif %}
               </p>
             </div>

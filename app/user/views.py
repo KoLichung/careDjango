@@ -1,5 +1,5 @@
-from modelCore.models import UserWeekDayTime ,Language ,UserLanguage ,County, UserServiceLocation ,Service ,UserServiceShip ,License 
-from modelCore.models import ChatroomUserShip, UserLicenseShipImage, ChatroomMessage ,User
+from modelCore.models import UserWeekDayTime ,Language ,UserLanguage ,City, UserServiceLocation ,Service ,UserServiceShip ,License 
+from modelCore.models import ChatroomUserShip, UserLicenseShipImage, ChatroomMessage ,User 
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
@@ -223,17 +223,16 @@ class UserLocationsViewSet(generics.UpdateAPIView,generics.ListAPIView,):
             location_ids = locations.split(',')
             transfer_fee_list = transfer_fee.split(',')
             for i in range(len(location_ids)):
-                if queryset.filter(user=user,county=location_ids[i]).exists() != True:
+                if queryset.filter(user=user,city=location_ids[i]).exists() != True:
                     userservicelocation = UserServiceLocation()
                 else:
-                    userservicelocation = queryset.get(user=user,county=location_ids[i])
+                    userservicelocation = queryset.get(user=user,city=location_ids[i])
                 userservicelocation.user = user
-                userservicelocation.city = County.objects.get(id=location_ids[i]).city
-                userservicelocation.county = County.objects.get(id=location_ids[i])
+                userservicelocation.city = City.objects.get(id=location_ids[i])
                 userservicelocation.transfer_fee = transfer_fee_list[i]
                 userservicelocation.save()
             for userservicelocation in queryset.filter(user=user):
-                if str(userservicelocation.county.id) not in location_ids:
+                if str(userservicelocation.city.id) not in location_ids:
                     userservicelocation.delete()
         queryset = queryset.filter(user=user)
         serializer = self.get_serializer(queryset,many=True)

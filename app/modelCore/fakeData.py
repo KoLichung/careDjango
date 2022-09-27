@@ -234,30 +234,26 @@ def fakeData():
 
     userserviceLocation = UserServiceLocation()
     userserviceLocation.user = User.objects.get(id=2)
-    userserviceLocation.county = County.objects.get(id=20)
-    userserviceLocation.city = userserviceLocation.county.city
+    userserviceLocation.city = City.objects.get(id=3)
     userserviceLocation.transfer_fee = 200
     userserviceLocation.save()
 
     userserviceLocation = UserServiceLocation()
     userserviceLocation.user = User.objects.get(id=3)
-    userserviceLocation.county = County.objects.get(id=35)
-    userserviceLocation.city = userserviceLocation.county.city
+    userserviceLocation.city = City.objects.get(id=5)
     userserviceLocation.transfer_fee = 300
     userserviceLocation.save()
 
     userserviceLocation = UserServiceLocation()
     userserviceLocation.user = User.objects.get(id=4)
-    userserviceLocation.county = County.objects.get(id=77)
-    userserviceLocation.city = userserviceLocation.county.city
+    userserviceLocation.city = City.objects.get(id=8)
     userserviceLocation.transfer_fee = 450
     userserviceLocation.save()
 
     case = Case()
     case.user = User.objects.get(id=2)
     case.servant = User.objects.get(id=3)
-    case.county = County.objects.get(id=35)
-    case.city = case.county.city
+    case.city = City.objects.get(id=5)
     case.care_type = 'home'
     case.name = '王大明'
     case.gender = 'M'
@@ -277,8 +273,7 @@ def fakeData():
     case = Case()
     case.user = User.objects.get(id=3)
     case.servant = User.objects.get(id=4)
-    case.county = County.objects.get(id=77)
-    case.city = case.county.city
+    case.city = City.objects.get(id=8)
     case.care_type = 'hospital'
     case.name = '陳小芬'
     case.gender = 'F'
@@ -382,7 +377,7 @@ def fakeData():
 
     orders = Order.objects.all()
     for order in orders:
-        transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city,county=order.case.county).transfer_fee
+        transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
         order.transfer_fee = transfer_fee
         if order.case.is_continuous_time == False:
             weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))

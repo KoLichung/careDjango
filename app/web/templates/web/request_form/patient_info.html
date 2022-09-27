@@ -152,6 +152,10 @@
             over_90.checked = true;
             over_70.checked = false;
             console.log(over_70.checked,2)
+          }else if(Number(weight_change.value) < 70){
+            over_90.checked = false;
+            over_70.checked = false;
+            calculate_rate.call();
           }
         })
       </script>

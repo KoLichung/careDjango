@@ -39,18 +39,10 @@
                   <div class="col-sm-8">
                     <div class="d-flex mt-1">
                       <div class="me-2">
-                        <select class="dropdown-button" name="city" onchange="listCities()">
+                        <select class="dropdown-button" name="city" >
                           {% for city in dict.citys %}
                             <option style="text-align: center" value="{{city.id}}">{{city}}</option>
                             <!-- <option value="醫院看護">醫院看護</option> -->
-                          {% endfor %}
-                        </select>
-                      </div>
-                      <div>
-                        <select class="dropdown-button" id="countylist" name="county">
-                          {% for county in dict.counties %}
-                            <option style="text-align: center" value="全區">全區</option>
-                            <option style="text-align: center" value="{{county.id}}">{{county}}</option>
                           {% endfor %}
                         </select>
                       </div>
@@ -134,10 +126,6 @@
                 
                   <br>  
                 </div>
-              
-                <!-- <a href="{% url 'search_list' %}?city_id={{dict.city.id}}&county_id={{dict.county.id}}&care_type={{dict.care_type}}&is_continuous_time={{dict.is_continuous_time}}&start_date={{dict.start_date}}&end_date={{dict.end_date}}"> -->
-                <!-- <button class="mt-4 full-purple-button" type="submit">搜尋</button> -->
-                <!-- </a> -->
 
                 <button class="mt-4 full-purple-button"type="submit" name="submit"value="ok">
                   <b>搜索</b>
@@ -168,32 +156,6 @@
           return cookieValue;
       }
       const csrftoken = getCookie('csrftoken');
-
-      function listCities(){
-        var cityid = $("[name='city']").val();
-        $('#countylist').html('');
-        $.ajax({
-          type: "POST",
-          data: {'city_id':cityid,
-                  'action':'refresh_county'},
-          headers: {'X-CSRFToken': csrftoken},
-          url: "{% url 'ajax_refresh_county' %}",
-          success: function(response)
-            {
-              const data = response.data
-              console.log(data)
-              // var resultObj = JSON.parse(response);
-              var dataHandler = $("#countylist");
-              var county_all = `<option style="text-align: center" value="全區">全區</option>`
-              dataHandler.append(county_all);
-              data.forEach(el =>
-              {
-                  var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-                  dataHandler.append(newRow);
-              });
-            }
-          });
-      }
       
       const weekday_select = document.getElementById('time_type_select')
       const select_continuous_time = document.getElementById('time_type_select')

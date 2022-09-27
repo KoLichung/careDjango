@@ -42,15 +42,7 @@
                         {% endfor %}
                       </select>
                     </div>
-                    
-                    <div class=" btn-group mb-2">
-                      <select class="dropdown-button" id="county_select" name="county" >
-                        <option style="text-align: center" value="全區">全區</option>
-                        {% for county in counties %}
-                        <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
-                        {% endfor %}
-                      </select>
-                    </div>  
+                  
                   </div>
               
                   <!-- 排序 -->
@@ -175,33 +167,6 @@
             return cookieValue;
         }
     const csrftoken = getCookie('csrftoken');
-    
-    function listCities(){
-      var cityid = $("[name='city']").val();
-      $('#county_select').html('');
-      $.ajax({
-        type: "POST",
-        data: {'city_id':cityid,
-                'action':'refresh_county'},
-        headers: {'X-CSRFToken': csrftoken},
-        url: "{% url 'ajax_refresh_county' %}",
-        success: function(response)
-        {
-          const data = response.data
-          console.log(data)
-          // var resultObj = JSON.parse(response);
-          var dataHandler = $("#county_select");
-          var county_all = `<option style="text-align: center" value="全區">全區</option>`
-          dataHandler.append(county_all);
-          data.forEach(el =>
-          {
-              var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-              dataHandler.append(newRow);
-          });
-
-        }
-      });
-    }
   </script>
      
 </main>

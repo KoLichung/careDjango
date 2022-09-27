@@ -342,12 +342,12 @@ class Case(models.Model):
         blank=True
     )
 
-    county = models.ForeignKey(
-        County,
-        on_delete=models.RESTRICT,
-        null=True,
-        blank=True
-    )
+    # county = models.ForeignKey(
+    #     County,
+    #     on_delete=models.RESTRICT,
+    #     null=True,
+    #     blank=True
+    # )
 
     CARETYPE_CHOICES = [
         ('home', '居家照顧'),
@@ -468,7 +468,7 @@ class TempCase(models.Model):
     )
     
     city = models.CharField(max_length= 100, blank=True, null=True)
-    county = models.CharField(max_length= 100, blank=True, null=True)
+    # county = models.CharField(max_length= 100, blank=True, null=True)
 
     CARETYPE_CHOICES = [
         ('home', '居家照顧'),

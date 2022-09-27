@@ -26,7 +26,7 @@
                 <p class="h5 mt-2">看護資訊</p>
                 <div class="case-info-font mt-2">
                   <p>看護類型：{% if case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
-                  <p>看護地點：{{case.city}} {{case.county}}</p>
+                  <p>看護地點：{{case.city}}</p>
                   <p class="text-indent-5" >看護時間：{% if case.is_continuous_time == True %}連續時間{% else %} 指定時段{% endif %}<br>{{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ({{case.startTimeformat}})~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}})</p>
                 </div>
 

@@ -30,7 +30,7 @@
                 {{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} <br> 
                 時間類型：{% if order.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}  <br>
                 照顧者：{{order.servant.name}} <br>
-                地點：{{order.case.city}} {{order.case.county}}
+                地點：{{order.case.city}} 
               </p>
             </div>
 

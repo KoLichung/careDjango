@@ -36,14 +36,7 @@
                           {% endfor %}
                         </select>
                       </div>
-                      <div class="mt-1 btn-group">
-                        <select class="dropdown-button" id="county_select" name="county" >
-                          <option style="text-align: center" value="全區">全區</option>
-                          {% for county in counties %}
-                            <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
-                          {% endfor %}
-                        </select>
-                      </div>
+                    
                     </div>
                     <div id="hidden_input"></div>                 
                     <div class="">
@@ -102,7 +95,7 @@
                 <div class="case-info-font">
                   <span class="news-subtitle">照護地點</span><br>
                   <div class="mt-1 mb-3">
-                    {{cityName}}，{{countyName}}
+                    {{cityName}}
                   </div>
                   <span class="news-subtitle mt-2">日期</span><br>
                   <div class="mt-2 mb-3">
@@ -171,31 +164,6 @@
       const increase_service_html = document.getElementById('increase_service_html');
       const sum_html = document.getElementById('sum_html');
       is_continuous_time = "{{is_continuous_time}}";
-      function listCities(){
-        var cityid = $("[name='city']").val();
-        $('#county_select').html('');
-        $.ajax({
-          type: "POST",
-          data: {'city_id':cityid,
-                  'action':'refresh_county'},
-          headers: {'X-CSRFToken': csrftoken},
-          url: "{% url 'ajax_refresh_county' %}",
-          success: function(response)
-          {
-            const data = response.data
-            console.log(data)
-            // var resultObj = JSON.parse(response);
-            var dataHandler = $("#county_select");
-            var county_all = `<option style="text-align: center" value="全區">全區</option>`
-            dataHandler.append(county_all);
-            data.forEach(el =>
-            {
-                var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-                dataHandler.append(newRow);
-            });
-          }
-        });
-      }
       var home = {
         call_backend : function (){
         var care_type = 'home';

@@ -11,7 +11,7 @@
                 <div class="case-info-font">
                   <p>委託人：{{case.user.name}}</p>
                   <p>案件類型：{% if case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
-                  <p>案件地點：{{case.city}} {{case.county}}</p>
+                  <p>案件地點：{{case.city}}</p>
                   <p class="text-indent-5" >案件時間：{% if case.is_continuous_time == True %}連續時間{% else %} 指定時段{% endif %}<br>{{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ({{case.startTimeformat}})~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}})</p>
                 </div>
 

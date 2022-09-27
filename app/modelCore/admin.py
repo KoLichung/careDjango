@@ -47,15 +47,15 @@ class UserLicenseShipImageAdmin(admin.ModelAdmin):
 
 @admin.register(UserServiceLocation)
 class UserServiceLocationAdmin(admin.ModelAdmin):
-    list_display = ('id','user', 'city', 'county', 'transfer_fee')
+    list_display = ('id','user', 'city', 'transfer_fee')
 
 @admin.register(Case)
 class CaseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'servant', 'city', 'county', 'care_type', 'start_datetime', 'end_datetime')
+    list_display = ('id', 'user', 'servant', 'city', 'care_type', 'start_datetime', 'end_datetime')
 
 @admin.register(TempCase)
 class TempCaseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'city', 'county', 'care_type', 'start_datetime', 'end_datetime')
+    list_display = ('id', 'user', 'city',  'care_type', 'start_datetime', 'end_datetime')
 
 @admin.register(DiseaseCondition)
 class DiseaseConditionAdmin(admin.ModelAdmin):

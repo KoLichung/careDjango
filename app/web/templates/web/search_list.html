@@ -61,19 +61,10 @@
                   <div class="col-sm-4 my-3">
                     <h5 class=" mb-2">照護地點</h5>
                     <div class="btn-group mb-2">
-                      <select class="dropdown-button" name="city" onchange="listCities()">
+                      <select class="dropdown-button" name="city" >
                         {% for city in dict.citys %}
                           <option style="text-align: center" value="{{city.id}}" {% if city == dict.city %} selected="selected" {% endif %}>{{city}}</option>
                           <!-- <option value="醫院看護">醫院看護</option> -->
-                        {% endfor %}
-                      </select>
-                    </div>
-  
-                    <div class="btn-group mb-2">
-                      <select class="dropdown-button" id="countylist" name="county">
-                        <option style="text-align: center" value="全區">全區</option>
-                        {% for county in dict.counties %}
-                          <option style="text-align: center" value="{{county.name}}" {% if county == dict.county %} selected="selected" {% endif %}>{{county}}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -177,7 +168,7 @@
       {% for servant in servants %}
       <div class="col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 ">
         <div class="border border-600" style="border-radius: 6px;">
-          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant.id}}&care_type={{care_type}}&is_continuous_time={{is_continuous_time}}&weekdays={{weekdays}}&StartDate={{defaultStartDate}}&EndDate={{defaultEndDate}}&start_time={{dict.start_time}}&end_time={{dict.end_time}}&city={{dict.city.id}}&county={{dict.county}}">
+          <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant.id}}&care_type={{care_type}}&is_continuous_time={{is_continuous_time}}&weekdays={{weekdays}}&StartDate={{defaultStartDate}}&EndDate={{defaultEndDate}}&start_time={{dict.start_time}}&end_time={{dict.end_time}}&city={{dict.city.id}}">
             {% if servant.background_image.url != None %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
@@ -275,32 +266,6 @@
         }
     const csrftoken = getCookie('csrftoken');
     
-    function listCities(){
-      var cityid = $("[name='city']").val();
-      
-      $('#countylist').html('');
-      $.ajax({
-        type: "POST",
-        data: {'city_id':cityid,
-                'action':'refresh_county'},
-        headers: {'X-CSRFToken': csrftoken},
-        url: "{% url 'ajax_refresh_county' %}",
-        success: function(response)
-        { 
-          const data = response.data
-          console.log(data)
-          var dataHandler = $("#countylist");
-          var county_all = `<option style="text-align: center" value="全區">全區</option>`;
-          dataHandler.append(county_all);
-          data.forEach(el =>
-          {
-              var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-              dataHandler.append(newRow);
-          });
-
-        }
-      });
-    }
   </script>
 </main>
 {% endblock %}

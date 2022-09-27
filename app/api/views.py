@@ -314,7 +314,6 @@ class SearchServantViewSet(viewsets.GenericViewSet,
     def get_queryset(self):
         care_type= self.request.query_params.get('care_type')
         city = self.request.query_params.get('city')
-        county = self.request.query_params.get('county')
         is_continuous_time = self.request.query_params.get('is_continuous_time')
         #2022-07-10T00:00:00Z
         start_datetime = self.request.query_params.get('start_datetime')
@@ -333,8 +332,6 @@ class SearchServantViewSet(viewsets.GenericViewSet,
 
         if city != None:
             queryset = queryset.filter(user_locations__city=City.objects.get(id=city))
-        if county != None:
-            queryset = queryset.filter(user_locations__county=County.objects.get(id=county))
 
         if start_datetime != None:
             start_date = start_datetime.split('T')[0]
@@ -444,7 +441,6 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
 
         care_type= self.request.query_params.get('care_type')
         city = self.request.query_params.get('city')
-        county = self.request.query_params.get('county')
 
         queryset = User.objects.filter(is_servant_passed=True)
         if care_type == 'home':
@@ -455,8 +451,6 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
         if city != None:
             queryset = queryset.filter(user_locations__city=City.objects.get(id=city)).distinct()
 
-        if county != None:
-            queryset = queryset.filter(user_locations__county=County.objects.get(id=county)).distinct()
 
         for i in range(len(queryset)):
             queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
@@ -473,7 +467,6 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         city = self.request.query_params.get('city')
-        county = self.request.query_params.get('county')
         #2022-07-10T00:00:00Z
         start_datetime = self.request.query_params.get('start_datetime')
         end_datetime = self.request.query_params.get('end_datetime')
@@ -482,8 +475,6 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
 
         if city != None:
             queryset = queryset.filter(city=City.objects.get(id=city))
-        if county != None:
-            queryset = queryset.filter(county=County.objects.get(id=county))
         if start_datetime != None and end_datetime != None :
             queryset = queryset.filter(start_datetime__gte=start_datetime,end_datetime__lte=end_datetime)
         if care_type == 'home':
@@ -722,8 +713,7 @@ class CreateCase(APIView):
 
     def post(self, request, format=None):
         user = self.request.user
-        county = self.request.query_params.get('county')
-        city = County.objects.get(id=county).city
+        city_id = self.request.query_params.get('city')
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
         weekday = self.request.query_params.get('weekday')
@@ -749,6 +739,9 @@ class CreateCase(APIView):
         #1,7,9
         service = request.data.get('service')
 
+        road_name = request.data.get('road_name')
+        hospital_name = request.data.get('hospital_name')
+
         emergencycontact_name = request.data.get('emergencycontact_name')
         emergencycontact_relation = request.data.get('emergencycontact_relation')
         emergencycontact_phone = request.data.get('emergencycontact_phone')
@@ -758,8 +751,7 @@ class CreateCase(APIView):
 
         case = Case()
         case.user = user
-        case.city = city
-        case.county = County.objects.get(id=county)
+        case.city = City.objects.get(id=city_id)
         
         if care_type == 'home' and request.data.get('road_name')!=None:
             case.road_name = request.data.get('road_name')
@@ -795,6 +787,10 @@ class CreateCase(APIView):
             case.disease_remark = disease_remark
         if conditions_remark != None:
             case.conditions_remark = conditions_remark
+        if road_name != None:
+            case.road_name = road_name
+        if hospital_name != None:
+            case.hospital_name = hospital_name
         if emergencycontact_name != None:
             case.emergencycontact_name = emergencycontact_name
         if emergencycontact_relation != None:
@@ -832,6 +828,93 @@ class CreateCase(APIView):
             servant_id_list = servant_ids.split(',')
             for servant_id in servant_id_list:
                 servant = User.objects.get(id=servant_id)
+                
+                order = Order()
+                order.case = case
+                order.user = case.user
+                order.servant = servant
+                order.state = 'unPaid'
+                order.start_datetime = case.start_datetime
+                order.end_datetime = case.end_datetime
+                order.start_time = order.case.start_time
+                order.end_time = order.case.end_time
+                order.save()
+                transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
+                order.transfer_fee = transfer_fee
+                weekdays = order.case.weekday.split(',')
+                if order.case.is_continuous_time == False:
+                    for weekday in weekdays:
+                        orderWeekday = OrderWeekDay()
+                        orderWeekday.order = order
+                        orderWeekday.weekday = weekday
+                        orderWeekday.save()
+                    weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+                    total_hours = 0
+                    number_of_transfer = 0
+                    for i in weekday_list:
+                        number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
+                        total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+                    order.work_hours = total_hours
+                    order.number_of_transfer = number_of_transfer
+                    order.amount_transfer_fee = transfer_fee * number_of_transfer
+                    one_day_work_hours = order.end_time - order.start_time
+                    if order.case.care_type == 'home':
+                        if one_day_work_hours < 12:
+                            wage = order.servant.home_hour_wage
+                        elif one_day_work_hours >=12 and total_hours < 24:
+                            wage = round(order.servant.home_half_day_wage/12)
+                    elif order.case.care_type == 'hospital':
+                        if one_day_work_hours < 12:
+                            wage = order.servant.hospital_hour_wage
+                        elif one_day_work_hours >=12 and total_hours < 24:
+                            wage = round(order.servant.hospital_half_day_wage/12)
+                else:
+                    order.number_of_transfer = 1
+                    order.amount_transfer_fee = transfer_fee * 1
+                    diff = order.end_datetime - order.start_datetime
+                    days, seconds = diff.days, diff.seconds
+                    hours = days * 24 + seconds // 3600
+                    minutes = (seconds % 3600) // 60
+                    total_hours = hours + round(minutes/60)
+                    order.work_hours = total_hours
+                    if order.case.care_type == 'home':
+                        if total_hours < 12:
+                            wage = order.case.servant.home_hour_wage
+                        elif total_hours >=12 and total_hours < 24:
+                            wage = round(order.case.servant.home_half_day_wage/12)
+                        else:
+                            wage = round(order.case.servant.home_one_day_wage/24)
+                    elif order.case.care_type == 'hospital':
+                        if total_hours < 12:
+                            wage = order.case.servant.hospital_hour_wage
+                        elif total_hours >=12 and total_hours < 24:
+                            wage = round(order.case.servant.hospital_half_day_wage/12)
+                        else:
+                            wage = round(order.case.servant.hospital_one_day_wage/24)
+
+                order.base_money = order.work_hours * wage
+
+                # need to change in the future
+                order.platform_percent = 15
+                order.save()
+                Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+
+                for service_id in service_ids:
+                    if int(service_id) <= 4:
+                        orderIncreaseService = OrderIncreaseService()
+                        orderIncreaseService.order = order
+                        orderIncreaseService.service = Service.objects.get(id=service_id)
+                        orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                        orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                        orderIncreaseService.save()
+
+                if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
+                    order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+                else:
+                    order.total_money = order.base_money
+                order.platform_money = order.total_money * (order.platform_percent/100)
+                order.save()
+
                 receiveBooking(servant,case)
                 chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
                 chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
@@ -875,8 +958,7 @@ class CreateServantOrder(APIView):
         user = self.request.user
         servant_id = self.request.query_params.get('servant_id')
         servant = User.objects.get(id=servant_id)
-        county = self.request.query_params.get('county')
-        city = County.objects.get(id=county).city
+        city_id = self.request.query_params.get('city')
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
         weekday = self.request.query_params.get('weekday')
@@ -896,6 +978,8 @@ class CreateServantOrder(APIView):
         body_condition = request.data.get('body_condition')
         conditions_remark = request.data.get('conditions_remark')
         service = request.data.get('service')
+        road_name = request.data.get('road_name')
+        hospital_name = request.data.get('hospital_name')
         emergencycontact_name = request.data.get('emergencycontact_name')
         emergencycontact_relation = request.data.get('emergencycontact_relation')
         emergencycontact_phone = request.data.get('emergencycontact_phone')
@@ -904,8 +988,8 @@ class CreateServantOrder(APIView):
         case = Case()
         case.user = user
         case.servant = servant
-        case.city = city
-        case.county = County.objects.get(id=county)
+        case.city = City.objects.get(id=city_id)
+
 
         #start_datetime=2022-07-21
         #s = "2014-04-07"
@@ -934,6 +1018,10 @@ class CreateServantOrder(APIView):
             case.disease_remark = disease_remark
         if conditions_remark != None:
             case.conditions_remark = conditions_remark
+        if road_name != None:
+            case.road_name = road_name
+        if hospital_name != None:
+            case.hospital_name = hospital_name
         if emergencycontact_name != None:
             case.emergencycontact_name = emergencycontact_name
         if emergencycontact_relation != None:
@@ -987,7 +1075,7 @@ class CreateServantOrder(APIView):
         order.start_time = order.case.start_time
         order.end_time = order.case.end_time
         order.save()
-        transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city,county=order.case.county).transfer_fee
+        transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
         order.transfer_fee = transfer_fee
         weekdays = order.case.weekday.split(',')
         if order.case.is_continuous_time == False:
@@ -1123,7 +1211,7 @@ class EarlyTermination(APIView):
         if aware_datetime >= order.start_datetime:
             order.end_datetime = aware_datetime
             order.save()
-            transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city,county=order.case.county).transfer_fee
+            transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
             order.transfer_fee = transfer_fee
             if order.case.is_continuous_time == False:
                 weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
@@ -1233,7 +1321,274 @@ class EarlyTermination(APIView):
             serializer = self.serializer_class(order)
             return Response(serializer.data)
 
+class EditCase(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    queryset = Case.objects.all()
+    serializer_class = serializers.CaseSerializer
 
+    def post(self, request, format=None):
+        user = self.request.user
+        case_id = self.request.query_params.get('case_id')
+        city_id = self.request.query_params.get('city')
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+        weekday = self.request.query_params.get('weekday')
+        start_time = self.request.query_params.get('start_time')
+        start_time = start_time.split(':')
+        end_time = self.request.query_params.get('end_time')
+        end_time = end_time.split(':')
+        
+        #home, hospital
+        care_type = request.data.get('care_type')
+        is_continuous_time = request.data.get('is_continuous_time')
+        name = request.data.get('name')
+        #M, F
+        gender = request.data.get('gender')
+        age = request.data.get('age')
+        weight = request.data.get('weight')
+        #1,2,4
+        disease = request.data.get('disease')
+        disease_remark = request.data.get('disease_remark')
+        #1,4,6
+        body_condition = request.data.get('body_condition')
+        conditions_remark = request.data.get('conditions_remark')
+        #1,7,9
+        service = request.data.get('service')
+
+        road_name = request.data.get('road_name')
+        hospital_name = request.data.get('hospital_name')
+
+        emergencycontact_name = request.data.get('emergencycontact_name')
+        emergencycontact_relation = request.data.get('emergencycontact_relation')
+        emergencycontact_phone = request.data.get('emergencycontact_phone')
+
+        #searvant_ids=1,4,7 => 要產生 message, order
+        servant_ids = request.data.get('servant_ids')
+
+        case = Case.objects.get(id=case_id)
+        if case.user == user:
+            case.city = City.objects.get(id=city_id)
+            
+            if care_type == 'home' and request.data.get('road_name')!=None:
+                case.road_name = request.data.get('road_name')
+            elif care_type == 'hospital' and request.data.get('hospital_name')!=None:
+                case.hospital_name = request.data.get('hospital_name')
+
+            #start_datetime=2022-07-21
+            #s = "2014-04-07"
+            #datetime.datetime.strptime(s, "%Y-%m-%d").date()
+            case.start_datetime = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            case.end_datetime = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+            
+            # weekday = 1,3,5
+            case.weekday = weekday
+
+            case.start_time = int(start_time[0]) + float(int(start_time[1])/60)
+            case.end_time = int(end_time[0]) + float(int(end_time[1])/60)
+            if name != None:
+                case.name = name
+            if care_type != None:
+                case.care_type = care_type
+            if is_continuous_time == 'True' or is_continuous_time == 'true':
+                case.is_continuous_time = True
+            else:
+                case.is_continuous_time = False
+            if gender != None:
+                case.gender = gender
+            if age != None:
+                case.age = age
+            if weight != None:
+                case.weight = weight
+            if disease_remark != None:
+                case.disease_remark = disease_remark
+            if conditions_remark != None:
+                case.conditions_remark = conditions_remark
+            if road_name != None:
+                case.road_name = road_name
+            if hospital_name != None:
+                case.hospital_name = hospital_name
+            if emergencycontact_name != None:
+                case.emergencycontact_name = emergencycontact_name
+            if emergencycontact_relation != None:
+                case.emergencycontact_relation = emergencycontact_relation
+            if emergencycontact_phone != None:
+                case.emergencycontact_phone = emergencycontact_phone
+            case.save()
+
+            if disease != None:
+                disease_ids = disease.split(',')
+                case_disease_ships = CaseDiseaseShip.objects.filter(case=case)
+                
+                for disease_id in disease_ids:
+                    if CaseDiseaseShip.objects.filter(case=case,disease=DiseaseCondition.objects.get(id=disease_id)).count() == 0:
+                        casediseaseship = CaseDiseaseShip()
+                    else:
+                        casediseaseship = CaseDiseaseShip.objects.get(case=case,disease=DiseaseCondition.objects.get(id=disease_id))
+                    casediseaseship.disease = DiseaseCondition.objects.get(id=disease_id)
+                    casediseaseship.case = case
+                    casediseaseship.save()
+                for case_disease_ship in case_disease_ships:
+                    if str(case_disease_ship.disease.id) not in disease_ids:
+                        case_disease_ship.delete()
+                
+
+            if body_condition != None:
+                body_condition_ids = body_condition.split(',')
+                body_condition_ships = CaseBodyConditionShip.objects.filter(case=case)
+                for body_condition_id in body_condition_ids:
+                    if CaseBodyConditionShip.objects.filter(case=case,body_condition=BodyCondition.objects.get(id=body_condition_id)).count() == 0:
+                        casebodyconditionship = CaseBodyConditionShip()
+                    else:
+                        casebodyconditionship = CaseBodyConditionShip.objects.get(case=case,body_condition=BodyCondition.objects.get(id=body_condition_id))
+                    casebodyconditionship.body_condition = BodyCondition.objects.get(id=body_condition_id)
+                    casebodyconditionship.case = case
+                    casebodyconditionship.save()
+                for body_condition_ship in body_condition_ships:
+                    if str(body_condition_ship.body_condition.id) not in disease_ids:
+                        body_condition_ship.delete()
+
+            if service != None:
+                service_ids = service.split(',')
+                case_services = CaseServiceShip.objects.filter(case=case)
+                for service_id in service_ids:
+                    if CaseServiceShip.objects.filter(case=case,service=Service.objects.get(id=service_id)).count() == 0:
+                        caseserviceship = CaseServiceShip()
+                    else:
+                        caseserviceship = CaseServiceShip.objects.get(case=case,service=Service.objects.get(id=service_id))
+                    caseserviceship.service = Service.objects.get(id=service_id)
+                    caseserviceship.case = case
+                    caseserviceship.save()
+                for case_service in case_services:
+                    if str(case_service.service.id) not in service_ids:
+                        case_service.delete()
+            # 這邊要針對個別 servant 產生訂單~ 要有系統訊息, 推播訊息, 並檢查 transferFee, roadName, hospitalName 等新欄位
+            if servant_ids != None:
+                servant_id_list = servant_ids.split(',')
+                for servant_id in servant_id_list:
+                    servant = User.objects.get(id=servant_id)
+                    
+                    if Order.objects.filter(case=case,servant=servant).count() == 0:
+                        order = Order()
+                    else:
+                        order = Order.objects.get(case=case,servant=servant)
+                    order.case = case
+                    order.user = case.user
+                    order.servant = servant
+                    order.state = 'unPaid'
+                    order.start_datetime = case.start_datetime
+                    order.end_datetime = case.end_datetime
+                    order.start_time = order.case.start_time
+                    order.end_time = order.case.end_time
+                    order.save()
+                    transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
+                    order.transfer_fee = transfer_fee
+                    weekdays = order.case.weekday.split(',')
+                    if order.case.is_continuous_time == False:
+                        for weekday in weekdays:
+                            orderWeekday = OrderWeekDay()
+                            orderWeekday.order = order
+                            orderWeekday.weekday = weekday
+                            orderWeekday.save()
+                        weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+                        total_hours = 0
+                        number_of_transfer = 0
+                        for i in weekday_list:
+                            number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
+                            total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+                        order.work_hours = total_hours
+                        order.number_of_transfer = number_of_transfer
+                        order.amount_transfer_fee = transfer_fee * number_of_transfer
+                        one_day_work_hours = order.end_time - order.start_time
+                        if order.case.care_type == 'home':
+                            if one_day_work_hours < 12:
+                                wage = order.servant.home_hour_wage
+                            elif one_day_work_hours >=12 and total_hours < 24:
+                                wage = round(order.servant.home_half_day_wage/12)
+                        elif order.case.care_type == 'hospital':
+                            if one_day_work_hours < 12:
+                                wage = order.servant.hospital_hour_wage
+                            elif one_day_work_hours >=12 and total_hours < 24:
+                                wage = round(order.servant.hospital_half_day_wage/12)
+                    else:
+                        order.number_of_transfer = 1
+                        order.amount_transfer_fee = transfer_fee * 1
+                        diff = order.end_datetime - order.start_datetime
+                        days, seconds = diff.days, diff.seconds
+                        hours = days * 24 + seconds // 3600
+                        minutes = (seconds % 3600) // 60
+                        total_hours = hours + round(minutes/60)
+                        order.work_hours = total_hours
+                        if order.case.care_type == 'home':
+                            if total_hours < 12:
+                                wage = order.case.servant.home_hour_wage
+                            elif total_hours >=12 and total_hours < 24:
+                                wage = round(order.case.servant.home_half_day_wage/12)
+                            else:
+                                wage = round(order.case.servant.home_one_day_wage/24)
+                        elif order.case.care_type == 'hospital':
+                            if total_hours < 12:
+                                wage = order.case.servant.hospital_hour_wage
+                            elif total_hours >=12 and total_hours < 24:
+                                wage = round(order.case.servant.hospital_half_day_wage/12)
+                            else:
+                                wage = round(order.case.servant.hospital_one_day_wage/24)
+
+                    order.base_money = order.work_hours * wage
+
+                    # need to change in the future
+                    order.platform_percent = 15
+                    order.save()
+                    Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+
+                    for service_id in service_ids:
+                        if int(service_id) <= 4:
+                            orderIncreaseService = OrderIncreaseService()
+                            orderIncreaseService.order = order
+                            orderIncreaseService.service = Service.objects.get(id=service_id)
+                            orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                            orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                            orderIncreaseService.save()
+
+                    if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
+                        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+                    else:
+                        order.total_money = order.base_money
+                    order.platform_money = order.total_money * (order.platform_percent/100)
+                    order.save()
+
+                    receiveBooking(servant,case)
+                    chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
+                    chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
+                    chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
+                    print(chatroom_set,1)
+                    if list(chatroom_set) != []:
+                        chatroom_id = list(chatroom_set)[0]
+                        print(chatroom_id,2)
+                        chatroom = ChatRoom.objects.get(id=chatroom_id)
+                        message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                        message.save()
+                    elif list(chatroom_set) == []:
+                        chatroom = ChatRoom()
+                        chatroom.save()
+                        ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
+                        ChatroomUserShip.objects.create(user=servant,chatroom=chatroom)
+                        message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                        message.save()
+                    chatroom.update_at = datetime.datetime.now()
+                    chatroom.save()
+
+            disease_idList = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
+            case.disease = DiseaseCondition.objects.filter(id__in=disease_idList)
+            body_condition_idList = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
+            case.body_condition = BodyCondition.objects.filter(id__in=body_condition_idList)
+            service_idList = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True))
+            case.services = Service.objects.filter(id__in=service_idList)
+
+            serializer = self.serializer_class(case)
+            return Response(serializer.data)
+        else:
+            return Response('no auth')
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]

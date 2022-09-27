@@ -43,7 +43,7 @@
               <p class="text-indent-5 mt-2">
                 <span class="sub-purple-text">服務地區</span>&nbsp;&ensp;
                 {% for location in servant.user_locations.all %}
-                {{location.city}}{{location.county}}&emsp;<span class="sub-font">交通費 ${{location.transfer_fee}}/趟</span><br>
+                {{location.city}}&emsp;<span class="sub-font">交通費 ${{location.transfer_fee}}/趟</span><br>
                 {% endfor %}
               </p>
             </div>
@@ -153,7 +153,7 @@
                 <span class="news-subtitle">照護地點</span><br>
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
-                    <select class="dropdown-button" id="city_select" name="city" onchange="listCities()" select>
+                    <select class="dropdown-button" id="city_select" name="city"  select>
                       
                       {% for city in citys %}
                         <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
@@ -161,14 +161,7 @@
                       {% endfor %}
                     </select>
                 </div>
-                <div class="mt-1 btn-group">
-                  <select class="dropdown-button" id="county_select" name="county" >
-                    <option style="text-align: center" value="全區">全區</option>
-                    {% for county in counties %}
-                      <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
-                    {% endfor %}
-                  </select>
-                </div>
+      
                 </div>
                 <span class="news-subtitle mt-2">日期</span><br>
                 <div class="mt-2 mb-3">
@@ -312,31 +305,6 @@
           return cookieValue;
       }
     const csrftoken = getCookie('csrftoken');
-    function listCities(){
-      var cityid = $("[name='city']").val();
-      $('#county_select').html('');
-      $.ajax({
-        type: "POST",
-        data: {'city_id':cityid,
-                'action':'refresh_county'},
-        headers: {'X-CSRFToken': csrftoken},
-        url: "{% url 'ajax_refresh_county' %}",
-        success: function(response)
-        {
-          const data = response.data
-          // var resultObj = JSON.parse(response);
-          var dataHandler = $("#county_select");
-          var county_all = `<option style="text-align: center" value="全區">全區</option>`
-          dataHandler.append(county_all);
-          data.forEach(el =>
-          {
-              var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-              dataHandler.append(newRow);
-          });
-
-        }
-      });
-    }
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const servant = urlParams.get('servant');

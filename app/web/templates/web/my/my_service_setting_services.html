@@ -22,39 +22,6 @@
   }
   const csrftoken = getCookie('csrftoken'); 
 
-  function listCities(city_select_id, county_name){
-      var num = city_select_id.split('city_select_')[1]
-
-      var cityid = $("#city_select_"+String(num)).val();
-      console.log(county_name);
-
-      $('#county_select_'+String(num)).html('');
-      $.ajax({
-        type: "POST",
-        data: {'city_id':cityid,
-                'action':'refresh_county'},
-        headers: {'X-CSRFToken': csrftoken},
-        url: "{% url 'ajax_refresh_county' %}",
-        success: function(response)
-        {
-          const data = response.data
-          // var resultObj = JSON.parse(response);
-          var dataHandler = $('#county_select_'+String(num));
-          var county_all = `<option style="text-align: center" value="全區">全區</option>`
-          dataHandler.append(county_all);
-          data.forEach(el =>
-          { 
-            var newRow;
-            if(el.county == county_name){
-              newRow = `<option style="text-align: center" value=${el.county} selected="selected">${el.county}</option>`;
-            }else{
-              newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
-            }
-            dataHandler.append(newRow);
-          });
-        }
-      });
-  }
 </script>
 
 <!-- main -->
@@ -160,26 +127,10 @@
                         </select>
                       </div>
                       &ensp;
-
-                      <div class="btn-group">
-                        <select class="dropdown-button" id="county_select_{{forloop.counter0}}" name="county_{{forloop.counter0}}" >
-                            {% comment %} <option style="text-align: center" value="全區">全區</option>
-                            {% for county in counties %}
-                              <option style="text-align: center" name="county_option" value="{{county.name}}" 
-                                {% if county.id == service_location.county.id %} 
-                                  selected="selected" 
-                                {% endif %} >
-                                {{county}}
-                              </option>
-                            {% endfor %} {% endcomment %}
-                        </select>
-                      </div>
                       &ensp;
                       <script>
                         location_list.push({{forloop.counter0}});
                         console.log(location_list);
-
-                        listCities("city_select_{{forloop.counter0}}", "{{service_location.county.name}}");
                       </script>
 
                       <span class="h6 ml-3">
@@ -196,7 +147,7 @@
                   {% for i in location_range %}
                     <div class="mt-2" id="locations_{{i}}" hidden>
                       <div class="btn-group">
-                        <select class="dropdown-button" id="city_select_{{i}}" name="city_{{i}}" onchange="listCities(this.id, '')" >
+                        <select class="dropdown-button" id="city_select_{{i}}" name="city_{{i}}"  >
                           {% for city in citys %}
                             <option style="text-align: center" name="city_option" value="{{city.id}}" 
                               {% if city.id == 4 %} 
@@ -208,17 +159,6 @@
                         </select>
                       </div>
                       &ensp;
-
-                      <div class="btn-group">
-                        <select class="dropdown-button" id="county_select_{{i}}" name="county_{{i}}" >
-                            <option style="text-align: center" value="全區">全區</option>
-                            {% for county in counties %}
-                              <option style="text-align: center" name="county_option" value="{{county.name}}" >
-                                {{county}}
-                              </option>
-                            {% endfor %}
-                        </select>
-                      </div>
                       &ensp;
 
                       <span class="h6 ml-3">
@@ -315,9 +255,7 @@
         
         var locations_id = 'locations_'+ String(locations_add_count);
         var name_city = 'city_' + String(locations_add_count)
-        var name_county = 'county_' + String(locations_add_count)
         var id_city = 'city_select_' + String(locations_add_count)
-        var id_county = 'county_select_' + String(locations_add_count)
         var transfer_fee_name = 'transfer_fee_' + String(locations_add_count)
 
         locations_add_html.innerHTML += `<div class="mt-2" id="${locations_id}">`
@@ -332,14 +270,7 @@
                       </select>
                     </div>
                     &ensp;
-                    <div class="btn-group">
-                      <select class="dropdown-button" id="${id_county}" name="${name_county}" >
-                        <option style="text-align: center" value="全區">全區</option>
-                        {% for county in counties %}
-                          <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county.name == county_name %} selected="selected" {% endif %}>{{county}}</option>
-                        {% endfor %}
-                      </select>
-                    </div>
+                    
                     &ensp;
                     <span class="h6 ml-3">
                       交通費&ensp;
