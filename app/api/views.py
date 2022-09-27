@@ -753,7 +753,7 @@ class CreateCase(APIView):
         case = Case()
         case.user = user
         case.county = County.objects.get(id=county_id)
-        case.city = case.city.county
+        case.city = case.county.city
         
         if care_type == 'home' and request.data.get('road_name')!=None:
             case.road_name = request.data.get('road_name')
@@ -991,7 +991,7 @@ class CreateServantOrder(APIView):
         case.user = user
         case.servant = servant
         case.county = County.objects.get(id=county_id)
-        case.city = case.city.county
+        case.city = case.county.city
 
         #start_datetime=2022-07-21
         #s = "2014-04-07"
