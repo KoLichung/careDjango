@@ -199,8 +199,9 @@ class MessageViewSet(APIView):
         chatroom = ChatRoom.objects.get(id=chatroom_id)
         user_ids = list(ChatroomUserShip.objects.filter(chatroom=chatroom).values_list('user', flat=True))
         chatroom_users = User.objects.filter(id__in=user_ids)
+
         if user in chatroom_users:
-            other_side_user = chatroom_users.exclude(user)[0]
+            other_side_user = chatroom_users.exclude(phone=user.phone)[0]
             message = ChatroomMessage()
             message.chatroom = chatroom
             message.user = user
