@@ -40,7 +40,7 @@ number_of_transfer 幾趟交通費
 amount_transfer_fee 總共的交通費
 ===============
 3.Api CreateCase/CreateServantOrder 修正
-4.修改 Case 並產生新訂單的 api (EditCase, parasm{case_id}, auth 發case的人才能改)
+4.修改 Case 並產生新訂單的 api (EditCase, parasm{case_id, servant_id}, auth 發case的人才能改)
 
 20220926
 1.後台案件列表/案件詳細 [此用戶已刪除]
