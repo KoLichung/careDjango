@@ -70,7 +70,8 @@ def bills(request):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/backboard/')
     
-    summarys = MonthSummary.objects.all().order_by('-id')[:2]
+    # summarys = MonthSummary.objects.all().order_by('-id')[:2]
+    summarys = MonthSummary.objects.all().order_by('-month_date')[:2]
     this_month_day = summarys[0].month_date
     last_month_day = this_month_day - datetime.timedelta(days=30)
 
