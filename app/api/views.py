@@ -714,7 +714,7 @@ class CreateCase(APIView):
 
     def post(self, request, format=None):
         user = self.request.user
-        city_id = self.request.query_params.get('city')
+        county_id = self.request.query_params.get('county')
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
         weekday = self.request.query_params.get('weekday')
@@ -752,7 +752,8 @@ class CreateCase(APIView):
 
         case = Case()
         case.user = user
-        case.city = City.objects.get(id=city_id)
+        case.county = County.objects.get(id=county_id)
+        case.city = case.city.county
         
         if care_type == 'home' and request.data.get('road_name')!=None:
             case.road_name = request.data.get('road_name')
@@ -959,7 +960,7 @@ class CreateServantOrder(APIView):
         user = self.request.user
         servant_id = self.request.query_params.get('servant_id')
         servant = User.objects.get(id=servant_id)
-        city_id = self.request.query_params.get('city')
+        county_id = self.request.query_params.get('county')
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
         weekday = self.request.query_params.get('weekday')
@@ -989,8 +990,8 @@ class CreateServantOrder(APIView):
         case = Case()
         case.user = user
         case.servant = servant
-        case.city = City.objects.get(id=city_id)
-
+        case.county = County.objects.get(id=county_id)
+        case.city = case.city.county
 
         #start_datetime=2022-07-21
         #s = "2014-04-07"
