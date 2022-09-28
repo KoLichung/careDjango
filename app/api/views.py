@@ -910,7 +910,10 @@ class CreateCase(APIView):
                         orderIncreaseService = OrderIncreaseService()
                         orderIncreaseService.order = order
                         orderIncreaseService.service = Service.objects.get(id=service_id)
-                        orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                        if UserServiceShip.objects.filter(user=servant,service=Service.objects.get(id=service_id)).count() > 0:
+                            orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                        else:
+                            orderIncreaseService.increase_percent = 0
                         orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                         orderIncreaseService.save()
 
@@ -1146,7 +1149,10 @@ class CreateServantOrder(APIView):
                 orderIncreaseService = OrderIncreaseService()
                 orderIncreaseService.order = order
                 orderIncreaseService.service = Service.objects.get(id=service_id)
-                orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                if UserServiceShip.objects.filter(user=servant,service=Service.objects.get(id=service_id)).count() > 0:
+                    orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                else:
+                    orderIncreaseService.increase_percent = 0
                 orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                 orderIncreaseService.save()
 
