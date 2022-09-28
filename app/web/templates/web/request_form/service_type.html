@@ -53,6 +53,14 @@
                 </select>
               </div>
               &emsp;
+              <div class="btn-group">
+                <select class="dropdown-button" id="county_select" name="county" >
+                  <option style="text-align: center" value="全區">全區</option>
+                  {% for county in counties %}
+                    <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county.name == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                  {% endfor %}
+                </select>
+              </div>
           </div>    
           <div id="hidden_input"></div>
           
@@ -120,6 +128,32 @@
                   }
               }
               return cookieValue;
+          }
+          function listCities(){
+            var cityid = $("[name='city']").val();
+            $('#county_select').html('');
+            $.ajax({
+              type: "POST",
+              data: {'city_id':cityid,
+                      'action':'refresh_county'},
+              headers: {'X-CSRFToken': csrftoken},
+              url: "{% url 'ajax_refresh_county' %}",
+              success: function(response)
+              {
+                const data = response.data
+                console.log(data)
+                // var resultObj = JSON.parse(response);
+                var dataHandler = $("#county_select");
+                var county_all = `<option style="text-align: center" value="全區">全區</option>`
+                dataHandler.append(county_all);
+                data.forEach(el =>
+                {
+                    var newRow = `<option style="text-align: center" value=${el.county}>${el.county}</option>`;
+                    dataHandler.append(newRow);
+                });
+
+              }
+            });
           }
       const csrftoken = getCookie('csrftoken');
       
@@ -194,8 +228,10 @@
       const start_end_date = document.getElementById('start_end_date');
       const start_time = document.getElementById('timepicker_startTime');
       const end_time = document.getElementById('timepicker_endTime');
+      const city_id = document.getElementById('city_select').value;
       $(document).ready(function() {
         submit_button.disabled = true;
+        submit_access.call();
         care_home.addEventListener('click',function(){
           if(this.checked = true){
             console.log('1')
@@ -222,12 +258,16 @@
           care_hospital.click();
         }
         document.querySelector(' .check_input ').addEventListener('change',function(){
+        
+          submit_access.call();
+      })
+      });
+      function submit_access(){
         if ((care_type !== '') && (start_end_date.value !== '') && (start_time.value !== '') && (end_time.value !== '')){
           console.log('query');
           submit_button.disabled = false;
         }
-      })
-      });
+      }
       
     </script>
 </main>

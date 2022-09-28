@@ -238,6 +238,7 @@
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const servant = urlParams.get('servant');
+  const city_id = "{{city_id}}";
   start_end_date = "{{start_end_date}}";
   startTime = "{{start_time}}";
   endTime = "{{end_time}}";
@@ -296,11 +297,12 @@
         for (var i = 0; i < checkboxes.length; i++) {
           weekdays.push(checkboxes[i].value)
             };
+        calculate_rate.call();
       })
       weekdays.forEach(e =>{
         var element = document.getElementById(e)
         element.checked = true;
-        console.log(element)
+        
       })
       }
   if (document.getElementById('weekly_time').checked){
@@ -409,6 +411,7 @@
       type: "POST",
       data: { 'servant':servant,
               'care_type':care_type,
+              'city_id':city_id,
               'start_end_date':start_end_date,
               'is_continuous_time':is_continuous_time,
               'startTime':startTime,
@@ -421,6 +424,7 @@
       success: function(response)
         {
           const data = response.data;
+          console.log(data)
           const increase_service_data = response.increase_service_data;
           increase_service_html.innerHTML = ``
           if (data.result == '3'){post_html.innerHTML = `
@@ -430,6 +434,14 @@
               </div>
               <div class="col-12  col-lg-4 text-end">
                 $ ${data.base_money}
+              </div>
+            </div> 
+            <div class="row case-info-font mt-2 h6">
+              <div class="col-12  col-lg-8">交通費
+                $${data.transfer_fee} x ${data.number_of_transfer} 趟
+              </div>
+              <div class="col-12  col-lg-4 text-end">
+                $ ${data.amount_transfer_fee}
               </div>
             </div> `;
             for (var num in increase_service_data){

@@ -440,6 +440,7 @@ def fakeData():
                     order.wage_hour = wage
 
         order.base_money = order.work_hours * wage
+        order.platform_percent = 15
         order.save()
 
     Review.objects.create(order=order,case=order.case,servant=order.case.servant)
@@ -475,8 +476,9 @@ def fakeData():
     orderIncreaseService.save()
 
     for order in Order.objects.all():
-        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum']))
-        order.platform_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * (order.platform_percent/100)
+        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) + order.amount_transfer_fee
+        order.save()
+        order.platform_money = (order.total_money) * (order.platform_percent/100)
         order.save()
 
     ChatRoom.objects.create(update_at=datetime.datetime.now())

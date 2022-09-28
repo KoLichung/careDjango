@@ -142,6 +142,7 @@
         const increase_service_html = document.getElementById('increase_service_html');
         const sum_html = document.getElementById('sum_html');
         is_continuous_time = "{{is_continuous_time}}";
+        const city_id = "{{city_id}}";
 
         function calculate_rate(){
           console.log(care_type)
@@ -150,6 +151,7 @@
             type: "POST",
             data: { 'servant':servant,
                     'care_type':care_type,
+                    'city_id':city_id,
                     'start_end_date':start_end_date,
                     'is_continuous_time':is_continuous_time,
                     'startTime':startTime,
@@ -165,16 +167,22 @@
                 const increase_service_data = response.increase_service_data;
                 increase_service_html.innerHTML = ``
                 if (data.result == '3'){post_html.innerHTML = `
-                      
-                      <div class="row case-info-font">
-                        <div class="col-8">
-                          $${data.hour_wage}x${data.total_hours}小時 
-                        </div>
-                        <div class="col text-end">
-                          $ ${data.base_money}
-                        </div>
-                      </div>
-                      <br>`;
+                    <div class="row case-info-font mt-2 h6">
+                    <div class="col-12  col-lg-8">
+                      $${data.hour_wage}x${data.total_hours}小時 
+                    </div>
+                    <div class="col-12  col-lg-4 text-end">
+                      $ ${data.base_money}
+                    </div>
+                  </div> 
+                  <div class="row case-info-font mt-2 h6">
+                    <div class="col-12  col-lg-8">交通費
+                      $${data.transfer_fee} x ${data.number_of_transfer} 趟
+                    </div>
+                    <div class="col-12  col-lg-4 text-end">
+                      $ ${data.amount_transfer_fee}
+                    </div>
+                  </div> `;
                   for (var num in increase_service_data){
                     increase_service_html.innerHTML += `                   
                     <div class="row case-info-font">

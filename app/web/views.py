@@ -65,6 +65,21 @@ def ajax_post_image(request):
         # print(updatedData)
         return JsonResponse({'data':'ajax'})
 
+def ajax_refresh_county(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'refresh_county':
+        updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
+        city_id = updatedData['city_id'][0]
+        counties = County.objects.filter(city=City.objects.get(id=city_id))
+        # countylist = serializers.serialize('json', list(counties))
+        data=[]
+        for county in counties:
+            item = {
+                'id':county.id,
+                'county':county.name,
+            }
+            data.append(item)
+        return JsonResponse({'data':data})
+
 def ajax_return_wage(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'return_wage':
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
@@ -100,17 +115,17 @@ def ajax_cal_rate(request):
         print(updatedData)
         servant_id = updatedData['servant'][0]
         servant = User.objects.get(id=servant_id)
-        print('a')
         care_type = updatedData['care_type'][0]
         start_end_date = updatedData['start_end_date'][0]
         is_continuous_time = updatedData['is_continuous_time'][0]
         startTime = updatedData['startTime'][0]
         endTime = updatedData['endTime'][0]
+        city_id = updatedData['city_id'][0]
         start_date = '20' + start_end_date.split(' to ')[0].replace('/','-')
         end_date = '20' +start_end_date.split(' to ')[1].replace('/','-')
+        transfer_fee = UserServiceLocation.objects.get(user=servant,city=City.objects.get(id=city_id)).transfer_fee
         print(is_continuous_time)
         if is_continuous_time == 'True':
-            print('b')
             servants = servants.filter(is_continuous_time=True)
             if servant not in servants:
                 data = {'result':'1'}
@@ -137,6 +152,8 @@ def ajax_cal_rate(request):
             start_datetime = datetime.datetime.combine(StartDate,StartTime)
             end_datetime = datetime.datetime.combine(EndDate,EndTime)
             if servant in servants:     
+                number_of_transfer = 1
+                amount_transfer_fee = transfer_fee * 1
                 diff = end_datetime - start_datetime
                 days, seconds = diff.days, diff.seconds
                 hours = days * 24 + seconds // 3600
@@ -156,21 +173,25 @@ def ajax_cal_rate(request):
                         wage = round(servant.hospital_half_day_wage/12)
                     else:
                         wage = round(servant.hospital_one_day_wage/24)             
-                base_money = total_hours * wage
+                base_money = total_hours * wage 
+                total_money = base_money + amount_transfer_fee
+                print(total_money,'test')
                 data = {
                     'result':'3',
                     'total_hours':total_hours,
                     'base_money':base_money,
                     'hour_wage':wage,
+                    'transfer_fee':transfer_fee,
+                    'number_of_transfer':number_of_transfer,
+                    'amount_transfer_fee':amount_transfer_fee,
+                    'total_money':total_money,
                 }
-                data['total_money'] = base_money
-                print(data)
+                print('data',data)
                 if 'increase_service[]' in updatedData:
                     increase_service_ids = updatedData['increase_service[]']
                     print(increase_service_ids)
                     increase_service_data = {}
                     count = 0
-                    total_money = base_money
                     for service_id in increase_service_ids:
                         count += 1
                         service = Service.objects.get(id=service_id)
@@ -187,7 +208,6 @@ def ajax_cal_rate(request):
                     data['total_money'] = total_money
                     return JsonResponse({'data':data,'increase_service_data':increase_service_data})
                 else:
-                    data['total_money'] = base_money
                     return JsonResponse({'data':data})
             else:
                 data = {'result':'2'}
@@ -252,14 +272,24 @@ def ajax_cal_rate(request):
                         start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
                         end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
                         total_hours = 0
+                        number_of_transfer = 0
                         for i in weekdays_num_list:
+                            number_of_transfer += (days_count([int(i)], start_date, end_date))
                             total_hours += (days_count([int(i)], start_date, end_date)) * (end_time_int - start_time_int)
-                        base_money = total_hours * wage
+                        
+                        amount_transfer_fee = transfer_fee * number_of_transfer
+                        base_money = total_hours * wage 
+                        total_money = base_money + amount_transfer_fee
                         data = {
                             'result':'3',
                             'total_hours':total_hours,
                             'base_money':base_money,
                             'hour_wage':wage,
+                            'transfer_fee':transfer_fee,
+                            'number_of_transfer':number_of_transfer,
+                            'amount_transfer_fee':amount_transfer_fee,
+                            'total_money':total_money,
+
                         }
                         print(data)
                         if 'increase_service[]' in updatedData:
@@ -267,7 +297,6 @@ def ajax_cal_rate(request):
                             print(increase_service_ids)
                             increase_service_data = {}
                             count = 0
-                            total_money = base_money
                             for service_id in increase_service_ids:
                                 count += 1
                                 service = Service.objects.get(id=service_id)
@@ -278,13 +307,13 @@ def ajax_cal_rate(request):
                                     'service' : service.name,
                                     'increase_percent' : increase_percent,
                                     'increase_money':increase_money,
+                                    
                                 }
                                 increase_service_data['data'+str(count)] = increase_data
                            
                             data['total_money'] = total_money
                             return JsonResponse({'data':data,'increase_service_data':increase_service_data})
                         else:
-                            data['total_money'] = base_money
                             return JsonResponse({'data':data})
                     else:
                         data = {'result':'2'}
@@ -678,6 +707,7 @@ def booking_patient_info(request):
         end_date = end_date.split('-')
         start_end_date = start_date[0].split('20')[1] + "/" + start_date[1] + "/" + start_date[2] + " to " + end_date[0].split('20')[1] + "/" + end_date[1] + "/" + end_date[2]
         city = City.objects.get(name=last_tempcase.city)
+        city_id = city.id
         is_continuous_time = str(last_tempcase.is_continuous_time)
         if is_continuous_time == 'False':
             weekdays = last_tempcase.weekday
@@ -867,7 +897,7 @@ def booking_patient_info(request):
             tempcase.increase_service = increase_service_str
         tempcase.save()
         return redirect_params('booking_location',{'servant':servant.id})
-    return render(request, 'web/booking/patient_info.html',{'start_end_date':start_end_date, 'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight,'weekday_str':weekday_str, 'increase_service_ships':increase_service_ships, 'weekday_list':weekday_list, 'servant':servant, 'care_type':care_type, 'start_time':start_time,'end_time':end_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'cityName':city,'citys':citys,'is_continuous_time':is_continuous_time, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'disease_none':disease_none, 'diseases':diseases,'body_conditions':body_conditions})
+    return render(request, 'web/booking/patient_info.html',{'start_end_date':start_end_date,'city_id':city_id, 'service_list':service_list,'increase_service_list':increase_service_list, 'body_condition_list':body_condition_list,'conditions_remark':conditions_remark, 'age':age,'disease_list':disease_list,'disease_remark':disease_remark, 'patient_name':patient_name,'gender':gender,'weight':weight,'weekday_str':weekday_str, 'increase_service_ships':increase_service_ships, 'weekday_list':weekday_list, 'servant':servant, 'care_type':care_type, 'start_time':start_time,'end_time':end_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'cityName':city,'citys':citys,'is_continuous_time':is_continuous_time, 'increase_services':increase_services, 'services':services, 'body_condition_none':body_condition_none,'disease_none':disease_none, 'diseases':diseases,'body_conditions':body_conditions})
 
 def booking_location(request):
     servant_id= request.GET.get('servant')
@@ -876,10 +906,11 @@ def booking_location(request):
     citys = City.objects.all()
     if TempCase.objects.filter(user=user,servant=servant,is_booking=True).exists() :
         last_tempcase = TempCase.objects.get(user=user,servant=servant,is_booking=True)
-        address = last_tempcase.address
-        tranfer_info = last_tempcase.tranfer_info
         city = last_tempcase.city
         city = City.objects.get(name=city)
+        city_id = city.id
+        countyName = last_tempcase.county
+        counties = County.objects.filter(city=city)
         care_type = last_tempcase.care_type
         start_date = last_tempcase.start_datetime.date()
         end_date = last_tempcase.end_datetime.date()
@@ -918,16 +949,12 @@ def booking_location(request):
     else:
         return redirect_params('search_carer_detail',{'servant':servant})
     if request.method == 'POST' and 'next' in request.POST:
-        city = request.POST.get('city')
-        address = request.POST.get('address')
-        tranfer_info = request.POST.get('tranfer_info')
+        county_id = request.POST.get('county')
         care_type = request.POST.get('care_type')
         road_name = request.POST.get('road_name')
         hospital_name = request.POST.get('hospital_name')
         tempcase = TempCase.objects.get(user=user,servant=servant)
-        tempcase.city = City.objects.get(id=city).name
-        tempcase.address = address
-        tempcase.tranfer_info = tranfer_info
+        tempcase.county = County.objects.get(id=county_id).name
         if road_name != None and road_name != '':
             tempcase.road_name = road_name
         if hospital_name != None and hospital_name != '':
@@ -936,7 +963,7 @@ def booking_location(request):
         return redirect_params('booking_contact',{'servant':servant_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_patient_info',{'servant':servant_id})
-    return render(request, 'web/booking/location.html',{'servant_id':servant_id, 'road_name':road_name,'hospital_name':hospital_name, 'address':address,'tranfer_info':tranfer_info, 'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'citys':citys,})
+    return render(request, 'web/booking/location.html',{'city_id':city_id, 'servant_id':servant_id,'countyName':countyName, 'counties':counties, 'road_name':road_name,'hospital_name':hospital_name, 'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,'citys':citys,})
 
 def booking_contact(request):
     servant_id = request.GET.get('servant')
@@ -950,6 +977,7 @@ def booking_contact(request):
         last_tempcase = TempCase.objects.get(user=user,servant=servant,is_booking=True)
         city = last_tempcase.city
         city = City.objects.get(name=city)
+        city_id = city.id
         care_type = last_tempcase.care_type
         start_date = last_tempcase.start_datetime.date()
         end_date = last_tempcase.end_datetime.date()
@@ -997,7 +1025,7 @@ def booking_contact(request):
         return redirect_params('booking_confirm',{'servant':servant_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_location',{'servant':servant_id})
-    return render(request, 'web/booking/contact.html',{ 'servant_id':servant_id,'user':user,'emergencycontact_phone':emergencycontact_phone,'emergencycontact_relation':emergencycontact_relation,'emergencycontact_name':emergencycontact_name,'start_end_date':start_end_date, 'servant_id':servant_id, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,})
+    return render(request, 'web/booking/contact.html',{'city_id':city_id, 'servant_id':servant_id,'user':user,'emergencycontact_phone':emergencycontact_phone,'emergencycontact_relation':emergencycontact_relation,'emergencycontact_name':emergencycontact_name,'start_end_date':start_end_date, 'servant_id':servant_id, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str, 'care_type':care_type, 'servant':servant, 'cityName':city,})
 
 def booking_confirm(request):
     servant_id = request.GET.get('servant')
@@ -1008,6 +1036,9 @@ def booking_confirm(request):
         tempcase = TempCase.objects.get(user=user,servant=servant,is_booking=True)
         tempcase = TempCase.objects.get(user=user,servant=servant,is_booking=True)
         care_type = tempcase.care_type
+        city = tempcase.city
+        city = City.objects.get(name=city)
+        city_id = city.id
         start_date = tempcase.start_datetime.date()
         end_date = tempcase.end_datetime.date()
         start_date_str = start_date.strftime("%m/%d")
@@ -1073,10 +1104,12 @@ def booking_confirm(request):
         return redirect_params('search_carer_detail',{'servant':servant})
     if request.method == 'POST' and 'pay' in request.POST:
         city_name = tempcase.city
+        county_name = tempcase.county
         case = Case()
         case.user = user
         case.servant = servant
         case.city = City.objects.get(name=city_name)
+        case.county = County.objects.get(city=City.objects.get(name=city_name),name=county_name)
         case.care_type = care_type
         case.name = tempcase.name
         case.gender = tempcase.gender
@@ -1204,7 +1237,7 @@ def booking_confirm(request):
         return redirect_params('http://202.182.105.11/newebpayApi/mpg_trade',{'order_id':order_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_contact',{'servant':servant_id})
-    return render(request, 'web/booking/confirm.html',{'servant_id':servant_id,'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant})
+    return render(request, 'web/booking/confirm.html',{'city_id':city_id, 'servant_id':servant_id,'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant})
 
 def news(request):
     blogposts = BlogPost.objects.filter(state='publish')
@@ -1903,7 +1936,8 @@ def my_notification_setting(request):
 def request_form_service_type(request):
     user = request.user
     citys = City.objects.all()
-    
+    counties = County.objects.all()
+
     if TempCase.objects.filter(user=user,is_booking=False).exists() :
         last_tempcase = TempCase.objects.get(user=user,is_booking=False)
         care_type = last_tempcase.care_type
@@ -1913,9 +1947,12 @@ def request_form_service_type(request):
         end_date = end_date.split('-')
         start_end_date = start_date[0].split('20')[1] + "/" + start_date[1] + "/" + start_date[2] + " to " + end_date[0].split('20')[1] + "/" + end_date[1] + "/" + end_date[2]
         city = City.objects.get(name=last_tempcase.city)
+        county_name = last_tempcase.county
+        print(county_name)
         road_name = last_tempcase.road_name
         hospital_name = last_tempcase.hospital_name
         is_continuous_time = last_tempcase.is_continuous_time
+        counties = counties.filter(city=city)
         print(is_continuous_time)
         if is_continuous_time == False:
             weekdays = last_tempcase.weekday
@@ -1935,6 +1972,8 @@ def request_form_service_type(request):
     else:
         city_id = '8'
         city = City.objects.get(id=city_id)
+        counties = counties.filter(city=City.objects.get(id=city_id))
+        county_name = '全區'
         start_time = ''
         end_time = ''
         weekday_list = []
@@ -1947,6 +1986,7 @@ def request_form_service_type(request):
     if request.method == 'POST':
         care_type = request.POST.get('care_type')
         city = request.POST.get('city')
+        county = request.POST.get('county')
         start_end_date = request.POST.get('start_end_date')
         is_continuous_time = request.POST.get('time_type')
         start_time = request.POST.get('timepicker_startTime')
@@ -1968,6 +2008,7 @@ def request_form_service_type(request):
         tempcase.user = user
         tempcase.care_type = care_type
         tempcase.city = City.objects.get(id=city).name
+        tempcase.county = county
         tempcase.start_datetime = start_date
         tempcase.end_datetime = end_date
         tempcase.start_time = start_time_int
@@ -1992,7 +2033,7 @@ def request_form_service_type(request):
         tempcase.save()
         return redirect('request_form_patient_info')
     
-    return render(request, 'web/request_form/service_type.html',{'road_name':road_name,'hospital_name':hospital_name, 'start_time':start_time,'end_time':end_time, 'weekday_list':weekday_list,'is_continuous_time':is_continuous_time, 'start_end_date':start_end_date,'care_type':care_type,'cityName':city,'citys':citys})
+    return render(request, 'web/request_form/service_type.html',{'countyName':county_name,'counties':counties, 'road_name':road_name,'hospital_name':hospital_name, 'start_time':start_time,'end_time':end_time, 'weekday_list':weekday_list,'is_continuous_time':is_continuous_time, 'start_end_date':start_end_date,'care_type':care_type,'cityName':city,'citys':citys})
 
 def request_form_patient_info(request):
     user = request.user
@@ -2213,6 +2254,7 @@ def request_form_confirm(request):
     is_continuous_time = tempcase.is_continuous_time
     weekdays = tempcase.weekday
     city_name = tempcase.city
+    county_name = tempcase.county
     user_ids = list(UserServiceLocation.objects.filter(city=City.objects.get(name=city_name)).values_list('user', flat=True))
     servants = servants.filter(id__in=user_ids)
 
@@ -2274,6 +2316,8 @@ def request_form_confirm(request):
         case = Case()
         case.user = user
         case.city = City.objects.get(name=city_name)
+        if county_name != '全區':
+            case.county = County.objects.get(city=City.objects.get(name=city_name),name=county_name)
         case.care_type = care_type
         case.name = tempcase.name
         case.gender = tempcase.gender

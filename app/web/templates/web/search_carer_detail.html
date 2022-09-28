@@ -314,7 +314,8 @@
     const care_type_hospital = document.getElementById('care_type_hospital');
     const submit_button = document.getElementById('submit_button');
     const select_time_Btn = document.getElementById('select_time');
-    
+    const city_id = document.getElementById('city_select').value;
+
     var home = {
       call_backend : function (){
       var care_type = 'home'
@@ -428,6 +429,7 @@
       return $.ajax({
         type: "POST",
         data: { 'servant':servant,
+                'city_id':city_id,
                 'care_type':care_type,
                 'start_end_date':start_end_date,
                 'is_continuous_time':is_continuous_time,
