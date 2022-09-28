@@ -793,6 +793,12 @@ class ChatroomMessage(models.Model):
         blank=True,
         null=True,
     )
+    order = models.ForeignKey(
+        Order,
+        on_delete = models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     is_this_message_only_case = models.BooleanField(default=False)
     content = models.TextField(default='', blank = True, null=True)
@@ -811,6 +817,12 @@ class SystemMessage(models.Model):
         on_delete = models.CASCADE,
         blank=True,
         null=True    
+    )
+    order = models.ForeignKey(
+        Order,
+        on_delete = models.CASCADE,
+        blank=True,
+        null=True,
     )
     content = models.TextField(default='', blank = True, null=True)
     create_at = models.DateTimeField(auto_now=True, blank = True,null=True) 

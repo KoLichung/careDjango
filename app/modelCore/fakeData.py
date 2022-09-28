@@ -254,6 +254,7 @@ def fakeData():
     case.user = User.objects.get(id=2)
     case.servant = User.objects.get(id=3)
     case.city = City.objects.get(id=5)
+    case.county = County.objects.get(id=62)
     case.care_type = 'home'
     case.name = '王大明'
     case.gender = 'M'
@@ -274,6 +275,7 @@ def fakeData():
     case.user = User.objects.get(id=3)
     case.servant = User.objects.get(id=4)
     case.city = City.objects.get(id=8)
+    case.county = County.objects.get(id=96)
     case.care_type = 'hospital'
     case.name = '陳小芬'
     case.gender = 'F'
@@ -504,6 +506,7 @@ def fakeData():
     message.user = User.objects.get(id=2)
     message.is_this_message_only_case = True
     message.case = Case.objects.get(id=1)
+    message.order = Order.objects.get(id=1)
     chatroom.update_at = datetime.datetime.now()
     chatroom.save()
     message.save()
@@ -520,12 +523,14 @@ def fakeData():
     systemMessage = SystemMessage()
     systemMessage.user = User.objects.get(id=2)
     systemMessage.case = Case.objects.get(id=1)
+    systemMessage.order = Order.objects.get(id=1)
     systemMessage.content = 'SystemTest01'
     systemMessage.save()
 
     systemMessage = SystemMessage()
     systemMessage.user = User.objects.get(id=3)
     systemMessage.case = Case.objects.get(id=2)
+    systemMessage.order = Order.objects.get(id=2)
     systemMessage.content = 'SystemTest02'
     systemMessage.save()
 
