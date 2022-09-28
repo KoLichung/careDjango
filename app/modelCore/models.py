@@ -670,7 +670,7 @@ class OrderWeekDay(models.Model):
 class Review(models.Model):
     order = models.ForeignKey(
         Order,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         related_name='order_reviews'
     )
     case = models.ForeignKey(

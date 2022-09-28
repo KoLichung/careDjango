@@ -397,7 +397,7 @@ def fakeData():
                     order.hours_hour_work = total_hours
                 elif one_day_work_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
-                    order.wage_half_day = wage
+                    order.wage_hour = wage
                     order.hours_half_day_work = total_hours
             elif order.case.care_type == 'hospital':
                 if one_day_work_hours < 12:
@@ -406,7 +406,7 @@ def fakeData():
                     order.hours_hour_work = total_hours
                 elif one_day_work_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
-                    order.wage_half_day = wage
+                    order.wage_hour = wage
                     order.hours_half_day_work = total_hours
         else:
             order.number_of_transfer = 1
@@ -423,10 +423,10 @@ def fakeData():
                     order.wage_hour =wage
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.home_half_day_wage/12)
-                    order.wage_half_day = wage
+                    order.wage_hour = wage
                 else:
                     wage = round(order.case.servant.home_one_day_wage/24)
-                    order.wage_one_day = wage
+                    order.wage_hour = wage
                     order.hours_one_day_work = total_hours
             elif order.case.care_type == 'hospital':
                 if total_hours < 12:
@@ -434,10 +434,10 @@ def fakeData():
                     order.wage_hour =wage
                 elif total_hours >=12 and total_hours < 24:
                     wage = round(order.case.servant.hospital_half_day_wage/12)
-                    order.wage_half_day = wage
+                    order.wage_hour = wage
                 else:
                     wage = round(order.case.servant.hospital_one_day_wage/24)
-                    order.wage_one_day = wage
+                    order.wage_hour = wage
 
         order.base_money = order.work_hours * wage
         order.save()
