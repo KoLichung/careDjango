@@ -126,7 +126,11 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
             # print(ChatroomMessage.objects.all())
             
             if ChatroomMessage.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
-                queryset[i].last_message = ChatroomMessage.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).order_by('-id').first().content[0:15]
+                last_message = ChatroomMessage.objects.filter(chatroom=queryset[i]).order_by('-id').first()
+                if last_message.is_this_message_only_case:
+                    queryset[i].last_message = '點我讀取案件訂單訊息！'
+                else:
+                    queryset[i].last_message = last_message.content[0:15]
             
             chat_rooms_not_read_messages = ChatroomMessage.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
             queryset[i].unread_num = chat_rooms_not_read_messages.count()
