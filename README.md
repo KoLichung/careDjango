@@ -27,6 +27,24 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220928
+昨天的問題：
+1.api views 
+CreateServantOrder, EditCase 的 message 呢?
+EditCase 只有一個 servant_id
+2.case 的 county  不用拿掉~ 區域一樣下拉選單要存回 (需求單也要改到)
+!!!縣市不可改, 區域一樣下拉選單要存回 (需求單也要改到)
+3.交通費沒有顯示在計算裡?!
+
+1.資料修正
+a.fakeData 的 review 要有 create_at 等日期(目前是 null)
+b.會員使用條款
+https://docs.google.com/document/d/1lhPhv6CJftQnKIZqfcmhBosFtgT6ijOR9zzs-Kp94L8/edit?usp=sharing
+2.newebpayApi 的 幕前交易 MpgTrade 串好, item_desc 寫 “時薪 $245 共 18 小時與額外費用”
+3.後台會員多一個按鈕 "重設臨時密碼"(紅色按鈕), 重設密碼為 "00000"
+彈出一個 modal 詢問, 是否重設臨時密碼為 "00000" 確定/取消
+(要記得密碼是要編碼過的)
+
 20220927
 1.
 把 model user_service_location 的 county 拿掉
