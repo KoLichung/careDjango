@@ -6,35 +6,60 @@
   <div class="col-lg-12 ps-lg-2 mb-3">
 
      <!-- 會員資訊 -->
-    <div class="card h-lg-100 mb-5">
-      <div class="card-header">
-        <div class="h5 mb-3">
-          <b>會員資訊</b>
-          
-        </div>
-        <div class="border"></div>
-        <div class="d-flex justify-content-between mt-3">
-          <div>
-            <span>姓名：{{user.name}}</span>
-            <span class="mx-3">電話：{{user.phone}}</span>
-            {% if user.is_apply_servant %}
-              <span>服務者 /需求者</span>
-              {% if user.is_servant_passed == False %}
-                <span style="color: red;">（服務者尚未審核）</span> 
-              {% elif user.is_servant_passed == True %}
-                <span style="color: red;">（服務者審核通過）</span> 
+     <form method="post" enctype="multipart/form-data">{% csrf_token %}
+      <div class="card h-lg-100 mb-5">
+        <div class="card-header">
+          <div class="h5 mb-3">
+            <b>會員資訊</b>
+            
+          </div>
+          <div class="border"></div>
+          <div class="d-flex justify-content-between mt-3">
+            <div>
+              <span>姓名：{{user.name}}</span>
+              <span class="mx-3">電話：{{user.phone}}</span>
+              {% if user.is_apply_servant %}
+                <span>服務者 /需求者</span>
+                {% if user.is_servant_passed == False %}
+                  <span style="color: red;">（服務者尚未審核）</span> 
+                {% elif user.is_servant_passed == True %}
+                  <span style="color: red;">（服務者審核通過）</span> 
+                {% endif %}
+              {% else %} 
+                <span>需求者</span>
               {% endif %}
-            {% else %} 
-              <span>需求者</span>
-            {% endif %}
+            </div>
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              重設臨時密碼
+            </button>          
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">重設臨時密碼</h5>
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button> -->
+                  </div>
+                  <div class="modal-body">
+                    確定重設密碼為 00000 ? 
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" name="reset_password" class="btn btn-warning">確定</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_data_review' %}?user={{user.id}}">資料審核</a>
+            </div>
           </div>
-          <div>
-            <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_data_review' %}?user={{user.id}}">資料審核</a>
-          </div>
-        </div>
 
+        </div>
       </div>
-    </div>
+     </form>
 
     <!-- 發案紀錄 -->
     <div class="card h-lg-100 mb-5">

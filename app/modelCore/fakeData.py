@@ -355,8 +355,8 @@ def fakeData():
     order.end_datetime = order.case.end_datetime
     order.save()
     Review.objects.create(order=order,case=order.case,servant=order.case.servant,
-                        case_offender_rating=4.8,case_offender_comment='good',
-                        servant_rating=5,servant_comment='nice')
+                        case_offender_rating=4.8,case_offender_comment='good',case_offender_rating_created_at=datetime.datetime.now(),
+                        servant_rating=5,servant_comment='nice',servant_rating_created_at=datetime.datetime.now())
 
     order = Order()
     order.case = Case.objects.get(id=2)

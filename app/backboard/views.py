@@ -97,6 +97,10 @@ def member_detail(request):
     user = User.objects.get(id=user_id)
     offend_orders = Order.objects.filter(user=user)
     take_orders = Order.objects.filter(servant=user)
+    if request.method == 'POST' and 'reset_password' in request.POST :
+        password = "00000"
+        user.set_password(password)
+        user.save()
     return render(request, 'backboard/member_detail.html',{'user':user,'offend_orders':offend_orders,'take_orders':take_orders})
 
 def all_blogs(request):
