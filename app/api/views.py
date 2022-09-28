@@ -65,7 +65,10 @@ class OrderViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         user = self.request.user
-        queryset = self.queryset.filter(case__user=user)
+        queryset = self.queryset
+        is_mine = self.request.query_params.get('is_mine')
+        if is_mine == 'true' or is_mine == 'True':
+            queryset = self.queryset.filter(case__user=user)
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -1168,6 +1171,7 @@ class CreateServantOrder(APIView):
         chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
         chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
         print(chatroom_set,1)
+
         if list(chatroom_set) != []:
             chatroom_id = list(chatroom_set)[0]
             print(chatroom_id,2)
@@ -1180,8 +1184,9 @@ class CreateServantOrder(APIView):
             print(chatroom_id,3)
             ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
             ChatroomUserShip.objects.create(user=servant,chatroom=chatroom)
-            message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+            message = ChatroomMessage(user=user,case=case,order=order,chatroom=chatroom,is_this_message_only_case=True)
             message.save()
+
         chatroom.update_at = datetime.datetime.now()
         chatroom.save()
         order.related_case = case
@@ -1596,11 +1601,12 @@ class EditCase(APIView):
                 chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
                 chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
                 print(chatroom_set,1)
+                
                 if list(chatroom_set) != []:
                     chatroom_id = list(chatroom_set)[0]
                     print(chatroom_id,2)
                     chatroom = ChatRoom.objects.get(id=chatroom_id)
-                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                    message = ChatroomMessage(user=user,case=case,order=order,chatroom=chatroom,is_this_message_only_case=True)
                     message.save()
                 elif list(chatroom_set) == []:
                     chatroom = ChatRoom()
