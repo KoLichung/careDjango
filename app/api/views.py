@@ -126,7 +126,11 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
             # print(ChatroomMessage.objects.all())
             
             if ChatroomMessage.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
-                queryset[i].last_message = ChatroomMessage.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).order_by('-id').first().content[0:15]
+                last_message = ChatroomMessage.objects.filter(chatroom=queryset[i]).order_by('-id').first()
+                if last_message.is_this_message_only_case:
+                    queryset[i].last_message = '點我讀取案件訂單訊息！'
+                else:
+                    queryset[i].last_message = last_message.content[0:15]
             
             chat_rooms_not_read_messages = ChatroomMessage.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
             queryset[i].unread_num = chat_rooms_not_read_messages.count()
@@ -428,7 +432,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
 
         user.avg_rate = Review.objects.filter(servant=user,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
         user.about_me = User.objects.get(phone=user).about_me
-        user.reviews = Review.objects.filter(servant=user)
+        user.reviews = Review.objects.filter(servant=user).filter(~Q(servant_rating=0))
         serializer = self.get_serializer(user, context={"request":request})
         return Response(serializer.data)
 
@@ -906,7 +910,10 @@ class CreateCase(APIView):
                         orderIncreaseService = OrderIncreaseService()
                         orderIncreaseService.order = order
                         orderIncreaseService.service = Service.objects.get(id=service_id)
-                        orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                        if UserServiceShip.objects.filter(user=servant,service=Service.objects.get(id=service_id)).count() > 0:
+                            orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                        else:
+                            orderIncreaseService.increase_percent = 0
                         orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                         orderIncreaseService.save()
 
@@ -1142,7 +1149,10 @@ class CreateServantOrder(APIView):
                 orderIncreaseService = OrderIncreaseService()
                 orderIncreaseService.order = order
                 orderIncreaseService.service = Service.objects.get(id=service_id)
-                orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                if UserServiceShip.objects.filter(user=servant,service=Service.objects.get(id=service_id)).count() > 0:
+                    orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                else:
+                    orderIncreaseService.increase_percent = 0
                 orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                 orderIncreaseService.save()
 
