@@ -222,8 +222,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
     message_is_mine = serializers.BooleanField(read_only=True,default=False)
-    # order = OrderSerializer(read_only=True)
+    order = OrderSerializer(read_only=True)
     case_detail = CaseSerializer(read_only=True)
+
     class Meta:
         model = ChatroomMessage
         fields = '__all__'
