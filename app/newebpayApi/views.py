@@ -123,7 +123,7 @@ class MpgTrade(APIView):
 
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         timeStamp = int( time.time() )
-        item_desc = "時薪 $"+ str(order.wage_hour) + "共" + str(order.work_hours) + "小時"
+        item_desc = "時薪 $"+ str(order.wage_hour) + " 共 " + str(order.work_hours) + " 小時"
         Version = "2.0"
         # order_id = '4'
         merchant_id = "ACE00009"
@@ -343,6 +343,17 @@ class NotifyUrlCallback(APIView):
                 payInfo.OrderInfoTradeAmt = data_json['Result']['Amt']
                 payInfo.OrderInfoPaymentType = data_json['Result']['PaymentType']
                 payInfo.OrderInfoPayTime = data_json['Result']['PayTime']
+
+                #change order state
+                order = Order.objects.get(id=payInfo.OrderInfoTradeNo)
+                order.state='paid'
+
+                case = order.case
+                case.servant = order.servant
+
+                order.save()
+                case.save()
+
                 try:
                     payInfo.OrderInfoTradeStatus = data_json['Result']['TradeStatus']
                 except:

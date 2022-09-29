@@ -1369,7 +1369,7 @@ class EditCase(APIView):
     def post(self, request, format=None):
         user = self.request.user
         case_id = self.request.query_params.get('case_id')
-        city_id = self.request.query_params.get('city')
+        countyId = self.request.query_params.get('county')
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
         weekday = self.request.query_params.get('weekday')
@@ -1407,7 +1407,8 @@ class EditCase(APIView):
 
         case = Case.objects.get(id=case_id)
         if case.user == user:
-            case.city = City.objects.get(id=city_id)
+            case.county = County.objects.get(id=countyId)
+            case.city = case.county.city
             
             if care_type == 'home' and request.data.get('road_name')!=None:
                 case.road_name = request.data.get('road_name')
