@@ -850,8 +850,8 @@ class CreateCase(APIView):
                 order.save()
                 transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
                 order.transfer_fee = transfer_fee
-                weekdays = order.case.weekday.split(',')
                 if order.case.is_continuous_time == False:
+                    weekdays = order.case.weekday.split(',')
                     for weekday in weekdays:
                         orderWeekday = OrderWeekDay()
                         orderWeekday.order = order
@@ -869,14 +869,14 @@ class CreateCase(APIView):
                     one_day_work_hours = order.end_time - order.start_time
                     if order.case.care_type == 'home':
                         if one_day_work_hours < 12:
-                            wage = order.servant.home_hour_wage
+                            wage = servant.home_hour_wage
                         elif one_day_work_hours >=12 and total_hours < 24:
-                            wage = round(order.servant.home_half_day_wage/12)
+                            wage = round(servant.home_half_day_wage/12)
                     elif order.case.care_type == 'hospital':
                         if one_day_work_hours < 12:
-                            wage = order.servant.hospital_hour_wage
+                            wage = servant.hospital_hour_wage
                         elif one_day_work_hours >=12 and total_hours < 24:
-                            wage = round(order.servant.hospital_half_day_wage/12)
+                            wage = round(servant.hospital_half_day_wage/12)
                 else:
                     order.number_of_transfer = 1
                     order.amount_transfer_fee = transfer_fee * 1
@@ -888,19 +888,19 @@ class CreateCase(APIView):
                     order.work_hours = total_hours
                     if order.case.care_type == 'home':
                         if total_hours < 12:
-                            wage = order.case.servant.home_hour_wage
+                            wage = servant.home_hour_wage
                         elif total_hours >=12 and total_hours < 24:
-                            wage = round(order.case.servant.home_half_day_wage/12)
+                            wage = round(servant.home_half_day_wage/12)
                         else:
-                            wage = round(order.case.servant.home_one_day_wage/24)
+                            wage = round(servant.home_one_day_wage/24)
                     elif order.case.care_type == 'hospital':
                         if total_hours < 12:
-                            wage = order.case.servant.hospital_hour_wage
+                            wage = servant.hospital_hour_wage
                         elif total_hours >=12 and total_hours < 24:
-                            wage = round(order.case.servant.hospital_half_day_wage/12)
+                            wage = round(servant.hospital_half_day_wage/12)
                         else:
-                            wage = round(order.case.servant.hospital_one_day_wage/24)
-
+                            wage = round(servant.hospital_one_day_wage/24)
+                order.wage_hour =wage
                 order.base_money = order.work_hours * wage
 
                 # need to change in the future
@@ -927,7 +927,7 @@ class CreateCase(APIView):
                 order.platform_money = order.total_money * (order.platform_percent/100)
                 order.save()
 
-                receiveBooking(servant,case)
+                receiveBooking(servant,order)
                 chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
                 chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
                 chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
@@ -1139,7 +1139,7 @@ class CreateServantOrder(APIView):
                     wage = round(order.case.servant.hospital_half_day_wage/12)
                 else:
                     wage = round(order.case.servant.hospital_one_day_wage/24)
-
+        order.wage_hour =wage
         order.base_money = order.work_hours * wage
 
         # need to change in the future
@@ -1166,7 +1166,7 @@ class CreateServantOrder(APIView):
         order.platform_money = order.total_money * (order.platform_percent/100)
         order.save()
 
-        receiveBooking(servant,case)
+        receiveBooking(servant,order)
         chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
         chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
         chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
@@ -1296,7 +1296,7 @@ class EarlyTermination(APIView):
                         wage = round(order.case.servant.hospital_half_day_wage/12)
                     else:
                         wage = round(order.case.servant.hospital_one_day_wage/24)
-
+            order.wage_hour =wage
             order.base_money = order.work_hours * wage
             order.save()
 
@@ -1572,7 +1572,7 @@ class EditCase(APIView):
                             wage = round(order.case.servant.hospital_half_day_wage/12)
                         else:
                             wage = round(order.case.servant.hospital_one_day_wage/24)
-
+                order.wage_hour =wage
                 order.base_money = order.work_hours * wage
 
                 # need to change in the future
@@ -1596,7 +1596,7 @@ class EditCase(APIView):
                 order.platform_money = order.total_money * (order.platform_percent/100)
                 order.save()
 
-                receiveBooking(servant,case)
+                receiveBooking(servant,order)
                 chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
                 chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
                 chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))

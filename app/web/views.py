@@ -11,6 +11,9 @@ from messageApp.tasks import *
 import urllib
 from datetime import date ,timedelta
 import datetime
+from django.contrib import messages
+import tkinter as tk
+from tkinter import messagebox
 import json
 from urllib import parse
 import requests
@@ -627,56 +630,30 @@ def search_carer_detail(request):
             reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')
     else:
         reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')
-
+    defaultStartTime = start_time
+    defaultEndTime = end_time
     if request.method == 'POST':
         if request.user.is_authenticated:
             user = request.user
-            care_type = request.POST.get('care_type')
-            city = request.POST.get('city')
-            start_end_date = request.POST.get('start_end_date')
-            is_continuous_time = request.POST.get('is_continuous_time')
-            start_time = request.POST.get('timepicker_startTime')
-            end_time = request.POST.get('timepicker_endTime')
-            weekdays = request.POST.getlist('weekdays[]')
-            defaultStartEndDate = start_end_date
-            start_date = start_end_date.split(' to ')[0]
-            end_date = start_end_date.split(' to ')[1]
-            start_date = datetime.datetime.strptime(start_date,"%y/%m/%d")
-            end_date = datetime.datetime.strptime(end_date,"%y/%m/%d")
-            print(care_type)
-            weekday_str = ''
-            count = 0
-            for weekday in weekdays:
-                count += 1
-                weekday_str += weekday 
-                if count < len(weekdays):
-                    weekday_str += ','
-            if TempCase.objects.filter(user=user,servant=servant,is_booking=True).exists() != False:
-                tempcase = TempCase.objects.get(user=user,servant=servant,is_booking=True)
+            if user == servant:
+                # root = tk.Tk()
+                # root.withdraw()
+                # messagebox.showwarning('alert title', 'Bad things happened!')
+                return render(request, 'web/search_carer_detail.html',{'servant_care_type':servant_care_type, 'weekdays':weekdays, 'cityName':city,'citys':citys, 'is_continuous_time':is_continuous_time, 'defaultStartTime':defaultStartTime,'defaultEndTime':defaultEndTime,'defaultStartEndDate':defaultStartEndDate,'weekday_list':weekday_list, 'servant':servant,'license_not_provide':license_not_provide,'reviews':reviews,'citys':citys,'care_type':care_type,'alert_flag': True})
             else:
-                tempcase = TempCase()
-            tempcase.user = user
-            tempcase.servant = servant
-            tempcase.is_booking = True
-            tempcase.care_type = care_type
-            tempcase.city = City.objects.get(id=city).name
-            if start_time != None: 
-                start_time = start_time.split(':')
-                start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
-                tempcase.start_time = start_time_int
-            if end_time != None:
-                end_time = end_time.split(':')
-                end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
-                tempcase.end_time = end_time_int
-            if start_date != None: 
-                tempcase.start_datetime = start_date
-            if end_date != None:
-                tempcase.end_datetime = end_date
-            if is_continuous_time == 'True':
-                tempcase.is_continuous_time = True
-            else:
-                tempcase.is_continuous_time = False
+                care_type = request.POST.get('care_type')
+                city = request.POST.get('city')
+                start_end_date = request.POST.get('start_end_date')
+                is_continuous_time = request.POST.get('is_continuous_time')
+                start_time = request.POST.get('timepicker_startTime')
+                end_time = request.POST.get('timepicker_endTime')
                 weekdays = request.POST.getlist('weekdays[]')
+                defaultStartEndDate = start_end_date
+                start_date = start_end_date.split(' to ')[0]
+                end_date = start_end_date.split(' to ')[1]
+                start_date = datetime.datetime.strptime(start_date,"%y/%m/%d")
+                end_date = datetime.datetime.strptime(end_date,"%y/%m/%d")
+                print(care_type)
                 weekday_str = ''
                 count = 0
                 for weekday in weekdays:
@@ -684,9 +661,42 @@ def search_carer_detail(request):
                     weekday_str += weekday 
                     if count < len(weekdays):
                         weekday_str += ','
-                tempcase.weekday = weekday_str
-            tempcase.save()
-            return redirect_params('booking_patient_info',{'weekdays':weekday_str, 'city':city,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_end_date':start_end_date,'start_time':start_time,'end_time':end_time,'servant':servant.id})
+                if TempCase.objects.filter(user=user,servant=servant,is_booking=True).exists() != False:
+                    tempcase = TempCase.objects.get(user=user,servant=servant,is_booking=True)
+                else:
+                    tempcase = TempCase()
+                tempcase.user = user
+                tempcase.servant = servant
+                tempcase.is_booking = True
+                tempcase.care_type = care_type
+                tempcase.city = City.objects.get(id=city).name
+                if start_time != None: 
+                    start_time = start_time.split(':')
+                    start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
+                    tempcase.start_time = start_time_int
+                if end_time != None:
+                    end_time = end_time.split(':')
+                    end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
+                    tempcase.end_time = end_time_int
+                if start_date != None: 
+                    tempcase.start_datetime = start_date
+                if end_date != None:
+                    tempcase.end_datetime = end_date
+                if is_continuous_time == 'True':
+                    tempcase.is_continuous_time = True
+                else:
+                    tempcase.is_continuous_time = False
+                    weekdays = request.POST.getlist('weekdays[]')
+                    weekday_str = ''
+                    count = 0
+                    for weekday in weekdays:
+                        count += 1
+                        weekday_str += weekday 
+                        if count < len(weekdays):
+                            weekday_str += ','
+                    tempcase.weekday = weekday_str
+                tempcase.save()
+                return redirect_params('booking_patient_info',{'weekdays':weekday_str, 'city':city,'care_type':care_type,'is_continuous_time':is_continuous_time,'start_end_date':start_end_date,'start_time':start_time,'end_time':end_time,'servant':servant.id})
         else:
             return redirect('login')
     defaultStartTime = start_time
@@ -1191,7 +1201,7 @@ def booking_confirm(request):
                     wage = round(order.case.servant.hospital_half_day_wage/12)
                 else:
                     wage = round(order.case.servant.hospital_one_day_wage/24)
-
+        order.wage_hour =wage
         order.base_money = order.work_hours * wage
         order.platform_percent = 10
         order.save()
@@ -1219,7 +1229,7 @@ def booking_confirm(request):
         order.platform_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * (order.platform_percent/100)
         order.save()
 
-        receiveBooking(servant,order.case)
+        receiveBooking(servant,order)
 
         chatroom = ChatRoom.objects.create(update_at=datetime.datetime.now())
         ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
@@ -1228,6 +1238,7 @@ def booking_confirm(request):
         message.user = user
         message.is_this_message_only_case = True
         message.case = case
+        message.order = order
         chatroom.update_at = datetime.datetime.now()
         chatroom.save()
         message.save()
@@ -1425,7 +1436,7 @@ def requirement_detail(request):
                 else:
                     wage = round(order.case.servant.hospital_one_day_wage/24)
                     order.wage_one_day = wage
-
+        order.wage_hour =wage
         order.base_money = order.work_hours * wage
         order.save()
 
@@ -1456,14 +1467,14 @@ def requirement_detail(request):
             chatroom_id = list(chatroom_set)[0]
             print(chatroom_id)
             chatroom = ChatRoom.objects.get(id=chatroom_id)
-            message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+            message = ChatroomMessage(user=user,case=order.case,order=order,chatroom=chatroom,is_this_message_only_case=True)
             message.save()
         elif list(chatroom_set) == []:
             chatroom = ChatRoom()
             chatroom.save()
             ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
             ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
-            message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+            message = ChatroomMessage(user=user,case=order.case,order=order,chatroom=chatroom,is_this_message_only_case=True)
             message.save()
             
         chatroom.update_at = datetime.datetime.now()
@@ -2238,17 +2249,18 @@ def request_form_confirm(request):
 
     service = tempcase.service
     service_list = []
+    service_ids = []
     if service != None and service != '':
-        service_Idlist = service.split(',')
-        for service_id in service_Idlist:
+        service_ids = service.split(',')
+        for service_id in service_ids:
             service_list.append(Service.objects.get(id=service_id))
             servant_ids = list(UserServiceShip.objects.filter(service=Service.objects.get(id=service_id)).values_list('user', flat=True))
     
     increase_service = tempcase.increase_service
     increase_service_list = []
     if increase_service != None and increase_service != '':
-        increase_service_Idlist = increase_service.split(',')
-        for increase_service_id in increase_service_Idlist:
+        increase_service_ids = increase_service.split(',')
+        for increase_service_id in increase_service_ids:
             increase_service_list.append(Service.objects.get(id=increase_service_id))
     
     is_continuous_time = tempcase.is_continuous_time
@@ -2335,7 +2347,7 @@ def request_form_confirm(request):
         case.emergencycontact_relation = tempcase.emergencycontact_relation
         case.emergencycontact_phone = tempcase.emergencycontact_phone
         case.save()
-        tempcase.delete()
+        
 
         for disease in disease_list:
             CaseDiseaseShip.objects.create(case=case,disease=disease)
@@ -2348,11 +2360,100 @@ def request_form_confirm(request):
         for increase_service in increase_service_list:
             CaseServiceShip.objects.create(case=case,service=increase_service)
         
-        for choose_servant_id in choose_servant_ids:
-            choose_servant = User.objects.get(id=choose_servant_id)
-            receiveBooking(choose_servant,case)
+        for servant_id in choose_servant_ids:
+            servant = User.objects.get(id=servant_id)
+            order = Order()
+            order.case = case
+            order.user = case.user
+            order.servant = servant
+            order.state = 'unPaid'
+            order.start_datetime = case.start_datetime
+            order.end_datetime = case.end_datetime
+            order.start_time = order.case.start_time
+            order.end_time = order.case.end_time
+            order.save()
+            transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
+            order.transfer_fee = transfer_fee
+            
+            if order.case.is_continuous_time == False:
+                weekdays = order.case.weekday.split(',')
+                for weekday in weekdays:
+                    orderWeekday = OrderWeekDay()
+                    orderWeekday.order = order
+                    orderWeekday.weekday = weekday
+                    orderWeekday.save()
+                weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+                total_hours = 0
+                number_of_transfer = 0
+                for i in weekday_list:
+                    number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
+                    total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+                order.work_hours = total_hours
+                order.number_of_transfer = number_of_transfer
+                order.amount_transfer_fee = transfer_fee * number_of_transfer
+                one_day_work_hours = order.end_time - order.start_time
+                if order.case.care_type == 'home':
+                    if one_day_work_hours < 12:
+                        wage = servant.home_hour_wage
+                    elif one_day_work_hours >=12 and total_hours < 24:
+                        wage = round(servant.home_half_day_wage/12)
+                elif order.case.care_type == 'hospital':
+                    if one_day_work_hours < 12:
+                        wage = servant.hospital_hour_wage
+                    elif one_day_work_hours >=12 and total_hours < 24:
+                        wage = round(servant.hospital_half_day_wage/12)
+            else:
+                order.number_of_transfer = 1
+                order.amount_transfer_fee = transfer_fee * 1
+                diff = order.end_datetime - order.start_datetime
+                days, seconds = diff.days, diff.seconds
+                hours = days * 24 + seconds // 3600
+                minutes = (seconds % 3600) // 60
+                total_hours = hours + round(minutes/60)
+                order.work_hours = total_hours
+                if order.case.care_type == 'home':
+                    if total_hours < 12:
+                        wage = servant.home_hour_wage
+                    elif total_hours >=12 and total_hours < 24:
+                        wage = round(servant.home_half_day_wage/12)
+                    else:
+                        wage = round(servant.home_one_day_wage/24)
+                elif order.case.care_type == 'hospital':
+                    if total_hours < 12:
+                        wage = servant.hospital_hour_wage
+                    elif total_hours >=12 and total_hours < 24:
+                        wage = round(servant.hospital_half_day_wage/12)
+                    else:
+                        wage = round(servant.hospital_one_day_wage/24)
+            order.wage_hour =wage
+            order.base_money = order.work_hours * wage
+
+            # need to change in the future
+            order.platform_percent = 15
+            order.save()
+            Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+            if service_ids != []:
+                for service_id in service_ids:
+                    if int(service_id) <= 4:
+                        orderIncreaseService = OrderIncreaseService()
+                        orderIncreaseService.order = order
+                        orderIncreaseService.service = Service.objects.get(id=service_id)
+                        if UserServiceShip.objects.filter(user=servant,service=Service.objects.get(id=service_id)).count() > 0:
+                            orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                        else:
+                            orderIncreaseService.increase_percent = 0
+                        orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                        orderIncreaseService.save()
+
+            if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
+                order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+            else:
+                order.total_money = order.base_money
+            order.platform_money = order.total_money * (order.platform_percent/100)
+            order.save()
+            receiveBooking(servant,order)
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
-            chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=choose_servant).values_list('chatroom', flat=True))
+            chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
             chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
             if list(chatroom_set) != []:
                 chatroom_id = list(chatroom_set)[0]
@@ -2364,11 +2465,12 @@ def request_form_confirm(request):
                 chatroom = ChatRoom()
                 chatroom.save()
                 ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
-                ChatroomUserShip.objects.create(user=choose_servant,chatroom=chatroom)
+                ChatroomUserShip.objects.create(user=servant,chatroom=chatroom)
                 message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
             chatroom.update_at = datetime.datetime.now()
             chatroom.save()
+            tempcase.delete()
         return redirect('index')
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect('request_form_contact')

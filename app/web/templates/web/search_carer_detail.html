@@ -280,11 +280,15 @@
                     <button class="full-green-button" id="submit_button">申請預訂</button>
                   </a>
                 </div>
+                {% if alert_flag %}
+                    <script>alert("無法發訂單給自己!")</script>  
+                {% endif %}
                 <input type="hidden" id="time" >
               </div>
               </form>
             </div>
           </div>  
+          
     </div>
   </div>
   <script type="text/javascript">
@@ -468,8 +472,6 @@
           }
       });
     }
-    
-    
   </script>
 </main>
 {% endblock %}

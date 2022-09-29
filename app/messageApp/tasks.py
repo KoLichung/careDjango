@@ -41,17 +41,17 @@ def sendFCMMessage(user,title,text):
 #====================================
 
 # [服務者]收到訂單
-def receiveBooking(user,case):
-    content_text = "您收到來自"+ case.user.name +"的預訂申請，請利用聊聊與對方聯絡。"
-    message = SystemMessage(case=case,user=user,content=content_text)
+def receiveBooking(user,order):
+    content_text = "您收到來自"+ order.case.user.name +"的預訂申請，請利用聊聊與對方聯絡。"
+    message = SystemMessage(case=order.case,user=user,order=order,content=content_text)
     message.save()
-    sendFCMMessage(case.servant, '收到訂單', content_text)
+    sendFCMMessage(order.case.servant, '收到訂單', content_text)
     
 
 # 需求者付款, [服務者]收到訂單成立
 def servantOrderEstablished(user,order):
     content_text = "您已成功接案！"+ order.user.name +"的預定已成立～您可前往會員中心-我接的案查詢詳情。"
-    message = SystemMessage(case=order.case,user=user,content=content_text)
+    message = SystemMessage(case=order.case,user=user,order=order,content=content_text)
     message.save()
     sendFCMMessage(order.servant, '訂單成立', content_text)
     
@@ -59,7 +59,7 @@ def servantOrderEstablished(user,order):
 # [需求者] 收到服務者已接案
 def neederOrderEstablished(user,order):
     content_text = "您的定單已成立！您可前往會員中心-訂單管理查詢詳情。"
-    message = SystemMessage(case=order.case,user=order.user,content=content_text)
+    message = SystemMessage(case=order.case,order=order,user=order.user,content=content_text)
     message.save()
     sendFCMMessage(order.user, '訂單成立', content_text)
     
@@ -67,7 +67,7 @@ def neederOrderEstablished(user,order):
 # [服務者] 收到訂單取消
 def orderCancel(user,order):
     content_text = "很抱歉，"+ order.user.name +"的定單已取消，請您不用前往服務!"
-    message = SystemMessage(case=order.case,user=user,content=content_text)
+    message = SystemMessage(case=order.case,user=user,order=order,content=content_text)
     message.save()
     sendFCMMessage(order.servant, '訂單取消', content_text)
     
@@ -75,7 +75,7 @@ def orderCancel(user,order):
 # [服務者] 收到訂單提前結束
 def orderEarlyTermination(user,order):
     content_text = "請注意！"+ order.user.name +"的定單已申請「提前結束」，確認交接完成，即可收班。"
-    message = SystemMessage(case=order.case,user=user,content=content_text)
+    message = SystemMessage(case=order.case,order=order,user=user,content=content_text)
     message.save()
     sendFCMMessage(order.servant, '訂單提前結束', content_text)
     

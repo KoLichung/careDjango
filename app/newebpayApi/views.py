@@ -119,25 +119,25 @@ class MpgTrade(APIView):
 
     def get(self, request, format=None):
         order_id = self.request.query_params.get('order_id')
-        # order = Order.objects.get(id=order_id)
+        order = Order.objects.get(id=order_id)
 
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         timeStamp = int( time.time() )
-
+        item_desc = "時薪 $"+ str(order.wage_hour) + "共" + str(order.work_hours) + "小時"
         Version = "2.0"
         # order_id = '4'
         merchant_id = "ACE00009"
         key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
         iv = "C3RqE64KeXb3RPqP"
-
+        Amt = str(order.total_money)
         data = {
             "Version": Version,
             "MerchantID" : merchant_id,
             "RespondType": "JSON",
             "TimeStamp": timeStamp,
             "MerchantOrderNo": order_id,
-            "Amt": 3000,
-            "ItemDesc": "test",       
+            "Amt": Amt,
+            "ItemDesc": item_desc,       
             "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback",
             "ClientBackURL": "http://202.182.105.11/newebpayApi/success_pay",
         }

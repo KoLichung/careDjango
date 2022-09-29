@@ -116,7 +116,7 @@
                           <div>
                             {% for increase_service in increase_service_ships %}
                             <div class="form-check">
-                              <input class="form-check-input" id="increase_service_{{increase_service.service.id}}" type="checkbox" name="increase_services[]" {% if increase_service in increase_service_list %}checked=""{% endif %} value="{{increase_service.service.id}}" />
+                              <input class="form-check-input" id="increase_service_{{increase_service.service.id}}" type="checkbox" name="increase_services[]" {% if increase_service.service.id == 3 or increase_service.service.id == 4 %}onclick="return false;"{% endif %} {% if increase_service in increase_service_list %}checked=""{% endif %} value="{{increase_service.service.id}}" />
                               <label class="h6 mb-0" for="increase_services[]">{{increase_service.service}}</label>
                             </div>
                             {% endfor %}
