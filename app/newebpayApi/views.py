@@ -118,7 +118,9 @@ class CreateMerchant(APIView):
 class MpgTrade(APIView):
 
     def get(self, request, format=None):
+        print('test')
         order_id = self.request.query_params.get('order_id')
+        print(order_id)
         order = Order.objects.get(id=order_id)
 
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'

@@ -79,6 +79,9 @@
                   </p>
             </div>
             <button class="full-purple-button mt-3 mb-5" type="submit">我可以接案</button>
+            {% if alert_flag %}
+                <script>alert("無法發訂單給自己!")</script>  
+            {% endif %}
           </div>
 
         </div>
