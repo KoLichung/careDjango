@@ -1513,9 +1513,8 @@ class EditCase(APIView):
                 servant = User.objects.get(id=servant_id)
                 
                 if Order.objects.filter(case=case,servant=servant).count() != 0:
-                    old_order = Order.objects.get(case=case,servant=servant)
-                    old_order.state = 'canceled'
-                    old_order.save()
+                    Order.objects.filter(case=case,servant=servant).update(state='canceled')
+             
                 order = Order()
                 order.case = case
                 order.user = case.user
