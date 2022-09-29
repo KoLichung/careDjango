@@ -1147,17 +1147,18 @@ class CreateServantOrder(APIView):
         order.save()
         Review.objects.create(order=order,case=order.case,servant=order.case.servant)
 
-        for service_id in service_idList:
-            if int(service_id) <= 4:
-                orderIncreaseService = OrderIncreaseService()
-                orderIncreaseService.order = order
-                orderIncreaseService.service = Service.objects.get(id=service_id)
-                if UserServiceShip.objects.filter(user=servant,service=Service.objects.get(id=service_id)).count() > 0:
-                    orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
-                else:
-                    orderIncreaseService.increase_percent = 0
-                orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
-                orderIncreaseService.save()
+        if service != None and service != '':
+            for service_id in service_idList:
+                if int(service_id) <= 4:
+                    orderIncreaseService = OrderIncreaseService()
+                    orderIncreaseService.order = order
+                    orderIncreaseService.service = Service.objects.get(id=service_id)
+                    if UserServiceShip.objects.filter(user=servant,service=Service.objects.get(id=service_id)).count() > 0:
+                        orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                    else:
+                        orderIncreaseService.increase_percent = 0
+                    orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                    orderIncreaseService.save()
 
         if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
             order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
@@ -1377,7 +1378,8 @@ class EditCase(APIView):
         start_time = start_time.split(':')
         end_time = self.request.query_params.get('end_time')
         end_time = end_time.split(':')
-        
+        servant_id = request.query_params.get('servant_id')
+
         #home, hospital
         care_type = request.data.get('care_type')
         is_continuous_time = request.data.get('is_continuous_time')
@@ -1401,9 +1403,6 @@ class EditCase(APIView):
         emergencycontact_name = request.data.get('emergencycontact_name')
         emergencycontact_relation = request.data.get('emergencycontact_relation')
         emergencycontact_phone = request.data.get('emergencycontact_phone')
-
-        #searvant_ids=1,4,7 => 要產生 message, order
-        servant_id = request.data.get('servant_id')
 
         case = Case.objects.get(id=case_id)
         if case.user == user:
@@ -1509,8 +1508,8 @@ class EditCase(APIView):
                 CaseServiceShip.objects.filter(case=case).delete()
 
             # 這邊要針對個別 servant 產生訂單~ 要有系統訊息, 推播訊息, 並檢查 transferFee, roadName, hospitalName 等新欄位
-            if servant_id != None:
-                
+            if servant_id != None and servant_id != '':
+
                 servant = User.objects.get(id=servant_id)
                 
                 if Order.objects.filter(case=case,servant=servant).count() != 0:
@@ -1527,8 +1526,13 @@ class EditCase(APIView):
                 order.start_time = order.case.start_time
                 order.end_time = order.case.end_time
                 order.save()
-                transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
-                order.transfer_fee = transfer_fee
+
+                if UserServiceLocation.objects.filter(user=order.servant,city=order.case.city).count() != 0:
+                    transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
+                    order.transfer_fee = transfer_fee
+                else:
+                    order.transfer_fee = 0
+                
                 weekdays = order.case.weekday.split(',')
                 if order.case.is_continuous_time == False:
                     for weekday in weekdays:
@@ -1558,7 +1562,7 @@ class EditCase(APIView):
                             wage = round(order.servant.hospital_half_day_wage/12)
                 else:
                     order.number_of_transfer = 1
-                    order.amount_transfer_fee = transfer_fee * 1
+                    order.amount_transfer_fee = order.transfer_fee * 1
                     diff = order.end_datetime - order.start_datetime
                     days, seconds = diff.days, diff.seconds
                     hours = days * 24 + seconds // 3600
@@ -1587,14 +1591,15 @@ class EditCase(APIView):
                 order.save()
                 Review.objects.create(order=order,case=order.case,servant=order.case.servant)
 
-                for service_id in service_ids:
-                    if int(service_id) <= 4:
-                        orderIncreaseService = OrderIncreaseService()
-                        orderIncreaseService.order = order
-                        orderIncreaseService.service = Service.objects.get(id=service_id)
-                        orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
-                        orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
-                        orderIncreaseService.save()
+                if service != None and service != '':
+                    for service_id in service_ids:
+                        if int(service_id) <= 4:
+                            orderIncreaseService = OrderIncreaseService()
+                            orderIncreaseService.order = order
+                            orderIncreaseService.service = Service.objects.get(id=service_id)
+                            orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                            orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                            orderIncreaseService.save()
 
                 if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
                     order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
@@ -1636,6 +1641,7 @@ class EditCase(APIView):
             return Response(serializer.data)
         else:
             return Response('no auth')
+
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]
