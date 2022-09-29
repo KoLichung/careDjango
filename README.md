@@ -27,6 +27,33 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220929:
+昨天的問題：
+1.newebpayApi 的 幕前交易 MpgTrade 串好, item_desc 寫 “時薪 $245 共 18 小時”
+
+1.建立預訂單或需求單時, ChatroomMessage, SystemMessage 也要給 order => 檢查 web 的部分
+2.要判斷, 不要讓發案者自己發訂單給自己!! => 檢查 web 的部分 
+a. /web/search_carer_detail => 彈出 dialog 說 "無法發訂單給自己!" / 確定~
+b. 在需求頁的第四個步驟 => 不要返回自己的 servant ~
+c. 我可以接案 detail 頁~ 同 a
+3.計算 Platform Percent (寫成一個 function) => web 
+藍新手續費固定2.8%
+階段收費
+基本6.5%
+120h後5.5%
+240h後4.5%
+360h後4%
+Ex. 基本是 6.5%+2.8%= 9.4%
+
+撈出當月 start_date 且 state="paid" 的訂單s 來計算
+9/20~10/20 130hr (用訂單的 start_date 來算)
+9/1~9/15 100hr 
+當下訂單
+9/25~10/10 50hr
+(130+100+50=280用 4.5%)
+訂單超過 240hr, 即 4.5%
+
+
 20220928
 昨天的問題：
 1.api views 
