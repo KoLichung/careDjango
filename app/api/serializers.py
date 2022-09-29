@@ -213,7 +213,7 @@ class CaseSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     related_case = CaseSerializer(read_only=True)
-    # servant = ServantSerializer(read_only=True)
+    servant = ServantSerializer(read_only=True)
     increase_services = OrderIncreaseServiceSerializer(read_only=True, many=True)
     class Meta:
         model = Order
