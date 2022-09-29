@@ -12,8 +12,8 @@ import urllib
 from datetime import date ,timedelta
 import datetime
 from django.contrib import messages
-import tkinter as tk
-from tkinter import messagebox
+# import tkinter as tk
+# from tkinter import messagebox
 import json
 from urllib import parse
 import requests
