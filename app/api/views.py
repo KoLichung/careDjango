@@ -906,7 +906,7 @@ class CreateCase(APIView):
                 # need to change in the future
                 order.platform_percent = 15
                 order.save()
-                Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+                Review.objects.create(order=order,case=order.case,servant=order.servant)
 
                 for service_id in service_ids:
                     if int(service_id) <= 4:
@@ -999,7 +999,7 @@ class CreateServantOrder(APIView):
 
         case = Case()
         case.user = user
-        case.servant = servant
+        # case.servant = servant
         case.county = County.objects.get(id=county_id)
         case.city = case.county.city
 
@@ -1080,7 +1080,7 @@ class CreateServantOrder(APIView):
         order = Order()
         order.case = case
         order.user = case.user
-        order.servant = case.servant
+        order.servant = servant
         order.state = 'unPaid'
         order.start_datetime = case.start_datetime
         order.end_datetime = case.end_datetime
@@ -1108,14 +1108,14 @@ class CreateServantOrder(APIView):
             one_day_work_hours = order.end_time - order.start_time
             if order.case.care_type == 'home':
                 if one_day_work_hours < 12:
-                    wage = order.case.servant.home_hour_wage
+                    wage = order.servant.home_hour_wage
                 elif one_day_work_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.home_half_day_wage/12)
+                    wage = round(order.servant.home_half_day_wage/12)
             elif order.case.care_type == 'hospital':
                 if one_day_work_hours < 12:
-                    wage = order.case.servant.hospital_hour_wage
+                    wage = order.servant.hospital_hour_wage
                 elif one_day_work_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                    wage = round(order.servant.hospital_half_day_wage/12)
         else:
             order.number_of_transfer = 1
             order.amount_transfer_fee = transfer_fee * 1
@@ -1127,25 +1127,25 @@ class CreateServantOrder(APIView):
             order.work_hours = total_hours
             if order.case.care_type == 'home':
                 if total_hours < 12:
-                    wage = order.case.servant.home_hour_wage
+                    wage = order.servant.home_hour_wage
                 elif total_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.home_half_day_wage/12)
+                    wage = round(order.servant.home_half_day_wage/12)
                 else:
-                    wage = round(order.case.servant.home_one_day_wage/24)
+                    wage = round(order.servant.home_one_day_wage/24)
             elif order.case.care_type == 'hospital':
                 if total_hours < 12:
-                    wage = order.case.servant.hospital_hour_wage
+                    wage = order.servant.hospital_hour_wage
                 elif total_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                    wage = round(order.servant.hospital_half_day_wage/12)
                 else:
-                    wage = round(order.case.servant.hospital_one_day_wage/24)
+                    wage = round(order.servant.hospital_one_day_wage/24)
         order.wage_hour =wage
         order.base_money = order.work_hours * wage
 
         # need to change in the future
         order.platform_percent = 15
         order.save()
-        Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+        Review.objects.create(order=order,case=order.case,servant=order.servant)
 
         if service != None and service != '':
             for service_id in service_idList:
@@ -1266,14 +1266,14 @@ class EarlyTermination(APIView):
                 one_day_work_hours = order.end_time - order.start_time
                 if order.case.care_type == 'home':
                     if one_day_work_hours < 12:
-                        wage = order.case.servant.home_hour_wage
+                        wage = order.servant.home_hour_wage
                     elif one_day_work_hours >=12 and total_hours < 24:
-                        wage = round(order.case.servant.home_half_day_wage/12)
+                        wage = round(order.servant.home_half_day_wage/12)
                 elif order.case.care_type == 'hospital':
                     if one_day_work_hours < 12:
-                        wage = order.case.servant.hospital_hour_wage
+                        wage = order.servant.hospital_hour_wage
                     elif one_day_work_hours >=12 and total_hours < 24:
-                        wage = round(order.case.servant.hospital_half_day_wage/12)
+                        wage = round(order.servant.hospital_half_day_wage/12)
             else:
                 order.number_of_transfer = 1
                 order.amount_transfer_fee = transfer_fee * 1
@@ -1285,18 +1285,18 @@ class EarlyTermination(APIView):
                 order.work_hours = total_hours
                 if order.case.care_type == 'home':
                     if total_hours < 12:
-                        wage = order.case.servant.home_hour_wage
+                        wage = order.servant.home_hour_wage
                     elif total_hours >=12 and total_hours < 24:
-                        wage = round(order.case.servant.home_half_day_wage/12)
+                        wage = round(order.servant.home_half_day_wage/12)
                     else:
-                        wage = round(order.case.servant.home_one_day_wage/24)
+                        wage = round(order.servant.home_one_day_wage/24)
                 elif order.case.care_type == 'hospital':
                     if total_hours < 12:
-                        wage = order.case.servant.hospital_hour_wage
+                        wage = order.servant.hospital_hour_wage
                     elif total_hours >=12 and total_hours < 24:
-                        wage = round(order.case.servant.hospital_half_day_wage/12)
+                        wage = round(order.servant.hospital_half_day_wage/12)
                     else:
-                        wage = round(order.case.servant.hospital_one_day_wage/24)
+                        wage = round(order.servant.hospital_one_day_wage/24)
             order.wage_hour =wage
             order.base_money = order.work_hours * wage
             order.save()
@@ -1571,25 +1571,25 @@ class EditCase(APIView):
                     order.work_hours = total_hours
                     if order.case.care_type == 'home':
                         if total_hours < 12:
-                            wage = order.case.servant.home_hour_wage
+                            wage = order.servant.home_hour_wage
                         elif total_hours >=12 and total_hours < 24:
-                            wage = round(order.case.servant.home_half_day_wage/12)
+                            wage = round(order.servant.home_half_day_wage/12)
                         else:
-                            wage = round(order.case.servant.home_one_day_wage/24)
+                            wage = round(order.servant.home_one_day_wage/24)
                     elif order.case.care_type == 'hospital':
                         if total_hours < 12:
-                            wage = order.case.servant.hospital_hour_wage
+                            wage = order.servant.hospital_hour_wage
                         elif total_hours >=12 and total_hours < 24:
-                            wage = round(order.case.servant.hospital_half_day_wage/12)
+                            wage = round(order.servant.hospital_half_day_wage/12)
                         else:
-                            wage = round(order.case.servant.hospital_one_day_wage/24)
+                            wage = round(order.servant.hospital_one_day_wage/24)
                 order.wage_hour =wage
                 order.base_money = order.work_hours * wage
 
                 # need to change in the future
                 order.platform_percent = 15
                 order.save()
-                Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+                Review.objects.create(order=order,case=order.case,servant=order.servant)
 
                 if service != None and service != '':
                     for service_id in service_ids:
