@@ -808,7 +808,7 @@ class CreateCase(APIView):
             case.emergencycontact_phone = emergencycontact_phone
         case.save()
 
-        if disease != None:
+        if disease != None and disease != '':
             disease_ids = disease.split(',')
             for disease_id in disease_ids:
                 casediseaseship = CaseDiseaseShip()
@@ -816,7 +816,7 @@ class CreateCase(APIView):
                 casediseaseship.case = case
                 casediseaseship.save()
 
-        if body_condition != None:
+        if body_condition != None and body_condition != '':
             body_condition_ids = body_condition.split(',')
             for body_condition_id in body_condition_ids:
                 casebodyconditionship = CaseBodyConditionShip()
@@ -824,7 +824,7 @@ class CreateCase(APIView):
                 casebodyconditionship.case = case
                 casebodyconditionship.save()
 
-        if service != None:
+        if service != None and service != '':
             service_ids = service.split(',')
             for service_id in service_ids:
                 caseserviceship = CaseServiceShip()
@@ -1046,7 +1046,7 @@ class CreateServantOrder(APIView):
             case.is_open_for_search = False
         case.save()
 
-        if disease != None:
+        if disease != None and disease != '':
             disease_ids = disease.split(',')
             for disease_id in disease_ids:
                 casediseaseship = CaseDiseaseShip()
@@ -1054,7 +1054,7 @@ class CreateServantOrder(APIView):
                 casediseaseship.case = case
                 casediseaseship.save()
 
-        if body_condition != None:
+        if body_condition != None and body_condition != '':
             body_condition_ids = body_condition.split(',')
             for body_condition_id in body_condition_ids:
                 casebodyconditionship = CaseBodyConditionShip()
@@ -1062,7 +1062,7 @@ class CreateServantOrder(APIView):
                 casebodyconditionship.case = case
                 casebodyconditionship.save()
 
-        if service != None:
+        if service != None and service != '':
             service_ids = service.split(',')
             for service_id in service_ids:
                 caseserviceship = CaseServiceShip()
@@ -1456,10 +1456,10 @@ class EditCase(APIView):
                 case.emergencycontact_phone = emergencycontact_phone
             case.save()
 
-            if disease != None:
+            if disease != None and disease != '':
                 disease_ids = disease.split(',')
                 case_disease_ships = CaseDiseaseShip.objects.filter(case=case)
-                
+
                 for disease_id in disease_ids:
                     if CaseDiseaseShip.objects.filter(case=case,disease=DiseaseCondition.objects.get(id=disease_id)).count() == 0:
                         casediseaseship = CaseDiseaseShip()
@@ -1471,9 +1471,10 @@ class EditCase(APIView):
                 for case_disease_ship in case_disease_ships:
                     if str(case_disease_ship.disease.id) not in disease_ids:
                         case_disease_ship.delete()
-                
+            else:
+                CaseDiseaseShip.objects.filter(case=case).delete()
 
-            if body_condition != None:
+            if body_condition != None and body_condition != '':
                 body_condition_ids = body_condition.split(',')
                 body_condition_ships = CaseBodyConditionShip.objects.filter(case=case)
                 for body_condition_id in body_condition_ids:
@@ -1487,8 +1488,10 @@ class EditCase(APIView):
                 for body_condition_ship in body_condition_ships:
                     if str(body_condition_ship.body_condition.id) not in disease_ids:
                         body_condition_ship.delete()
+            else:
+                CaseBodyConditionShip.objects.filter(case=case).delete()
 
-            if service != None:
+            if service != None and service != '':
                 service_ids = service.split(',')
                 case_services = CaseServiceShip.objects.filter(case=case)
                 for service_id in service_ids:
@@ -1502,6 +1505,9 @@ class EditCase(APIView):
                 for case_service in case_services:
                     if str(case_service.service.id) not in service_ids:
                         case_service.delete()
+            else:
+                CaseServiceShip.objects.filter(case=case).delete()
+
             # 這邊要針對個別 servant 產生訂單~ 要有系統訊息, 推播訊息, 並檢查 transferFee, roadName, hospitalName 等新欄位
             if servant_id != None:
                 
