@@ -636,9 +636,6 @@ def search_carer_detail(request):
         if request.user.is_authenticated:
             user = request.user
             if user == servant:
-                # root = tk.Tk()
-                # root.withdraw()
-                # messagebox.showwarning('alert title', 'Bad things happened!')
                 return render(request, 'web/search_carer_detail.html',{'servant_care_type':servant_care_type, 'weekdays':weekdays, 'cityName':city,'citys':citys, 'is_continuous_time':is_continuous_time, 'defaultStartTime':defaultStartTime,'defaultEndTime':defaultEndTime,'defaultStartEndDate':defaultStartEndDate,'weekday_list':weekday_list, 'servant':servant,'license_not_provide':license_not_provide,'reviews':reviews,'citys':citys,'care_type':care_type,'alert_flag': True})
             else:
                 care_type = request.POST.get('care_type')
@@ -1111,7 +1108,7 @@ def booking_confirm(request):
             for increase_service_id in increase_service_Idlist:
                 increase_service_list.append(Service.objects.get(id=increase_service_id))
     else:
-        return redirect_params('search_carer_detail',{'servant':servant})
+        return redirect_params('search_carer_detail',{'servant':servant.id})
     if request.method == 'POST' and 'pay' in request.POST:
         city_name = tempcase.city
         county_name = tempcase.county
@@ -1203,7 +1200,7 @@ def booking_confirm(request):
                     wage = round(order.case.servant.hospital_one_day_wage/24)
         order.wage_hour =wage
         order.base_money = order.work_hours * wage
-        order.platform_percent = 10
+        order.platform_percent = platform_percent_cal(user,order)
         order.save()
         Review.objects.create(order=order,case=order.case,servant=order.case.servant)
         
@@ -1366,121 +1363,125 @@ def requirement_detail(request):
         weekday_str = '星期一 ～ 星期日'
 
     if request.method == 'POST':
-        case.servant = user
-        order = Order(case=case,servant=user)
-        order.user = case.user 
-        order.start_datetime = case.start_datetime
-        order.end_datetime = case.end_datetime
-        order.start_time = case.start_time
-        order.end_time = case.end_time
-        order.save()
-
-        transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
-        order.transfer_fee = transfer_fee
-        if order.case.is_continuous_time == False:
-            weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
-            total_hours = 0
-            number_of_transfer = 0
-            for i in weekday_list:
-                number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
-                total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
-            order.work_hours = total_hours
-            order.number_of_transfer = number_of_transfer
-            order.amount_transfer_fee = transfer_fee * number_of_transfer
-            one_day_work_hours = order.end_time - order.start_time
-            if order.case.care_type == 'home':
-                if one_day_work_hours < 12:
-                    wage = order.case.servant.home_hour_wage
-                    order.wage_hour =wage
-                    order.hours_hour_work = total_hours
-                elif one_day_work_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.home_half_day_wage/12)
-                    order.wage_hour = wage
-                    order.hours_half_day_work = total_hours
-            elif order.case.care_type == 'hospital':
-                if one_day_work_hours < 12:
-                    wage = order.case.servant.hospital_hour_wage
-                    order.wage_hour =wage
-                    order.hours_hour_work = total_hours
-                elif one_day_work_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.hospital_half_day_wage/12)
-                    order.wage_hour = wage
-                    order.hours_half_day_work = total_hours
+        if user == case.user:
+            return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str,'alert_flag': True})
         else:
-            order.number_of_transfer = 1
-            order.amount_transfer_fee = transfer_fee * 1
-            diff = order.end_datetime - order.start_datetime
-            days, seconds = diff.days, diff.seconds
-            hours = days * 24 + seconds // 3600
-            minutes = (seconds % 3600) // 60
-            total_hours = hours + round(minutes/60)
-            order.work_hours = total_hours
-            if order.case.care_type == 'home':
-                if total_hours < 12:
-                    wage = order.case.servant.home_hour_wage
-                    order.wage_hour =wage
-                elif total_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.home_half_day_wage/12)
-                    order.wage_hour = wage
-                else:
-                    wage = round(order.case.servant.home_one_day_wage/24)
-                    order.wage_one_day = wage
-                    order.hours_one_day_work = total_hours
-            elif order.case.care_type == 'hospital':
-                if total_hours < 12:
-                    wage = order.case.servant.hospital_hour_wage
-                    order.wage_hour =wage
-                elif total_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.hospital_half_day_wage/12)
-                    order.wage_hour = wage
-                else:
-                    wage = round(order.case.servant.hospital_one_day_wage/24)
-                    order.wage_one_day = wage
-        order.wage_hour =wage
-        order.base_money = order.work_hours * wage
-        order.save()
+            case.servant = user
+            order = Order(case=case,servant=user)
+            order.user = case.user 
+            order.start_datetime = case.start_datetime
+            order.end_datetime = case.end_datetime
+            order.start_time = case.start_time
+            order.end_time = case.end_time
+            order.save()
 
-        increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
-        for service in increase_services:
-            if UserServiceShip.objects.filter(user=order.servant, service=service).count() == 0:
-                UserServiceShip.objects.create(user=order.servant,service=service)
-        service_idList = list(CaseServiceShip.objects.filter(case=order.case).values_list('service', flat=True))
-        for service_id in service_idList:
-            if int(service_id) <= 4:
-                orderIncreaseService = OrderIncreaseService()
-                orderIncreaseService.order = order
-                orderIncreaseService.service = Service.objects.get(id=service_id)
-                orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=order.servant,service=Service.objects.get(id=service_id)).increase_percent
-                orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
-                orderIncreaseService.save()
+            transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
+            order.transfer_fee = transfer_fee
+            if order.case.is_continuous_time == False:
+                weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+                total_hours = 0
+                number_of_transfer = 0
+                for i in weekday_list:
+                    number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
+                    total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+                order.work_hours = total_hours
+                order.number_of_transfer = number_of_transfer
+                order.amount_transfer_fee = transfer_fee * number_of_transfer
+                one_day_work_hours = order.end_time - order.start_time
+                if order.case.care_type == 'home':
+                    if one_day_work_hours < 12:
+                        wage = order.case.servant.home_hour_wage
+                        order.wage_hour =wage
+                        order.hours_hour_work = total_hours
+                    elif one_day_work_hours >=12 and total_hours < 24:
+                        wage = round(order.case.servant.home_half_day_wage/12)
+                        order.wage_hour = wage
+                        order.hours_half_day_work = total_hours
+                elif order.case.care_type == 'hospital':
+                    if one_day_work_hours < 12:
+                        wage = order.case.servant.hospital_hour_wage
+                        order.wage_hour =wage
+                        order.hours_hour_work = total_hours
+                    elif one_day_work_hours >=12 and total_hours < 24:
+                        wage = round(order.case.servant.hospital_half_day_wage/12)
+                        order.wage_hour = wage
+                        order.hours_half_day_work = total_hours
+            else:
+                order.number_of_transfer = 1
+                order.amount_transfer_fee = transfer_fee * 1
+                diff = order.end_datetime - order.start_datetime
+                days, seconds = diff.days, diff.seconds
+                hours = days * 24 + seconds // 3600
+                minutes = (seconds % 3600) // 60
+                total_hours = hours + round(minutes/60)
+                order.work_hours = total_hours
+                if order.case.care_type == 'home':
+                    if total_hours < 12:
+                        wage = order.case.servant.home_hour_wage
+                        order.wage_hour =wage
+                    elif total_hours >=12 and total_hours < 24:
+                        wage = round(order.case.servant.home_half_day_wage/12)
+                        order.wage_hour = wage
+                    else:
+                        wage = round(order.case.servant.home_one_day_wage/24)
+                        order.wage_one_day = wage
+                        order.hours_one_day_work = total_hours
+                elif order.case.care_type == 'hospital':
+                    if total_hours < 12:
+                        wage = order.case.servant.hospital_hour_wage
+                        order.wage_hour =wage
+                    elif total_hours >=12 and total_hours < 24:
+                        wage = round(order.case.servant.hospital_half_day_wage/12)
+                        order.wage_hour = wage
+                    else:
+                        wage = round(order.case.servant.hospital_one_day_wage/24)
+                        order.wage_one_day = wage
+            order.wage_hour =wage
+            order.base_money = order.work_hours * wage
+            order.platform_percent = platform_percent_cal(case.user,order)
+            order.save()
 
-        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
-        order.platform_money = order.total_money * (order.platform_percent/100)
-        order.save()
-        neederOrderEstablished(case.user,order)
-        servantOrderEstablished(case.servant,order)
+            increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
+            for service in increase_services:
+                if UserServiceShip.objects.filter(user=order.servant, service=service).count() == 0:
+                    UserServiceShip.objects.create(user=order.servant,service=service)
+            service_idList = list(CaseServiceShip.objects.filter(case=order.case).values_list('service', flat=True))
+            for service_id in service_idList:
+                if int(service_id) <= 4:
+                    orderIncreaseService = OrderIncreaseService()
+                    orderIncreaseService.order = order
+                    orderIncreaseService.service = Service.objects.get(id=service_id)
+                    orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=order.servant,service=Service.objects.get(id=service_id)).increase_percent
+                    orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                    orderIncreaseService.save()
 
-        chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
-        chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
-        chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
-        if list(chatroom_set) != []:
-            chatroom_id = list(chatroom_set)[0]
-            print(chatroom_id)
-            chatroom = ChatRoom.objects.get(id=chatroom_id)
-            message = ChatroomMessage(user=user,case=order.case,order=order,chatroom=chatroom,is_this_message_only_case=True)
-            message.save()
-        elif list(chatroom_set) == []:
-            chatroom = ChatRoom()
+            order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+            order.platform_money = order.total_money * (order.platform_percent/100)
+            order.save()
+            neederOrderEstablished(case.user,order)
+            servantOrderEstablished(case.servant,order)
+
+            chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
+            chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
+            chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
+            if list(chatroom_set) != []:
+                chatroom_id = list(chatroom_set)[0]
+                print(chatroom_id)
+                chatroom = ChatRoom.objects.get(id=chatroom_id)
+                message = ChatroomMessage(user=user,case=order.case,order=order,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+            elif list(chatroom_set) == []:
+                chatroom = ChatRoom()
+                chatroom.save()
+                ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
+                ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
+                message = ChatroomMessage(user=user,case=order.case,order=order,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+                
+            chatroom.update_at = datetime.datetime.now()
             chatroom.save()
-            ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
-            ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
-            message = ChatroomMessage(user=user,case=order.case,order=order,chatroom=chatroom,is_this_message_only_case=True)
-            message.save()
-            
-        chatroom.update_at = datetime.datetime.now()
-        chatroom.save()
 
-        return redirect('take_case_message')
+            return redirect('take_case_message')
 
     return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str})
 
@@ -2212,7 +2213,9 @@ def request_form_contact(request):
 
 def request_form_confirm(request):
     user = request.user
+    user_id = user.id
     servants = User.objects.filter(is_servant_passed=True)
+    servants = servants.exclude(id=user_id)
     tempcase = TempCase.objects.get(user=user,is_booking=False)
     care_type = tempcase.care_type
     start_date = tempcase.start_datetime
@@ -2254,7 +2257,7 @@ def request_form_confirm(request):
         service_ids = service.split(',')
         for service_id in service_ids:
             service_list.append(Service.objects.get(id=service_id))
-            servant_ids = list(UserServiceShip.objects.filter(service=Service.objects.get(id=service_id)).values_list('user', flat=True))
+            # servant_ids = list(UserServiceShip.objects.filter(service=Service.objects.get(id=service_id)).values_list('user', flat=True))
     
     increase_service = tempcase.increase_service
     increase_service_list = []
@@ -2429,7 +2432,7 @@ def request_form_confirm(request):
             order.base_money = order.work_hours * wage
 
             # need to change in the future
-            order.platform_percent = 15
+            order.platform_percent = platform_percent_cal(user,order)
             order.save()
             Review.objects.create(order=order,case=order.case,servant=order.case.servant)
             if service_ids != []:
@@ -2526,3 +2529,25 @@ def terms_of_service(request):
 def faq(request):
     assistanceposts = AssistancePost.objects.all()
     return render(request, 'web/faq.html',{'assistanceposts':assistanceposts})
+
+def platform_percent_cal(user,order):
+    orders = Order.objects.all()
+    today = datetime.datetime.today()
+    current_year = today.year
+    current_month = today.month
+    base_percent = 2.8
+    work_hours = order.work_hours
+    orders_total_hours = work_hours 
+    if orders.filter(user=user,start_datetime__year=current_year,start_datetime__month=current_month,state='paid').count() != 0:
+        accumulate_work_hours = orders.filter(user=user,start_datetime__year=current_year,start_datetime__month=current_month,state='paid').aggregate(Sum('work_hours'))['work_hours__sum']
+        print('accumulate_work_hours',accumulate_work_hours)
+        orders_total_hours += accumulate_work_hours
+    
+    if orders_total_hours < 120:
+        return (base_percent + 6.5)
+    elif orders_total_hours >= 120 and orders_total_hours < 240 :
+        return (base_percent + 5.5)
+    elif orders_total_hours >= 240 and orders_total_hours < 360 :
+        return (base_percent + 4.5)
+    elif orders_total_hours > 360 :
+        return (base_percent + 4)
