@@ -48,7 +48,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE00001",
+                "MerchantID": "ACE00012",
                 "MCType": 1,
                 "MerchantName": "杏心測試十",
                 "MerchantNameE": "XinshingTest10",
