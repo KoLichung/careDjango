@@ -57,7 +57,7 @@ class CreateMerchant(APIView):
                 "MerchantAddrArea": "中西區",
                 "MerchantAddrCode": "700",
                 "MerchantAddr": "民族路27號",
-                "MerchantEnAddr": "No. 132, Sec. 2, Minzu Rd., West Central Dist., Tainan City 郵遞區號 , Taiwan (R.O.C.)",
+                "MerchantEnAddr": "No. 132, Sec. 2, Minzu Rd., West Central Dist., Tainan City 700 , Taiwan (R.O.C.)",
                 "NationalE": "Taiwan",
                 "CityE": "Tainan City",
                 "PaymentType": "CREDIT:1|WEBATM:0|VACC:0|CVS:0|BARCODE:0|EsunWallet:0|TaiwanPay:0",
