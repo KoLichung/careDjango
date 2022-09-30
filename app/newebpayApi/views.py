@@ -70,8 +70,8 @@ class CreateMerchant(APIView):
                 "AccountName": "齊家科技股份有限公司",
                 "CreditAutoType": 1,
                 "AgreedDay": "CREDIT:0",
-                "Withdraw": "9",
-                "WithdrawMer": "1",
+                "Withdraw": "",
+                "WithdrawMer": "",
                 "WithdrawSetting" : "Withdraw=9",
                 "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback",
                 
