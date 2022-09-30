@@ -111,6 +111,7 @@ class CreateMerchant(APIView):
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
         # print(type(json.loads(resp.text)['status']))
+        logger.info('check test')
         logger.info(resp.text)
         userstore = UserStore()
         userstore.user = self.request.user
