@@ -41,14 +41,14 @@ class CreateMerchant(APIView):
                 "TimeStamp": timeStamp,
                 "MemberPhone": "0987-654321",
                 "MemberAddress": "台南市中西區民族路27號",
-                "ManagerName": "方聖傑",
+                "ManagerName": user.name,
                 "ManagerNameE": "Sheng Jie,Fang",
                 "LoginAccount": "scottfang2022",
-                "ManagerMobile": "0981352308",
+                "ManagerMobile": str(user.phone),
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE00010",
+                "MerchantID": "ACE00011",
                 "MCType": 1,
                 "MerchantName": "杏心測試十",
                 "MerchantNameE": "XinshingTest10",
@@ -64,9 +64,9 @@ class CreateMerchant(APIView):
                 "MerchantType": 2,
                 "BusinessType": "8999",
                 "MerchantDesc": "test",
-                "BankCode": "013",
-                "SubBankCode": "1379",
-                "BankAccount": "137030000175",
+                "BankCode": user.ATMInfoBankCode,
+                "SubBankCode": str(user.ATMInfoBranchBankCode),
+                "BankAccount": user.ATMInfoAccount,
                 "AccountName": "齊家科技股份有限公司",
                 "CreditAutoType": 1,
                 "AgreedDay": "CREDIT:0",
@@ -84,7 +84,7 @@ class CreateMerchant(APIView):
             "IDPic": 0,
             "IDFrom": 2,
             "Date": "19850911",
-            "MemberName": "方聖傑",
+            "MemberName": user.name,
         }
 
         extend_params_company = {
@@ -111,12 +111,13 @@ class CreateMerchant(APIView):
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
         # print(type(json.loads(resp.text)['status']))
-        # userstore = UserStore()
-        # userstore.user = self.request.user
-        # userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
-        # userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
-        # userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
-        # userstore.save()
+        print(resp.text)
+        userstore = UserStore()
+        userstore.user = self.request.user
+        userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
+        userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
+        userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
+        userstore.save()
         # save merchant_id, hash_key, hash_iv to UserStore
 
         return Response(json.loads(resp.text))

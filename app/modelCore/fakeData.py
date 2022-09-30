@@ -9,6 +9,7 @@ from django.db.models import Avg ,Sum
 from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage ,OrderWeekDay ,OrderIncreaseService, BlogCategory, BlogPost, MonthSummary
+from api.views import time_format_change ,continuous_time_cal
 
 def importCityCounty():
     module_dir = os.path.dirname(__file__)  # get current directory
@@ -269,6 +270,7 @@ def fakeData():
     case.end_time = 19
     case.start_datetime = datetime.datetime(2022,7,20).replace(tzinfo=pytz.UTC)
     case.end_datetime = datetime.datetime(2022,8,20).replace(tzinfo=pytz.UTC)
+    case.created_at = datetime.datetime.now()
     case.save()
 
     case = Case()
@@ -290,6 +292,7 @@ def fakeData():
     case.end_time = 20
     case.start_datetime = datetime.datetime(2022,7,10).replace(tzinfo=pytz.UTC)
     case.end_datetime = datetime.datetime(2022,8,5).replace(tzinfo=pytz.UTC)
+    case.created_at = datetime.datetime.now()
     case.save()
 
     caseDiseaseShip = CaseDiseaseShip()
@@ -347,6 +350,7 @@ def fakeData():
     caseServiceShip.save()
 
     order = Order()
+    order.created_at = datetime.datetime.now()
     order.case = Case.objects.get(id=1)
     order.user = order.case.user
     order.servant = order.case.servant
@@ -361,6 +365,7 @@ def fakeData():
                         servant_rating=5,servant_comment='nice',servant_rating_created_at=datetime.datetime.now())
 
     order = Order()
+    order.created_at = datetime.datetime.now()
     order.case = Case.objects.get(id=2)
     order.user = order.case.user
     order.servant = order.case.servant
@@ -413,11 +418,11 @@ def fakeData():
         else:
             order.number_of_transfer = 1
             order.amount_transfer_fee = transfer_fee * 1
-            diff = order.end_datetime - order.start_datetime
-            days, seconds = diff.days, diff.seconds
-            hours = days * 24 + seconds // 3600
-            minutes = (seconds % 3600) // 60
-            total_hours = hours + round(minutes/60)
+            # diff = order.end_datetime - order.start_datetime
+            # days, seconds = diff.days, diff.seconds
+            # hours = days * 24 + seconds // 3600
+            # minutes = (seconds % 3600) // 60
+            total_hours = continuous_time_cal(order)
             order.work_hours = total_hours
             if order.case.care_type == 'home':
                 if total_hours < 12:

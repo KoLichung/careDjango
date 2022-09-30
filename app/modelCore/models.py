@@ -397,8 +397,8 @@ class Case(models.Model):
     end_time = models.FloatField(default=24, blank=True, null=True)
     start_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
     end_datetime = models.DateTimeField(auto_now=False, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now=True, blank=True, null=True)
-    taken_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now=False, blank=True, null=True)
+    taken_at = models.DateTimeField(auto_now=False, blank=True, null=True)
     emergencycontact_name = models.CharField(max_length=100,blank=True, null=True)
     emergencycontact_relation = models.CharField(max_length=100,blank=True, null=True)
     emergencycontact_phone = models.CharField(max_length=10,blank=True, null=True)
@@ -628,7 +628,7 @@ class Order(models.Model):
     start_time = models.FloatField(default=0, blank=True, null=True)
     end_time = models.FloatField(default=24, blank=True, null=True)
     
-    created_at = models.DateTimeField(auto_now=True, blank = True,null=True) 
+    created_at = models.DateTimeField(auto_now=False, blank = True,null=True) 
 
     refund_money = models.IntegerField(default=0, blank=True, null=True)
     refund_apply_date = models.DateTimeField(auto_now=True, blank = True,null=True)

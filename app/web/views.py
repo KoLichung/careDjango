@@ -21,6 +21,7 @@ from time import time
 import logging
 from django.contrib import auth
 from modelCore.forms import *
+from api.views import time_format_change ,continuous_time_cal
 from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service ,UserWeekDayTime
@@ -1133,9 +1134,11 @@ def booking_confirm(request):
         case.emergencycontact_name = tempcase.emergencycontact_name
         case.emergencycontact_relation = tempcase.emergencycontact_relation
         case.emergencycontact_phone = tempcase.emergencycontact_phone
+        case.created_at = datetime.datetime.now()
         case.save()
 
         order = Order()
+        order.created_at = datetime.datetime.now()
         order.case = case
         order.user = order.case.user
         order.servant = order.case.servant
@@ -1178,11 +1181,12 @@ def booking_confirm(request):
         else:
             order.number_of_transfer = 1
             order.amount_transfer_fee = transfer_fee * 1
-            diff = order.end_datetime - order.start_datetime
-            days, seconds = diff.days, diff.seconds
-            hours = days * 24 + seconds // 3600
-            minutes = (seconds % 3600) // 60
-            total_hours = hours + round(minutes/60)
+            # diff = order.end_datetime - order.start_datetime
+            # days, seconds = diff.days, diff.seconds
+            # hours = days * 24 + seconds // 3600
+            # minutes = (seconds % 3600) // 60
+            # total_hours = hours + round(minutes/60)
+            total_hours = continuous_time_cal(order)
             order.work_hours = total_hours
             if order.case.care_type == 'home':
                 if total_hours < 12:
@@ -1328,6 +1332,7 @@ def requirement_list(request):
         cases = cases.filter(start_datetime__gte=start_date)
     if start_date == '' and end_date != '':
         cases = cases.filter(end_datetime__lte=end_date)
+    cases = cases.filter(servant=None)
 
     return render(request, 'web/requirement_list.html',{'start_date':start_date,'end_date':end_date, 'care_type':care_type, 'cases':cases,'cityName':city,'citys':citys})
 
@@ -1368,6 +1373,7 @@ def requirement_detail(request):
         else:
             case.servant = user
             order = Order(case=case,servant=user)
+            order.created_at = datetime.datetime.now()
             order.user = case.user 
             order.start_datetime = case.start_datetime
             order.end_datetime = case.end_datetime
@@ -1409,11 +1415,12 @@ def requirement_detail(request):
             else:
                 order.number_of_transfer = 1
                 order.amount_transfer_fee = transfer_fee * 1
-                diff = order.end_datetime - order.start_datetime
-                days, seconds = diff.days, diff.seconds
-                hours = days * 24 + seconds // 3600
-                minutes = (seconds % 3600) // 60
-                total_hours = hours + round(minutes/60)
+                # diff = order.end_datetime - order.start_datetime
+                # days, seconds = diff.days, diff.seconds
+                # hours = days * 24 + seconds // 3600
+                # minutes = (seconds % 3600) // 60
+                # total_hours = hours + round(minutes/60)
+                total_hours = continuous_time_cal(order)
                 order.work_hours = total_hours
                 if order.case.care_type == 'home':
                     if total_hours < 12:
@@ -2349,6 +2356,7 @@ def request_form_confirm(request):
         case.emergencycontact_name = tempcase.emergencycontact_name
         case.emergencycontact_relation = tempcase.emergencycontact_relation
         case.emergencycontact_phone = tempcase.emergencycontact_phone
+        case.created_at = datetime.datetime.now()
         case.save()
         
 
@@ -2366,6 +2374,7 @@ def request_form_confirm(request):
         for servant_id in choose_servant_ids:
             servant = User.objects.get(id=servant_id)
             order = Order()
+            order.created_at = datetime.datetime.now()
             order.case = case
             order.user = case.user
             order.servant = servant
@@ -2408,11 +2417,12 @@ def request_form_confirm(request):
             else:
                 order.number_of_transfer = 1
                 order.amount_transfer_fee = transfer_fee * 1
-                diff = order.end_datetime - order.start_datetime
-                days, seconds = diff.days, diff.seconds
-                hours = days * 24 + seconds // 3600
-                minutes = (seconds % 3600) // 60
-                total_hours = hours + round(minutes/60)
+                # diff = order.end_datetime - order.start_datetime
+                # days, seconds = diff.days, diff.seconds
+                # hours = days * 24 + seconds // 3600
+                # minutes = (seconds % 3600) // 60
+                # total_hours = hours + round(minutes/60)
+                total_hours = continuous_time_cal(order)
                 order.work_hours = total_hours
                 if order.case.care_type == 'home':
                     if total_hours < 12:

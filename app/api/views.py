@@ -758,6 +758,7 @@ class CreateCase(APIView):
         servant_ids = request.data.get('servant_ids')
 
         case = Case()
+        case.created_at = datetime.datetime.now()
         case.user = user
         case.county = County.objects.get(id=county_id)
         case.city = case.county.city
@@ -839,6 +840,7 @@ class CreateCase(APIView):
                 servant = User.objects.get(id=servant_id)
                 
                 order = Order()
+                order.created_at = datetime.datetime.now()
                 order.case = case
                 order.user = case.user
                 order.servant = servant
@@ -998,6 +1000,7 @@ class CreateServantOrder(APIView):
         is_open_for_search = request.data.get('is_open_for_search')
 
         case = Case()
+        case.created_at = datetime.datetime.now()
         case.user = user
         # case.servant = servant
         case.county = County.objects.get(id=county_id)
@@ -1078,6 +1081,7 @@ class CreateServantOrder(APIView):
         case.services = Service.objects.filter(id__in=service_idList)
 
         order = Order()
+        order.created_at = datetime.datetime.now()
         order.case = case
         order.user = case.user
         order.servant = servant
@@ -1119,11 +1123,11 @@ class CreateServantOrder(APIView):
         else:
             order.number_of_transfer = 1
             order.amount_transfer_fee = transfer_fee * 1
-            diff = order.end_datetime - order.start_datetime
-            days, seconds = diff.days, diff.seconds
-            hours = days * 24 + seconds // 3600
-            minutes = (seconds % 3600) // 60
-            total_hours = hours + round(minutes/60)
+            # diff = order.end_datetime - order.start_datetime
+            # days, seconds = diff.days, diff.seconds
+            # hours = days * 24 + seconds // 3600
+            # minutes = (seconds % 3600) // 60
+            total_hours = continuous_time_cal(order)
             order.work_hours = total_hours
             if order.case.care_type == 'home':
                 if total_hours < 12:
@@ -1277,11 +1281,11 @@ class EarlyTermination(APIView):
             else:
                 order.number_of_transfer = 1
                 order.amount_transfer_fee = transfer_fee * 1
-                diff = order.end_datetime - order.start_datetime
-                days, seconds = diff.days, diff.seconds
-                hours = days * 24 + seconds // 3600
-                minutes = (seconds % 3600) // 60
-                total_hours = hours + round(minutes/60)
+                # diff = order.end_datetime - order.start_datetime
+                # days, seconds = diff.days, diff.seconds
+                # hours = days * 24 + seconds // 3600
+                # minutes = (seconds % 3600) // 60
+                total_hours = continuous_time_cal(order)
                 order.work_hours = total_hours
                 if order.case.care_type == 'home':
                     if total_hours < 12:
@@ -1321,14 +1325,14 @@ class EarlyTermination(APIView):
                 chatroom_id = list(chatroom_set)[0]
                 print(chatroom_id)
                 chatroom = ChatRoom.objects.get(id=chatroom_id)
-                message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user,case=order.case,order=order,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
             elif list(chatroom_set) == []:
                 chatroom = ChatRoom()
                 chatroom.save()
                 ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
                 ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
-                message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user,case=order.case,order=order,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
                 
             chatroom.update_at = datetime.datetime.now()
@@ -1532,8 +1536,9 @@ class EditCase(APIView):
                 else:
                     order.transfer_fee = 0
                 
-                weekdays = order.case.weekday.split(',')
+                
                 if order.case.is_continuous_time == False:
+                    weekdays = order.case.weekday.split(',')
                     for weekday in weekdays:
                         orderWeekday = OrderWeekDay()
                         orderWeekday.order = order
@@ -1562,11 +1567,15 @@ class EditCase(APIView):
                 else:
                     order.number_of_transfer = 1
                     order.amount_transfer_fee = order.transfer_fee * 1
-                    diff = order.end_datetime - order.start_datetime
-                    days, seconds = diff.days, diff.seconds
-                    hours = days * 24 + seconds // 3600
-                    minutes = (seconds % 3600) // 60
-                    total_hours = hours + round(minutes/60)
+                    # start_time = datetime.datetime.strptime(start_time,"%H:%M")
+                    # end_time = datetime.datetime.strptime(end_time,"%H:%M")
+                    # start_datetime = datetime.datetime.combine(order.start_datetime.date(),start_time)
+                    # end_datetime = datetime.datetime.combine(order.end_datetime.date(),end_time)
+                    # diff = end_datetime - start_datetime
+                    # days, seconds = diff.days, diff.seconds
+                    # hours = days * 24 + seconds // 3600
+                    # minutes = (seconds % 3600) // 60
+                    total_hours = continuous_time_cal(order)
                     order.work_hours = total_hours
                     if order.case.care_type == 'home':
                         if total_hours < 12:
@@ -1645,3 +1654,33 @@ def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]
     return len([day for day in days if day.weekday() in weekdays])
+
+def time_format_change(time_int):
+    hour = int(time_int) 
+    minute = int((time_int - int(time_int)) * 60)
+    if hour < 10:
+        if minute < 10:
+            return '0'+ str(hour) + ":0" + str(minute)
+        else:
+            return '0'+ str(hour) + ":" + str(minute)
+    else:
+        if minute < 10:
+            return  str(hour) + ":0" + str(minute)
+        else:
+            return  str(hour) + ":" + str(minute)
+
+def continuous_time_cal(order):
+    start_time = time_format_change(order.start_time) 
+    end_time = time_format_change(order.end_time) 
+    print('test01',start_time,end_time)
+    start_time = datetime.datetime.strptime(start_time,"%H:%M").time()
+    end_time = datetime.datetime.strptime(end_time,"%H:%M").time()
+    print('test02',start_time,end_time)
+    start_datetime = datetime.datetime.combine(order.start_datetime.date(),start_time)
+    end_datetime = datetime.datetime.combine(order.end_datetime.date(),end_time)
+    diff = end_datetime - start_datetime
+    days, seconds = diff.days, diff.seconds
+    hours = days * 24 + seconds // 3600
+    minutes = (seconds % 3600) // 60
+    total_hours = hours + round(minutes/60)
+    return total_hours

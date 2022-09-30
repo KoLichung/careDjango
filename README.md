@@ -38,6 +38,8 @@ a.user 資料要帶入~
 b.密碼是什麼?? 如何登入
 c.建店有 callback 資料? 要跟交易的 call_back 分開? => call_back 如果沒用到刪掉
 建店要存下 UserStore 資料~ => 這樣幕前交易才能使用
+3.
+修正total_hours的計算
 
 20220929:
 昨天的問題：
