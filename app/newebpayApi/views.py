@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, unicode_literals
 from urllib import response
-from django.shortcuts import render 
+from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
@@ -15,10 +15,13 @@ import hashlib
 import codecs
 import logging
 import json
-from modelCore.models import Order ,UserStore ,PayInfo
+from modelCore.models import Order ,UserStore ,PayInfo ,UserLicenseShipImage ,License 
 
 logger = logging.getLogger(__file__)
 
+# 缺的user欄位: 英文地址 出生年月日 會員證號 身分證領補換 會員聯絡地址 管理者中文姓名 管理者英文姓名 管理者帳號 管理者行動電話號碼 管理者 E-mail
+# 商店爭議款信箱 客服商店信箱 商店代號 商店類別 商店中文名稱 商店網址 聯絡地址-城市 聯絡地址-地區 聯絡地址-郵遞區號 聯絡地址- 路名及門牌號碼 商店英文聯絡地址 商店簡介
+# (選填) 會員帳戶自動提領啟用 會員商店自動提領啟用 會員商店自動提領規則 物流設定 商店退貨取件人資訊參 數(姓名) 商店退貨取件人資訊參 數(行動電話) 商店退貨取件人資訊參 數(電子信箱)
 class CreateMerchant(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -45,9 +48,9 @@ class CreateMerchant(APIView):
                 "ManagerNameE": "Sheng Jie,Fang",
                 "LoginAccount": "scottman2022",
                 "ManagerMobile": str(user.phone),
-                "ManagerEmail": "scottman608@gmail.com",
-                "DisputeMail": "scottman608@gmail.com",
-                "MerchantEmail": "scottman608@gmail.com",
+                "ManagerEmail": "jason@kosbrother.com",
+                "DisputeMail": "jason@kosbrother.com",
+                "MerchantEmail": "jason@kosbrother.com",
                 "MerchantID": "ACE00012",
                 "MCType": 1,
                 "MerchantName": "杏心測試十",
@@ -76,12 +79,15 @@ class CreateMerchant(APIView):
                 # "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback",
                 
         }
-
+        if UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1)).image != None:
+            IDPic = 0
+        else:
+            IDPic = 1
         extend_params_personal = {
             "MemberUnified": "D122776945",
             "IDCardDate": "1070124",
             "IDCardPlace": "南市",
-            "IDPic": 0,
+            "IDPic": IDPic,
             "IDFrom": 2,
             "Date": "19850911",
             "MemberName": user.name,
