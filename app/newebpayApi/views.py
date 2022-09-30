@@ -48,7 +48,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
                 "MerchantEmail": "scottman608@gmail.com",
-                "MerchantID": "ACE00011",
+                "MerchantID": "ACE00001",
                 "MCType": 1,
                 "MerchantName": "杏心測試十",
                 "MerchantNameE": "XinshingTest10",
@@ -112,12 +112,12 @@ class CreateMerchant(APIView):
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
         # print(type(json.loads(resp.text)['status']))
         # logger.info(resp.text)
-        # userstore = UserStore()
-        # userstore.user = self.request.user
-        # userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
-        # userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
-        # userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
-        # userstore.save()
+        userstore = UserStore()
+        userstore.user = self.request.user
+        userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
+        userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
+        userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
+        userstore.save()
         # save merchant_id, hash_key, hash_iv to UserStore
 
         return Response(json.loads(resp.text))
