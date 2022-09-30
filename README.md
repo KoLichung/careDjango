@@ -27,6 +27,18 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20220930:
+1.
+時間紀錄不能 auto, 不然 update 的時候也會更新
+(model要改掉,有用到的地方紀錄)
+Order, Case, PayInfo 的時間要特別注意
+2.
+建店的時候, 
+a.user 資料要帶入~
+b.密碼是什麼?? 如何登入
+c.建店有 callback 資料? 要跟交易的 call_back 分開? => call_back 如果沒用到刪掉
+建店要存下 UserStore 資料~ => 這樣幕前交易才能使用
+
 20220929:
 昨天的問題：
 1.newebpayApi 的 幕前交易 MpgTrade 串好, item_desc 寫 “時薪 $245 共 18 小時”

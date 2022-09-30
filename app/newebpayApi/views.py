@@ -18,12 +18,18 @@ import json
 from modelCore.models import Order ,UserStore ,PayInfo
 
 logger = logging.getLogger(__file__)
+
 class CreateMerchant(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         # order_id = self.request.query_params.get('order_id')
         # order = Order.objects.get(id=order_id)
+        user = self.request.user
+
+        if UserStore.objects.filter(user=user).count() == 0:
+            print('code here')
 
         post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
         timeStamp = int( time.time() )
