@@ -43,7 +43,7 @@ class CreateMerchant(APIView):
                 "MemberAddress": "台南市中西區民族路27號",
                 "ManagerName": user.name,
                 "ManagerNameE": "Sheng Jie,Fang",
-                "LoginAccount": "scottfang2022",
+                "LoginAccount": "scottman2022",
                 "ManagerMobile": str(user.phone),
                 "ManagerEmail": "scottman608@gmail.com",
                 "DisputeMail": "scottman608@gmail.com",
