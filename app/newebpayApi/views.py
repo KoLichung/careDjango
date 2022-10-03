@@ -353,7 +353,7 @@ class NotifyUrlCallback(APIView):
 
         if(PayInfo.objects.filter(OrderInfoMerchantOrderNo=data_json['Result']['MerchantOrderNo']).count()==0 ):
             payInfo = PayInfo()
-            payInfo.order = Order.objects.get(id='1')
+            payInfo.order = Order.objects.get(id=data_json['Result']['MerchantOrderNo'])
             payInfo.MerchantID = data_json['Result']['MerchantID']
             
             if data_json['Status'] == 'SUCCESS' :
