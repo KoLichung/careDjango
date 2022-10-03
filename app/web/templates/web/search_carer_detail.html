@@ -318,7 +318,7 @@
     const care_type_hospital = document.getElementById('care_type_hospital');
     const submit_button = document.getElementById('submit_button');
     const select_time_Btn = document.getElementById('select_time');
-    city_id = document.getElementById('city_select').value;
+    const city_select = document.getElementById('city_select');
 
     var home = {
       call_backend : function (){
@@ -411,6 +411,10 @@
       };
       calculate_rate.call();
     });
+    city_select.addEventListener('change',function(){
+      city_id = this.value;
+      calculate_rate.call();
+    })
     $( document ).ready(function() {
       submit_button.disabled = true;
       if (!care_type){
