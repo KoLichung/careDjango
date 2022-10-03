@@ -304,7 +304,7 @@ class UserLicenseImagesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = self.queryset.filter(user=user)
+        queryset = self.queryset.filter(user=user).order_by('license')
         return queryset
 
     def update(self, request, *args, **kwargs):
