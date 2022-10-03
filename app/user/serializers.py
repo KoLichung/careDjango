@@ -37,7 +37,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('id','phone','name','gender','email','address','image','is_apply_servant','is_servant_passed','is_home','home_hour_wage','home_half_day_wage','home_one_day_wage','is_hospital','hospital_hour_wage','hospital_half_day_wage','hospital_one_day_wage','about_me','ATMInfoBankCode','ATMInfoBranchBankCode','ATMInfoAccount','background_image', 'total_unread_num')
-        read_only_fields = ('id',)
+        read_only_fields = ('id','image', 'background_image')
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user authentication object"""
