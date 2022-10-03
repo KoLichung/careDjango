@@ -318,7 +318,7 @@
     const care_type_hospital = document.getElementById('care_type_hospital');
     const submit_button = document.getElementById('submit_button');
     const select_time_Btn = document.getElementById('select_time');
-    const city_id = document.getElementById('city_select').value;
+    city_id = document.getElementById('city_select').value;
 
     var home = {
       call_backend : function (){
@@ -429,7 +429,7 @@
       }else if (care_type_hospital.checked == true ){
         var care_type = 'hospital'
       }
-      console.log(is_continuous_time)
+      console.log(servant,city_id,care_type,start_end_date,is_continuous_time,startTime,endTime,weekdays)
       return $.ajax({
         type: "POST",
         data: { 'servant':servant,
