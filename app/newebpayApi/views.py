@@ -83,7 +83,6 @@ class CreateMerchant(APIView):
             IDPic = 0
         else:
             IDPic = 1
-            
         extend_params_personal = {
             "MemberUnified": "D122776945",
             "IDCardDate": "1070124",
@@ -119,7 +118,7 @@ class CreateMerchant(APIView):
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
         # print(type(json.loads(resp.text)['status']))
         # logger.info('check test')
-        # logger.info(resp.text)
+        logger.info(resp.text)
         # userstore = UserStore()
         # userstore.user = self.request.user
         # userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
@@ -137,15 +136,16 @@ class MpgTrade(APIView):
         order_id = self.request.query_params.get('order_id')
         print(order_id)
         order = Order.objects.get(id=order_id)
-
+        user = order.user
+        userStore = UserStore.objects.get(user=user)
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         timeStamp = int( time.time() )
         item_desc = "時薪 $"+ str(order.wage_hour) + " 共 " + str(order.work_hours) + " 小時"
         Version = "2.0"
         # order_id = '4'
-        merchant_id = "ACE00009"
-        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
-        iv = "C3RqE64KeXb3RPqP"
+        merchant_id = userStore.MerchantID
+        key = userStore.MerchantHashKey
+        iv = userStore.MerchantIvKey
         Amt = str(order.total_money)
         data = {
             "Version": Version,
@@ -155,7 +155,7 @@ class MpgTrade(APIView):
             "MerchantOrderNo": order_id,
             "Amt": Amt,
             "ItemDesc": item_desc,       
-            "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback",
+            "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback/" + userStore.id + "/",
             "ClientBackURL": "http://202.182.105.11/newebpayApi/success_pay",
         }
 
@@ -335,12 +335,14 @@ class NotifyUrlCallback(APIView):
         # logger.info(request.body)
 
         # logger.info(request.body.decode('utf-8'))
-
+        url = self.request.url
+        userstore_id = url.split('/')[-2]
+        userStore = UserStore.objects.get(id=userstore_id)
         data = urllib.parse.parse_qs(request.body.decode('utf-8'))
         logger.info(data)
         # print(body)
-        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
-        iv = "C3RqE64KeXb3RPqP"
+        key = userStore.MerchantHashKey
+        iv = userStore.MerchantIvKey
         TradeInfo = data['TradeInfo'][0]
         decrypt_text = module.aes256_cbc_decrypt(TradeInfo, key, iv)
         # the_data = urllib.parse.unquote(decrypt_text)
