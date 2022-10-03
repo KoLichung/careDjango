@@ -23,14 +23,19 @@ def importCityCounty():
                 city = City()
                 city.name = row[0]
                 city.newebpay_cityname = row[6]
+                city.nameE = row[5].split(', ')[1]
                 city.save()
             else:
                 city = City.objects.get(name=row[0])
 
             county_name = row[2].replace(row[0],'')
-            county = County()
+            if County.objects.filter(name=county_name).count()==0:
+                county = County()
+            else:
+                county = County.objects.get(name=county_name)
             county.city = city
             county.name = county_name
+            county.addressCode = row[1]
             county.save()
             print(city.name + " " + county.name)
 

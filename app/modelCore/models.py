@@ -300,6 +300,7 @@ class County(models.Model):
         on_delete=models.RESTRICT,
     )
     name = models.CharField(max_length=100, blank=True, null=True)
+    addressCode = models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
             return self.name
 

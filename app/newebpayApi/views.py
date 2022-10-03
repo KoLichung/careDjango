@@ -70,7 +70,7 @@ class CreateMerchant(APIView):
                 "BankCode": user.ATMInfoBankCode,
                 "SubBankCode": str(user.ATMInfoBranchBankCode),
                 "BankAccount": user.ATMInfoAccount,
-                "AccountName": "齊家科技股份有限公司",
+                # "AccountName": "齊家科技股份有限公司",
                 "CreditAutoType": 1,
                 "AgreedDay": "CREDIT:0",
                 "Withdraw": "",

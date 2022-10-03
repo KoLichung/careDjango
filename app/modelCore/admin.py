@@ -11,11 +11,11 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ('id', 'name', 'newebpay_cityname', 'nameE')
 
 @admin.register(County)
 class CountyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'city', 'name')
+    list_display = ('id', 'city', 'name', 'addressCode')
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
