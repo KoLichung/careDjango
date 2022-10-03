@@ -329,15 +329,14 @@ class Debit(APIView):
 
 class NotifyUrlCallback(APIView):
 
-    def post(self, request, format=None):
+    def post(self, request, id):
         # body_unicode = request.body.decode('utf-8')
         # logger.info(request)
         # logger.info(request.body)
 
         # logger.info(request.body.decode('utf-8'))
-        url = self.request.url
-        logger.info(url)
-        userstore_id = url.split('/')[-2]
+        userstore_id = id
+        logger.info('id:',id)
         userStore = UserStore.objects.get(id=userstore_id)
         data = urllib.parse.parse_qs(request.body.decode('utf-8'))
         logger.info(data)
