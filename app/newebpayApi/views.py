@@ -362,9 +362,9 @@ class NotifyUrlCallback(APIView):
                 payInfo.OrderInfoTradeAmt = data_json['Result']['Amt']
                 payInfo.OrderInfoPaymentType = data_json['Result']['PaymentType']
                 payInfo.OrderInfoPayTime = data_json['Result']['PayTime']
-
+                payInfo.save()
                 #change order state
-                order = Order.objects.get(id=payInfo.OrderInfoTradeNo)
+                order = Order.objects.get(id=payInfo.OrderInfoMerchantOrderNo)
                 order.state='paid'
 
                 case = order.case
