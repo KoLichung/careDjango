@@ -336,6 +336,7 @@ class NotifyUrlCallback(APIView):
 
         # logger.info(request.body.decode('utf-8'))
         url = self.request.url
+        logger.info(url)
         userstore_id = url.split('/')[-2]
         userStore = UserStore.objects.get(id=userstore_id)
         data = urllib.parse.parse_qs(request.body.decode('utf-8'))
