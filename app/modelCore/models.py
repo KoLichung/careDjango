@@ -70,7 +70,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     line_id = models.CharField(max_length= 100, blank = True, null=True, unique=True)
     apple_id = models.CharField(max_length= 100, blank = True, null=True, unique=True)
 
-    is_apply_servant = models.BooleanField(default=False)
+    # is_apply_servant == True => 已提交, 審核中
+    # is_apply_servant == False => 未提交, or 需重新提交
+    is_apply_servant = models.BooleanField(default=False) 
     is_servant_passed = models.BooleanField(default=False)
     is_fcm_notify = models.BooleanField(default=True)
 

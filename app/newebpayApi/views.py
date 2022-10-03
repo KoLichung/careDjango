@@ -83,6 +83,7 @@ class CreateMerchant(APIView):
             IDPic = 0
         else:
             IDPic = 1
+            
         extend_params_personal = {
             "MemberUnified": "D122776945",
             "IDCardDate": "1070124",

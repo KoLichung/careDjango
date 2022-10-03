@@ -27,6 +27,17 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20221003:
+1.
+a.mpg_trade 要帶入 user 的 user_store key/iv 去加密
+b.notifyurl_callback/[user_store id]/
+商店的訂單, 要用商店的 key/iv 去解
+ex. notifyurl_callback/1/
+user_store = UserStore.objects.get(id=1)
+2.
+a.member_data_review 加 is_apply_servant 跟 建店 button
+b.建店 detail 頁
+
 20220930:
 1.
 時間紀錄不能 auto, 不然 update 的時候也會更新
