@@ -51,7 +51,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
                 "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE00012",
+                "MerchantID": "ACE00013",
                 "MCType": 1,
                 "MerchantName": "杏心測試十",
                 "MerchantNameE": "XinshingTest10",
@@ -76,7 +76,7 @@ class CreateMerchant(APIView):
                 "Withdraw": "",
                 "WithdrawMer": "",
                 "WithdrawSetting" : "Withdraw=9",
-                # "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback",
+                "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback/2/",
                 
         }
         if UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1)).image != None:
