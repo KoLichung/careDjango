@@ -412,7 +412,6 @@
       calculate_rate.call();
     });
     city_select.addEventListener('change',function(){
-      city_id = this.value;
       calculate_rate.call();
     })
     $( document ).ready(function() {
@@ -428,6 +427,7 @@
       calculate_rate.call();
     });
     function calculate_rate(){
+      city_id = this.value;
       if(care_type_home.checked == true){
         var care_type = 'home'
       }else if (care_type_hospital.checked == true ){
