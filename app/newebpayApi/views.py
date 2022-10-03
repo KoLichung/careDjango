@@ -51,7 +51,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
                 "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE00012",
+                "MerchantID": "ACE00013",
                 "MCType": 1,
                 "MerchantName": "杏心測試十",
                 "MerchantNameE": "XinshingTest10",
@@ -76,7 +76,7 @@ class CreateMerchant(APIView):
                 "Withdraw": "",
                 "WithdrawMer": "",
                 "WithdrawSetting" : "Withdraw=9",
-                # "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback",
+                "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback/2/",
                 
         }
         if UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1)).image != None:
@@ -329,14 +329,14 @@ class Debit(APIView):
 
 class NotifyUrlCallback(APIView):
 
-    def post(self, request, format=None):
+    def post(self, request, id):
         # body_unicode = request.body.decode('utf-8')
         # logger.info(request)
         # logger.info(request.body)
 
         # logger.info(request.body.decode('utf-8'))
-        url = self.request.url
-        userstore_id = url.split('/')[-2]
+        userstore_id = id
+        logger.info('id:',id)
         userStore = UserStore.objects.get(id=userstore_id)
         data = urllib.parse.parse_qs(request.body.decode('utf-8'))
         logger.info(data)
@@ -353,7 +353,7 @@ class NotifyUrlCallback(APIView):
 
         if(PayInfo.objects.filter(OrderInfoMerchantOrderNo=data_json['Result']['MerchantOrderNo']).count()==0 ):
             payInfo = PayInfo()
-            payInfo.order = Order.objects.get(id='1')
+            payInfo.order = Order.objects.get(id=data_json['Result']['MerchantOrderNo'])
             payInfo.MerchantID = data_json['Result']['MerchantID']
             
             if data_json['Status'] == 'SUCCESS' :
@@ -362,9 +362,9 @@ class NotifyUrlCallback(APIView):
                 payInfo.OrderInfoTradeAmt = data_json['Result']['Amt']
                 payInfo.OrderInfoPaymentType = data_json['Result']['PaymentType']
                 payInfo.OrderInfoPayTime = data_json['Result']['PayTime']
-
+                payInfo.save()
                 #change order state
-                order = Order.objects.get(id=payInfo.OrderInfoTradeNo)
+                order = Order.objects.get(id=payInfo.OrderInfoMerchantOrderNo)
                 order.state='paid'
 
                 case = order.case

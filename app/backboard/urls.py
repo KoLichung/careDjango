@@ -19,5 +19,8 @@ urlpatterns = [
     path('logout', views.logout, name='backboard_logout'),
     path('all_assistances', views.all_assistances, name = 'all_assistances'), 
     path('new_assistance', views.new_assistance, name = 'new_assistance'), 
+    path('userstore_detail', views.userstore_detail, name = 'userstore_detail'), 
+    path('ajax_refresh_county', views.ajax_refresh_county, name = 'ajax_refresh_county'),
+    
 
 ]

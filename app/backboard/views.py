@@ -1,12 +1,34 @@
 from django.shortcuts import render,redirect
 from django.core.paginator import Paginator
+from django.http import HttpResponse ,JsonResponse ,HttpResponseRedirect ,response
 import urllib
 import datetime
+from newebpayApi import module
+import requests
+import time
+import json
 from modelCore.forms import BlogPostCoverImageForm ,AssistancePostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
-from modelCore.models import OrderIncreaseService, MonthSummary ,User ,UserLicenseShipImage ,License ,AssistancePost
+from modelCore.models import OrderIncreaseService, MonthSummary ,User ,UserLicenseShipImage ,License ,AssistancePost ,UserStore ,City ,County
 from django.contrib import auth
 from django.contrib.auth import authenticate
+
+def ajax_refresh_county(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'refresh_county':
+        updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
+        print(updatedData)
+        city_id = updatedData['city_id'][0]
+        counties = County.objects.filter(city=City.objects.get(id=city_id))
+        # countylist = serializers.serialize('json', list(counties))
+        data=[]
+        for county in counties:
+            item = {
+                'id':county.id,
+                'county':county.name,
+            }
+            data.append(item)
+        print(data)
+        return JsonResponse({'data':data})
 
 def login(request):
     if request.method == 'POST':
@@ -102,6 +124,7 @@ def member_detail(request):
         user.set_password(password)
         user.save()
     return render(request, 'backboard/member_detail.html',{'user':user,'offend_orders':offend_orders,'take_orders':take_orders})
+
 
 def all_blogs(request):
     if not request.user.is_authenticated or not request.user.is_staff:
@@ -216,11 +239,19 @@ def member_data_review(request):
     user_id = request.GET.get('user')
     user = User.objects.get(id=user_id)
     licences = License.objects.all().order_by('id')
+    if UserStore.objects.filter(user=user).count() == 0 :
+        check_user_store = False
+    else:
+        check_user_store = True
     for license in licences:
         if UserLicenseShipImage.objects.filter(user=user, license=license).count() == 0:
             UserLicenseShipImage.objects.create(user=user,license=license)
     userLicenseImages = UserLicenseShipImage.objects.filter(user=user).order_by('license')
     if request.method == 'POST' :
+        for userLicenseImage in userLicenseImages:
+            if ('delete'+str(userLicenseImage.license.id)) in request.POST:
+                userLicenseImage.image = None
+                userLicenseImage.save()
         if 'post' in request.POST:
             if request.POST.get('checkIsServant') == 'True':
                 user.is_servant_passed = True
@@ -233,8 +264,99 @@ def member_data_review(request):
             return redirect_params('member_detail',{'user':user.id})
         else:
             return redirect_params('member_detail',{'user':user.id})
+        
 
-    return render(request, 'backboard/member_data_review.html',{'user':user,'userLicenseImages':userLicenseImages})
+    return render(request, 'backboard/member_data_review.html',{'user':user,'userLicenseImages':userLicenseImages,'check_user_store':check_user_store})
+
+def userstore_detail(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+            return redirect('/backboard/')
+
+    user_id = request.GET.get('user')
+    user = User.objects.get(id=user_id)
+    userLicenseImages = UserLicenseShipImage.objects.filter(user=user).order_by('license')[:2]
+    citys = City.objects.all()
+    cityName = citys.get(id=8)
+    counties = County.objects.filter(city=cityName)
+    countyName = counties.get(name='西屯區')
+    if request.method == "POST":
+        ID_card_name = request.POST.get('ID_card_name')
+        ID_number = request.POST.get('ID_number')
+        birthday = request.POST.get('birthday')
+        ID_card_number = request.POST.get('ID_card_number')
+        ReissueOrChange = request.POST.get('ReissueOrChange')
+        city = request.POST.get('city')
+        county = request.POST.get('county')
+        ID_card_name = request.POST.get('ID_card_name')
+
+        post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
+        timeStamp = int( time.time() )
+        PartnerID_ = "CARE168"
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
+        data = {
+                "Version" : "1.8",
+                "TimeStamp": timeStamp,
+                "MemberPhone": "0987-654321",
+                "MemberAddress": "台南市中西區民族路27號",
+                "ManagerName": user.name,
+                "ManagerNameE": "Sheng Jie,Fang",
+                "LoginAccount": "scottman2022",
+                "ManagerMobile": str(user.phone),
+                "ManagerEmail": "jason@kosbrother.com",
+                "DisputeMail": "jason@kosbrother.com",
+                "MerchantEmail": "jason@kosbrother.com",
+                "MerchantID": "ACE00013",
+                "MCType": 1,
+                "MerchantName": "杏心測試十",
+                "MerchantNameE": "XinshingTest10",
+                "MerchantWebURL": "http://test.com",
+                "MerchantAddrCity": "台南市",
+                "MerchantAddrArea": "中西區",
+                "MerchantAddrCode": "700",
+                "MerchantAddr": "民族路27號",
+                "MerchantEnAddr": "No. 132, Sec. 2, Minzu Rd., West Central Dist., Tainan City 700 , Taiwan (R.O.C.)",
+                "NationalE": "Taiwan",
+                "CityE": "Tainan City",
+                "PaymentType": "CREDIT:1|WEBATM:0|VACC:0|CVS:0|BARCODE:0|EsunWallet:0|TaiwanPay:0",
+                "MerchantType": 2,
+                "BusinessType": "8999",
+                "MerchantDesc": "test",
+                "BankCode": user.ATMInfoBankCode,
+                "SubBankCode": str(user.ATMInfoBranchBankCode),
+                "BankAccount": user.ATMInfoAccount,
+                "AccountName": "齊家科技股份有限公司",
+                "CreditAutoType": 1,
+                "AgreedDay": "CREDIT:0",
+                "Withdraw": "",
+                "WithdrawMer": "",
+                "WithdrawSetting" : "Withdraw=9",
+                "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback/2/",
+                
+        }
+        if UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1)).image != None:
+            IDPic = 0
+        else:
+            IDPic = 1
+        extend_params_personal = {
+            "MemberUnified": "D122776945",
+            "IDCardDate": "1070124",
+            "IDCardPlace": "南市",
+            "IDPic": IDPic,
+            "IDFrom": 2,
+            "Date": "19850911",
+            "MemberName": user.name,
+        }
+
+        data.update(extend_params_personal)
+        # data.update(extend_params_company)
+
+        query_str = urllib.parse.urlencode(data)
+        encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
+        resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
+        return response(json.loads(resp.text))
+
+    return render(request, 'backboard/userstore_detail.html',{'user':user,'userLicenseImages':userLicenseImages,'cityName':cityName,'citys':citys,'countyName':countyName,'counties':counties})
 
 def refunds(request):
     if not request.user.is_authenticated or not request.user.is_staff:

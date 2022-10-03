@@ -11,7 +11,7 @@ urlpatterns = [
     path('invoice', views.Invoice.as_view()),
     path('appropriation', views.Appropriation.as_view()),
     path('debit', views.Debit.as_view()),
-    path('notifyurl_callback', views.NotifyUrlCallback.as_view()),
+    path('notifyurl_callback/<int:id>/', views.NotifyUrlCallback.as_view()),
 
     path('success_pay', views.success_pay, name = 'success_pay'),
 ]

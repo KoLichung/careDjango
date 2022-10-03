@@ -26,6 +26,15 @@
             <button class="btn purple-button btn-sm" type="submit" name="post" value='publish'>儲存修改</button>
           </div>
         </div>
+        <div>
+          <input class="form-check-input" id="checkIsServantConfirm" name="check_apply_servant" type="checkbox" value="True" {% if user.is_apply_servant == True %}checked{% endif %}/>
+          <label class="" for="checkIsServantConfirm">提交審核中(如果要請會員重提交, 此處取消打勾)</label>
+        </div>
+        <div>
+          <input class="form-check-input" id="checkIsServantConfirm" name="check_servant_passed" type="checkbox" value="True" {% if user.is_servant_passed == True %}checked{% endif %}/>
+          <label class="" for="checkIsServantConfirm">審核通過為服務者 {% if check_user_store == False %}<span style="color:red">(藍新商店未開通)</span>{% endif %}</label>
+          <button class="btn btn-primary btn-sm" type="button" onclick="location.href='{% url 'userstore_detail' %}?user={{user.id}}'">申請開通藍新商店</button>
+        </div>
         
         {% for userLicenseImage in userLicenseImages %}
           <div class="mt-3 d-flex align-items-center">  
@@ -34,11 +43,17 @@
                 <img class="img-fluid rounded" src="{{userLicenseImage.image.url}}" alt="" width="300" />
               </div>
             {% else %}
+            
             {% endif %}
             <div>
-              &emsp;{{userLicenseImage.license}}&emsp;
-              <input class="form-check-input" id="checkIsServantConfirm" name="check{{userLicenseImage.license.id}}" type="checkbox" value="True" {% if userLicenseImage.isPassed == True %}checked{% endif %}/>
-              <label class="" for="checkIsServantConfirm">審核通過</label>
+              <div>&emsp;{{userLicenseImage.license}}&emsp;</div>
+              <div>
+                <input class="form-check-input" id="checkIsServantConfirm" name="check{{userLicenseImage.license.id}}" type="checkbox" value="True" {% if userLicenseImage.isPassed == True %}checked{% endif %}/>
+                <label class="" for="checkIsServantConfirm">審核通過</label>
+              </div>
+              <div>
+                <button class="btn purple-button btn-sm" type="submit" name="delete{{userLicenseImage.license.id}}" >不通過刪除</button>
+              </div>
             </div>
           </div>
           
