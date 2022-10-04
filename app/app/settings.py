@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'fcm_django',
     'messageApp',
+    'ezpay_invoice',
 ]
 
 MIDDLEWARE = [
