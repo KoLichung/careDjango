@@ -107,7 +107,7 @@ class CreateMerchant(APIView):
             "IDPic": IDPic,
             "IDFrom": IDFrom,
             "Date": birthday,
-            "MemberName": user.name,
+            "MemberName": ID_card_name,
         }
 
         # extend_params_company = {
