@@ -27,6 +27,15 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20221004:
+1.https://inv.ezpay.com.tw/
+Ezpay 串發票, 閱讀文件 
+發票 api 文件 
+https://inv.ezpay.com.tw/Invoice_index/download
+2.Django new app ezpay_invoice
+test.py, views.py, models.py, admins.py 不需要的 檔案 先砍掉
+new tasks.py, 然後串發票的程式寫在這裡面
+
 20221003:
 1.
 a.mpg_trade 要帶入 user 的 user_store key/iv 去加密

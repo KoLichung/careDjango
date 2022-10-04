@@ -26,7 +26,7 @@
         <form method="post" enctype="multipart/form-data">{% csrf_token %}
         <br>
         <div class="row">
-            <div class="col-sm-10 col-lg-5">
+            <div class="col-md-6 col-8">
                 {% for userLicenseImage in userLicenseImages %}
                 <div class="mt-3 d-flex align-items-center ">  
                     <div class="container" >
@@ -39,8 +39,9 @@
                     </div>
                 </div>
                 {% endfor %}
+                <br>
             </div>
-            <div class="col-sm-10 col-lg-5">
+            <div class="col-md-6 col-8">
                 <div>身分證姓名</div>
                 <div>
                     <label class="h6 mt-2" for="aboriginal"></label>
@@ -63,10 +64,10 @@
                 </div><br>
                 <div>身分證領補換</div>
                 <div class="mt-1 btn-group">
-                    <select class="dropdown-button" id="ReissueOrChange" name="ReissueOrChange"  select>
-                        <option style="text-align: center" name="ReissueOrChange" value="初發" >補發</option>
-                        <option style="text-align: center" name="ReissueOrChange" value="補發" >補發</option>
-                        <option style="text-align: center" name="ReissueOrChange" value="換發" >換發</option>
+                    <select class="dropdown-button" id="IDFrom" name="IDFrom"  select>
+                        <option style="text-align: center" name="IDFrom" value="1" >初發</option>
+                        <option style="text-align: center" name="IDFrom" value="2" >補發</option>
+                        <option style="text-align: center" name="IDFrom" value="3" >換發</option>
                         <!-- <option value="醫院看護">醫院看護</option> -->
                     </select>
                 </div><br><br>
@@ -85,7 +86,7 @@
                     <select class="dropdown-button" id="county_select" name="county" >
                         <option style="text-align: center" value="全區">全區</option>
                         {% for county in counties %}
-                        <option style="text-align: center" name="county_option" value="{{county.name}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
+                        <option style="text-align: center" name="county_option" value="{{county.id}}" {% if county == countyName %} selected="selected" {% endif %}>{{county}}</option>
                         {% endfor %}
                     </select>
                 </div><br><br>
@@ -95,7 +96,6 @@
                     <label class="h6 mt-2" for="aboriginal"></label>
                     <input class="booking-input" style="width: 300px;" id="aboriginal" name="address"  type="text" placeholder="" />
                 </div><br>
-                
             </div>
         </div>
         </form>

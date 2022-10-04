@@ -33,7 +33,7 @@ class CreateMerchant(APIView):
         ID_number = request.POST.get('ID_number')
         birthday = request.POST.get('birthday')
         ID_card_date = request.POST.get('ID_card_date')
-        ReissueOrChange = request.POST.get('ReissueOrChange')
+        IDFrom = request.POST.get('IDFrom')
         city = request.POST.get('city')
         county = request.POST.get('county')
         ID_card_name = request.POST.get('ID_card_name')
@@ -95,7 +95,7 @@ class CreateMerchant(APIView):
             "IDCardDate": ID_card_date,
             "IDCardPlace": City.objects.get(),
             "IDPic": IDPic,
-            "IDFrom": 2,
+            "IDFrom": IDFrom,
             "Date": birthday,
             "MemberName": user.name,
         }
