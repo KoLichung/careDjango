@@ -15,45 +15,52 @@ import hashlib
 import codecs
 import logging
 import json
-from modelCore.models import Order ,UserStore ,PayInfo ,UserLicenseShipImage ,License, City
+from modelCore.models import Order,UserStore,PayInfo,UserLicenseShipImage,License,City,County
 
 logger = logging.getLogger(__file__)
 
-# 缺的user欄位: 英文地址 出生年月日 會員證號 身分證領補換 會員聯絡地址 管理者中文姓名 管理者英文姓名 管理者帳號 管理者行動電話號碼 管理者 E-mail
-# 商店爭議款信箱 客服商店信箱 商店代號 商店類別 商店中文名稱 商店網址 聯絡地址-城市 聯絡地址-地區 聯絡地址-郵遞區號 聯絡地址- 路名及門牌號碼 商店英文聯絡地址 商店簡介
-# (選填) 會員帳戶自動提領啟用 會員商店自動提領啟用 會員商店自動提領規則 物流設定 商店退貨取件人資訊參 數(姓名) 商店退貨取件人資訊參 數(行動電話) 商店退貨取件人資訊參 數(電子信箱)
 class CreateMerchant(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
         user = self.request.user
 
         ID_card_name = request.POST.get('ID_card_name')
+        ManagerNameE = request.POST.get('ManagerNameE')
         ID_number = request.POST.get('ID_number')
         birthday = request.POST.get('birthday')
         ID_card_date = request.POST.get('ID_card_date')
         IDFrom = request.POST.get('IDFrom')
-        city = request.POST.get('city')
-        county = request.POST.get('county')
+        city_id = request.POST.get('city_id')
+        county_id = request.POST.get('county_id')
         ID_card_name = request.POST.get('ID_card_name')
 
-        if UserStore.objects.filter(user=user).count() == 0:
-            print('code here')
+        MerchantAddr = request.POST.get('MerchantAddr')
+        MerchantEnAddr = request.POST.get('MerchantEnAddr')
+
+        city = City.objects.get(id=city_id)
+        county = County.objects.get(id=county_id)
+
+        # if UserStore.objects.filter(user=user).count() == 0:
+        #     print('code here')
 
         post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
         timeStamp = int( time.time() )
         PartnerID_ = "CARE168"
         key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
         iv = "CeYa8zoA0mX4qBpP"
+        
+        LoginAccount = "XinShing"+str(user.id)
+
         data = {
                 "Version" : "1.8",
                 "TimeStamp": timeStamp,
                 "MemberPhone": parsePhone(user.phone),
-                "MemberAddress": "台南市中西區民族路27號",
+                "MemberAddress": city.name+county.name+MerchantAddr,
                 "ManagerName": ID_card_name,
-                "ManagerNameE": "Sheng Jie,Fang",
-                "LoginAccount": "scottman2022",
+                "ManagerNameE": ManagerNameE,
+                "LoginAccount": LoginAccount,
                 "ManagerMobile": user.phone.replace('-', '').replace(' ', ''),
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
@@ -63,13 +70,13 @@ class CreateMerchant(APIView):
                 "MerchantName": "杏心合作商店"+str(user.id),
                 "MerchantNameE": "XinShing"+str(user.id),
                 "MerchantWebURL": "https://care168.com.tw/web/search_carer_detail?servant="+str(user.id),
-                "MerchantAddrCity": "台南市",
-                "MerchantAddrArea": "中西區",
-                "MerchantAddrCode": "700",
-                "MerchantAddr": "民族路27號",
-                "MerchantEnAddr": "No. 132, Sec. 2, Minzu Rd., West Central Dist., Tainan City 700 , Taiwan (R.O.C.)",
+                "MerchantAddrCity": city.name,
+                "MerchantAddrArea": county.name,
+                "MerchantAddrCode": county.addressCode,
+                "MerchantAddr": MerchantAddr,
+                "MerchantEnAddr": MerchantEnAddr,
                 "NationalE": "Taiwan",
-                "CityE": "Tainan City",
+                "CityE": city.nameE,
                 "PaymentType": "CREDIT:1|WEBATM:0|VACC:0|CVS:0|BARCODE:0|EsunWallet:0|TaiwanPay:0",
                 "MerchantType": 2,
                 "BusinessType": "8999",
@@ -86,28 +93,30 @@ class CreateMerchant(APIView):
                 # "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback/2/",
                 
         }
+
         if UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1)).image != None:
             IDPic = 0
         else:
             IDPic = 1
+
         extend_params_personal = {
             "MemberUnified": ID_number,
             "IDCardDate": ID_card_date,
-            "IDCardPlace": City.objects.get(),
+            "IDCardPlace": city.newebpay_cityname,
             "IDPic": IDPic,
             "IDFrom": IDFrom,
             "Date": birthday,
             "MemberName": user.name,
         }
 
-        extend_params_company = {
-            "MemberUnified": "22803842",
-            "RepresentName": "王小明",
-            "ManagerID": "M123321123",
-            "CapitalAmount": "10000000",
-            "IncorporationDate": "202020202",
-            "CompanyAddress": "台南市中西區民族路27號",
-        }
+        # extend_params_company = {
+        #     "MemberUnified": "22803842",
+        #     "RepresentName": "王小明",
+        #     "ManagerID": "M123321123",
+        #     "CapitalAmount": "10000000",
+        #     "IncorporationDate": "202020202",
+        #     "CompanyAddress": "台南市中西區民族路27號",
+        # }
 
         data.update(extend_params_personal)
         # data.update(extend_params_company)
@@ -123,15 +132,21 @@ class CreateMerchant(APIView):
         # print(int(encrypted, 16))
         # PostData_ = str(encrypted)
         resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
+
+        print(resp.text)
         # print(type(json.loads(resp.text)['status']))
         # logger.info('check test')
         logger.info(resp.text)
-        # userstore = UserStore()
-        # userstore.user = self.request.user
+
+        userstore = UserStore()
+        userstore.user = self.request.user
         # userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
         # userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
         # userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
-        # userstore.save()
+        userstore.LoginAccount = LoginAccount
+        userstore.MemberUnified = ID_number
+        userstore.save()
+
         # save merchant_id, hash_key, hash_iv to UserStore
 
         return Response(json.loads(resp.text))

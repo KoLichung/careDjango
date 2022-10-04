@@ -16,7 +16,7 @@ from django.contrib.auth import authenticate
 def ajax_refresh_county(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'refresh_county':
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
-        print(updatedData)
+        # print(updatedData)
         city_id = updatedData['city_id'][0]
         counties = County.objects.filter(city=City.objects.get(id=city_id))
         # countylist = serializers.serialize('json', list(counties))
@@ -27,7 +27,7 @@ def ajax_refresh_county(request):
                 'county':county.name,
             }
             data.append(item)
-        print(data)
+        # print(data)
         return JsonResponse({'data':data})
 
 def login(request):
@@ -279,7 +279,9 @@ def userstore_detail(request):
     cityName = citys.get(id=8)
     counties = County.objects.filter(city=cityName)
     countyName = counties.get(name='西屯區')
+
     if request.method == "POST":
+        s
         ID_card_name = request.POST.get('ID_card_name')
         ID_number = request.POST.get('ID_number')
         birthday = request.POST.get('birthday')

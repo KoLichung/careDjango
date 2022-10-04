@@ -839,6 +839,8 @@ class UserStore(models.Model):
     MerchantID = models.CharField(max_length = 255, blank = True, null=True)
     MerchantHashKey = models.CharField(max_length = 255, blank = True, null=True)
     MerchantIvKey = models.CharField(max_length = 255, blank = True, null=True)
+    LoginAccount = models.CharField(max_length = 100, blank = True, null=True)
+    MemberUnified = models.CharField(max_length = 100, blank = True, null=True)
 
 class BlogCategory(models.Model):
     name = models.CharField(max_length = 255, blank = True, null=True)
