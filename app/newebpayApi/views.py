@@ -15,16 +15,17 @@ import hashlib
 import codecs
 import logging
 import json
-from modelCore.models import Order,UserStore,PayInfo,UserLicenseShipImage,License,City,County
+from modelCore.models import Order,UserStore,PayInfo,UserLicenseShipImage,License,City,County,User
 
 logger = logging.getLogger(__file__)
 
 class CreateMerchant(APIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
-        user = self.request.user
+        user_id = request.POST.get('user_id')
+        user = User.objects.get(id=user_id)
 
         ID_card_name = request.POST.get('ID_card_name')
         ManagerNameE = request.POST.get('ManagerNameE')
