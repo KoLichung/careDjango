@@ -15,7 +15,7 @@ import hashlib
 import codecs
 import logging
 import json
-from modelCore.models import Order ,UserStore ,PayInfo ,UserLicenseShipImage ,License 
+from modelCore.models import Order ,UserStore ,PayInfo ,UserLicenseShipImage ,License, City
 
 logger = logging.getLogger(__file__)
 
@@ -27,9 +27,16 @@ class CreateMerchant(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
-        # order_id = self.request.query_params.get('order_id')
-        # order = Order.objects.get(id=order_id)
         user = self.request.user
+
+        ID_card_name = request.POST.get('ID_card_name')
+        ID_number = request.POST.get('ID_number')
+        birthday = request.POST.get('birthday')
+        ID_card_date = request.POST.get('ID_card_date')
+        ReissueOrChange = request.POST.get('ReissueOrChange')
+        city = request.POST.get('city')
+        county = request.POST.get('county')
+        ID_card_name = request.POST.get('ID_card_name')
 
         if UserStore.objects.filter(user=user).count() == 0:
             print('code here')
@@ -42,20 +49,20 @@ class CreateMerchant(APIView):
         data = {
                 "Version" : "1.8",
                 "TimeStamp": timeStamp,
-                "MemberPhone": "0987-654321",
+                "MemberPhone": parsePhone(user.phone),
                 "MemberAddress": "台南市中西區民族路27號",
-                "ManagerName": user.name,
+                "ManagerName": ID_card_name,
                 "ManagerNameE": "Sheng Jie,Fang",
                 "LoginAccount": "scottman2022",
-                "ManagerMobile": str(user.phone),
+                "ManagerMobile": user.phone.replace('-', '').replace(' ', ''),
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
                 "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE00013",
+                "MerchantID": "Care16800"+str(user.id),
                 "MCType": 1,
-                "MerchantName": "杏心測試十",
-                "MerchantNameE": "XinshingTest10",
-                "MerchantWebURL": "http://test.com",
+                "MerchantName": "杏心合作商店"+str(user.id),
+                "MerchantNameE": "XinShing"+str(user.id),
+                "MerchantWebURL": "https://care168.com.tw/web/search_carer_detail?servant="+str(user.id),
                 "MerchantAddrCity": "台南市",
                 "MerchantAddrArea": "中西區",
                 "MerchantAddrCode": "700",
@@ -76,7 +83,7 @@ class CreateMerchant(APIView):
                 "Withdraw": "",
                 "WithdrawMer": "",
                 "WithdrawSetting" : "Withdraw=9",
-                "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback/2/",
+                # "NotifyURL": "http://202.182.105.11/newebpayApi/notifyurl_callback/2/",
                 
         }
         if UserLicenseShipImage.objects.get(user=user,license=License.objects.get(id=1)).image != None:
@@ -84,12 +91,12 @@ class CreateMerchant(APIView):
         else:
             IDPic = 1
         extend_params_personal = {
-            "MemberUnified": "D122776945",
-            "IDCardDate": "1070124",
-            "IDCardPlace": "南市",
+            "MemberUnified": ID_number,
+            "IDCardDate": ID_card_date,
+            "IDCardPlace": City.objects.get(),
             "IDPic": IDPic,
             "IDFrom": 2,
-            "Date": "19850911",
+            "Date": birthday,
             "MemberName": user.name,
         }
 
@@ -128,6 +135,10 @@ class CreateMerchant(APIView):
         # save merchant_id, hash_key, hash_iv to UserStore
 
         return Response(json.loads(resp.text))
+
+def parsePhone(phone):
+    phone = phone.replace('-', '').replace(' ', '')
+    return phone[0:4]+'-'+phone[4:len(phone)]
 
 class MpgTrade(APIView):
 
