@@ -141,9 +141,9 @@ class CreateMerchant(APIView):
 
         userstore = UserStore()
         userstore.user = self.request.user
-        # userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
-        # userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
-        # userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
+        userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
+        userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
+        userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
         userstore.LoginAccount = LoginAccount
         userstore.MemberUnified = ID_number
         userstore.save()
