@@ -114,8 +114,10 @@ class UserWeekDayTimesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
                     userweekdaytime = UserWeekDayTime()
                 else:
                     userweekdaytime = queryset.get(user=user,weekday=weekday_ids[i])
-                start_time = int(weektime_list[i].split(':')[0][:2]) + float(int(weektime_list[i].split(':')[0][2:])/60)
-                end_time = int(weektime_list[i].split(':')[1][:2]) + float(int(weektime_list[i].split(':')[1][2:])/60)
+                # start_time = int(weektime_list[i].split(':')[0][:2]) + float(int(weektime_list[i].split(':')[0][2:])/60)
+                # end_time = int(weektime_list[i].split(':')[1][:2]) + float(int(weektime_list[i].split(':')[1][2:])/60)
+                start_time = weektime_list[i].split(':')[0]
+                end_time = weektime_list[i].split(':')[1]
                 userweekdaytime.user = user
                 userweekdaytime.weekday = weekday_ids[i]
                 userweekdaytime.start_time = start_time

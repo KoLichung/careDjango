@@ -38,9 +38,6 @@ o 1.platform_percent 要寫到 api 裡~
 => 如果尚未設定 isHome/isHospital 不要跑出來~
 (所有的服務員回傳都檢查一下~)
 
-1.import stocks
-
-
 20221004:
 1.https://inv.ezpay.com.tw/
 Ezpay 串發票, 閱讀文件 
