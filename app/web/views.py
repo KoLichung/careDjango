@@ -21,7 +21,6 @@ from time import time
 import logging
 from django.contrib import auth
 from modelCore.forms import *
-from api.views import time_format_change ,continuous_time_cal
 from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service ,UserWeekDayTime
@@ -2539,6 +2538,36 @@ def terms_of_service(request):
 def faq(request):
     assistanceposts = AssistancePost.objects.all()
     return render(request, 'web/faq.html',{'assistanceposts':assistanceposts})
+
+def time_format_change(time_int):
+    hour = int(time_int) 
+    minute = int((time_int - int(time_int)) * 60)
+    if hour < 10:
+        if minute < 10:
+            return '0'+ str(hour) + ":0" + str(minute)
+        else:
+            return '0'+ str(hour) + ":" + str(minute)
+    else:
+        if minute < 10:
+            return  str(hour) + ":0" + str(minute)
+        else:
+            return  str(hour) + ":" + str(minute)
+
+def continuous_time_cal(order):
+    start_time = time_format_change(order.start_time) 
+    end_time = time_format_change(order.end_time) 
+    print('test01',start_time,end_time)
+    start_time = datetime.datetime.strptime(start_time,"%H:%M").time()
+    end_time = datetime.datetime.strptime(end_time,"%H:%M").time()
+    print('test02',start_time,end_time)
+    start_datetime = datetime.datetime.combine(order.start_datetime.date(),start_time)
+    end_datetime = datetime.datetime.combine(order.end_datetime.date(),end_time)
+    diff = end_datetime - start_datetime
+    days, seconds = diff.days, diff.seconds
+    hours = days * 24 + seconds // 3600
+    minutes = (seconds % 3600) // 60
+    total_hours = hours + round(minutes/60)
+    return total_hours
 
 def platform_percent_cal(user,order):
     orders = Order.objects.all()

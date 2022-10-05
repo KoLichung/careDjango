@@ -88,7 +88,7 @@ class Invoice_touch(APIView):
 
     def get(self, request, format=None):
         user = self.request.user
-        post_url = '：https://cinv.ezpay.com.tw/Api/invoice_touch_issue'
+        post_url = 'https://cinv.ezpay.com.tw/Api/invoice_touch_issue'
         timeStamp = int( time.time() )
         MerchantID_ = "CARE168"
         key = "Hxz8q13qoEMkW42UGrAOOeJwVz8E43PK"

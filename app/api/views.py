@@ -1685,3 +1685,25 @@ def continuous_time_cal(order):
     minutes = (seconds % 3600) // 60
     total_hours = hours + round(minutes/60)
     return total_hours
+
+def platform_percent_cal(user,order):
+    orders = Order.objects.all()
+    today = datetime.datetime.today()
+    current_year = today.year
+    current_month = today.month
+    base_percent = 2.8
+    work_hours = order.work_hours
+    orders_total_hours = work_hours 
+    if orders.filter(user=user,start_datetime__year=current_year,start_datetime__month=current_month,state='paid').count() != 0:
+        accumulate_work_hours = orders.filter(user=user,start_datetime__year=current_year,start_datetime__month=current_month,state='paid').aggregate(Sum('work_hours'))['work_hours__sum']
+        print('accumulate_work_hours',accumulate_work_hours)
+        orders_total_hours += accumulate_work_hours
+    
+    if orders_total_hours < 120:
+        return (base_percent + 6.5)
+    elif orders_total_hours >= 120 and orders_total_hours < 240 :
+        return (base_percent + 5.5)
+    elif orders_total_hours >= 240 and orders_total_hours < 360 :
+        return (base_percent + 4.5)
+    elif orders_total_hours > 360 :
+        return (base_percent + 4)
