@@ -27,6 +27,20 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20221005:
+之前的問題：
+o 1.platform_percent 要寫到 api 裡~
+2.api/user/create 沒有在 create user 的時候, 同時 create user_license_image_ships (web測試正常?!)
+3.會員列表~ 申請審核但尚未通過的 "審核中(人數)"
+4.重設臨時密碼的 button 移到 會員資訊的右側
+5.web 服務員推薦
+=> 沒有設定時薪跟地區也會跑出來!
+=> 如果尚未設定 isHome/isHospital 不要跑出來~
+(所有的服務員回傳都檢查一下~)
+
+1.import stocks
+
+
 20221004:
 1.https://inv.ezpay.com.tw/
 Ezpay 串發票, 閱讀文件 
