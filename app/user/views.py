@@ -106,7 +106,7 @@ class UserWeekDayTimesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
         queryset = self.queryset
         weekday = request.data.get('weekday')
         weektime = request.data.get('weektime')
-        if weekday != None:
+        if weekday != None and weekday != '':
             weekday_ids = weekday.split(',')
             weektime_list = weektime.split(',')
             for i in range(len(weekday_ids)):
@@ -126,6 +126,10 @@ class UserWeekDayTimesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
             for userweekdaytime in queryset.filter(user=user):
                 if userweekdaytime.weekday not in weekday_ids:
                     userweekdaytime.delete()
+                    
+        if weekday=='':
+            queryset.filter(user=user).delete()
+
         queryset = queryset.filter(user=user)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
