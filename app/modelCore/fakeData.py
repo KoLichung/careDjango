@@ -66,7 +66,7 @@ def seedData():
     Service.objects.create(name="身體清潔",remark="沐浴、擦澡、更衣")
     Service.objects.create(name="陪同就醫",remark="陪伴看診、洗腎，代領藥品")
     Service.objects.create(name="陪同復健",remark="※有復健需求可先聊聊溝通復健內容與服務費用是否不同，以維護雙方權益^^")
-    Service.objects.create(name="代購物品",remark="代買生活必需品，以有發票或收據為主 ※代購物品期間服務者無法負責安全維護，家屬需自行評估被照顧者狀況")
+    Service.objects.create(name="代購物品",remark="代購餐點、生活必需品，以有發票或收據為主 ※代購期間服務者無法負責安全維護，家屬需自行評估被照顧者狀況")
     Service.objects.create(name="簡易備餐",remark="依現有食材簡易煮粥、麵食或加熱即食品；僅提供被照顧者與一位家屬餐食")
     Service.objects.create(name="家務協助",remark="簡易掃地拖地，清洗、收折衣物，清洗、更換床單 ※服務範圍僅限被照顧者主要生活環境，照服員非專業清潔人員無提供刷洗環境、移動家具、大掃除等服務；清洗衣物、床單，需提供洗衣機或付費使用投幣式洗衣機，超出以上服務範圍服務者有權利拒絕服務")
     Service.objects.create(name="鼻胃管灌食")
