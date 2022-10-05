@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
-from ezpay_invoice import module
+
+from newebpayApi import module
 
 import requests
 import time
@@ -25,10 +26,15 @@ class Invoice(APIView):
 
     def get(self, request, format=None):
         user = self.request.user
-
+        order_id = self.request.query_params.get('order_id')
+        print(order_id)
+        order = Order.objects.get(id=order_id)
+        TaxAmt = order.TaxAmt
+        print(TaxAmt)
         post_url = 'https://cinv.ezpay.com.tw/Api/invoice_issue'
         timeStamp = int( time.time() )
-        MerchantID_ = "CARE168"
+
+        MerchantID_ = "34822736"
         key = "Hxz8q13qoEMkW42UGrAOOeJwVz8E43PK"
         iv = "C7HjdwVLqYw4updP"
 
@@ -36,21 +42,21 @@ class Invoice(APIView):
             'RespondType':'JSON',
             'Version':'1.5',
             'TimeStamp':str(timeStamp),
-            'MerchantOrderNo':'201406010001',
+            'MerchantOrderNo':order_id,
             'Status':'0',
             'Category':'B2C',
-            'BuyerName':'王小明',
+            'BuyerName':order.user.name,
             'PrintFlag':'Y',
-            'TaxType':'9',
+            'TaxType':'1',
             'TaxRate':5,
-            'Amt':3000,
-            'TaxAmt':150,
-            'TotalAmt':3150,
+            'Amt':(order.total_money - int(TaxAmt)),
+            'TaxAmt':int(TaxAmt),
+            'TotalAmt':order.total_money,
             'ItemName':'居家照顧服務',
             'ItemCount':1,
             'ItemUnit':'項',
-            'ItemPrice':3150,
-            'ItemAmt':3150,
+            'ItemPrice':order.total_money,
+            'ItemAmt':order.total_money,
             'ItemTaxType':1,
 
 
@@ -69,10 +75,39 @@ class Invoice(APIView):
 
         # data.update(extend_params_personal)
         query_str = urllib.parse.urlencode(data)
-        print(query_str)
-        encrypt_data = module.AES_Encrypt( key, iv,query_str)
-        print(encrypt_data)
+        encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
         resp = requests.post(post_url, data ={"MerchantID_":MerchantID_, "PostData_":encrypt_data})
         # 在order欄位加入
+        print(json.loads(resp.text))
+        # print(json.loads(json.loads(resp.text)['Result'])['InvoiceTransNo'])
         return Response(json.loads(resp.text))
- 
+
+class Invoice_touch(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        user = self.request.user
+        post_url = '：https://cinv.ezpay.com.tw/Api/invoice_touch_issue'
+        timeStamp = int( time.time() )
+        MerchantID_ = "CARE168"
+        key = "Hxz8q13qoEMkW42UGrAOOeJwVz8E43PK"
+        iv = "C7HjdwVLqYw4updP"
+
+        data = {
+            'RespondType':'JSON',
+            'Version':'1.0。',
+            'TimeStamp':str(timeStamp),
+            'InvoiceTransNo':'test',
+            'MerchantOrderNo':'201406010001',
+            'TotalAmt':3150,
+        }
+
+        query_str = urllib.parse.urlencode(data)
+        print(query_str)
+        encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
+        print(encrypt_data)
+        resp = requests.post(post_url, data ={"MerchantID_":MerchantID_, "PostData_":encrypt_data})
+        print(resp)
+        # 在order欄位加入
+        return Response(json.loads(resp.text))
