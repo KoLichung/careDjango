@@ -66,7 +66,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
                 "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE00168"+str(user.id),
+                "MerchantID": "ACE0168"+str(user.id),
                 "MCType": 1,
                 "MerchantName": "杏心合作商店"+str(user.id),
                 "MerchantNameE": "XinShing"+str(user.id),
@@ -110,6 +110,9 @@ class CreateMerchant(APIView):
             "MemberName": ID_card_name,
         }
 
+        logger.info(data)
+        logger.info(extend_params_personal)
+
         # extend_params_company = {
         #     "MemberUnified": "22803842",
         #     "RepresentName": "王小明",
@@ -140,7 +143,7 @@ class CreateMerchant(APIView):
         logger.info(resp.text)
 
         userstore = UserStore()
-        userstore.user = self.request.user
+        userstore.user = user
         userstore.MerchantID = json.loads(resp.text)['result']['MerchantID']
         userstore.MerchantHashKey = json.loads(resp.text)['result']['MerchantHashKey']
         userstore.MerchantIvKey = json.loads(resp.text)['result']['MerchantIvKey']
