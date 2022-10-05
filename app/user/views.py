@@ -16,7 +16,7 @@ class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system"""
     serializer_class = UserSerializer
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer,):
         user = serializer.save(user=self.request.user)
         return user
 

@@ -102,8 +102,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
         licenses = License.objects.all()
+        print(licenses)
+        print('user',self)
         for license in licenses:
-            if UserLicenseShipImage.objects.filter(user=self,license=license).count == 0:
+            if UserLicenseShipImage.objects.filter(user=self,license=license).count() == 0:
                 instance = UserLicenseShipImage.objects.create(user=self,license=license)
                 print(instance)
 

@@ -21,10 +21,6 @@ from time import time
 import logging
 from django.contrib import auth
 from modelCore.forms import *
-<<<<<<< HEAD
-=======
-# from api.views import time_format_change ,continuous_time_cal
->>>>>>> 59d216dd13928e8cf90af3f6e17b98f307ba5b8c
 from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service ,UserWeekDayTime
@@ -119,6 +115,7 @@ def ajax_cal_rate(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'ajax_cal_rate' :
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
         servants = User.objects.filter(is_servant_passed=True)
+        servants = servants.exclude(is_home=False,is_hospital=False)
         print(updatedData)
         servant_id = updatedData['servant'][0]
         servant = User.objects.get(id=servant_id)
@@ -431,6 +428,7 @@ def search_list(request):
     
     citys = City.objects.all()
     servants = User.objects.filter(is_servant_passed=True)
+    servants = servants.exclude(is_home=False,is_hospital=False)
     city_id = request.GET.get("city")
     care_type = request.GET.get('care_type')
     is_continuous_time = request.GET.get('is_continuous_time')
@@ -2225,6 +2223,7 @@ def request_form_confirm(request):
     user = request.user
     user_id = user.id
     servants = User.objects.filter(is_servant_passed=True)
+    servants = servants.exclude(is_home=False,is_hospital=False)
     servants = servants.exclude(id=user_id)
     tempcase = TempCase.objects.get(user=user,is_booking=False)
     care_type = tempcase.care_type
@@ -2494,6 +2493,7 @@ def request_form_confirm(request):
     
 def recommend_carer(request):
     servants = User.objects.filter(is_servant_passed=True)
+    servants = servants.exclude(is_home=False,is_hospital=False)
     citys = City.objects.all()
     city_id = ''
     care_type = ''

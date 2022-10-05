@@ -10,6 +10,7 @@
           <a href="{% url 'all_members' %}" class="custom-purple-btn btn-sm" role="button">所有會員({{members_num}}人)</a>
           <a href="{% url 'all_members' %}?member=needer"class="custom-purple-border-btn btn-sm" role="button">需求者({{needers_num}}人)</a>
           <a href="{% url 'all_members' %}?member=servant" class="custom-purple-border-btn btn-sm" role="button">服務者({{servants_num}}人)</a>
+          <a href="{% url 'all_members' %}?member=apply_servant" class="custom-purple-border-btn btn-sm" role="button">審核中({{apply_servant_num}}人)</a>
         </div>
         <!-- <div class="h5 mb-3"><b>所有會員</b></div> -->
         <div class="border"></div>

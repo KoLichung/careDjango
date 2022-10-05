@@ -9,9 +9,15 @@
      <form method="post" enctype="multipart/form-data">{% csrf_token %}
       <div class="card h-lg-100 mb-5">
         <div class="card-header">
-          <div class="h5 mb-3">
-            <b>會員資訊</b>
-            
+          <div class="h5 mb-3 row">
+            <div class="col-2">
+              <b>會員資訊</b>
+            </div>           
+            <div class="col">
+              <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                重設臨時密碼
+              </button>   
+            </div>
           </div>
           <div class="border"></div>
           <div class="d-flex justify-content-between mt-3">
@@ -28,10 +34,7 @@
               {% else %} 
                 <span>需求者</span>
               {% endif %}
-            </div>
-            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              重設臨時密碼
-            </button>          
+            </div>    
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
