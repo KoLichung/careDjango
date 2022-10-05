@@ -21,7 +21,7 @@ from time import time
 import logging
 from django.contrib import auth
 from modelCore.forms import *
-from api.views import time_format_change ,continuous_time_cal
+# from api.views import time_format_change ,continuous_time_cal
 from django.contrib.auth import authenticate, logout
 from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service ,UserWeekDayTime
