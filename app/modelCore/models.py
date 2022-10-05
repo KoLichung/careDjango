@@ -638,9 +638,9 @@ class Order(models.Model):
     refund_apply_date = models.DateTimeField(auto_now=True, blank = True,null=True)
 
     @property
-    def invoice_money(self):
-        invoice_percent = (self.platform_percent - 2.8)
-        return self.total_money * invoice_percent
+    def TaxAmt(self):
+        tax_percent = (self.platform_percent - 2.8)
+        return (self.total_money * tax_percent)/100
 
 class OrderIncreaseService(models.Model):
     order =  models.ForeignKey(

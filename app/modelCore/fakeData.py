@@ -6,6 +6,7 @@ from django.utils import timezone
 import pytz
 from pytz import tzinfo
 from django.db.models import Avg ,Sum 
+from web.views import platform_percent_cal
 from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage ,OrderWeekDay ,OrderIncreaseService, BlogCategory, BlogPost, MonthSummary
@@ -452,7 +453,7 @@ def fakeData():
                     order.wage_hour = wage
 
         order.base_money = order.work_hours * wage
-        order.platform_percent = 15
+        order.platform_percent = platform_percent_cal(user,order)
         order.save()
 
     Review.objects.create(order=order,case=order.case,servant=order.case.servant)

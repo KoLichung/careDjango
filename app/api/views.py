@@ -18,6 +18,7 @@ from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMe
 from modelCore.models import BlogPost, BlogPostCategoryShip, BlogCategory
 from api import serializers
 from messageApp.tasks import *
+from web.views import platform_percent_cal
 
 class LicenseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -906,7 +907,7 @@ class CreateCase(APIView):
                 order.base_money = order.work_hours * wage
 
                 # need to change in the future
-                order.platform_percent = 15
+                order.platform_percent = platform_percent_cal(user,order)
                 order.save()
                 Review.objects.create(order=order,case=order.case,servant=order.servant)
 
@@ -1147,7 +1148,7 @@ class CreateServantOrder(APIView):
         order.base_money = order.work_hours * wage
 
         # need to change in the future
-        order.platform_percent = 15
+        order.platform_percent = platform_percent_cal(user,order)
         order.save()
         Review.objects.create(order=order,case=order.case,servant=order.servant)
 
@@ -1595,7 +1596,7 @@ class EditCase(APIView):
                 order.base_money = order.work_hours * wage
 
                 # need to change in the future
-                order.platform_percent = 15
+                order.platform_percent = platform_percent_cal(user,order)
                 order.save()
                 Review.objects.create(order=order,case=order.case,servant=order.servant)
 
