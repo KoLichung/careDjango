@@ -126,7 +126,7 @@ class UserWeekDayTimesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
             for userweekdaytime in queryset.filter(user=user):
                 if userweekdaytime.weekday not in weekday_ids:
                     userweekdaytime.delete()
-                    
+
         if weekday=='':
             queryset.filter(user=user).delete()
 
@@ -151,7 +151,7 @@ class UserLanguagesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
         language = request.data.get('language')
         remark_original = request.data.get('remark_original')
         remark_others = request.data.get('remark_others')
-        if language != None:
+        if language != None and language!='':
             language_ids = language.split(',')
             for language_id in language_ids:
                 if queryset.filter(user=user,language=language_id).exists() != True:
