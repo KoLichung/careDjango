@@ -353,7 +353,6 @@ def login(request):
         print(login_url)
         return redirect(login_url) 
 
-
     return render(request, 'web/login.html')
 
 def register_line(request):
@@ -418,6 +417,42 @@ def login_line(request):
             return redirect_params('login')
 
 def register_phone(request):
+    if request.method == 'POST' and 'register'in request.POST :
+        username = request.POST['userName']
+        phone = request.POST['phone']
+        password = request.POST['password']
+        if User.objects.filter(phone=phone).exists() != False:
+            user = authenticate(request, phone=phone, password=password)
+            if user is not None and user.name == username :
+                auth.login(request, user)
+                return redirect('index')
+            else:
+                return render(request, 'web/register_phone.html',{'alert_flag': True})
+        else:
+            user = User()
+            user.name = username
+            user.phone = phone
+            user.set_password(password)
+            user.save()
+            auth.login(request, user)
+            print(request.user)
+            return redirect('login')
+    elif request.method == 'POST' and 'line_login' in request.POST:
+        auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
+        # call_back = 'http://202.182.105.11/' + redirect_to
+        call_back = 'http://202.182.105.11/web/login_line?next=/web/index'
+
+        print(call_back)
+        data = {
+            'response_type': 'code',
+            'client_id': '1657316694',
+            'redirect_uri': call_back,
+            'state': 'abcde',
+        }
+        query_str = urllib.parse.urlencode(data) + '&scope=profile%20openid%20email'
+        login_url = auth_url + query_str
+        print(login_url)
+        return redirect(login_url) 
     return render(request, 'web/register_phone.html')
 
 def logout(request):
@@ -1951,7 +1986,17 @@ def my_write_review(request):
     return render(request, 'web/my/write_review.html',{'order':order})
 
 def my_notification_setting(request):
-    return render(request, 'web/my/notification_setting.html')
+    user = request.user
+    if request.method == 'POST':
+        check_news_content = request.POST.get('check_news_content')
+        if check_news_content == 'True':
+            user.is_fcm_notify = True
+            user.save()
+        else:
+            user.is_fcm_notify = False
+            user.save()
+        return redirect('index')
+    return render(request, 'web/my/notification_setting.html',{'user':user})
 
 def request_form_service_type(request):
     user = request.user
