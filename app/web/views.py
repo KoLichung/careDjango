@@ -339,7 +339,7 @@ def login(request):
     elif request.method == 'POST' and 'line_login' in request.POST:
         auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
         # call_back = 'http://202.182.105.11/' + redirect_to
-        call_back = 'http://127.0.0.1:8000/web/login_line?next=/web/index'
+        call_back = 'http://202.182.105.11/web/login_line?next=/web/index'
 
         print(call_back)
         data = {
@@ -391,7 +391,7 @@ def login_line(request):
         'client_id': '1657316694',
         'client_secret': 'd7751034c13427e80df2818ce86d3a26',
         'code': code,
-        'redirect_uri': 'http://127.0.0.1:8000/web/login_line?next=/web/index' ,
+        'redirect_uri': 'http://202.182.105.11/web/login_line?next=/web/index' ,
     }
     data = parse.urlencode(FormData)
     resp = requests.post(url, headers=headers, data=data)
