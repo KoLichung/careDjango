@@ -1,19 +1,30 @@
 {% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
-<main class="main bg-white h-100" id="top" >
-      <div class="row">
-       
-        <div class="my-auto col-8 col-sm-6 col-xl-4 mx-auto text-center">
-          <h4 class="section-title-purple mt-10">歡迎您的加入</h4>
-          <p>加入服務者的說明文字加入服務者的說明文字加入服務者的說明文字加入服務者的說明文字加入服務者的說明文字</p>
-          <a href="{% url 'my_service_setting' %}">
-            <button class="full-purple-button mt-5">
-              <span class="fas fa-edit"></span>
-              開始填資料
-            </button>
-          </a>
-        </div>
+<main class="main bg-white py-5" id="top" >
+  <div class="text-center mb-5">
+    <span class="section-title-purple">成為服務者流程圖</span>
+    <div class="mx-8 mt-6">
+      <div class="become-carer-step h-100">下載<br>Care168 App</div>
+      <div class="become-carer-step h-100">填寫基本資料<br>免費加入會員</div>
+      <div class="become-carer-step h-100">至會員中心<br>申請成為服務者</div>
+      <div class="become-carer-step h-100">上傳相關文件<br>等待審核通過</div>
+      <div class="become-carer-step h-100">審核<br>通過</div>
+      <div class="become-carer-step h-100">至會員中心<br>設定我的服務</div>
+      <div class="become-carer-step h-100 last">可以開始<br>自由接案囉!</div>
+    </div>
+
+    <div class="mt-5">
+      <div class="news-title mb-3">
+        下載 Care168
       </div>
+      <a href="">
+        <img src="{% static 'web/assets/img/new/download_apple.png' %}" alt="" class="" style="max-width: 180px;" >
+      </a>
+      <a href="">
+        <img src="{% static 'web/assets/img/new/download_google.png' %}" alt="" class="" style="max-width: 180px;">
+      </a>
+    </div>
+  </div> 
 </main>
 {% endblock %}

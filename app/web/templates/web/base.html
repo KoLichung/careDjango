@@ -112,6 +112,9 @@
             <li class="nav-item">
               <a class="nav-link-custom" href="{% url 'faq' %}">幫助中心</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link-custom" href="{% url 'become_carer' %}">成為服務者</a>
+            </li>
             {% comment %} <li class="nav-item">
               <a class="nav-link-custom" href="{% url 'my_service_setting_time' %}">成為服務者</a>
             </li> {% endcomment %}
@@ -132,7 +135,7 @@
           
           <!-- 沒有新的訊息 -->
           <li class="nav-item pb-1">
-            <a href="">
+            <a href="{% url 'chat' %}">
               <span class="nav-link-custom-icon">
                 <span class="far fa-comments"></span>   
               </span>

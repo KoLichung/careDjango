@@ -2639,3 +2639,6 @@ def platform_percent_cal(user,order):
         return (base_percent + 4.5)
     elif orders_total_hours > 360 :
         return (base_percent + 4)
+
+def chat(request):
+    return render(request, 'web/chat.html')

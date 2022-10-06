@@ -825,6 +825,34 @@ input .service-setting-input {
   outline: 0;
 }
 
+.become-carer-step{
+  border: 1px solid #BB6BD9;
+  border-radius: 10px;
+  padding: 10px 20px;
+  color: #BB6BD9;
+  font-weight: 500;
+  display: inline-block;
+  margin: 20px 20px;
+  position: relative;
+}
+
+div.become-carer-step::after{
+  content: '';
+  position: absolute;
+  right: -15px;
+  top: 50%;
+  display: block;
+  border-right: 3px solid #BB6BD9;
+  border-top: 3px solid #BB6BD9;
+  width: 20px;
+  height: 20px;
+  float: right;
+  transform: translate(50%, -50%) rotate(45deg);
+}
+
+div.become-carer-step.last::after{
+  content: none;
+}
 
 
 
