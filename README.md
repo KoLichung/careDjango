@@ -27,6 +27,12 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20221006:
+1.register_phone 頁面
+2.my_notification_setting 頁面
+對應 User model 的 is_fcm_notify,
+推播 tasks 的地方也要用這個參數辨別一下~
+
 20221005:
 之前的問題：
 o 1.platform_percent 要寫到 api 裡~
