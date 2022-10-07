@@ -436,7 +436,7 @@ def register_phone(request):
             user.save()
             auth.login(request, user)
             print(request.user)
-            return redirect('login')
+            return redirect('index')
     elif request.method == 'POST' and 'line_login' in request.POST:
         auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
         # call_back = 'http://202.182.105.11/' + redirect_to
