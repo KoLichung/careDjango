@@ -1,0 +1,17 @@
+{% extends 'web/base.html' %} {% block content %}
+{% load static %}
+<!-- main -->
+<main class="main bg-white py-5" id="top" >
+  <div class="text-center mb-5 mt-7">
+    <h4 class="section-title-purple">使用聊聊功能，請下載並開啟 Care168 App使用~</h4>
+    <div class="mt-5">
+      <a href="">
+        <img src="{% static 'web/assets/img/new/download_apple.png' %}" alt="" class="" style="max-width: 180px;" >
+      </a>
+      <a href="">
+        <img src="{% static 'web/assets/img/new/download_google.png' %}" alt="" class="" style="max-width: 180px;">
+      </a>
+    </div>
+  </div>  
+</main>
+{% endblock %}
