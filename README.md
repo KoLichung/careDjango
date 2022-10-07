@@ -27,6 +27,10 @@ HashIV：CeYa8zoA0mX4qBpP
 vultr:
 8k-TPf]CT964,--R
 
+20221007:
+1.register 完要直接登入
+line/phone 都一樣~
+
 20221006:
 1.register_phone 頁面
 2.my_notification_setting 頁面
