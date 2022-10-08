@@ -12,6 +12,7 @@ urlpatterns = [
     path('ezpay_invoice/', include('ezpay_invoice.urls')),
     path('backboard/', include('backboard.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('messageApp/', include('messageApp.urls')),
 ]
 
 if settings.DEBUG:

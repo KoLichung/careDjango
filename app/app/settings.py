@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from firebase_admin import initialize_app
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -59,6 +60,28 @@ INSTALLED_APPS = [
     'messageApp',
     'ezpay_invoice',
 ]
+
+FIREBASE_APP = initialize_app()
+
+#Get the absolute path of the settings.py file's directory
+# PWD = os.path.dirname(os.path.realpath(__file__ )) 
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(PWD, "flutterjava-firebase.json")
+
+FCM_DJANGO_SETTINGS = {
+     # default: _('FCM Django')
+    "APP_VERBOSE_NAME": "FCM Django",
+     # true if you want to have only one active device per registered user at a time
+     # default: False
+    "ONE_DEVICE_PER_USER": False,
+     # devices to which notifications cannot be sent,
+     # are deleted upon receiving error response from FCM
+     # default: False
+    "DELETE_INACTIVE_DEVICES": False,
+    # Transform create of an existing Device (based on registration id) into
+                # an update. See the section
+    # "Update of device with duplicate registration ID" for more details.
+    "UPDATE_ON_DUPLICATE_REG_ID": True,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
