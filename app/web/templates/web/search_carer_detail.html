@@ -53,7 +53,7 @@
             <p class="small-section-title-purple mt-5">服務項目</p>
             <div class="case-info-font mb-5 text-indent-28px">
               {% for userservice in servant.ship_services.all %}
-                {% if licenseImage.license.id != 1 and  licenseImage.license.id != 2 and  licenseImage.license.id != 3 licenseImage.license.id != 4 %}
+                {% if userservice.service.id != 1 and  userservice.service.id != 2 and  userservice.service.id != 3 and userservice.service.id != 4 %}
                   <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{userservice.service}}</p>
                 {% endif %}
               {% endfor %}
