@@ -9,9 +9,9 @@
     <div class="accordion mb-3" id="accordionExample">
       <div class="accordion-item">
         <h2 class="accordion-header" id="heading1">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">{{post.title}}</button>
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{post.id}}" aria-expanded="true" aria-controls="collapse{{post.id}}">{{post.title}}</button>
         </h2>
-        <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+        <div class="accordion-collapse collapse" id="collapse{{post.id}}" aria-labelledby="heading1" data-bs-parent="#accordionExample">
           <div class="accordion-body">{{post.body|safe}}</div>
         </div>
       </div>

@@ -656,10 +656,10 @@ def search_carer_detail(request):
     if servant.is_hospital == True:
         servant_care_type.append('醫院看護')
 
-    license_not_provide = []
-    for license_id in range(1,4):
-        if UserLicenseShipImage.objects.filter(user=servant,license=license_id).exists() == False:
-            license_not_provide.append(License.objects.get(id=license_id))
+    # license_not_provide = []
+    # for license_id in range(1,4):
+    #     if UserLicenseShipImage.objects.filter(user=servant,license=license_id).exists() == False:
+    #         license_not_provide.append(License.objects.get(id=license_id))
 
     if len(Review.objects.filter(servant=servant)) >= 2:
         reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')[:2]
@@ -735,7 +735,11 @@ def search_carer_detail(request):
             return redirect('login')
     defaultStartTime = start_time
     defaultEndTime = end_time
-    return render(request, 'web/search_carer_detail.html',{'servant_care_type':servant_care_type, 'weekdays':weekdays, 'cityName':city,'citys':citys, 'is_continuous_time':is_continuous_time, 'defaultStartTime':defaultStartTime,'defaultEndTime':defaultEndTime,'defaultStartEndDate':defaultStartEndDate,'weekday_list':weekday_list, 'servant':servant,'license_not_provide':license_not_provide,'reviews':reviews,'citys':citys,'care_type':care_type})
+    return render(request, 'web/search_carer_detail.html',
+        {'servant_care_type':servant_care_type, 'weekdays':weekdays, 'cityName':city,'citys':citys, 
+        'is_continuous_time':is_continuous_time, 'defaultStartTime':defaultStartTime,'defaultEndTime':defaultEndTime,
+        'defaultStartEndDate':defaultStartEndDate,'weekday_list':weekday_list, 'servant':servant,
+        'reviews':reviews,'citys':citys,'care_type':care_type})
 
 def booking_patient_info(request):
     user = request.user

@@ -215,7 +215,7 @@
             </div>
               
             <!-- Grid column 關於 -->
-            <div class="col-md-2 col-lg-2 col-xl-2 mb-3 ml-5">
+            <div class="col-md-2 col-lg-2 col-xl-2 mb-2 ml-2">
               <h6 class="title-font pb-2" style="color:white">關於</h6>
               <ul style="list-style: none; padding:0px;">
                 <li><a class="" href="{% url 'about' %}" style="color: white; text-decoration: none;" >關於我們</a></li>
@@ -226,16 +226,21 @@
             </div>
               
             <!-- Grid column 客服時間 -->
-            <div class="col-md-3 col-lg-3 col-xl-2 mb-3 ">
-              <h6 class="title-font pb-2" style="color:white">客服時間與聯繫方式</h6>
-              <span>星期一至星期五<br>9:00 ~ 18:00</span><br>
-              <span><span class="fas fa-envelope me-1"></span> service@care168.com</span>
+            <div class="col-md-3 col-lg-3 col-xl-3 mb-3 ">
+              <h6 class="title-font pb-2" style="color:white">聯絡我們</h6>
+              <span><img src="/static/web/assets/img/line_icon.png" alt="line icon" width="20" height="20"> Line官方帳號 @care168</span>
               <br>
-              <span><span class="fas fa-phone me-1"></span> 02-12345678</span>
+              <span>
+                {% comment %} <span class="fas fa-envelope me-1"></span> {% endcomment %}
+              📪 care168care168@gmail.com</span>
+              <br>
+              <span>
+                {% comment %} <span class="fas fa-phone me-1"></span> {% endcomment %}
+                ☎️ (03) 464-2168</span>
             </div>
 
             <!-- Grid column 聯繫客服 -->
-            <div class="col-md-4 col-lg-4 col-xl-3 mb-3 ">
+            <div class="col-md-3 col-lg-3 col-xl-3 mb-3 ">
               <h6 class="title-font pb-2" style="color:white"><div >Care168是第三方預約照護平台，</div>
                 <div class="mt-2">本平台非長照機構，無提供長照</div>
                 <div class="mt-2">相關服務及補助，如有長照需求</div>
@@ -250,7 +255,7 @@
         <div class="row  justify-content-between">
           <!-- Left -->
           <div class="col-xs-12 col-sm-12 col-md-8 text-md-start pb-2">
-            <span>© 2022 照護168有限公司 All rights reserved.</span>
+            <span>© 2022杏心網路平台有限公司. All Rights Reserved.</span>
           </div>
            
           <!-- Right -->              

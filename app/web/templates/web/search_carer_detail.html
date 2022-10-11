@@ -53,18 +53,25 @@
             <p class="small-section-title-purple mt-5">服務項目</p>
             <div class="case-info-font mb-5 text-indent-28px">
               {% for userservice in servant.ship_services.all %}
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{userservice.service}}</p>
+                {% if licenseImage.license.id != 1 and  licenseImage.license.id != 2 and  licenseImage.license.id != 3 licenseImage.license.id != 4 %}
+                  <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{userservice.service}}</p>
+                {% endif %}
               {% endfor %}
             </div>
 
             <p class="small-section-title-purple mt-5">相關資格文件</p>
             <div class="case-info-font mb-5 text-indent-28px">
               <!-- <p><span class="fas fa-times-circle fs-1" style="color: red;"></span>&ensp;未提供 COVID-19 疫苗接種記錄卡</p> -->
-              {% for license in license_not_provide %}
-              <p><span class="fas fa-times-circle fs-1" style="color: red;"></span>&ensp;未提供 {{license}}</p>
-              {% endfor %}
+              
               {% for licenseImage in servant.user_license_images.all %}
-              <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{licenseImage.license}}</p>
+               
+                {% if licenseImage.isPassed %}
+                  <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{licenseImage.license}}</p>
+                {% else %}
+                  {% if licenseImage.license.id == 4 or  licenseImage.license.id == 5 or  licenseImage.license.id == 6 %}
+                    <p><span class="fas fa-times-circle fs-1" style="color:red"></span>&ensp;{{licenseImage.license}}</p>
+                  {% endif %}
+                {% endif %}
               {% endfor %}
        
             </div>

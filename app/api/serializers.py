@@ -149,7 +149,7 @@ class LicenseShipSerializer(serializers.ModelSerializer):
 class ServantSerializer(serializers.ModelSerializer):
     locations = UserServiceLocationSerializer(read_only=True, many=True)
     avg_rate = serializers.IntegerField(default=0)
-    background_image_url = serializers.ImageField(max_length=None, use_url=True, allow_null=True, required=False)
+    # background_image_url = serializers.ImageField(max_length=None, use_url=True, allow_null=True, required=False)
     services = ServiceSerializer(read_only=True, many=True)
     
     about_me = serializers.CharField(default='')
@@ -161,7 +161,7 @@ class ServantSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ('id', 'name', 'gender','image', 'phone','servant_avg_rating', 'is_home', 'home_hour_wage', 'home_half_day_wage', 'home_one_day_wage', 'is_hospital', 'hospital_hour_wage', 'hospital_half_day_wage', 'hospital_one_day_wage', 'locations', 'rating_nums', 'background_image_url', 'services', 'licences', 'about_me', 'reviews','avg_rate', 'languages')
+        fields = ('id', 'name', 'gender','image', 'phone','servant_avg_rating', 'is_home', 'home_hour_wage', 'home_half_day_wage', 'home_one_day_wage', 'is_hospital', 'hospital_hour_wage', 'hospital_half_day_wage', 'hospital_one_day_wage', 'locations', 'rating_nums', 'background_image', 'services', 'licences', 'about_me', 'reviews','avg_rate', 'languages')
         read_only_fields = ('id',)
 
 class OrderIncreaseServiceSerializer(serializers.ModelSerializer):
