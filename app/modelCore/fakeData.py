@@ -124,7 +124,19 @@ def fakeData():
     user.name = 'user01'
     user.phone = '0915323131'
     user.is_apply_servant = True
+    user.is_servant_passed = True
     user.gender = 'M'
+    user.is_home = True
+    user.home_hour_wage = 300
+    user.home_half_day_wage = 1600
+    user.home_one_day_wage = 2900
+    user.is_hospital = True
+    user.hospital_hour_wage = 320
+    user.hospital_half_day_wage = 1750
+    user.hospital_one_day_wage = 3200
+    user.is_continuous_time = True
+    user.is_continuous_start_time = 9
+    user.is_continuous_end_time = 21
     user.save()
 
     user = User()
@@ -246,6 +258,12 @@ def fakeData():
     userserviceLocation.save()
 
     userserviceLocation = UserServiceLocation()
+    userserviceLocation.user = User.objects.get(id=2)
+    userserviceLocation.city = City.objects.get(id=5)
+    userserviceLocation.transfer_fee = 300
+    userserviceLocation.save()
+
+    userserviceLocation = UserServiceLocation()
     userserviceLocation.user = User.objects.get(id=3)
     userserviceLocation.city = City.objects.get(id=5)
     userserviceLocation.transfer_fee = 300
@@ -258,8 +276,8 @@ def fakeData():
     userserviceLocation.save()
 
     case = Case()
-    case.user = User.objects.get(id=2)
-    case.servant = User.objects.get(id=3)
+    case.user = User.objects.get(id=3)
+    # case.servant = User.objects.get(id=3)
     case.city = City.objects.get(id=5)
     case.county = County.objects.get(id=62)
     case.care_type = 'home'
@@ -359,7 +377,7 @@ def fakeData():
     order.created_at = datetime.datetime.now()
     order.case = Case.objects.get(id=1)
     order.user = order.case.user
-    order.servant = order.case.servant
+    order.servant = User.objects.get(id=2)
     order.state = 'unPaid'
     order.start_time = order.case.start_time
     order.end_time = order.case.end_time
@@ -432,24 +450,24 @@ def fakeData():
             order.work_hours = total_hours
             if order.case.care_type == 'home':
                 if total_hours < 12:
-                    wage = order.case.servant.home_hour_wage
+                    wage = order.servant.home_hour_wage
                     order.wage_hour =wage
                 elif total_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.home_half_day_wage/12)
+                    wage = round(order.servant.home_half_day_wage/12)
                     order.wage_hour = wage
                 else:
-                    wage = round(order.case.servant.home_one_day_wage/24)
+                    wage = round(order.servant.home_one_day_wage/24)
                     order.wage_hour = wage
                     order.hours_one_day_work = total_hours
             elif order.case.care_type == 'hospital':
                 if total_hours < 12:
-                    wage = order.case.servant.hospital_hour_wage
+                    wage = order.servant.hospital_hour_wage
                     order.wage_hour =wage
                 elif total_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                    wage = round(order.servant.hospital_half_day_wage/12)
                     order.wage_hour = wage
                 else:
-                    wage = round(order.case.servant.hospital_one_day_wage/24)
+                    wage = round(order.servant.hospital_one_day_wage/24)
                     order.wage_hour = wage
 
         order.base_money = order.work_hours * wage
