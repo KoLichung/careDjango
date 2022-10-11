@@ -45,8 +45,12 @@ class CreateMerchant(APIView):
 
         # if UserStore.objects.filter(user=user).count() == 0:
         #     print('code here')
+        
+        # 測試
+        # post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
+        # 正式
+        post_url = 'https://core.Newebpay.com/API/AddMerchant'
 
-        post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
         timeStamp = int( time.time() )
         PartnerID_ = "CARE168"
         key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
@@ -168,7 +172,11 @@ class MpgTrade(APIView):
         order = Order.objects.get(id=order_id)
         user = order.user
         userStore = UserStore.objects.get(user=user)
-        api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
+        #測試
+        # api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
+        #正式
+        api_url = 'https://core.newebpay.com/MPG/mpg_gateway'
+
         timeStamp = int( time.time() )
         item_desc = "時薪 $"+ str(order.wage_hour) + " 共 " + str(order.work_hours) + " 小時"
         Version = "2.0"
@@ -216,7 +224,11 @@ def success_pay(request):
 
 class SearchTradeInfo(APIView):
     def get(self, request, format=None):
-        post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 
+        #測試
+        # post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 
+        #正式
+        post_url = 'https://core.newebpay.com/API/QueryTradeInfo' 
+
         MerchantID = "ACE00009"
         key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
         iv = "C3RqE64KeXb3RPqP"
@@ -254,7 +266,11 @@ class SearchTradeInfo(APIView):
 
 class CancelAuthorization(APIView):
     def get(self, request, format=None):
-        post_url = 'https://ccore.newebpay.com/API/CreditCard/Cancel'
+        #測試
+        # post_url = 'https://ccore.newebpay.com/API/CreditCard/Cancel'
+        #正式
+        post_url = 'https://core.newebpay.com/API/CreditCard/Cancel'
+        
         MerchantID_ = "MS336989148"
         timeStamp = int( time.time() )
         key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
@@ -278,7 +294,11 @@ class CancelAuthorization(APIView):
 # 請款
 class Invoice(APIView):
     def get(self, request, format=None):
-        post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
+        #測試
+        # post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
+        #正式
+        post_url = 'https://core.newebpay.com/API/CreditCard/Close'
+        
         MerchantID = "ACE00009"
         timeStamp = int( time.time() )
         key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
@@ -306,7 +326,11 @@ class Invoice(APIView):
 class Appropriation(APIView):
 
     def get(self, request, format=None):
-        post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
+        #測試
+        # post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
+        #正式
+        post_url = 'https://core.newebpay.com/API/ExportInstruct'
+
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
         key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
@@ -334,7 +358,11 @@ class Appropriation(APIView):
 class Debit(APIView):
 
     def get(self, request, format=None):
-        post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
+        #測試
+        # post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
+        #正式 
+        post_url = 'https://core.newebpay.com/API/ChargeInstruct'
+
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
         key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
