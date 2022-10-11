@@ -20,8 +20,7 @@ from modelCore.models import Order,UserStore,PayInfo,UserLicenseShipImage,Licens
 logger = logging.getLogger(__file__)
 
 class CreateMerchant(APIView):
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
+    # 正式的商店代號是 AID
 
     def post(self, request, format=None):
         user_id = request.POST.get('user_id')
@@ -47,9 +46,9 @@ class CreateMerchant(APIView):
         #     print('code here')
         
         # 測試
-        # post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
+        post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
         # 正式
-        post_url = 'https://core.Newebpay.com/API/AddMerchant'
+        # post_url = 'https://core.Newebpay.com/API/AddMerchant'
 
         timeStamp = int( time.time() )
         PartnerID_ = "CARE168"
@@ -164,8 +163,12 @@ def parsePhone(phone):
     return phone[0:4]+'-'+phone[4:len(phone)]
 
 class MpgTrade(APIView):
+    
+    
 
     def get(self, request, format=None):
+        ip_position = '149.28.22.217'
+
         print('test')
         order_id = self.request.query_params.get('order_id')
         print(order_id)
@@ -193,8 +196,8 @@ class MpgTrade(APIView):
             "MerchantOrderNo": order_id,
             "Amt": Amt,
             "ItemDesc": item_desc,       
-            "NotifyURL": "http://149.28.22.217/newebpayApi/notifyurl_callback/" + str(userStore.id) + "/",
-            "ClientBackURL": "http://149.28.22.217/newebpayApi/success_pay",
+            "NotifyURL": "http://"+ip_position+"/newebpayApi/notifyurl_callback/" + str(userStore.id) + "/",
+            "ClientBackURL": "http://"+ip_position+"/newebpayApi/success_pay",
         }
 
         query_str = urllib.parse.urlencode(data)

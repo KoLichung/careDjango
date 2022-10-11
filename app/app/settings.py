@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'care168.com.tw',
     '149.28.22.217',
+    '45.32.43.27',
 ]
 
 ADMINS = (
