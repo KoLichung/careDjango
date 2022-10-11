@@ -339,7 +339,8 @@ def login(request):
     elif request.method == 'POST' and 'line_login' in request.POST:
         auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
         # call_back = 'http://202.182.105.11/' + redirect_to
-        call_back = 'http://202.182.105.11/web/login_line?next=/web/index'
+        # call_back = 'http://202.182.105.11/web/login_line?next=/web/index'
+        call_back = 'https://care168.com.tw/web/login_line?next=/web/index'
 
         print(call_back)
         data = {
@@ -391,7 +392,7 @@ def login_line(request):
         'client_id': '1657316694',
         'client_secret': 'd7751034c13427e80df2818ce86d3a26',
         'code': code,
-        'redirect_uri': 'http://202.182.105.11/web/login_line?next=/web/index' ,
+        'redirect_uri': 'https://care168.com.tw/web/login_line?next=/web/index' ,
     }
     data = parse.urlencode(FormData)
     resp = requests.post(url, headers=headers, data=data)
@@ -440,7 +441,7 @@ def register_phone(request):
     elif request.method == 'POST' and 'line_login' in request.POST:
         auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
         # call_back = 'http://202.182.105.11/' + redirect_to
-        call_back = 'http://202.182.105.11/web/login_line?next=/web/index'
+        call_back = 'https://care168.com.tw/web/login_line?next=/web/index'
 
         print(call_back)
         data = {
@@ -1277,7 +1278,7 @@ def booking_confirm(request):
 
         tempcase.delete()
         order_id = order.id
-        return redirect_params('http://202.182.105.11/newebpayApi/mpg_trade',{'order_id':order_id})
+        return redirect_params('https://care168.com.tw/newebpayApi/mpg_trade',{'order_id':order_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_contact',{'servant':servant_id})
     return render(request, 'web/booking/confirm.html',{'city_id':city_id, 'servant_id':servant_id,'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant})
