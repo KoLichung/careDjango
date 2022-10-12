@@ -152,6 +152,9 @@ def fakeData():
     user.is_continuous_time = True
     user.is_continuous_start_time = 9
     user.is_continuous_end_time = 21
+    user.ATMInfoBankCode = '013'
+    user.ATMInfoBranchBankCode = '1092'
+    user.ATMInfoAccount = '109506060917'
     user.save()
 
     user = User()
