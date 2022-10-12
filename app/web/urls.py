@@ -67,6 +67,6 @@ urlpatterns = [
     path('become_carer', views.become_carer, name = 'become_carer'),
     path('chat', views.chat, name = 'chat'),
 
-
+    path('success_pay', views.success_pay)
 ]
 

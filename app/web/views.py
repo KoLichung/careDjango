@@ -2638,3 +2638,6 @@ def platform_percent_cal(user,order):
 
 def chat(request):
     return render(request, 'web/chat.html')
+
+def success_pay(request):
+    return render(request, 'web/success_pay.html')
