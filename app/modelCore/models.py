@@ -639,6 +639,8 @@ class Order(models.Model):
     refund_money = models.IntegerField(default=0, blank=True, null=True)
     refund_apply_date = models.DateTimeField(auto_now=True, blank = True,null=True)
 
+    is_paid_to_servant = models.BooleanField(default=False)
+
     @property
     def TaxAmt(self):
         tax_percent = (self.platform_percent - 2.8)
