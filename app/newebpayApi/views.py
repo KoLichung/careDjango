@@ -55,7 +55,7 @@ class CreateMerchant(APIView):
         key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
         iv = "CeYa8zoA0mX4qBpP"
         
-        LoginAccount = "XinShing"+str(user.id)
+        LoginAccount = "XinShing168"+str(user.id)
 
         data = {
                 "Version" : "1.8",
@@ -69,7 +69,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
                 "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE"+str(user.id),
+                "MerchantID": "ACE222"+str(user.id),
                 "MCType": 1,
                 "MerchantName": "杏心合作商店"+str(user.id),
                 "MerchantNameE": "XinShing"+str(user.id),
