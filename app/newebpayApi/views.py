@@ -172,7 +172,7 @@ class MpgTrade(APIView):
         order_id = self.request.query_params.get('order_id')
         print(order_id)
         order = Order.objects.get(id=order_id)
-        user = order.user
+        user = order.servant
         userStore = UserStore.objects.get(user=user)
         #測試
         api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
