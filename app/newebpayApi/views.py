@@ -1,4 +1,5 @@
 from __future__ import absolute_import, division, unicode_literals
+from platform import platform
 from urllib import response
 from django.shortcuts import render
 from rest_framework.views import APIView
@@ -52,8 +53,10 @@ class CreateMerchant(APIView):
 
         timeStamp = int( time.time() )
         PartnerID_ = "CARE168"
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+        # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        # iv = "CeYa8zoA0mX4qBpP"
+        key = 'SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH'
+        iv = 'C6RhZZ45pflwEoSP'
         
         LoginAccount = "XinShing168"+str(user.id)
 
@@ -69,7 +72,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
                 "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE222"+str(user.id),
+                "MerchantID": "ACE223"+str(user.id),
                 "MCType": 1,
                 "MerchantName": "杏心合作商店"+str(user.id),
                 "MerchantNameE": "XinShing"+str(user.id),
@@ -225,22 +228,29 @@ def success_pay(request):
     return render(request, 'success_pay.html')
 
 class SearchTradeInfo(APIView):
+    
     def get(self, request, format=None):
         #測試
         post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 
         #正式
         # post_url = 'https://core.newebpay.com/API/QueryTradeInfo' 
 
-        MerchantID = "ACE00009"
-        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
-        iv = "C3RqE64KeXb3RPqP"
+        order_id = self.request.query_params.get('order_id')
+        order = Order.objects.get(id=order_id)
+        user = order.servant
+        userStore = UserStore.objects.filter(user=user).first()
+
+        MerchantID = userStore.MerchantID
+        key = userStore.MerchantHashKey
+        iv = userStore.MerchantIvKey
+
         Version = "1.3"
         RespondType = "JSON"
         check_data = {
-            "Amt": 2000,
+            "Amt": str(order.total_money),
             "MerchantID" : MerchantID,
-            "MerchantOrderNo":"3",
-            }
+            "MerchantOrderNo": str(order.id),
+        }
 
         # sorted_check_data = {}
         # for key in sorted(check_data):
@@ -252,8 +262,8 @@ class SearchTradeInfo(APIView):
         hash = str.upper(hashs)
         CheckValue = hash
         TimeStamp = int( time.time() )
-        MerchantOrderNo = "3"
-        Amt = 2000
+        MerchantOrderNo = order.id
+        Amt = order.total_money
 
         # with open("SearchTradeInfo.html", 'w', encoding="utf-8") as f:
         #     html_string = f"<!DOCTYPE html><head><meta charset='utf-8'><title>MPG</title></head><body><form name='Newebpay' method='post' action={post_url}>測試URL: {post_url}<p>MerchantID:<input type='text' name='MerchantID' readonly='readonly' value={MerchantID} ><br><br>Version:<input type='text' name='Version' readonly='readonly' value={Version} ><br><br>RespondType:<input type='text' name='RespondType' readonly='readonly' value={RespondType}><br><br>CheckValue:<input type='text' name='CheckValue' readonly='readonly' value={CheckValue}><br><br><br>TimeStamp:<input type='text' name='TimeStamp' readonly='readonly' value={TimeStamp}><br><br>MerchantOrderNo:<input type='text' name='MerchantOrderNo' readonly='readonly' value={MerchantOrderNo}><br><br>Amt:<input type='text' name='Amt' readonly='readonly' value={Amt}><br><input type='submit' value='Submit'></form></body></html>"
@@ -273,15 +283,25 @@ class CancelAuthorization(APIView):
         #正式
         # post_url = 'https://core.newebpay.com/API/CreditCard/Cancel'
         
-        MerchantID_ = "MS336989148"
+        # MerchantID_ = "MS336989148"
         timeStamp = int( time.time() )
-        key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
-        iv = "C6RhZZ45pflwEoSP"
+        # key = "SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH"
+        # iv = "C6RhZZ45pflwEoSP"
+
+        order_id = self.request.query_params.get('order_id')
+        order = Order.objects.get(id=order_id)
+        user = order.servant
+        userStore = UserStore.objects.filter(user=user).first()
+
+        MerchantID_ = userStore.MerchantID
+        key = userStore.MerchantHashKey
+        iv = userStore.MerchantIvKey
+
         data = {
             "RespondType": "JSON",
             "Version": "1.0",
-            "Amt": 2500,
-            "MerchantOrderNo": "202208020002",
+            "Amt": order.total_money,
+            "MerchantOrderNo": order.id,
             "IndexType": 1,
             "TimeStamp": timeStamp,
         } 
@@ -301,19 +321,30 @@ class Invoice(APIView):
         #正式
         # post_url = 'https://core.newebpay.com/API/CreditCard/Close'
         
-        MerchantID = "ACE00009"
+        # MerchantID = "ACE00009"
         timeStamp = int( time.time() )
-        key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
-        iv = "C3RqE64KeXb3RPqP"
+        # key = "4hfcUUaByF7iCMttHAj06qVqgzKS1kiU"
+        # iv = "C3RqE64KeXb3RPqP"
+
+        order_id = self.request.query_params.get('order_id')
+        order = Order.objects.get(id=order_id)
+        user = order.servant
+        userStore = UserStore.objects.filter(user=user).first()
+
+        MerchantID = userStore.MerchantID
+        key = userStore.MerchantHashKey
+        iv = userStore.MerchantIvKey
+
+        payInfo = PayInfo.objects.get(order=order)
 
         data = {
                 "RespondType": "JSON",
                 "Version": "1.1",
-                "Amt": 2000,   
-                "MerchantOrderNo":"3",
+                "Amt": order.total_money,   
+                "MerchantOrderNo": order.id,
                 "TimeStamp": timeStamp,
                 "IndexType" : 1,
-                "TradeNo": "22080613222748822",
+                "TradeNo": payInfo.OrderInfoTradeNo,
                 "CloseType": 1,
             }
 
@@ -333,20 +364,27 @@ class Appropriation(APIView):
         #正式
         # post_url = 'https://core.newebpay.com/API/ExportInstruct'
 
-        PartnerID_ = "CARE168"
+        PartnerID_ = "MS336989148"
         timeStamp = int( time.time() )
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+
+        # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        # iv = "CeYa8zoA0mX4qBpP"
+
+        order_id = self.request.query_params.get('order_id')
+        order = Order.objects.get(id=order_id)
+        user = order.servant
+        userStore = UserStore.objects.filter(user=user).first()
+
+        MerchantID = userStore.MerchantID
+        key = userStore.MerchantHashKey
+        iv = userStore.MerchantIvKey
 
         data = {
                 "Version": "1.0",
-                "MerchantID" : "ACE00009",
-                "MerTrade": "DebitTest001",
                 "TimeStamp": timeStamp,
-                "FeeType": 1,
-                "BalanceType": 0,
-                "MerchantOrderNo":"3",
-                "Amount": 2000,     
+                "MerchantID" : MerchantID,
+                "MerchantOrderNo": order.id,
+                "Amount": order.total_money,     
             }
 
         query_str = urllib.parse.urlencode(data)
@@ -365,20 +403,31 @@ class Debit(APIView):
         #正式 
         # post_url = 'https://core.newebpay.com/API/ChargeInstruct'
 
-        PartnerID_ = "CARE168"
+        PartnerID_ = "MS336989148"
         timeStamp = int( time.time() )
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+
+        # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        # iv = "CeYa8zoA0mX4qBpP"
+
+        order_id = self.request.query_params.get('order_id')
+        platform_money = self.request.query_params.get('money')
+
+        order = Order.objects.get(id=order_id)
+        user = order.servant
+        userStore = UserStore.objects.filter(user=user).first()
+
+        MerchantID = userStore.MerchantID
+        key = userStore.MerchantHashKey
+        iv = userStore.MerchantIvKey
 
         data = {
-                "Version": "1.1",
-                "MerchantID" : "ACE00009",
-                "MerTrade": "DebitTest001",
-                "TimeStamp": timeStamp,
-                "FeeType": 1,
-                "BalanceType": 0,
-                "Amount": 2000,     
-            }
+            "Version": "1.1",
+            "TimeStamp": timeStamp,
+            "MerchantID" : MerchantID,
+            "Amount": platform_money,
+            "FeeType": 0,
+            "BalanceType": 0,
+        }
 
         query_str = urllib.parse.urlencode(data)
         encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
