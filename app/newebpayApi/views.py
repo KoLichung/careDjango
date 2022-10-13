@@ -52,7 +52,8 @@ class CreateMerchant(APIView):
         # post_url = 'https://core.Newebpay.com/API/AddMerchant'
 
         timeStamp = int( time.time() )
-        PartnerID_ = "CARE168"
+        
+        PartnerID_ = "MS336989148"
         # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
         # iv = "CeYa8zoA0mX4qBpP"
         key = 'SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH'
