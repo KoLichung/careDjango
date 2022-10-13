@@ -52,12 +52,14 @@ class CreateMerchant(APIView):
         # post_url = 'https://core.Newebpay.com/API/AddMerchant'
 
         timeStamp = int( time.time() )
-        
-        PartnerID_ = "MS336989148"
-        # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        # iv = "CeYa8zoA0mX4qBpP"
-        key = 'SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH'
-        iv = 'C6RhZZ45pflwEoSP'
+
+        PartnerID_ = "CARE168"
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
+
+        # PartnerID_ = "MS336989148"
+        # key = 'SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH'
+        # iv = 'C6RhZZ45pflwEoSP'
         
         LoginAccount = "XinShing168"+str(user.id)
 
@@ -365,7 +367,7 @@ class Appropriation(APIView):
         #正式
         # post_url = 'https://core.newebpay.com/API/ExportInstruct'
 
-        PartnerID_ = "MS336989148"
+        PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
 
         # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
@@ -404,7 +406,7 @@ class Debit(APIView):
         #正式 
         # post_url = 'https://core.newebpay.com/API/ChargeInstruct'
 
-        PartnerID_ = "MS336989148"
+        PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
 
         # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
