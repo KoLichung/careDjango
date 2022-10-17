@@ -75,7 +75,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
                 "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE33"+str(user.id),
+                "MerchantID": "ACE44"+str(user.id),
                 "MCType": 1,
                 "MerchantName": "杏心合作商店"+str(user.id),
                 "MerchantNameE": "XinShing"+str(user.id),
@@ -144,7 +144,7 @@ class CreateMerchant(APIView):
         # encrypted = cbc_encrypt(query_string, HashKey, HashIV)
         # print(int(encrypted, 16))
         # PostData_ = str(encrypted)
-        resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
+        resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data}, timeout=300)
 
         print(resp.text)
         # print(type(json.loads(resp.text)['status']))
