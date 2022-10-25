@@ -36,4 +36,7 @@ urlpatterns = [
     path('messages', views.MessageViewSet.as_view()),
     path('earlytermination', views.EarlyTermination.as_view()),
     path('edit_case', views.EditCase.as_view()),
+    path('sms_verify', views.SmsVerifyViewSet.as_view()),
+    path('reset_password_sms_verify', views.ResetPasswordSmsVerifyViewSet.as_view()),
+    path('reset_password_sms_password', views.ResetPasswordSmsSendPasswordViewSet.as_view()),
 ]

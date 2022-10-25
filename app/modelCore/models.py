@@ -904,3 +904,8 @@ class AssistancePost(models.Model):
     title = models.CharField(max_length = 255, blank = True, null=True)
     body = RichTextUploadingField(config_name='default')
     create_date = models.DateField(blank = True, null=True)
+
+class SmsVerifyCode(models.Model):
+    phone = models.CharField(max_length=10)
+    code = models.CharField(max_length=4)
+    is_expired = models.BooleanField(default=False)

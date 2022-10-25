@@ -1651,6 +1651,57 @@ class EditCase(APIView):
         else:
             return Response('no auth')
 
+
+class SmsVerifyViewSet(APIView):
+
+    def get(self, request, format=None):
+        from messageApp.tasks import randSmsVerifyCode
+        phone= self.request.query_params.get('phone')
+        if phone!= None and len(phone) == 10:
+            if User.objects.filter(phone=phone).count() ==0:
+                code = randSmsVerifyCode(phone)
+                return Response({'message': "ok", 'code': code})
+            else:
+                return Response({'message': "this phone already registered"})
+        else:
+            return Response({'message': "wrong phone number type"})
+
+class ResetPasswordSmsVerifyViewSet(APIView):
+
+    def get(self, request, format=None):
+        from messageApp.tasks import randSmsVerifyCode
+        phone= self.request.query_params.get('phone')
+        if phone!= None and len(phone) == 10:
+            if User.objects.filter(phone=phone).count() !=0:
+                code = randSmsVerifyCode(phone)
+                return Response({'message': "ok", 'code': code})
+            else:
+                return Response({'message': "this phone haven't registered"})
+        else:
+            return Response({'message': "wrong phone number type"})
+
+class ResetPasswordSmsSendPasswordViewSet(APIView):
+
+    def get(self, request, format=None):
+        from messageApp.tasks import smsSendPassword
+        phone= self.request.query_params.get('phone')
+        if phone!= None and len(phone) == 10:
+            if User.objects.filter(phone=phone).count() !=0:
+                user = User.objects.get(phone=phone)
+
+                password = generatePassword()
+                smsSendPassword(phone, password)
+
+                user.set_password(password)
+                user.save()
+                return Response({'message': "ok"})
+            else:
+                return Response({'message': "this phone already registered"})
+        else:
+            return Response({'message': "wrong phone number type"})
+
+
+
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
     days = [start + timedelta(days=i) for i in range(dates_diff.days)]
@@ -1707,3 +1758,17 @@ def platform_percent_cal(user,order):
         return (base_percent + 4.5)
     elif orders_total_hours > 360 :
         return (base_percent + 4)
+
+def generatePassword() :
+    # Declare a digits variable 
+    # which stores all digits
+    digits = "0123456789abcdefghij"
+    OTP = ""
+ 
+    # length of password can be changed
+    # by changing value in range
+    for i in range(6) :
+        OTP += digits[math.floor(random.random() * 20)]
+    
+    # ex.3211
+    return OTP
