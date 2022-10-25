@@ -4,6 +4,7 @@ from fcm_django.models import FCMDevice
 import requests
 import math, random
 from celery import shared_task
+import environ
 
 #====================================
 ### 推播訊息 1.收到訂單訊息(chatroom 文字圖片) 2.收到系統訊息
@@ -105,10 +106,13 @@ def testSMS():
     url = 'https://smsb2c.mitake.com.tw/b2c/mtk/SmSend?CharsetURL=UTF8'
 
     testString = "這個是一個測試 0012"
+    
+    env = environ.Env()
+    environ.Env.read_env()
 
     params ={
-        "username": "0938651226",
-        "password": "123456",
+        "username": env('SMS_USER_NAME'),
+        "password": env('SMS_PASSWORD'),
         "dstaddr": "0912585506",
         "smbody": testString
     }
@@ -121,9 +125,13 @@ def sendSMSCode(phone, code):
     url = 'https://smsb2c.mitake.com.tw/b2c/mtk/SmSend?CharsetURL=UTF8'
 
     theString = f"您的驗證碼為 {code}, 請盡快驗證~"
+
+    env = environ.Env()
+    environ.Env.read_env()
+
     params ={
-        "username": "0938651226",
-        "password": "123456",
+        "username": env('SMS_USER_NAME'),
+        "password": env('SMS_PASSWORD'),
         "dstaddr": phone,
         "smbody": theString
     }
@@ -143,9 +151,13 @@ def smsSendPassword(phone, password):
     url = 'https://smsb2c.mitake.com.tw/b2c/mtk/SmSend?CharsetURL=UTF8'
 
     theString = f"您的臨時密碼為 {password}, 請盡快登入並修改~"
+
+    env = environ.Env()
+    environ.Env.read_env()
+
     params ={
-        "username": "0938651226",
-        "password": "123456",
+        "username": env('SMS_USER_NAME'),
+        "password": env('SMS_PASSWORD'),
         "dstaddr": phone,
         "smbody": theString
     }
