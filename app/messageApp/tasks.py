@@ -109,6 +109,9 @@ def testSMS():
     
     env = environ.Env()
     environ.Env.read_env()
+    
+    print(env('SMS_USER_NAME'))
+    print(env('SMS_PASSWORD'))
 
     params ={
         "username": env('SMS_USER_NAME'),
