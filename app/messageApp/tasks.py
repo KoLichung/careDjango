@@ -103,7 +103,7 @@ def changeOrderStateMessage(user,order,orderState):
 
 def testSMS():
     print('test mitake sms')
-    url = 'https://smsb2c.mitake.com.tw/b2c/mtk/SmSend?CharsetURL=UTF8'
+    url = 'https://smsapi.mitake.com.tw/api/mtk/SmSend?CharsetURL=UTF8'
 
     testString = "這個是一個測試 0012"
     
@@ -125,7 +125,7 @@ def testSMS():
     print(resp.text)
 
 def sendSMSCode(phone, code):
-    url = 'https://smsb2c.mitake.com.tw/b2c/mtk/SmSend?CharsetURL=UTF8'
+    url = 'https://smsapi.mitake.com.tw/api/mtk/SmSend?CharsetURL=UTF8'
 
     theString = f"您的驗證碼為 {code}, 請盡快驗證~"
 
@@ -151,7 +151,7 @@ def randSmsVerifyCode(phone):
     return smsVerifyCode.code
 
 def smsSendPassword(phone, password):
-    url = 'https://smsb2c.mitake.com.tw/b2c/mtk/SmSend?CharsetURL=UTF8'
+    url = 'https://smsapi.mitake.com.tw/api/mtk/SmSend?CharsetURL=UTF8'
 
     theString = f"您的臨時密碼為 {password}, 請盡快登入並修改~"
 
