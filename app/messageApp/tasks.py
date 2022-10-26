@@ -147,7 +147,7 @@ def randSmsVerifyCode(phone):
     smsVerifyCode.code = generateOTP()
     smsVerifyCode.save()
     sendSMSCode(smsVerifyCode.phone, smsVerifyCode.code)
-    expireSmsCode.apply_async(kwargs={'id': smsVerifyCode.id}, countdown=60)
+    # expireSmsCode.apply_async(kwargs={'id': smsVerifyCode.id}, countdown=60)
     return smsVerifyCode.code
 
 def smsSendPassword(phone, password):
