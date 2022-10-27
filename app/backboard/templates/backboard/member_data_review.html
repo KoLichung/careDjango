@@ -33,7 +33,11 @@
         <div>
           <input class="form-check-input" id="checkIsServantConfirm" name="check_servant_passed" type="checkbox" value="True" {% if user.is_servant_passed == True %}checked{% endif %}/>
           <label class="" for="checkIsServantConfirm">審核通過為服務者 
-            {% if check_user_store == False %}<span style="color:red">(藍新商店未開通)</span>{% endif %}
+            {% if check_user_store == False %}
+              <span style="color:red">(藍新商店未開通)</span>
+            {% else %}
+              (藍新商店已開通)
+            {% endif %}
           </label>
           {% if check_user_store == False %}
            <button class="btn btn-primary btn-sm" type="button" onclick="location.href='{% url 'userstore_detail' %}?user={{user.id}}'">申請開通藍新商店</button>
