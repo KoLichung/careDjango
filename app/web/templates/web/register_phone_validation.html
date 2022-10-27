@@ -13,85 +13,92 @@
 
       <!-- card form -->
       <div class="col-sm-10 col-md-6 px-sm-0 align-self-center mx-auto py-5">
-        <form method="post" enctype="multipart/form-data">{% csrf_token %}
             <div class="row justify-content-center g-0">
-
               <div class="col-lg-9 col-xl-8 col-xxl-6">
-
                 <div class="card">
                   <!-- card header -->
                   <div class="text-center p-2" style="background-color: #BB6BD9;">
-                    <span class="fw-bolder fs-4 z-index-1 position-relative text-white">Care 168</span>
+                    <span class="fw-bolder fs-4 z-index-1 position-relative text-white">Care 168 電話註冊</span>
                   </div>
 
                   <!-- card-body -->
                   <div class="card-body p-4">
                     
-                    <!-- Line登入 -->
-                    <div class="row flex-between-center">
-                      
-                      <div class="col-auto">
-                        <h5>使用 LINE 加入</h5>
-                      </div>
+                    <p name="error_span" id="error_span"></p>
 
-                      <div class="mt-2">
-                        <button class="line-login-button my-2" type="submit" name="line_login"  >
-                          <span class="mt-2"><span class="fab fa-line"></span> 透過 LINE 繼續</span>
-                        </button>
-                      </div>
-                      
-                    </div>
-
-                    <!-- 分隔線 -->
-                    <div class="position-relative mt-4">
-                      <hr class="bg-300" />
-                      <div class="divider-content-center">或</div>
-                    </div>
-
-                    <!-- 會員帳號登入 -->
                     <div>
-                      <h5 class="mt-4 mb-3 col-lg-8">免費註冊</h5>
-
-                      <form>
                         <div class="input-box mb-3">
                           <span class="material-icons md-18">phone_iphone</span>
-                          <input type="tel" name="phone" placeholder="電話號碼" />
+                          <input type="tel" name="phone" id="phone_field" placeholder="電話號碼" />
                         </div>
 
                         <div class="d-flex flex-row justify-content-end">
-                          <button class="small-purple-button mb-3">
+                          <button class="small-purple-button mb-3" onclick="send_sms_code()">
                             <span>寄送驗證碼</span>
                           </button>
                         </div>
 
                         <div class="input-box mb-3">
                           <span class="material-icons md-18">lock</span>
-                          <input type="password" name="password" placeholder="請輸入驗證碼" />
+                          <input type="password" name="password" id="code_field" placeholder="請輸入驗證碼" />
                         </div>
   
-                        <button class="full-purple-button mt-3" type="submit" name="register" >
+                        <button class="full-purple-button mt-3" onclick="check_sms_code()" >
                           <span class="mt-2">驗證</span>
                         </button>   
-                        
-          
-                      </form>
-
-                      
-
                     </div>
-
                  </div>
-
                 </div>
-
               </div>
-
             </div>  
-        </form>
       </div>
 
     </div>
   </div>
 </main>
+
+<script>
+  function send_sms_code(){
+    var error_span = document.getElementById('error_span');
+    console.log(error_span.innerHTML)
+    var phone = document.getElementById('phone_field').value;
+    console.log(phone)
+    $.ajax({
+      type: "GET",
+      data: {'phone':phone},
+      url: "{% url 'ajax_send_sms_verify_code' %}",
+      success: function(response)
+      {
+        const message = response.message
+        console.log(message)
+        error_span.innerHTML = message
+      }
+    });
+  }
+
+  function check_sms_code(){
+    var error_span = document.getElementById('error_span');
+    console.log(error_span.innerHTML)
+    var phone = document.getElementById('phone_field').value;
+    var code = document.getElementById('code_field').value;
+    console.log(phone)
+    $.ajax({
+      type: "GET",
+      data: {'phone':phone, 'code':code},
+      url: "{% url 'ajax_check_sms_code' %}",
+      success: function(response)
+      {
+        const message = response.message
+        console.log(message)
+        if(message=="success"){
+          window.location.href = "/web/register_phone?phone="+phone;
+        }else{
+          error_span.innerHTML = message
+        }
+      }
+    });
+  }
+
+</script>
 
 {% endblock %}

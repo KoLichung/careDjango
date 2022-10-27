@@ -417,10 +417,45 @@ def login_line(request):
             print('not user')
             return redirect_params('login')
 
+def register_phone_validation(request):
+    if request.method == 'POST' and request.POST['phone']!= None:
+        phone = request.POST['phone']
+        # return redirect(f'web/register_phone?phone={phone}')
+        return redirect_params('register_phone',{'phone':phone})
+
+    return render(request, 'web/register_phone_validation.html')
+
+def ajax_send_sms_verify_code(request):
+    from messageApp.tasks import randSmsVerifyCode
+    phone= request.GET['phone']
+    # print('here')
+    # print(phone)
+    if phone!= None and len(phone) == 10:
+        if User.objects.filter(phone=phone).count() ==0:
+            code='1122'
+            # code = randSmsVerifyCode(phone)
+            return JsonResponse({'message': "驗證碼已寄出！", 'code': code})
+        else:
+            return JsonResponse({'message': "錯誤訊息：這支電話已經被註冊！"})
+    else:
+        return JsonResponse({'message': "錯誤訊息：電話格式錯誤！"})
+
+def ajax_check_sms_code(request):
+    phone= request.GET['phone']
+    code = request.GET['code']
+    if phone!=None and code != None:
+        if SmsVerifyCode.objects.filter(phone=phone, code=code, is_expired=False).count()!=0:
+            SmsVerifyCode.objects.filter(phone=phone, code=code).update(is_expired=True)
+            return JsonResponse({'message': "success"})
+        else:
+            return JsonResponse({'message': "錯誤訊息：電話號碼/驗證碼輸入錯誤或已過期！"})
+    else:
+        return JsonResponse({'message': "錯誤訊息：電話 或 驗證碼 空白！"})
+
 def register_phone(request):
     if request.method == 'POST' and 'register'in request.POST :
         username = request.POST['userName']
-        phone = request.POST['phone']
+        phone = request.POST['userPhone']
         password = request.POST['password']
         if User.objects.filter(phone=phone).exists() != False:
             user = authenticate(request, phone=phone, password=password)
@@ -454,7 +489,9 @@ def register_phone(request):
         login_url = auth_url + query_str
         print(login_url)
         return redirect(login_url) 
-    return render(request, 'web/register_phone.html')
+    
+    phone = request.GET['phone']
+    return render(request, 'web/register_phone.html', {'phone':phone})
 
 def logout(request):
     auth.logout(request)

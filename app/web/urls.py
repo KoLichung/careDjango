@@ -11,7 +11,11 @@ urlpatterns = [
     path('register_line', views.register_line, name = 'register_line'),
     path('login_line', views.login_line, name = 'login_line'),
     path('register_phone', views.register_phone, name = 'register_phone'),
+    path('register_phone_validation', views.register_phone_validation, name= 'register_phone_validation'),
     path('logout', views.logout, name = 'logout'),
+
+    path('ajax_send_sms_verify_code', views.ajax_send_sms_verify_code, name='ajax_send_sms_verify_code'),
+    path('ajax_check_sms_code', views.ajax_check_sms_code, name='ajax_check_sms_code'),
 
     path('search_list', views.search_list, name = 'search_list'),
     path('search_carer_detail', views.search_carer_detail, name = 'search_carer_detail'),
