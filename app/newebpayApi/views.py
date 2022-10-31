@@ -374,10 +374,10 @@ class Appropriation(APIView):
         # post_url = 'https://core.newebpay.com/API/ExportInstruct'
 
         PartnerID_ = "CARE168"
-        timeStamp = int( time.time() )
-
         key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
         iv = "CeYa8zoA0mX4qBpP"
+
+        timeStamp = int( time.time() )
 
         order_id = self.request.query_params.get('order_id')
         order = Order.objects.get(id=order_id)
@@ -404,6 +404,7 @@ class Appropriation(APIView):
         return Response(json.loads(resp.text))
 
 # 扣款
+# http://45.32.43.27/newebpayApi/debit?order_id=1&money=1000
 class Debit(APIView):
 
     def get(self, request, format=None):
@@ -413,10 +414,10 @@ class Debit(APIView):
         # post_url = 'https://core.newebpay.com/API/ChargeInstruct'
 
         PartnerID_ = "CARE168"
-        timeStamp = int( time.time() )
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
 
-        # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        # iv = "CeYa8zoA0mX4qBpP"
+        timeStamp = int( time.time() )
 
         order_id = self.request.query_params.get('order_id')
         platform_money = self.request.query_params.get('money')
@@ -426,8 +427,8 @@ class Debit(APIView):
         userStore = UserStore.objects.filter(user=user).first()
 
         MerchantID = userStore.MerchantID
-        key = userStore.MerchantHashKey
-        iv = userStore.MerchantIvKey
+        # key = userStore.MerchantHashKey
+        # iv = userStore.MerchantIvKey
 
         data = {
             "Version": "1.1",
