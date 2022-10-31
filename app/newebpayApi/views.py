@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, unicode_literals
 from platform import platform
 from urllib import response
-from django.shortcuts import render
+from django.shortcuts import render ,redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
@@ -162,7 +162,8 @@ class CreateMerchant(APIView):
 
         # save merchant_id, hash_key, hash_iv to UserStore
 
-        return Response(json.loads(resp.text))
+        # return Response(json.loads(resp.text))
+        return redirect_params('backboard/member_data_review', {"user":user_id})
 
 def parsePhone(phone):
     phone = phone.replace('-', '').replace(' ', '')
@@ -230,6 +231,9 @@ class MpgTrade(APIView):
 def success_pay(request):
     return render(request, 'success_pay.html')
 
+#查詢
+#http://45.32.43.27/newebpayApi/search_tradeinfo?order_id=1
+#CloseStatus 0=未請款 1=等待提送請款至收單機構 2=請款處理中 3=請款完成
 class SearchTradeInfo(APIView):
     
     def get(self, request, format=None):
@@ -317,6 +321,7 @@ class CancelAuthorization(APIView):
         return Response(json.loads(resp.text))
 
 # 請款
+# http://45.32.43.27/newebpayApi/invoice?order_id=1
 class Invoice(APIView):
     def get(self, request, format=None):
         #測試
@@ -359,6 +364,7 @@ class Invoice(APIView):
         return Response(json.loads(resp.text))
 
 # 撥款
+# http://45.32.43.27/newebpayApi/appropriation?order_id=1
 class Appropriation(APIView):
 
     def get(self, request, format=None):
@@ -370,8 +376,8 @@ class Appropriation(APIView):
         PartnerID_ = "CARE168"
         timeStamp = int( time.time() )
 
-        # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        # iv = "CeYa8zoA0mX4qBpP"
+        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        iv = "CeYa8zoA0mX4qBpP"
 
         order_id = self.request.query_params.get('order_id')
         order = Order.objects.get(id=order_id)
@@ -379,8 +385,8 @@ class Appropriation(APIView):
         userStore = UserStore.objects.filter(user=user).first()
 
         MerchantID = userStore.MerchantID
-        key = userStore.MerchantHashKey
-        iv = userStore.MerchantIvKey
+        # key = userStore.MerchantHashKey
+        # iv = userStore.MerchantIvKey
 
         data = {
                 "Version": "1.0",
@@ -531,3 +537,10 @@ class NotifyUrlCallback(APIView):
         # print(content)
 
         return Response("1|OK")
+
+def redirect_params(url, params=None):
+    response = redirect(url)
+    if params:
+        query_string = urllib.parse.urlencode(params)
+        response['Location'] += '?' + query_string
+    return response
