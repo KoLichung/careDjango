@@ -65,7 +65,9 @@ def backboard_refound(order_id, money):
 
     logger.info(resp.text)
 
-    if resp.text['Status'] == 'SUCCESS':
+    jsonText = json.loads(resp.text)
+
+    if jsonText['Status'] == 'SUCCESS':
         return 'SUCCESS'
     else:
         return "FAIL"
