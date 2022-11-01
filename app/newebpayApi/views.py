@@ -320,8 +320,9 @@ class CancelAuthorization(APIView):
 
         return Response(json.loads(resp.text))
 
-# 請款 退款
+# 請款 
 # http://45.32.43.27/newebpayApi/invoice?order_id=1&close_type=1
+# 退款
 # http://45.32.43.27/newebpayApi/invoice?order_id=1&close_type=2&refound_money=300
 # Amt 請退款金額
 # CloseType 請款或退款, 請款填 1, 退款填 2

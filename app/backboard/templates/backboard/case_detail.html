@@ -42,8 +42,11 @@
             <span class="mx-3">建立：{{case.created_at.year}}/{{case.created_at.month}}/{{case.created_at.day}} 服務者：{{case.servant.name}} </span>
           </div>
           <div>
-            (已退款 ${{order.refund_money}})
-            <a href="{% url 'refunds' %}?case={{case.id}}" class="custom-red-border-btn btn-sm" role="button">按我退款</a>
+            {% if order.refund_money != 0 %}
+              (已退款 ${{order.refund_money}})
+            {% else %}
+              <a href="{% url 'refunds' %}?case={{case.id}}" class="custom-red-border-btn btn-sm" role="button">按我退款</a>
+            {% endif %}
           </div>
         </div>
 

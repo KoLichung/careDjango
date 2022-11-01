@@ -1,5 +1,16 @@
 
 from modelCore.models import Order
+import requests
+import time
+import urllib.parse
+import hashlib
+import codecs
+import logging
+import json
+from modelCore.models import Order,UserStore,PayInfo,UserLicenseShipImage,License,City,County,User
+from newebpayApi import module
+
+logger = logging.getLogger(__file__)
 
 #1.尚未請款, 無法退款
 #2.已請款, 尚未撥款 => 可退款
@@ -17,3 +28,44 @@ def backboard_refound(order_id, money):
 
     #if trade info is not 請款
     #return "haven't send invoice to bank"
+
+    post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
+    #正式
+    # post_url = 'https://core.newebpay.com/API/CreditCard/Close'
+    
+    timeStamp = int( time.time() )
+
+    close_type = 2
+
+    order = Order.objects.get(id=order_id)
+    user = order.servant
+    userStore = UserStore.objects.filter(user=user).first()
+
+    MerchantID = userStore.MerchantID
+    key = userStore.MerchantHashKey
+    iv = userStore.MerchantIvKey
+
+    payInfo = PayInfo.objects.get(order=order)
+
+    data = {
+            "RespondType": "JSON",
+            "Version": "1.1",
+            "Amt": money,   
+            "MerchantOrderNo": order.id,
+            "TimeStamp": timeStamp,
+            "IndexType" : 1,
+            "TradeNo": payInfo.OrderInfoTradeNo,
+            "CloseType": close_type,
+        }
+
+    query_str = urllib.parse.urlencode(data)
+    encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
+
+    resp = requests.post(post_url, data ={"MerchantID_":MerchantID, "PostData_":encrypt_data})
+
+    logger.info(resp)
+
+    if resp['Status'] == 'SUCCESS':
+        return 'SUCCESS'
+    else:
+        return "FAIL"
