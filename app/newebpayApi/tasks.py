@@ -62,6 +62,7 @@ def backboard_refound(order_id, money):
     encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
 
     resp = requests.post(post_url, data ={"MerchantID_":MerchantID, "PostData_":encrypt_data})
+    resp.encoding = 'utf-8'
 
     logger.info(resp.text)
 
