@@ -320,8 +320,11 @@ class CancelAuthorization(APIView):
 
         return Response(json.loads(resp.text))
 
-# 請款
-# http://45.32.43.27/newebpayApi/invoice?order_id=1
+# 請款 退款
+# http://45.32.43.27/newebpayApi/invoice?order_id=1&close_type=1
+# http://45.32.43.27/newebpayApi/invoice?order_id=1&close_type=2&refound_money=300
+# Amt 請退款金額
+# CloseType 請款或退款, 請款填 1, 退款填 2
 class Invoice(APIView):
     def get(self, request, format=None):
         #測試
@@ -335,6 +338,9 @@ class Invoice(APIView):
         # iv = "C3RqE64KeXb3RPqP"
 
         order_id = self.request.query_params.get('order_id')
+        close_type = self.request.query_params.get('close_type')
+        refound_money = self.request.query_params.get('refound_money')
+
         order = Order.objects.get(id=order_id)
         user = order.servant
         userStore = UserStore.objects.filter(user=user).first()
@@ -344,16 +350,22 @@ class Invoice(APIView):
         iv = userStore.MerchantIvKey
 
         payInfo = PayInfo.objects.get(order=order)
+        
+        amt_money = 0
+        if close_type == 1 or close_type == "1":
+            amt_money = order.total_money
+        else:
+            amt_money = refound_money
 
         data = {
                 "RespondType": "JSON",
                 "Version": "1.1",
-                "Amt": order.total_money,   
+                "Amt": amt_money,   
                 "MerchantOrderNo": order.id,
                 "TimeStamp": timeStamp,
                 "IndexType" : 1,
                 "TradeNo": payInfo.OrderInfoTradeNo,
-                "CloseType": 1,
+                "CloseType": close_type,
             }
 
         query_str = urllib.parse.urlencode(data)

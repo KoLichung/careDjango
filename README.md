@@ -24,6 +24,12 @@ HashIV：CeYa8zoA0mX4qBpP
 
 測試 API 網址：https://ccore.Newebpay.com/API/AddMerchant
 
+EZPay 發票
+https://inv.ezpay.com.tw/main/Login_center/single_login
+90139096
+Care168
+care0963823292
+
 vultr:
 8k-TPf]CT964,--R
 
