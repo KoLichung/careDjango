@@ -63,9 +63,9 @@ def backboard_refound(order_id, money):
 
     resp = requests.post(post_url, data ={"MerchantID_":MerchantID, "PostData_":encrypt_data})
 
-    logger.info(resp)
+    logger.info(resp.text)
 
-    if resp['Status'] == 'SUCCESS':
+    if resp.text['Status'] == 'SUCCESS':
         return 'SUCCESS'
     else:
         return "FAIL"
