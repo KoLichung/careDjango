@@ -1240,6 +1240,8 @@ class EarlyTermination(APIView):
     serializer_class = serializers.OrderSerializer
 
     def post(self, request, format=None):
+        from newebpayApi.tasks import approprivate_money_to_store, debit_money_to_platform, backboard_refound
+
         user = self.request.user
         end_datetime = self.request.query_params.get('end_datetime')
         order_id = self.request.query_params.get('order_id')
@@ -1315,9 +1317,18 @@ class EarlyTermination(APIView):
                     orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                     orderIncreaseService.save()
 
-            order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
-            order.platform_money = order.total_money * (order.platform_percent/100)
+            newTotalMoney = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+            newPlatformMoney = newTotalMoney * (order.platform_percent/100)
+
+            back_money = order.total_money - newTotalMoney
+            backboard_refound(order.id, back_money)
+            approprivate_money_to_store(order.id)
+            debit_money_to_platform(order.id, newPlatformMoney)
+
+            order.total_money = newTotalMoney
+            order.platform_money = newPlatformMoney
             order.save()
+
             orderEarlyTermination(order.servant,order)
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
             chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
@@ -1344,6 +1355,57 @@ class EarlyTermination(APIView):
             orderCancel(order.servant,order)
             order.state = 'canceled'
             order.save()
+            
+            timediff_in_hours = (order.start_datetime - aware_datetime)/3600
+            if timediff_in_hours < 48 and timediff_in_hours > 24:
+                # 收取一日費用之 50%
+                if order.case.is_continuous_time == True:
+                    servant_money = order.wage_hour * 24 * 1/2
+                else:
+                    days = (order.end_datetime - order.start_datetime).days
+                    one_day_hours = order.work_hours / days
+                    servant_money =  order.wage_hour * one_day_hours * 1/2
+
+                back_money = order.total_money - servant_money
+                backboard_refound(order.id, back_money)
+                approprivate_money_to_store(order.id)
+
+                platform_money = servant_money * order.platform_percent
+                debit_money_to_platform(order.id, platform_money)
+
+            elif timediff_in_hours <= 24 and timediff_in_hours >3:
+                # 收取一日費用之 100%
+                if order.case.is_continuous_time == True:
+                    servant_money = order.wage_hour * 24
+                else:
+                    days = (order.end_datetime - order.start_datetime).days
+                    one_day_hours = order.work_hours / days
+                    servant_money =  order.wage_hour * one_day_hours
+
+                servant_money = int(servant_money)
+                back_money = order.total_money - servant_money
+                backboard_refound(order.id, back_money)
+                approprivate_money_to_store(order.id)
+
+                platform_money = servant_money * order.platform_percent
+                debit_money_to_platform(order.id, platform_money)
+            else:
+                # 收取一日費用之 100% + 交通費
+                if order.case.is_continuous_time == True:
+                    servant_money = order.wage_hour * 24
+                else:
+                    days = (order.end_datetime - order.start_datetime).days
+                    one_day_hours = order.work_hours / days
+                    servant_money =  order.wage_hour * one_day_hours
+
+                servant_money = int(servant_money) + order.transfer_fee * 2
+                back_money = order.total_money - servant_money
+                backboard_refound(order.id, back_money)
+                approprivate_money_to_store(order.id)
+
+                platform_money = servant_money * order.platform_percent
+                debit_money_to_platform(order.id, platform_money)
+
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
             chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
             chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))

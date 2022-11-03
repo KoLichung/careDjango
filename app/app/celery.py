@@ -70,6 +70,12 @@ def changeCaseState(arg):
     for order in orders:
         case = order.case
         if case.state == 'unComplete' and now > order.end_datetime:
+            # 撥款 跟 扣款
+            from newebpayApi.tasks import approprivate_money_to_store, debit_money_to_platform
+            result_approprivte = approprivate_money_to_store(order.id)
+            if result_approprivte == 'SUCCESS':
+                debit_money_to_platform(order.id, order.platform_money)
+
             case.state = 'Complete'
             case.save()
             print(case.state)
