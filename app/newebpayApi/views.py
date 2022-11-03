@@ -163,7 +163,7 @@ class CreateMerchant(APIView):
         # save merchant_id, hash_key, hash_iv to UserStore
 
         # return Response(json.loads(resp.text))
-        return redirect_params('backboard/member_data_review', {"user":user_id})
+        return redirect_params('member_data_review', {"user":user_id})
 
 def parsePhone(phone):
     phone = phone.replace('-', '').replace(' ', '')
