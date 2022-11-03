@@ -104,11 +104,11 @@ def approprivate_money_to_store(order_id):
     encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
 
     resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
-    resp.encoding = 'utf-8'
-
-    logger.info(resp.text)
+    # resp.encoding = 'utf-8'
+    # logger.info(resp.text)
 
     jsonText = json.loads(resp.text)
+    logger.info(jsonText)
 
     if jsonText['Status'] == 'SUCCESS':
         return 'SUCCESS'
@@ -148,11 +148,11 @@ def debit_money_to_platform(order_id, platform_money):
     encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
 
     resp = requests.post(post_url, data ={"PartnerID_":PartnerID_, "PostData_":encrypt_data})
-    resp.encoding = 'utf-8'
-
-    logger.info(resp.text)
+    # resp.encoding = 'utf-8'
+    # logger.info(resp.text)
 
     jsonText = json.loads(resp.text)
+    logger.info(jsonText)
 
     if jsonText['Status'] == 'SUCCESS':
         return 'SUCCESS'
