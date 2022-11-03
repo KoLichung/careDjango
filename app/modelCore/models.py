@@ -29,6 +29,7 @@ class UserManager(BaseUserManager):
         user = self.model(
             phone = phone, 
             name=extra_fields.get('name'),
+            email=extra_fields.get('email'),
             line_id=extra_fields.get('line_id'),
             apple_id =extra_fields.get('apple_id'),
         )
