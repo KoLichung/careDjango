@@ -246,19 +246,30 @@ def member_data_review(request):
         check_user_store = False
     else:
         check_user_store = True
+
     for license in licences:
         if UserLicenseShipImage.objects.filter(user=user, license=license).count() == 0:
             UserLicenseShipImage.objects.create(user=user,license=license)
     userLicenseImages = UserLicenseShipImage.objects.filter(user=user).order_by('license')
+
     if request.method == 'POST' :
+        
         for userLicenseImage in userLicenseImages:
             if ('delete'+str(userLicenseImage.license.id)) in request.POST:
                 userLicenseImage.image = None
                 userLicenseImage.save()
         if 'post' in request.POST:
-            if request.POST.get('checkIsServant') == 'True':
+
+            if request.POST.get('check_apply_servant') == 'True':
+                user.is_apply_servant = True
+            else:
+                user.is_apply_servant = False
+            if request.POST.get('check_servant_passed') == 'True':
                 user.is_servant_passed = True
+            else:
+                user.is_servant_passed = False
             user.save()
+
             for userLicenseImage in userLicenseImages:
                 checkLicenseImage = request.POST.get('check'+str(userLicenseImage.license.id))
                 if checkLicenseImage == 'True':
