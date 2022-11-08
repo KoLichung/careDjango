@@ -21,6 +21,7 @@ http://202.182.105.11/newebpayApi/mpg_trade?order_id=3
 平台商名稱：杏心股份有限公司
 HashKey：Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q
 HashIV：CeYa8zoA0mX4qBpP
+測試商店代號：ACE
 
 測試 API 網址：https://ccore.Newebpay.com/API/AddMerchant
 

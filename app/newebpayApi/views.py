@@ -21,7 +21,6 @@ from modelCore.models import Order,UserStore,PayInfo,UserLicenseShipImage,Licens
 logger = logging.getLogger(__file__)
 
 class CreateMerchant(APIView):
-    # 正式的商店代號是 AID
 
     def post(self, request, format=None):
         user_id = request.POST.get('user_id')
@@ -47,15 +46,18 @@ class CreateMerchant(APIView):
         #     print('code here')
         
         # 測試
-        post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
+        # post_url = 'https://ccore.Newebpay.com/API/AddMerchant'
+        # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        # iv = "CeYa8zoA0mX4qBpP"
         # 正式
-        # post_url = 'https://core.Newebpay.com/API/AddMerchant'
+        post_url = 'https://core.Newebpay.com/API/AddMerchant'
+        key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
+        iv = "PtMc75C71vZUAhqC"
 
         timeStamp = int( time.time() )
 
         PartnerID_ = "CARE168"
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
+        
 
         # PartnerID_ = "MS336989148"
         # key = 'SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH'
@@ -75,7 +77,7 @@ class CreateMerchant(APIView):
                 "ManagerEmail": "jason@kosbrother.com",
                 "DisputeMail": "jason@kosbrother.com",
                 "MerchantEmail": "jason@kosbrother.com",
-                "MerchantID": "ACE88"+str(user.id),
+                "MerchantID": "AID168"+str(user.id),
                 "MCType": 1,
                 "MerchantName": "杏心合作商店"+str(user.id),
                 "MerchantNameE": "XinShing"+str(user.id),
@@ -182,9 +184,9 @@ class MpgTrade(APIView):
         user = order.servant
         userStore = UserStore.objects.get(user=user)
         #測試
-        api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
+        # api_url = 'https://ccore.newebpay.com/MPG/mpg_gateway'
         #正式
-        # api_url = 'https://core.newebpay.com/MPG/mpg_gateway'
+        api_url = 'https://core.newebpay.com/MPG/mpg_gateway'
 
         timeStamp = int( time.time() )
         item_desc = "時薪 $"+ str(order.wage_hour) + " 共 " + str(order.work_hours) + " 小時"
@@ -238,9 +240,9 @@ class SearchTradeInfo(APIView):
     
     def get(self, request, format=None):
         #測試
-        post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 
+        # post_url = 'https://ccore.newebpay.com/API/QueryTradeInfo' 
         #正式
-        # post_url = 'https://core.newebpay.com/API/QueryTradeInfo' 
+        post_url = 'https://core.newebpay.com/API/QueryTradeInfo' 
 
         order_id = self.request.query_params.get('order_id')
         order = Order.objects.get(id=order_id)
@@ -286,9 +288,9 @@ class SearchTradeInfo(APIView):
 class CancelAuthorization(APIView):
     def get(self, request, format=None):
         #測試
-        post_url = 'https://ccore.newebpay.com/API/CreditCard/Cancel'
+        # post_url = 'https://ccore.newebpay.com/API/CreditCard/Cancel'
         #正式
-        # post_url = 'https://core.newebpay.com/API/CreditCard/Cancel'
+        post_url = 'https://core.newebpay.com/API/CreditCard/Cancel'
         
         # MerchantID_ = "MS336989148"
         timeStamp = int( time.time() )
@@ -329,9 +331,9 @@ class CancelAuthorization(APIView):
 class Invoice(APIView):
     def get(self, request, format=None):
         #測試
-        post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
+        # post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
         #正式
-        # post_url = 'https://core.newebpay.com/API/CreditCard/Close'
+        post_url = 'https://core.newebpay.com/API/CreditCard/Close'
         
         # MerchantID = "ACE00009"
         timeStamp = int( time.time() )
@@ -382,13 +384,15 @@ class Appropriation(APIView):
 
     def get(self, request, format=None):
         #測試
-        post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
+        # post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
+        # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        # iv = "CeYa8zoA0mX4qBpP"
         #正式
-        # post_url = 'https://core.newebpay.com/API/ExportInstruct'
+        post_url = 'https://core.newebpay.com/API/ExportInstruct'
+        key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
+        iv = "PtMc75C71vZUAhqC"
 
         PartnerID_ = "CARE168"
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
 
         timeStamp = int( time.time() )
 
@@ -422,14 +426,16 @@ class Debit(APIView):
 
     def get(self, request, format=None):
         #測試
-        post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
+        # post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
+        # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+        # iv = "CeYa8zoA0mX4qBpP"
+
         #正式 
-        # post_url = 'https://core.newebpay.com/API/ChargeInstruct'
+        post_url = 'https://core.newebpay.com/API/ChargeInstruct'
+        key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
+        iv = "PtMc75C71vZUAhqC"
 
         PartnerID_ = "CARE168"
-        key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-        iv = "CeYa8zoA0mX4qBpP"
-
         timeStamp = int( time.time() )
 
         order_id = self.request.query_params.get('order_id')

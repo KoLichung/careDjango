@@ -456,6 +456,7 @@ def register_phone(request):
     if request.method == 'POST' and 'register'in request.POST :
         username = request.POST['userName']
         phone = request.POST['userPhone']
+        email = request.POST['email']
         password = request.POST['password']
         if User.objects.filter(phone=phone).exists() != False:
             user = authenticate(request, phone=phone, password=password)
@@ -468,6 +469,7 @@ def register_phone(request):
             user = User()
             user.name = username
             user.phone = phone
+            user.email = email
             user.set_password(password)
             user.save()
             auth.login(request, user)

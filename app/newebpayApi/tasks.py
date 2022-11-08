@@ -29,9 +29,10 @@ def backboard_refound(order_id, money):
     #if trade info is not 請款
     #return "haven't send invoice to bank"
 
-    post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
+    #測試
+    # post_url = 'https://ccore.newebpay.com/API/CreditCard/Close'
     #正式
-    # post_url = 'https://core.newebpay.com/API/CreditCard/Close'
+    post_url = 'https://core.newebpay.com/API/CreditCard/Close'
     
     timeStamp = int( time.time() )
 
@@ -74,13 +75,15 @@ def backboard_refound(order_id, money):
 
 def approprivate_money_to_store(order_id):
     #測試
-    post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
+    # post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
+    # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+    # iv = "CeYa8zoA0mX4qBpP"
     #正式
-    # post_url = 'https://core.newebpay.com/API/ExportInstruct'
+    post_url = 'https://core.newebpay.com/API/ExportInstruct'
+    key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
+    iv = "PtMc75C71vZUAhqC"
 
     PartnerID_ = "CARE168"
-    key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-    iv = "CeYa8zoA0mX4qBpP"
 
     timeStamp = int( time.time() )
 
@@ -117,13 +120,16 @@ def approprivate_money_to_store(order_id):
 
 def debit_money_to_platform(order_id, platform_money):
     #測試
-    post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
+    # post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
+    # key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
+    # iv = "CeYa8zoA0mX4qBpP"
     #正式 
-    # post_url = 'https://core.newebpay.com/API/ChargeInstruct'
+    post_url = 'https://core.newebpay.com/API/ChargeInstruct'
+    key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
+    iv = "PtMc75C71vZUAhqC"
 
     PartnerID_ = "CARE168"
-    key = "Oq1IRY4RwYXpLAfmnmKkwd26bcT6q88q"
-    iv = "CeYa8zoA0mX4qBpP"
+    
 
     timeStamp = int( time.time() )
 
