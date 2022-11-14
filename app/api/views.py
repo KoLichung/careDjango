@@ -484,8 +484,13 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
 
         if city != None:
             queryset = queryset.filter(city=City.objects.get(id=city))
+
         if start_datetime != None and end_datetime != None :
             queryset = queryset.filter(start_datetime__gte=start_datetime,end_datetime__lte=end_datetime)
+
+        if start_datetime == None:
+            queryset = queryset.filter(start_datetime__gte=datetime.datetime.now())
+        
         if care_type == 'home':
             queryset = queryset.filter(care_type='home')
         elif care_type == 'hospital':
@@ -835,7 +840,7 @@ class CreateCase(APIView):
                 caseserviceship.save()
 
         # 這邊要針對個別 servant 產生訂單~ 要有系統訊息, 推播訊息, 並檢查 transferFee, roadName, hospitalName 等新欄位
-        if servant_ids != None:
+        if servant_ids != None and servant_ids!= '':
             servant_id_list = servant_ids.split(',')
             for servant_id in servant_id_list:
                 servant = User.objects.get(id=servant_id)
