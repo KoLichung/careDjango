@@ -396,8 +396,8 @@ class Case(models.Model):
 
     is_taken = models.BooleanField(default=False)
     is_open_for_search = models.BooleanField(default=False)
-    road_name = models.CharField(max_length= 255,default='')
-    hospital_name = models.CharField(max_length= 255, default='')
+    road_name = models.CharField(max_length= 255,default='', blank=True, null=True)
+    hospital_name = models.CharField(max_length= 255, default='', blank=True, null=True)
 
     weekday = models.CharField(max_length=100, blank=True, null=True)
     start_time = models.FloatField(default=0, blank=True, null=True)

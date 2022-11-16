@@ -1101,8 +1101,9 @@ class CreateServantOrder(APIView):
         order.save()
         transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
         order.transfer_fee = transfer_fee
-        weekdays = order.case.weekday.split(',')
+       
         if order.case.is_continuous_time == False:
+            weekdays = order.case.weekday.split(',')
             for weekday in weekdays:
                 orderWeekday = OrderWeekDay()
                 orderWeekday.order = order
@@ -1187,14 +1188,14 @@ class CreateServantOrder(APIView):
 
         if list(chatroom_set) != []:
             chatroom_id = list(chatroom_set)[0]
-            print(chatroom_id,2)
+            # print(chatroom_id,2)
             chatroom = ChatRoom.objects.get(id=chatroom_id)
             message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
             message.save()
         elif list(chatroom_set) == []:
             chatroom = ChatRoom()
             chatroom.save()
-            print(chatroom_id,3)
+            # print(chatroom_id,3)
             ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
             ChatroomUserShip.objects.create(user=servant,chatroom=chatroom)
             message = ChatroomMessage(user=user,case=case,order=order,chatroom=chatroom,is_this_message_only_case=True)
@@ -1206,6 +1207,160 @@ class CreateServantOrder(APIView):
         # for weekday in 
         serializer = self.serializer_class(order)
         return Response(serializer.data)
+
+class ApplyCase(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, format=None):
+        servant = self.request.user
+        case_id = request.data.get('case_id')
+
+        if servant.is_servant_passed:
+            case = Case.objects.get(id=case_id)
+
+            if servant == case.user:
+                return Response({'message': "不能申請自己發的案！"})
+
+            order = Order()
+            order.created_at = datetime.datetime.now()
+            order.case = case
+            order.user = case.user
+            order.servant = servant
+            order.state = 'unPaid'
+            order.start_datetime = case.start_datetime
+            order.end_datetime = case.end_datetime
+            order.start_time = order.case.start_time
+            order.end_time = order.case.end_time
+            # order.save()
+            
+            if UserServiceLocation.objects.filter(user=order.servant,city=order.case.city).count()!= 0:
+                transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
+                order.transfer_fee = transfer_fee
+            else:
+                return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
+            
+            # 計算連續時間 或 非連續時間費用
+            if order.case.is_continuous_time == False:
+                weekdays = order.case.weekday.split(',')
+                for weekday in weekdays:
+                    orderWeekday = OrderWeekDay()
+                    orderWeekday.order = order
+                    orderWeekday.weekday = weekday
+                    orderWeekday.save()
+                weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
+                total_hours = 0
+                number_of_transfer = 0
+                for i in weekday_list:
+                    number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
+                    total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+                order.work_hours = total_hours
+                order.number_of_transfer = number_of_transfer
+                order.amount_transfer_fee = transfer_fee * number_of_transfer
+                one_day_work_hours = order.end_time - order.start_time
+                if order.case.care_type == 'home':
+                    if servant.is_home:
+                        if one_day_work_hours < 12:
+                            wage = order.servant.home_hour_wage
+                        elif one_day_work_hours >=12 and total_hours < 24:
+                            wage = round(order.servant.home_half_day_wage/12)
+                    else:
+                        return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
+                elif order.case.care_type == 'hospital':
+                    if servant.is_hospital:
+                        if one_day_work_hours < 12:
+                            wage = order.servant.hospital_hour_wage
+                        elif one_day_work_hours >=12 and total_hours < 24:
+                            wage = round(order.servant.hospital_half_day_wage/12)
+                    else:
+                        return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
+            else:
+                order.number_of_transfer = 1
+                order.amount_transfer_fee = transfer_fee * 1
+                # diff = order.end_datetime - order.start_datetime
+                # days, seconds = diff.days, diff.seconds
+                # hours = days * 24 + seconds // 3600
+                # minutes = (seconds % 3600) // 60
+                total_hours = continuous_time_cal(order)
+                order.work_hours = total_hours
+                if order.case.care_type == 'home':
+                    if servant.is_home:
+                        if total_hours < 12:
+                            wage = order.servant.home_hour_wage
+                        elif total_hours >=12 and total_hours < 24:
+                            wage = round(order.servant.home_half_day_wage/12)
+                        else:
+                            wage = round(order.servant.home_one_day_wage/24)
+                    else:
+                        return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
+                elif order.case.care_type == 'hospital':
+                    if servant.is_hospital:
+                        if total_hours < 12:
+                            wage = order.servant.hospital_hour_wage
+                        elif total_hours >=12 and total_hours < 24:
+                            wage = round(order.servant.hospital_half_day_wage/12)
+                        else:
+                            wage = round(order.servant.hospital_one_day_wage/24)
+                    else:
+                        return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
+            
+            order.wage_hour =wage
+            order.base_money = order.work_hours * wage
+
+            order.platform_percent = platform_percent_cal(case.user,order)
+            order.save()
+            Review.objects.create(order=order,case=order.case,servant=order.servant)
+
+            # 計算加價費用
+            case_services = CaseServiceShip.objects.filter(case=case)
+            for case_service in case_services:
+                if case_service.service.id <= 4:
+                    orderIncreaseService = OrderIncreaseService()
+                    orderIncreaseService.order = order
+                    orderIncreaseService.service = case_service.service
+                    if UserServiceShip.objects.filter(user=servant,service=case_service.service).count() > 0:
+                        orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=case_service.service).increase_percent
+                    else:
+                        orderIncreaseService.increase_percent = 0
+                    orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                    orderIncreaseService.save()
+
+            if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
+                order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+            else:
+                order.total_money = order.base_money
+            order.platform_money = order.total_money * (order.platform_percent/100)
+            order.save()
+
+            # 產生 chatroom message
+            receiveBooking(servant,order)
+            chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
+            chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
+            chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
+            print(chatroom_set,1)
+
+            if list(chatroom_set) != []:
+                chatroom_id = list(chatroom_set)[0]
+                # print(chatroom_id,2)
+                chatroom = ChatRoom.objects.get(id=chatroom_id)
+                message = ChatroomMessage(user=servant,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+            elif list(chatroom_set) == []:
+                chatroom = ChatRoom()
+                chatroom.save()
+                # print(chatroom_id,3)
+                ChatroomUserShip.objects.create(user=case.user,chatroom=chatroom)
+                ChatroomUserShip.objects.create(user=servant,chatroom=chatroom)
+                message = ChatroomMessage(user=servant,case=case,order=order,chatroom=chatroom,is_this_message_only_case=True)
+                message.save()
+
+            chatroom.update_at = datetime.datetime.now()
+            chatroom.save()
+
+            return Response({'message': "您已經向委託人發出接案訊息，請等待聊聊回覆~"})
+        else:
+            return Response({'message': "您不是服務者，無法向委託人發出接案訊息。"})
+
 
 class BlogCategoryViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -1719,7 +1874,6 @@ class EditCase(APIView):
             return Response(serializer.data)
         else:
             return Response('no auth')
-
 
 class SmsVerifyViewSet(APIView):
 
