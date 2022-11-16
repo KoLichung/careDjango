@@ -172,6 +172,8 @@ class OrderIncreaseServiceSerializer(serializers.ModelSerializer):
 
 class CaseOrderSerializer(serializers.ModelSerializer):
     increase_services = OrderIncreaseServiceSerializer(read_only=True, many=True)
+    servant = ServantSerializer(read_only=True)
+
     class Meta:
         model = Order
         fields = '__all__'
