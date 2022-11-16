@@ -590,7 +590,8 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             # language_ids = list(UserLanguage.objects.filter(user=queryset[i].user.id).values_list('language', flat=True))
             # queryset[i].servant.languages = Language.objects.filter(id__in=language_ids)
             
-            queryset[i].servant.languages = UserLanguage.objects.filter(user=queryset[i].user.id)
+            if queryset[i].servant != None:
+                queryset[i].servant.languages = UserLanguage.objects.filter(user=queryset[i].user.id)
 
         return queryset
 
