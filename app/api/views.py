@@ -604,6 +604,8 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
                     case.hour_wage = case.servant.home_hour_wage
                 elif case.care_type == 'hospital':
                     case.hour_wage = case.servant.hospital_hour_wage
+                
+                case.servant.languages = UserLanguage.objects.filter(user=user)
             
             case.servant_rating = Review.objects.get(case=case).servant_rating
 
@@ -618,8 +620,6 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
 
             # language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
             # case.servant.languages = Language.objects.filter(id__in=language_ids)
-
-            case.servant.languages = UserLanguage.objects.filter(user=user)
 
             case.order = Order.objects.get(case=case)
             case.order.increase_services = OrderIncreaseService.objects.filter(order=case.order)
