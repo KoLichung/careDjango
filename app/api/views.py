@@ -599,10 +599,11 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
         case = self.get_object()
         user = self.request.user
         if case.user == user:  
-            if case.care_type == 'home':
-                case.hour_wage = case.servant.home_hour_wage
-            elif case.care_type == 'hospital':
-                case.hour_wage = case.servant.hospital_hour_wage
+            if case.servant != None:
+                if case.care_type == 'home':
+                    case.hour_wage = case.servant.home_hour_wage
+                elif case.care_type == 'hospital':
+                    case.hour_wage = case.servant.hospital_hour_wage
             
             case.servant_rating = Review.objects.get(case=case).servant_rating
 
