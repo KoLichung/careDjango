@@ -95,7 +95,7 @@
         <div class="collapse navbar-collapse scrollbar" id="navbarStandard">
           <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
             <li class="nav-item">
-              <a class="nav-link-custom" aria-current="page" href="#">
+              <a class="nav-link-custom" aria-current="page" href="#download_app">
                   <span class="fas fa-mobile-alt"></span>
                   下載 App
               </a>
@@ -203,14 +203,18 @@
       <div class="container-fluid text-center text-md-start mb-4">
         <div class="row justify-content-center pt-5 px-5">
           <!-- Grid column 下載App -->
-            <div class="col-md-3 col-lg-3 col-xl-3 mb-3 ">
+            <div id="download_app" class="col-md-3 col-lg-3 col-xl-3 mb-3 ">
               <h6 class="title-font pb-2" style="color:white">下載App</h6>
               <div class="" >
-                <img src="{% static 'web/assets/img/new/download_apple.png' %}" width="150" alt="" class="">
+                <a href="https://apps.apple.com/tw/app/care168/id1644036067" target="_blank">
+                  <img src="{% static 'web/assets/img/new/download_apple.png' %}" width="150" alt="" class="">
+                </a>
               </div>
     
               <div class="" >
-                <img src="{% static 'web/assets/img/new/download_google.png' %}" width="150" alt="">
+                <a href="https://play.google.com/store/apps/details?id=com.chijia.fluttercare168" target="_blank">
+                  <img src="{% static 'web/assets/img/new/download_google.png' %}" width="150" alt="">
+                </a>
               </div>
             </div>
               
@@ -260,8 +264,12 @@
            
           <!-- Right -->              
           <div class="col-xs-12 col-sm-12 col-md-2 text-md-end pb-2" >
-            <img src="{% static 'web/assets/img/new/social_fb.png' %}" width="30" alt="">
-            <img src="{% static 'web/assets/img/new/social_line.png' %}" width="30" alt="">
+            <a href="https://www.facebook.com/Care168照護一路幫-第三方預約照護平台-105607495398871/" target="_blank">
+              <img src="{% static 'web/assets/img/new/social_fb.png' %}" width="30" alt="">
+            </a>
+            <a href="https://line.me/R/ti/p/@876gfkog" target="_blank">
+              <img src="{% static 'web/assets/img/new/social_line.png' %}" width="30" alt="">
+            </a>
           </div>
         </div>           
       </div>             
