@@ -1219,6 +1219,9 @@ class ApplyCase(APIView):
         if servant.is_servant_passed:
             case = Case.objects.get(id=case_id)
 
+            if Order.objects.filter(case=case, servant=servant, state='unPaid').count()!=0:
+                return Response({'message': "您已經申請過此案，請等待聊聊回應！"})
+
             if servant == case.user:
                 return Response({'message': "不能申請自己發的案！"})
 
