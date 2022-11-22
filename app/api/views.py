@@ -622,8 +622,9 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             # language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
             # case.servant.languages = Language.objects.filter(id__in=language_ids)
 
-            case.order = Order.objects.get(case=case)
-            case.order.increase_services = OrderIncreaseService.objects.filter(order=case.order)
+            if Order.objects.filter(case=case).count()!=0:
+                case.order = Order.objects.get(case=case)
+                case.order.increase_services = OrderIncreaseService.objects.filter(order=case.order)
 
             # 以下做 order 相關欄位
             # order = Order.objects.get(case=case)
