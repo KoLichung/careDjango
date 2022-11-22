@@ -30,10 +30,10 @@ def importCityCounty():
                 city = City.objects.get(name=row[0])
 
             county_name = row[2].replace(row[0],'')
-            if County.objects.filter(name=county_name).count()==0:
+            if County.objects.filter(city=city, name=county_name).count()==0:
                 county = County()
             else:
-                county = County.objects.get(name=county_name)
+                county = County.objects.get(city=city, name=county_name)
             county.city = city
             county.name = county_name
             county.addressCode = row[1]
