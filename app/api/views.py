@@ -607,7 +607,8 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
                 
                 case.servant.languages = UserLanguage.objects.filter(user=user)
             
-            case.servant_rating = Review.objects.get(case=case).servant_rating
+            if Review.objects.filter(case=case).count()!=0:
+                case.servant_rating = Review.objects.get(case=case).servant_rating
 
             disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
             case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
@@ -1190,7 +1191,7 @@ class CreateServantOrder(APIView):
             chatroom_id = list(chatroom_set)[0]
             # print(chatroom_id,2)
             chatroom = ChatRoom.objects.get(id=chatroom_id)
-            message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+            message = ChatroomMessage(user=user,case=case,order=order,chatroom=chatroom,is_this_message_only_case=True)
             message.save()
         elif list(chatroom_set) == []:
             chatroom = ChatRoom()
