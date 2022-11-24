@@ -362,15 +362,20 @@ class SearchServantViewSet(viewsets.GenericViewSet,
                 for weekdays_num in weekdays_num_list:
                     service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
                     queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
-            # 如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
-            # 2022-07-10
-
-            #所選擇的日期期間/週間/時段, 要在已有的訂單時段之外, 先找出時段內的訂單, 然後找出時段內的人, 最後反過來, 非時段內的人就是可以被篩選
-            #1.取出日期期間有交集的訂單
+            
+            #情況：如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
+            #方法：
+            #所選擇的日期期間/週間/時段, 
+            #要在已有的訂單時段之外, 先找出時段內, 且狀態是 'paid' 的訂單, 
+            #然後找出時段內的人, 
+            #最後反過來, 非時段內的人就是可以被篩選
+            
+            #1.取出日期期間有交集的訂單, 且訂單狀態是 paid
             condition1 = Q(start_datetime__range=[start_date, end_date])
             condition2 = Q(end_datetime__range=[start_date, end_date])
             condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
-            orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
+
+            orders = Order.objects.filter(state='paid').filter(condition1 | condition2 | condition3).distinct()
             #2.再從 1 取出週間有交集的訂單
             #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
             if weekdays != None:
