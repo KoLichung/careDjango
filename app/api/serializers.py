@@ -113,7 +113,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         if instance.case.user.image:
             rep['needer_image'] = instance.case.user.image.url
         
-        rep['servant_name'] = instance.servant.name
+        if instance.servant:
+            rep['servant_name'] = instance.servant.name
+
         if instance.servant.image:
             rep['servant_image'] = instance.servant.image.url
 
