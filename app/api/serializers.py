@@ -116,8 +116,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         if instance.servant:
             rep['servant_name'] = instance.servant.name
 
-        if instance.servant.image:
-            rep['servant_image'] = instance.servant.image.url
+            if instance.servant.image:
+                rep['servant_image'] = instance.servant.image.url
 
         rep['care_type'] = instance.case.care_type
         rep['is_continuous_time'] =  instance.case.is_continuous_time
