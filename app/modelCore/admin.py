@@ -7,7 +7,7 @@ from .models import BlogPostCategoryShip ,TempCase, MonthSummary ,AssistancePost
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'phone', 'line_id')
+    list_display = ('id', 'name', 'gender','phone', 'line_id')
 
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):

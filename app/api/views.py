@@ -584,7 +584,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         user = self.request.user
-        queryset = self.queryset.filter(user=user)
+        queryset = self.queryset.filter(user=user).order_by('-id')
         
         for i in range(len(queryset)):
             # language_ids = list(UserLanguage.objects.filter(user=queryset[i].user.id).values_list('language', flat=True))
@@ -616,7 +616,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
             case.body_condition = BodyCondition.objects.filter(id__in=body_condition_ids)
 
-            service_ids = list(CaseServiceShip.objects.filter(case=case.user.id).values_list('service', flat=True)) 
+            service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True)) 
             case.services  = Service.objects.filter(id__in=service_ids)
 
             # language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
