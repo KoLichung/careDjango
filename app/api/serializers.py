@@ -204,7 +204,7 @@ class CaseSerializer(serializers.ModelSerializer):
 
     review = ReviewSerializer(read_only=True, many=False)
     rating_nums = serializers.IntegerField(default=0)
-    servant_rating = serializers.IntegerField(default=0)
+    servant_rating = serializers.FloatField(default=0)
     avg_offender_rating = serializers.FloatField(default=0)
     num_offender_rating = serializers.IntegerField(default=0)
 
