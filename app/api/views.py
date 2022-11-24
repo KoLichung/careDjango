@@ -703,6 +703,7 @@ class ReviewViewSet(viewsets.GenericViewSet,
         if review.case.user == user:
             review.servant_rating = servant_rating
             review.servant_comment = servant_comment
+            review.servant_rating_created_at = datetime.datetime.now()
             review.save()
             serializer = self.get_serializer(review)
             return Response(serializer.data)
@@ -723,6 +724,7 @@ class ServantPutReviewView(APIView):
             case_offender_comment = request.data.get('case_offender_comment')
             review.case_offender_rating = case_offender_rating
             review.case_offender_comment = case_offender_comment
+            review.case_offender_rating_created_at = datetime.datetime.now()
             review.save()
             serializer = serializers.ReviewSerializer(review)
             return Response(serializer.data)
