@@ -614,6 +614,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             
             if Review.objects.filter(case=case).count()!=0:
                 case.servant_rating = Review.objects.get(case=case).servant_rating
+                case.review = Review.objects.filter(case=case).first()
 
             disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
             case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
@@ -623,7 +624,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
 
             service_ids = list(CaseServiceShip.objects.filter(case=case).values_list('service', flat=True)) 
             case.services  = Service.objects.filter(id__in=service_ids)
-
+            
             # language_ids = list(UserLanguage.objects.filter(user=user).values_list('language', flat=True))
             # case.servant.languages = Language.objects.filter(id__in=language_ids)
 
