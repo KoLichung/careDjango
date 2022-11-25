@@ -877,12 +877,13 @@ class CreateCase(APIView):
                         orderWeekday.order = order
                         orderWeekday.weekday = weekday
                         orderWeekday.save()
+
                     weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
-                    total_hours = 0
-                    number_of_transfer = 0
-                    for i in weekday_list:
-                        number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
-                        total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+                    
+                    days = days_count(weekday_list, order.start_datetime.date(), order.end_datetime.date())
+                    number_of_transfer = days
+                    total_hours = days * (order.end_time - order.start_time)
+
                     order.work_hours = total_hours
                     order.number_of_transfer = number_of_transfer
                     order.amount_transfer_fee = transfer_fee * number_of_transfer
@@ -1270,12 +1271,13 @@ class ApplyCase(APIView):
                     orderWeekday.order = order
                     orderWeekday.weekday = weekday
                     orderWeekday.save()
+                
                 weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
-                total_hours = 0
-                number_of_transfer = 0
-                for i in weekday_list:
-                    number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
-                    total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+
+                days = days_count(weekday_list, order.start_datetime.date(), order.end_datetime.date())
+                number_of_transfer = days
+                total_hours = days * (order.end_time - order.start_time)
+                
                 order.work_hours = total_hours
                 order.number_of_transfer = number_of_transfer
                 order.amount_transfer_fee = transfer_fee * number_of_transfer
@@ -1447,11 +1449,11 @@ class EarlyTermination(APIView):
             order.transfer_fee = transfer_fee
             if order.case.is_continuous_time == False:
                 weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
-                total_hours = 0
-                number_of_transfer = 0
-                for i in weekday_list:
-                    number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
-                    total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+                
+                days = days_count(weekday_list, order.start_datetime.date(), order.end_datetime.date())
+                number_of_transfer = days
+                total_hours = days * (order.end_time - order.start_time)
+
                 order.work_hours = total_hours
                 order.number_of_transfer = number_of_transfer
                 order.amount_transfer_fee = transfer_fee * number_of_transfer
@@ -1792,12 +1794,13 @@ class EditCase(APIView):
                         orderWeekday.order = order
                         orderWeekday.weekday = weekday
                         orderWeekday.save()
+                    
                     weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
-                    total_hours = 0
-                    number_of_transfer = 0
-                    for i in weekday_list:
-                        number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
-                        total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+
+                    days = days_count(weekday_list, order.start_datetime.date(), order.end_datetime.date())
+                    number_of_transfer = days
+                    total_hours = days * (order.end_time - order.start_time)
+                    
                     order.work_hours = total_hours
                     order.number_of_transfer = number_of_transfer
                     order.amount_transfer_fee = transfer_fee * number_of_transfer
