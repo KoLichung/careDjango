@@ -102,6 +102,14 @@ class UserServiceLocationViewSet(viewsets.GenericViewSet,
     queryset = UserServiceLocation.objects.all()
     serializer_class = serializers.UserServiceLocationSerializer
 
+    def get_queryset(self):
+        queryset = self.queryset
+        
+        user_id = self.request.query_params.get('user_id')
+        user = User.objects.get(id=user_id)
+        queryset = queryset.filter(user=user)
+        return queryset
+
 class UserWeekDayTimeViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
