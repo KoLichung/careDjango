@@ -1968,7 +1968,7 @@ def days_count(weekdays: list, start: date, end: date):
         if(dayWeekDay == 7):
             dayWeekDay = 0
 
-        if dayWeekDay in weekdays:
+        if str(dayWeekDay) in weekdays:
             days = days + 1
     return days
 
