@@ -1119,12 +1119,19 @@ class CreateServantOrder(APIView):
                 orderWeekday.order = order
                 orderWeekday.weekday = weekday
                 orderWeekday.save()
+
             weekday_list = list(OrderWeekDay.objects.filter(order=order).values_list('weekday', flat=True))
-            total_hours = 0
-            number_of_transfer = 0
-            for i in weekday_list:
-                number_of_transfer += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date()))
-                total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+
+            days = days_count(weekday_list, order.start_datetime.date(), order.end_datetime.date())
+            number_of_transfer = days
+            total_hours = days * (order.end_time - order.start_time)
+
+            # total_hours = 0
+            # number_of_transfer = 0
+            # for i in weekday_list:
+            #     number_of_transfer 
+            #     total_hours += (days_count([int(i)], order.start_datetime.date(), order.end_datetime.date())) * (order.end_time - order.start_time)
+
             order.work_hours = total_hours
             order.number_of_transfer = number_of_transfer
             order.amount_transfer_fee = transfer_fee * number_of_transfer
@@ -1940,11 +1947,30 @@ class ResetPasswordSmsSendPasswordViewSet(APIView):
             return Response({'message': "wrong phone number type"})
 
 
-
+# for test in shell
+# from api.views import days_count
+# import datetime
+# weekday_list = [1,3,4,5]
+# start = datetime.datetime.strptime('20221128', "%Y%m%d").date()
+# end = datetime.datetime.strptime('20221130', "%Y%m%d").date()
+# days_count(weekday_list, start, end)
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
-    days = [start + timedelta(days=i) for i in range(dates_diff.days+1)]
-    return len([day for day in days if day.weekday() in weekdays])
+    # print(f'days diff {dates_diff}')
+
+    days = 0
+    for i in range(dates_diff.days+1):
+        day = start + timedelta(days=i)
+        # print(day)
+        # print(day.weekday())
+
+        dayWeekDay = day.weekday() + 1
+        if(dayWeekDay == 7):
+            dayWeekDay = 0
+
+        if dayWeekDay in weekdays:
+            days = days + 1
+    return days
 
 def time_format_change(time_int):
     hour = int(time_int) 
