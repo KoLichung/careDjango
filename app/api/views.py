@@ -927,7 +927,8 @@ class CreateCase(APIView):
                 order.platform_percent = platform_percent_cal(user,order)
                 order.save()
                 Review.objects.create(order=order,case=order.case,servant=order.servant)
-
+                
+                total_increase_money = 0
                 for service_id in service_ids:
                     if int(service_id) <= 4:
                         orderIncreaseService = OrderIncreaseService()
@@ -940,10 +941,9 @@ class CreateCase(APIView):
                         orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                         orderIncreaseService.save()
 
-                if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
-                    order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
-                else:
-                    order.total_money = order.base_money
+                total_service_money =  order.base_money + total_increase_money
+                order.total_money = total_service_money + order.amount_transfer_fee
+
                 order.platform_money = order.total_money * (order.platform_percent/100)
                 order.save()
 
@@ -1170,6 +1170,7 @@ class CreateServantOrder(APIView):
         order.save()
         Review.objects.create(order=order,case=order.case,servant=order.servant)
 
+        total_increase_money = 0
         if service != None and service != '':
             for service_id in service_idList:
                 if int(service_id) <= 4:
@@ -1183,10 +1184,11 @@ class CreateServantOrder(APIView):
                     orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                     orderIncreaseService.save()
 
-        if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
-            order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
-        else:
-            order.total_money = order.base_money
+                    total_increase_money = total_increase_money + orderIncreaseService.increase_money
+
+        total_service_money =  order.base_money + total_increase_money
+        order.total_money = total_service_money + order.amount_transfer_fee
+        
         order.platform_money = order.total_money * (order.platform_percent/100)
         order.save()
 
@@ -1325,6 +1327,8 @@ class ApplyCase(APIView):
             Review.objects.create(order=order,case=order.case,servant=order.servant)
 
             # 計算加價費用
+            total_increase_money = 0
+
             case_services = CaseServiceShip.objects.filter(case=case)
             for case_service in case_services:
                 if case_service.service.id <= 4:
@@ -1338,10 +1342,9 @@ class ApplyCase(APIView):
                     orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                     orderIncreaseService.save()
 
-            if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
-                order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
-            else:
-                order.total_money = order.base_money
+            total_service_money =  order.base_money + total_increase_money
+            order.total_money = total_service_money + order.amount_transfer_fee
+
             order.platform_money = order.total_money * (order.platform_percent/100)
             order.save()
 
