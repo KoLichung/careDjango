@@ -1943,7 +1943,7 @@ class ResetPasswordSmsSendPasswordViewSet(APIView):
 
 def days_count(weekdays: list, start: date, end: date):
     dates_diff = end-start
-    days = [start + timedelta(days=i) for i in range(dates_diff.days)]
+    days = [start + timedelta(days=i) for i in range(dates_diff.days+1)]
     return len([day for day in days if day.weekday() in weekdays])
 
 def time_format_change(time_int):
