@@ -45,6 +45,7 @@
                           <input type="radio" {% if gender == 'M' %}checked=""{% endif %} name="gender" value="M">
                           <span class="checkmark"></span>
                         </label>
+                        &nbsp;&nbsp;&nbsp;
                         <label class="custom-radio-parent">女
                           <input type="radio" name="gender" {% if gender == 'F' %}checked=""{% endif %}  value="F">
                           <span class="checkmark"></span>
@@ -52,42 +53,44 @@
                       </div>
                       <div class="">
                         <label class="h6" for="patient_weight">體重：</label>
-                        <input class="booking-input" id="patient_weight" value="{{weight}}" name="weight" type="text"/>
+                        <input class="booking-input" id="patient_weight" {% if weight != 0 %} value="{{weight}}" {% endif %}  name="weight" type="text"/>
                       </div>
 
                       <div class="mt-2 mb-4">
                         <label class="h6" for="patient_age">年齡：</label>
-                        <input class="booking-input" id="patient_age" name="age" value="{{age}}" type="text"/>
+                        <input class="booking-input" id="patient_age" name="age" {% if age != 0 %} value="{{age}}" {% endif %} type="text"/>
                       </div>
 
                           <p class="h6" style="font-weight: 600;">疾病狀況：</p>
+                          {% comment %} <button type="button" style="border-radius: 4px; border: none; padding: 5px 10px;" id="disease_clear_button">清除選擇</button> {% endcomment %}
                           <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="disease_none" id="disease_none" {% if disease_none == True %}checked=""{% endif %} value='{{disease.none.id}}'/>
+                            <input class="form-check-input" type="checkbox" name="disease_none" id="none1" {% if disease_none == True %}checked=""{% endif %} value='{{disease.none.id}}'/>
                             <label class="h6" for="disease_none">無</label>
-                          </div>
+                          </div> 
                           <div class="row mx-0">
                               {% for disease in diseases %}
                                 <div class="form-check " style="width:200px">
-                                  <input class="form-check-input" type="checkbox" name="diseases[]" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
+                                  <input class="form-check-input" id="disease{{disease.id}}" type="checkbox" name="diseases[]" onclick="checkNone1()" {% if disease in disease_list %}checked=""{% endif %}  value="{{disease.id}}" />
                                   <label class="h6" for="diseases[]">{{disease}}</label>
                                 </div>
                               {% endfor %}                       
                           </div>
                           <div class="mb-4">
-                            <input class="form-check-input" type="checkbox" name="disease_info" id="" />
+                            {% comment %} <input class="form-check-input" type="checkbox" name="disease_info" id="" /> {% endcomment %}
                             <label class="h6" for="infectious_disease">傳染性疾病，補充說明：</label>
                             <textarea class="custom-form-control" id="infectious_disease" name="disease_text"  rows="3" placeholder="例：傳染性疾病名稱、病情狀況... ">{{disease_remark}}</textarea>
                           </div>
 
                           <p class="h6" style="font-weight: 600;">身體狀況：</p>
+                          {% comment %} <button type="button" style="border-radius: 4px; border: none; padding: 5px 10px;" id="condition_clear_button">清除選擇</button> {% endcomment %}
                           <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="body_condition_none" id="body_condition" {% if body_condition_none == True %}checked=""{% endif %} value="{{body_condition_none.id}}" />
+                            <input class="form-check-input" type="checkbox" name="body_condition_none" id="none2" {% if body_condition_none == True %}checked=""{% endif %} value="{{body_condition_none.id}}" />
                             <label class="h6" for="body_condition">無</label>
                           </div>
                           <div class="row mx-0">
                               {% for body_condition in body_conditions %}
                               <div class="form-check" style="width:200px">
-                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="aids" {% if body_condition in body_condition_list %}checked=""{% endif %} value="{{body_condition.id}}" />
+                                <input class="form-check-input" type="checkbox" name="body_conditions[]" id="condition{{body_condition.id}}" onclick="checkNone2()" {% if body_condition in body_condition_list %}checked=""{% endif %} value="{{body_condition.id}}" />
                                 <label class="h6" for="body_conditions[]">{{body_condition}}</label>
                               </div>
                               {% endfor %}
@@ -159,5 +162,48 @@
           }
         })
       </script>
+
+      <script>
+        none1Element = document.getElementById('none1');
+        none2Element = document.getElementById('none2');
+        dieseaseElements = document.querySelectorAll('[id*="disease"]');
+        bodyConditionElements = document.querySelectorAll('[id*="condition"]');
+        
+        $('#none1').click(function(event) {
+          if(this.checked) {
+            console.log("hello");
+
+            dieseaseElements.forEach((item) => {
+              item.checked = false;
+            })
+
+            //$(':checkbox').each(function() {
+              //  this.checked = true;                        
+            //});
+          }
+        });
+
+        $('#none2').click(function(event) {
+          if(this.checked) {
+            bodyConditionElements.forEach((item) => {
+              item.checked = false;
+            })
+          }
+        });
+        
+        function checkNone1(){
+          if(none1Element.checked){
+            none1Element.checked = false;
+          }
+        }
+
+        function checkNone2(){
+          if(none2Element.checked){
+            none2Element.checked = false;
+          }
+        }
+
+      </script>
+
 </main>
 {% endblock %}
