@@ -432,8 +432,8 @@ def ajax_send_sms_verify_code(request):
     # print(phone)
     if phone!= None and len(phone) == 10:
         if User.objects.filter(phone=phone).count() ==0:
-            code='1122'
-            # code = randSmsVerifyCode(phone)
+            # code='1122'
+            code = randSmsVerifyCode(phone)
             return JsonResponse({'message': "驗證碼已寄出！", 'code': code})
         else:
             return JsonResponse({'message': "錯誤訊息：這支電話已經被註冊！"})
