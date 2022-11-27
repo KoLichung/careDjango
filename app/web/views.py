@@ -1370,7 +1370,7 @@ def new_assistance(request):
     return render(request, 'web/news_detail.html',{'blogpost':blogpost, 'categories':categories,'blogposts':blogposts})
 
 def requirement_list(request):
-    cases = Case.objects.all()
+    cases = Case.objects.filter(is_open_for_search=True)
     citys = City.objects.all()
     city_id = ''
     care_type = ''
