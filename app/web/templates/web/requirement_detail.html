@@ -82,6 +82,15 @@
             {% if alert_flag %}
                 <script>alert("無法發訂單給自己!")</script>  
             {% endif %}
+            {% if alert_no_location %}
+                <script>alert("您沒有此區的服務交通設定!")</script>  
+            {% endif %}
+            {% if alert_not_servant %}
+                <script>alert("您目前並非服務者!")</script>  
+            {% endif %}
+            {% if alert_already_applied %}
+                <script>alert("您已經申請過了!請至APP查看訊息！")</script>  
+            {% endif %}
           </div>
 
         </div>

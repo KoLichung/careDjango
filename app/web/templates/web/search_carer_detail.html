@@ -30,7 +30,7 @@
                 <span class="h5">{{servant.name|slice:"0:1"}}{% if servant.gender == 'M' %}先生{% else %}小姐{% endif %}</span>
                   <div class="mt-2">
                     {% for care_type in servant_care_type %}
-                    <span class="purple-border-tag">{{care_type}}</span>
+                      <span class="purple-border-tag">{{care_type}}</span>
                     {% endfor %}
                   </div>
               </div>
@@ -144,15 +144,19 @@
               <form method="post" enctype="multipart/form-data">{% csrf_token %}
               <div class="mb-3" style="margin: 0; display: flex;">
 
-                <div class="segment__item">
-                  <input type="radio" class="segment__input"  id="care_type_home" name="care_type" onclick="home.call_backend()" value="home" {% if care_type == 'home' %} checked {% endif %} >
-                  <div class="segment__button" >居家照顧</div>
-                </div>
-          
-                <div class="segment__item">
-                  <input type="radio" class="segment__input"  id="care_type_hospital" name="care_type" onclick="hospital.call_backend()" value="hospital" {% if care_type == 'hospital' %} checked {% endif %} >
-                  <div class="segment__button">醫院看護</div>
-                </div>
+                {% if servant.is_home == True %}
+                  <div class="segment__item">
+                    <input type="radio" class="segment__input"  id="care_type_home" name="care_type" onclick="home.call_backend()" value="home" {% if care_type == 'home' %} checked {% endif %} >
+                    <div class="segment__button" >居家照顧</div>
+                  </div>
+                {% endif %}
+                
+                {% if servant.is_hospital == True %}
+                  <div class="segment__item">
+                    <input type="radio" class="segment__input"  id="care_type_hospital" name="care_type" onclick="hospital.call_backend()" value="hospital" {% if care_type == 'hospital' %} checked {% endif %} >
+                    <div class="segment__button">醫院看護</div>
+                  </div>
+                {% endif %}
               </div>
               
               <div class="case-info-font">
@@ -290,6 +294,15 @@
                 {% if alert_flag %}
                     <script>alert("無法發訂單給自己!")</script>  
                 {% endif %}
+                {% if alert_no_location %}
+                    <script>alert("您沒有此區的服務交通設定!")</script>  
+                {% endif %}
+                {% if alert_not_servant %}
+                    <script>alert("您目前並非服務者!")</script>  
+                {% endif %}
+                {% if alert_already_applied %}
+                    <script>alert("您已經申請過了!請至APP查看訊息！")</script>  
+                {% endif %}
                 <input type="hidden" id="time" >
               </div>
               </form>
@@ -299,7 +312,7 @@
     </div>
   </div>
   <script type="text/javascript">
-    
+
     function getCookie(name){
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -326,6 +339,9 @@
     const submit_button = document.getElementById('submit_button');
     const select_time_Btn = document.getElementById('select_time');
     const city_select = document.getElementById('city_select');
+    
+    //function call_backend(){
+    //}
 
     var home = {
       call_backend : function (){

@@ -104,7 +104,7 @@ class UserServiceLocationViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         queryset = self.queryset
-        
+
         user_id = self.request.query_params.get('user_id')
         user = User.objects.get(id=user_id)
         queryset = queryset.filter(user=user)
@@ -949,6 +949,8 @@ class CreateCase(APIView):
                             orderIncreaseService.increase_percent = 0
                         orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                         orderIncreaseService.save()
+
+                        total_increase_money = total_increase_money + orderIncreaseService.increase_money
 
                 total_service_money =  order.base_money + total_increase_money
                 order.total_money = total_service_money + order.amount_transfer_fee

@@ -86,9 +86,11 @@ def ajax_refresh_county(request):
 def ajax_return_wage(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'return_wage':
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
+        print(updatedData)
         care_type = updatedData['care_type'][0]
-        servant =updatedData['servant'][0]
-        servant = User.objects.get(phone=servant)
+        servant_id =updatedData['servant'][0]
+        servant = User.objects.get(id=servant_id)
+        print(servant)
         print('ajax_return_wage')
         data={}
         if care_type == 'home':
@@ -110,7 +112,10 @@ def ajax_return_wage(request):
                 data['half_day_wage'] = '尚未設定'
                 data['one_day_wage'] = '尚未設定'
         return JsonResponse({'data':data})
-    
+    else:
+        print('here')
+        return JsonResponse({'message':'error'})
+
 def ajax_cal_rate(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.POST['action'] == 'ajax_cal_rate' :
         updatedData = urllib.parse.parse_qs(request.body.decode('utf-8'))
@@ -657,14 +662,19 @@ def search_list(request):
     return render(request, 'web/search_list.html',{'dict':dict,'servants':servants,'care_type':care_type,'defaultStartDate':defaultStartDate,'defaultEndDate':defaultEndDate,'weekdays':weekday_str,'weekday_list':weekday_list,'is_continuous_time':is_continuous_time})
 
 def search_carer_detail(request):
-    citys = City.objects.all()
+    servant_id = request.GET.get('servant')
+    servant = User.objects.get(id=servant_id)
+
+    cityIds = list(UserServiceLocation.objects.filter(user=servant).values_list('city', flat=True))
+    citys = City.objects.filter(id__in=cityIds)
+    
     city_id = request.GET.get("city")
     if city_id == None:
         city_id = '8'
     city = City.objects.get(id=city_id)
     start_date = ''
     end_date = ''
-    servant_id = request.GET.get('servant')
+    
     reviews_all = request.GET.get('reviews')
     care_type = request.GET.get('care_type')
     is_continuous_time = request.GET.get('is_continuous_time')
@@ -692,7 +702,7 @@ def search_carer_detail(request):
         
     servant_care_type = []
     if servant.is_home == True:
-            servant_care_type.append('居家照顧')
+        servant_care_type.append('居家照顧')
     if servant.is_hospital == True:
         servant_care_type.append('醫院看護')
 
@@ -1181,6 +1191,7 @@ def booking_confirm(request):
                 increase_service_list.append(Service.objects.get(id=increase_service_id))
     else:
         return redirect_params('search_carer_detail',{'servant':servant.id})
+
     if request.method == 'POST' and 'pay' in request.POST:
         city_name = tempcase.city
         county_name = tempcase.county
@@ -1288,6 +1299,7 @@ def booking_confirm(request):
         for service in service_list:
             CaseServiceShip.objects.create(case=case,service=service)
 
+        total_increase_money = 0
         for increase_service in increase_service_list:
             CaseServiceShip.objects.create(case=case,service=increase_service)
             orderIncreaseService = OrderIncreaseService()
@@ -1297,8 +1309,12 @@ def booking_confirm(request):
             orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
             orderIncreaseService.save()
 
-        order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum']))
-        order.platform_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * (order.platform_percent/100)
+            total_increase_money = total_increase_money + orderIncreaseService.increase_money
+
+        total_service_money =  order.base_money + total_increase_money
+        order.total_money = total_service_money + order.amount_transfer_fee
+       
+        order.platform_money = order.total_money * (order.platform_percent/100)
         order.save()
 
         receiveBooking(servant,order)
@@ -1315,11 +1331,13 @@ def booking_confirm(request):
         chatroom.save()
         message.save()
 
-        tempcase.delete()
+        TempCase.objects.filter(user=user).delete()
+
         order_id = order.id
         return redirect_params('https://care168.com.tw/newebpayApi/mpg_trade',{'order_id':order_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_contact',{'servant':servant_id})
+        
     return render(request, 'web/booking/confirm.html',{'city_id':city_id, 'servant_id':servant_id,'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant})
 
 def news(request):
@@ -1410,6 +1428,8 @@ def requirement_list(request):
 def requirement_detail(request):
     case_id = request.GET.get('case')
     user = request.user
+    print(user)
+
     case = Case.objects.get(id=case_id)
     if case.is_continuous_time == False and case.weekday != None:
         week_day = case.weekday
@@ -1439,6 +1459,18 @@ def requirement_detail(request):
         weekday_str = '星期一 ～ 星期日'
 
     if request.method == 'POST':
+        if request.user.is_authenticated == False:
+            return redirect('login')
+
+        if request.user.is_servant_passed == False:
+            return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str,'alert_not_servant': True})
+
+        if UserServiceLocation.objects.filter(user=user,city=case.city).count()==0:
+            return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str,'alert_no_location': True})
+
+        if Order.objects.filter(case=case, servant=user).count()!=0:
+            return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str,'alert_already_applied': True})
+
         if user == case.user:
             return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str,'alert_flag': True})
         else:
@@ -1523,6 +1555,8 @@ def requirement_detail(request):
             for service in increase_services:
                 if UserServiceShip.objects.filter(user=order.servant, service=service).count() == 0:
                     UserServiceShip.objects.create(user=order.servant,service=service)
+
+            total_increase_money = 0
             service_idList = list(CaseServiceShip.objects.filter(case=order.case).values_list('service', flat=True))
             for service_id in service_idList:
                 if int(service_id) <= 4:
@@ -1533,8 +1567,13 @@ def requirement_detail(request):
                     orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                     orderIncreaseService.save()
 
-            order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
+                    total_increase_money = total_increase_money + orderIncreaseService.increase_money
+
+            total_service_money =  order.base_money + total_increase_money
+            order.total_money = total_service_money + order.amount_transfer_fee
+
             order.platform_money = order.total_money * (order.platform_percent/100)
+            
             order.save()
             neederOrderEstablished(case.user,order)
             servantOrderEstablished(case.servant,order)
@@ -2527,6 +2566,8 @@ def request_form_confirm(request):
             order.platform_percent = platform_percent_cal(user,order)
             order.save()
             Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+
+            total_increase_money = 0
             if service_ids != []:
                 for service_id in service_ids:
                     if int(service_id) <= 4:
@@ -2540,16 +2581,19 @@ def request_form_confirm(request):
                         orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                         orderIncreaseService.save()
 
-            if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
-                order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
-            else:
-                order.total_money = order.base_money
+                        total_increase_money = total_increase_money + orderIncreaseService.increase_money
+
+            total_service_money =  order.base_money + total_increase_money
+            order.total_money = total_service_money + order.amount_transfer_fee
+
             order.platform_money = order.total_money * (order.platform_percent/100)
             order.save()
+            
             receiveBooking(servant,order)
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
             chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
             chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
+            
             if list(chatroom_set) != []:
                 chatroom_id = list(chatroom_set)[0]
                 print(chatroom_id)
@@ -2565,8 +2609,11 @@ def request_form_confirm(request):
                 message.save()
             chatroom.update_at = datetime.datetime.now()
             chatroom.save()
-            tempcase.delete()
-        return redirect('index')
+
+            TempCase.objects.filter(user=user).delete()
+            # tempcase.delete()
+        return redirect('chat')
+
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect('request_form_contact')
     return render(request, 'web/request_form/confirm.html',{'servants':servants, 'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list, 'tempcase':tempcase, 'care_type':care_type,'start_date_str':start_date_str,'end_date_str':end_date_str,'time_type':time_type,'start_time_str':start_time_str,'end_time_str':end_time_str})
