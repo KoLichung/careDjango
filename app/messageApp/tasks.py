@@ -86,7 +86,13 @@ def orderEarlyTermination(user,order):
     message.save()
     if user.is_fcm_notify == True:
         sendFCMMessage(order.servant, '訂單提前結束', content_text)
-    
+
+def userBecomeServant(user):
+    content_text = "恭喜您～通過審核為服務者！請至會員中心-我的服務-開始設定您的服務項目。"
+    message = SystemMessage(user=user,content=content_text)
+    message.save()
+    if user.is_fcm_notify == True:
+        sendFCMMessage(user,'恭喜成為服務者！', content_text)
 
 #====================================
 ### 聊聊訊息 1.order狀態改變(訂單成立, 修改(x), 付款, 取消, 提前結束) 2.發文字訊息 or 圖片訊息(不用, 因為這個只出現在 chatroom 的場景)
