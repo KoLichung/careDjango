@@ -62,11 +62,11 @@ INSTALLED_APPS = [
     'ezpay_invoice',
 ]
 
-FIREBASE_APP = initialize_app()
-
 #Get the absolute path of the settings.py file's directory
-# PWD = os.path.dirname(os.path.realpath(__file__ )) 
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(PWD, "flutterjava-firebase.json")
+PWD = os.path.dirname(os.path.realpath(__file__ )) 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(PWD, "flutterjava-firebase.json")
+
+FIREBASE_APP = initialize_app()
 
 FCM_DJANGO_SETTINGS = {
      # default: _('FCM Django')
