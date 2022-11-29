@@ -266,12 +266,11 @@ def member_data_review(request):
                 user.is_apply_servant = False
             
             if request.POST.get('check_servant_passed') == 'True':
-                user.is_servant_passed = True
-
                 if user.is_servant_passed == False:
                     # here need to notify this user by system message and fcm message
                     from messageApp.tasks import userBecomeServant
                     userBecomeServant(user)
+                user.is_servant_passed = True
             else:
                 user.is_servant_passed = False
             user.save()
