@@ -833,6 +833,8 @@ class CreateCase(APIView):
             case.emergencycontact_relation = emergencycontact_relation
         if emergencycontact_phone != None:
             case.emergencycontact_phone = emergencycontact_phone
+
+        case.is_open_for_search = True
         case.save()
 
         if disease != None and disease != '':
