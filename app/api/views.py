@@ -148,7 +148,8 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
                 chat_rooms_not_read_messages = ChatroomMessage.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
                 queryset[i].unread_num = chat_rooms_not_read_messages.count()
             except:
-                queryset.exclude(id=queryset[i].id)
+                # queryset.exclude(id=queryset[i].id)
+                queryset[i].last_message = '對方用戶已刪除！'
 
         return queryset
 
