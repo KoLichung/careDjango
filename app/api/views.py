@@ -138,7 +138,7 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
                 # print(other_side_user.name)
                 # print(ChatroomMessage.objects.all())
             
-                if ChatroomMessage.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
+                if ChatroomMessage.objects.filter(chatroom=queryset[i]).count()!=0:
                     last_message = ChatroomMessage.objects.filter(chatroom=queryset[i]).order_by('-id').first()
                     if last_message.is_this_message_only_case:
                         queryset[i].last_message = '點我讀取案件訂單訊息！'
