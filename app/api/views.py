@@ -131,21 +131,24 @@ class ChatRoomViewSet(viewsets.GenericViewSet,
         queryset = self.queryset.filter(id__in=chatroom_ids).order_by('-update_at')
 
         for i in range(len(queryset)):
-            other_side_user = ChatroomUserShip.objects.filter(chatroom=queryset[i]).filter(~Q(user=self.request.user)).first().user
-            queryset[i].other_side_image_url = other_side_user.image
-            queryset[i].other_side_name = other_side_user.name
-            # print(other_side_user.name)
-            # print(ChatroomMessage.objects.all())
+            try:
+                other_side_user = ChatroomUserShip.objects.filter(chatroom=queryset[i]).filter(~Q(user=self.request.user)).first().user
+                queryset[i].other_side_image_url = other_side_user.image
+                queryset[i].other_side_name = other_side_user.name
+                # print(other_side_user.name)
+                # print(ChatroomMessage.objects.all())
             
-            if ChatroomMessage.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
-                last_message = ChatroomMessage.objects.filter(chatroom=queryset[i]).order_by('-id').first()
-                if last_message.is_this_message_only_case:
-                    queryset[i].last_message = '點我讀取案件訂單訊息！'
-                else:
-                    queryset[i].last_message = last_message.content[0:15]
-            
-            chat_rooms_not_read_messages = ChatroomMessage.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
-            queryset[i].unread_num = chat_rooms_not_read_messages.count()
+                if ChatroomMessage.objects.filter(chatroom=queryset[i], is_this_message_only_case=False).count()!=0:
+                    last_message = ChatroomMessage.objects.filter(chatroom=queryset[i]).order_by('-id').first()
+                    if last_message.is_this_message_only_case:
+                        queryset[i].last_message = '點我讀取案件訂單訊息！'
+                    else:
+                        queryset[i].last_message = last_message.content[0:15]
+                
+                chat_rooms_not_read_messages = ChatroomMessage.objects.filter(chatroom=queryset[i],is_read_by_other_side=False).filter(~Q(user=user))
+                queryset[i].unread_num = chat_rooms_not_read_messages.count()
+            except:
+                queryset.exclude(id=queryset[i].id)
 
         return queryset
 
