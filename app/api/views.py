@@ -470,6 +470,10 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
         city = self.request.query_params.get('city')
 
         queryset = User.objects.filter(is_servant_passed=True)
+        
+        user_ids = list(UserServiceLocation.objects.all().values_list('user', flat=True).distinct())
+        queryset = queryset.filter(id__in=user_ids)
+
         if care_type == 'home':
             queryset = queryset.filter(is_home=True)
         elif care_type == 'hospital':
