@@ -1795,6 +1795,7 @@ class EditCase(APIView):
                 order.end_datetime = case.end_datetime
                 order.start_time = order.case.start_time
                 order.end_time = order.case.end_time
+                order.created_at = datetime.datetime.now()
                 order.save()
 
                 if UserServiceLocation.objects.filter(user=order.servant,city=order.case.city).count() != 0:
