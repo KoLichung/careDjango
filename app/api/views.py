@@ -1389,7 +1389,7 @@ class ApplyCase(APIView):
                 chatroom_id = list(chatroom_set)[0]
                 # print(chatroom_id,2)
                 chatroom = ChatRoom.objects.get(id=chatroom_id)
-                message = ChatroomMessage(user=servant,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=servant,case=case,order=order,chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
             elif list(chatroom_set) == []:
                 chatroom = ChatRoom()
