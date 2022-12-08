@@ -272,9 +272,11 @@ def ajax_cal_rate(request):
                     time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
                     order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
                     order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
+
                     orders = orders.filter(order_condition_1|order_condition_2).distinct()
                     order_conflict_servants_id = list(orders.values_list('servant', flat=True))
                     servants = servants.filter(~Q(id__in=order_conflict_servants_id))
+                    
                     if servant in servants:
                         print(servant)
                         one_day_work_hours = float(end_time_int) - float(start_time_int)
