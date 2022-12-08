@@ -143,17 +143,21 @@ def ajax_cal_rate(request):
             end_time = endTime.split(':')
             start_time_int = int(start_time[0]) + float(int(start_time[1])/60)
             end_time_int = int(end_time[0]) + float(int(end_time[1])/60)
+
             condition1 = Q(start_datetime__range=[start_date, end_date])
             condition2 = Q(end_datetime__range=[start_date, end_date])
             condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
-            orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
+            orders = Order.objects.filter(state='paid').filter(condition1 | condition2 | condition3).distinct()
+            
             time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
             time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
             time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
             order_condition = Q((time_condition_1 | time_condition_2 | time_condition3))
+            
             orders = orders.filter(order_condition).distinct()
             order_conflict_servants_id = list(orders.values_list('servant', flat=True))
             servants = servants.filter(~Q(id__in=order_conflict_servants_id))
+            
             StartDate = datetime.datetime.strptime(start_date,'%Y-%m-%d').date()
             EndDate = datetime.datetime.strptime(end_date,'%Y-%m-%d').date()
             StartTime = datetime.datetime.strptime(startTime,'%H:%M').time()
@@ -255,7 +259,7 @@ def ajax_cal_rate(request):
                     condition1 = Q(start_datetime__range=[start_date, end_date])
                     condition2 = Q(end_datetime__range=[start_date, end_date])
                     condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
-                    orders = Order.objects.filter(condition1 | condition2 | condition3).distinct()
+                    orders = Order.objects.filter(state='paid').filter(condition1 | condition2 | condition3).distinct()
 
                     #2.再從 1 取出週間有交集的訂單
                     #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
