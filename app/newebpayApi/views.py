@@ -151,7 +151,7 @@ class CreateMerchant(APIView):
         print(resp.text)
         # print(type(json.loads(resp.text)['status']))
         # logger.info('check test')
-        logger.info(json.load(resp.text))
+        logger.info(json.loads(resp.text))
 
         userstore = UserStore()
         userstore.user = user
