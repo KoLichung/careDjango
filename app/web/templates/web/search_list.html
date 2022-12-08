@@ -172,19 +172,17 @@
             {% if servant.background_image.url != None %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖"> 
+              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/head_background.jpg' %}" alt="照顧者背景圖"> 
             {% endif %}
             <div class="card-body">
 
               <div class="d-flex">
                 <div class="avatar avatar-xl" style="margin-right: 5px;">
-                  <!-- <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >   -->
                   {% if servant.image.url != None %}
                     <img class="rounded-circle" src="{{servant.image.url}}" alt="" > 
                   {% else %}
-                    <img class="rounded-circle" src="{% static 'web/assets/img/new/customer_image.png' %}" alt="" >
+                    <img class="rounded-circle" src="{% static 'web/assets/img/new/head.png' %}" alt="" >
                   {% endif %}
-                  <!-- cat_horizontal.jpg -->
                 </div>
                 <!-- 4.8, 對 4 做 for loop, 對 0.8 做判斷, if > 0.5 給 1 顆星, <= 0.5, 就給 半顆星 -->
                 <span class="carer-name" style="margin-right: 5px;">{{servant.name|slice:"0:1"}}{% if servant.gender == 'M' %}先生{% else %}小姐{% endif %}</span >

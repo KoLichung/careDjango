@@ -44,6 +44,23 @@
           {% endif %}
         </div>
         
+        <br>
+        <div>金融機構代碼</div>
+        <div>
+            <label class="h6 mt-2" for="aboriginal"></label>
+            <input class="booking-input" style="width: 300px;" id="aboriginal" name="ATMInfoBankCode"  type="text" placeholder="" {% if user.ATMInfoBankCode != None %}value={{user.ATMInfoBankCode}} {% endif %} >
+        </div><br>
+        <div>金融機構分行代碼</div>
+        <div>
+            <label class="h6 mt-2" for="aboriginal"></label>
+            <input class="booking-input" style="width: 300px;" id="aboriginal" name="ATMInfoBranchBankCode"  type="text" placeholder=""{% if user.ATMInfoBankCode != None %} value={{user.ATMInfoBranchBankCode}} {% endif %} >
+        </div><br>
+        <div>金融機構帳戶帳號</div>
+        <div>
+            <label class="h6 mt-2" for="aboriginal"></label>
+            <input class="booking-input" style="width: 300px;" id="aboriginal" name="ATMInfoAccount"  type="text" placeholder="" {% if user.ATMInfoBankCode != None %} value={{user.ATMInfoAccount}} {% endif %}  >
+        </div><br>
+
         {% for userLicenseImage in userLicenseImages %}
           <div class="mt-3 d-flex align-items-center">  
             {% if userLicenseImage.image.url != None %}
@@ -66,16 +83,6 @@
           </div>
           
         {% endfor %}
-          <!-- <div class="mt-3 d-flex align-items-center">  
-            <div>
-              <img class="img-fluid rounded" src="{% static 'backboard/assets/img/samples/cat_horizontal.jpg' %}" alt="" width="300" />
-            </div>
-            <div>
-              &emsp;身分證反面&emsp;
-              <input class="form-check-input" id="checkIsServantConfirm" type="checkbox" value="" />
-              <label class="" for="checkIsServantConfirm">審核通過</label>
-            </div>
-          </div> -->
         </form>
       </div>
     </div>

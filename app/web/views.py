@@ -167,7 +167,7 @@ def ajax_cal_rate(request):
                 days, seconds = diff.days, diff.seconds
                 hours = days * 24 + seconds // 3600
                 minutes = (seconds % 3600) // 60
-                total_hours = hours + round(minutes/60)
+                total_hours = (hours + round(minutes/60,1))
                 if care_type == 'home':
                     if total_hours < 12:
                         wage = servant.home_hour_wage
@@ -181,10 +181,16 @@ def ajax_cal_rate(request):
                     elif total_hours >=12 and total_hours < 24:
                         wage = round(servant.hospital_half_day_wage/12)
                     else:
-                        wage = round(servant.hospital_one_day_wage/24)             
-                base_money = total_hours * wage 
+                        wage = round(servant.hospital_one_day_wage/24)
+                          
+                base_money = int(total_hours * wage) 
                 total_money = base_money + amount_transfer_fee
+
+                print(total_hours, 'total hours')
+                print(base_money, 'base money')
+                print('herere')
                 print(total_money,'test')
+
                 data = {
                     'result':'3',
                     'total_hours':total_hours,
@@ -193,9 +199,11 @@ def ajax_cal_rate(request):
                     'transfer_fee':transfer_fee,
                     'number_of_transfer':number_of_transfer,
                     'amount_transfer_fee':amount_transfer_fee,
-                    'total_money':total_money,
+                    'total_money': total_money,
                 }
+
                 print('data',data)
+
                 if 'increase_service[]' in updatedData:
                     increase_service_ids = updatedData['increase_service[]']
                     print(increase_service_ids)
@@ -214,7 +222,7 @@ def ajax_cal_rate(request):
                         }
                         increase_service_data['data'+str(count)] = increase_data
                     print(increase_service_data)
-                    data['total_money'] = total_money
+                    data['total_money'] = int(total_money)
                     return JsonResponse({'data':data,'increase_service_data':increase_service_data})
                 else:
                     return JsonResponse({'data':data})
@@ -286,8 +294,10 @@ def ajax_cal_rate(request):
                             number_of_transfer += (days_count([int(i)], start_date, end_date))
                             total_hours += (days_count([int(i)], start_date, end_date)) * (end_time_int - start_time_int)
                         
+                        total_hours = round(total_hours,1)
+
                         amount_transfer_fee = transfer_fee * number_of_transfer
-                        base_money = total_hours * wage 
+                        base_money = int(total_hours * wage) 
                         total_money = base_money + amount_transfer_fee
                         data = {
                             'result':'3',
@@ -320,7 +330,7 @@ def ajax_cal_rate(request):
                                 }
                                 increase_service_data['data'+str(count)] = increase_data
                            
-                            data['total_money'] = total_money
+                            data['total_money'] = int(total_money)
                             return JsonResponse({'data':data,'increase_service_data':increase_service_data})
                         else:
                             return JsonResponse({'data':data})
@@ -707,11 +717,11 @@ def search_carer_detail(request):
         servant_care_type.append('醫院看護')
 
     if len(Review.objects.filter(servant=servant)) >= 2:
-        reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')[:2]
+        reviews = Review.objects.filter(~Q(servant_rating=0)).filter(servant=servant).order_by('-servant_rating_created_at')[:2]
         if reviews_all != None:
             reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')
     else:
-        reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')
+        reviews = Review.objects.filter(~Q(servant_rating=0)).filter(servant=servant).order_by('-servant_rating_created_at')
     defaultStartTime = start_time
     defaultEndTime = end_time
     if request.method == 'POST':

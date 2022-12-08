@@ -12,7 +12,7 @@
               {% if servant.background_image.url != None %}
                 <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
               {% else %}
-                <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖"> 
+                <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/head_background.jpg' %}" alt="照顧者背景圖"> 
               {% endif %}
             </div>
 
@@ -22,7 +22,7 @@
                 {% if servant.image.url != None %}
                   <img class="rounded-circle" src="{{servant.image.url}}" alt="" > 
                 {% else %}
-                  <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >
+                  <img class="rounded-circle" src="{% static 'web/assets/img/new/head.jpg' %}" alt="" >
                 {% endif %}
               </div>
 
@@ -64,12 +64,13 @@
               <!-- <p><span class="fas fa-times-circle fs-1" style="color: red;"></span>&ensp;未提供 COVID-19 疫苗接種記錄卡</p> -->
               
               {% for licenseImage in servant.user_license_images.all %}
-               
-                {% if licenseImage.isPassed %}
-                  <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{licenseImage.license}}</p>
-                {% else %}
-                  {% if licenseImage.license.id == 4 or  licenseImage.license.id == 5 or  licenseImage.license.id == 6 %}
-                    <p><span class="fas fa-times-circle fs-1" style="color:red"></span>&ensp;{{licenseImage.license}}</p>
+                {% if licenseImage.license.id != 1 and licenseImage.license.id != 2 and licenseImage.license.id != 3 %}
+                  {% if licenseImage.isPassed %}
+                    <p><span class="fas fa-check-circle fs-1" style="color: #55D9A0;"></span>&ensp;{{licenseImage.license}}</p>
+                  {% else %}
+                    {% if licenseImage.license.id == 4 or  licenseImage.license.id == 5 or  licenseImage.license.id == 6 %}
+                      <p><span class="fas fa-times-circle fs-1" style="color:red"></span>&ensp;{{licenseImage.license}}</p>
+                    {% endif %}
                   {% endif %}
                 {% endif %}
               {% endfor %}
@@ -78,7 +79,7 @@
 
             <p class="small-section-title-purple mt-5">關於我</p>
             <div class="case-info-font mb-5 ">
-              {{servant.about_me}}
+              {{servant.about_me|linebreaks}}
             </div>
 
             <hr>
@@ -89,7 +90,11 @@
               <div class="row">
                 <div class="col align-self-center" style="display: flex;">
                   <div class="avatar avatar-3xl" >
-                    <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
+                    {% if review.case.user.image.url != None %}
+                      <img class="rounded-circle"  src="{{review.case.user.image.url}}" alt="照顧者大頭照">
+                    {% else %}
+                      <img class="rounded-circle" src="{% static 'web/assets/img/new/head.jpg' %}" alt="" >  
+                    {% endif %}
                   </div>
                   <div class="mx-3 mt-1">
                     <span class="case-info-font">{{review.case.user.name}}</span>

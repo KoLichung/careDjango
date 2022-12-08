@@ -18,7 +18,11 @@
                 <div class="container" style="display: flex; padding-left: 0;" >
                   
                     <div class="avatar avatar-3xl" >
-                      <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" />
+                      {% if case.user.image.url != None %}
+                        <img class="rounded-circle"  src="{{case.user.image.url}}" alt="照顧者大頭照">
+                      {% else %}
+                        <img class="rounded-circle" src="{% static 'web/assets/img/new/head.jpg' %}" alt="" >  
+                      {% endif %}
                     </div>
 
                     <div class="mx-3">

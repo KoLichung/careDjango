@@ -87,7 +87,7 @@
             {% if servant.background_image.url != None %}
               <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
-              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="照顧者背景圖"> 
+              <img class="card-img-top" style="height: 120px;  object-fit: cover;" src="{% static 'web/assets/img/new/head_background.jpg' %}" alt="照顧者背景圖"> 
             {% endif %}
             <div class="card-body" >
               <div class="d-flex">
@@ -95,7 +95,7 @@
                   {% if servant.image.url != None %}
                     <img class="rounded-circle"  src="{{servant.image.url}}" alt="照顧者大頭照">
                   {% else %}
-                    <img class="rounded-circle" src="{% static 'web/assets/img/new/cat_horizontal.jpg' %}" alt="" >  
+                    <img class="rounded-circle" src="{% static 'web/assets/img/new/head.jpg' %}" alt="" >  
                   {% endif %}
                 </div>
                   <span class="carer-name" style="margin-right: 5px;">{{servant.name|slice:"0:1"}}{% if servant.gender == 'M' %}先生{% else %}小姐{% endif %}</span >

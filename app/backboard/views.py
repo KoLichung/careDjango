@@ -273,6 +273,11 @@ def member_data_review(request):
                 user.is_servant_passed = True
             else:
                 user.is_servant_passed = False
+            
+            user.ATMInfoBankCode = request.POST.get('ATMInfoBankCode')
+            user.ATMInfoBranchBankCode = request.POST.get('ATMInfoBranchBankCode')
+            user.ATMInfoAccount = request.POST.get('ATMInfoAccount')
+
             user.save()
 
             for userLicenseImage in userLicenseImages:
