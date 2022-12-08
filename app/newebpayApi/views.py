@@ -32,13 +32,17 @@ class CreateMerchant(APIView):
         birthday = request.POST.get('birthday')
         ID_card_date = request.POST.get('ID_card_date')
         IDFrom = request.POST.get('IDFrom')
+
+        issue_city_id = request.POST.get('issue_city_id')
         city_id = request.POST.get('city_id')
         county_id = request.POST.get('county_id')
-        ID_card_name = request.POST.get('ID_card_name')
+
+        # ID_card_name = request.POST.get('ID_card_name')
 
         MerchantAddr = request.POST.get('MerchantAddr')
         MerchantEnAddr = request.POST.get('MerchantEnAddr')
 
+        issue_city = City.objects.get(id=issue_city_id)
         city = City.objects.get(id=city_id)
         county = County.objects.get(id=county_id)
 
@@ -114,7 +118,7 @@ class CreateMerchant(APIView):
         extend_params_personal = {
             "MemberUnified": ID_number,
             "IDCardDate": ID_card_date,
-            "IDCardPlace": city.newebpay_cityname,
+            "IDCardPlace": issue_city.newebpay_cityname,
             "IDPic": IDPic,
             "IDFrom": IDFrom,
             "Date": birthday,
