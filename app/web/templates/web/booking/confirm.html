@@ -15,7 +15,7 @@
             ③ 聯絡人
           </div>
           <div class="col" style="color: #BB6BD9;">
-            ④ 確認付款
+            ④ 送出訂單
           </div>
         </div>
 
@@ -73,15 +73,16 @@
             </div>
 
             <p class="h5 mt-4" style="color: #BB6BD9;">費用計算</p>
+            <p>※以服務費用計算平均時薪，四捨五入取到個位數。</p>
             <div class="mt-3">          
               <span class="case-info-font" style="color: #BB6BD9;"><strong>基本費用</strong></span>
               <br>    
-              <div class="row case-info-font mt-3" id="post_html"> </div>
+              <div class="case-info-font mt-3" id="post_html"> </div>
               
               <br>
               <span class="case-info-font" style="color: #BB6BD9;"><strong>加價項目</strong></span>
               <br>
-              <div class="row case-info-font mt-3" id="increase_service_html"> </div>
+              <div class="case-info-font mt-3" id="increase_service_html"> </div>
               <div id="sum_html"></div>    
             </div>
           </div>
@@ -92,10 +93,10 @@
         <div class="row mt-5 mx-auto">
           <span class="h5 "><strong>訂單說明</strong></span>
           <div class="case-info-font"></div>
-          <span>1. 信用卡授權成功後，要等服務者回覆同意接案後，信用卡才會扣款。</span>
-          <span>2. 若服務者超過 6 小時未回覆同意接案，或是距離服務時間剩1小時，信用卡授權會自動取消。</span>
-          <span>3. 需求時數在一天之內，未滿 12 小時以每小時時薪計價；12 ~ 24 小時以半天價格之時薪計價；滿 24 小時以全天價格之時薪計價。</span>
-          <span>4. 距離服務開始 24 小時以前取消，可全額退款。24 小時內取消則無法退款。其他相關規定請看服務合約。</span>          
+          {% comment %} <span>1. 信用卡授權成功後，要等服務者回覆同意接案後，信用卡才會扣款。</span> {% endcomment %}
+          <span>1. 若服務者超過 6 小時未回覆同意接案，或是距離服務時間剩1小時，信用卡授權會自動取消。</span>
+          <span>2. 需求時數在一天之內，未滿 12 小時以每小時時薪計價；12 ~ 24 小時以半天價格之時薪計價；滿 24 小時以全天價格之時薪計價。</span>
+          <span>3. 距離服務開始 24 小時以前取消，可全額退款。24 小時內取消則無法退款。其他相關規定請看服務合約。</span>          
         </div>
         <form method="POST" enctype="multipart/form-data">{% csrf_token %}
           <div class="row justify-content-center mt-5 pb-6 mx-auto">
@@ -106,7 +107,7 @@
             </div>
             <div class="col-12 col-sm-4 mt-2">
               
-                <button class="full-green-button" type="submit" name="pay">確認付款 <span class="far fa-credit-card"></span> </button>
+                <button class="full-green-button" type="submit" name="pay">送出訂單 <span class="far fa-credit-card"></span> </button>
               
             </div>
           </div>
@@ -167,7 +168,7 @@
                 const increase_service_data = response.increase_service_data;
                 increase_service_html.innerHTML = ``
                 if (data.result == '3'){post_html.innerHTML = `
-                    <div class="row case-info-font mt-2 h6">
+                    <div class="row case-info-font">
                     <div class="col-12  col-lg-8">
                       $${data.hour_wage}x${data.total_hours}小時 
                     </div>
@@ -175,7 +176,7 @@
                       $ ${data.base_money}
                     </div>
                   </div> 
-                  <div class="row case-info-font mt-2 h6">
+                  <div class="row case-info-font">
                     <div class="col-12  col-lg-8">交通費
                       $${data.transfer_fee} x ${data.number_of_transfer} 趟
                     </div>
@@ -187,8 +188,7 @@
                     increase_service_html.innerHTML += `                   
                     <div class="row case-info-font">
                         <div class="col-8">
-                          ${increase_service_data[num].service}<br>
-                          每小時加 ${increase_service_data[num].increase_percent}% x ${data.total_hours}小時
+                          ${increase_service_data[num].service} ${increase_service_data[num].increase_percent}%
                         </div>
                         <div class="col text-end">
                           $ ${increase_service_data[num].increase_money}
@@ -196,12 +196,12 @@
                       </div>`};
                     sum_html.innerHTML = `
                     <hr style="color: #BB6BD9;">
-                    <div class="row">
-                      <div class="col-8 case-info-font" style="color: #BB6BD9;">
+                    <div class="row case-info-font">
+                      <div class="col-8" style="color: #BB6BD9;">
                         <strong>總計</strong>
                       </div>
-                      <div class="col text-end ">
-                        <strong>$ <span class="h5" style="color: #BB6BD9;">${data.total_money}</span> </strong> 
+                      <div class="col text-end">
+                        <strong><span class="h5" style="color: #BB6BD9;">$ ${data.total_money}   </span> </strong> 
                       </div>
                     </div>
                     `

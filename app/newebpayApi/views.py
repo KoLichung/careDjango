@@ -193,7 +193,8 @@ class MpgTrade(APIView):
         api_url = 'https://core.newebpay.com/MPG/mpg_gateway'
 
         timeStamp = int( time.time() )
-        item_desc = "時薪 $"+ str(order.wage_hour) + " 共 " + str(order.work_hours) + " 小時"
+        # item_desc = "時薪 $"+ str(order.wage_hour) + " 共 " + str(order.work_hours) + " 小時"
+        item_desc = "照顧服務費用"
         Version = "2.0"
         # order_id = '4'
         merchant_id = userStore.MerchantID
@@ -207,7 +208,7 @@ class MpgTrade(APIView):
             "TimeStamp": timeStamp,
             "MerchantOrderNo": order_id,
             "Amt": Amt,
-            "ItemDesc": '',       
+            "ItemDesc": item_desc,       
             "NotifyURL": "http://"+ip_position+"/newebpayApi/notifyurl_callback/" + str(userStore.id) + "/",
             "ClientBackURL": "http://"+ip_position+"/web/success_pay",
         }

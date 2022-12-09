@@ -276,7 +276,7 @@ def ajax_cal_rate(request):
                     orders = orders.filter(order_condition_1|order_condition_2).distinct()
                     order_conflict_servants_id = list(orders.values_list('servant', flat=True))
                     servants = servants.filter(~Q(id__in=order_conflict_servants_id))
-                    
+
                     if servant in servants:
                         print(servant)
                         one_day_work_hours = float(end_time_int) - float(start_time_int)
@@ -1350,7 +1350,9 @@ def booking_confirm(request):
         TempCase.objects.filter(user=user).delete()
 
         order_id = order.id
-        return redirect_params('https://care168.com.tw/newebpayApi/mpg_trade',{'order_id':order_id})
+
+        return redirect('chat')
+        # return redirect_params('https://care168.com.tw/newebpayApi/mpg_trade',{'order_id':order_id})
     elif request.method == 'POST' and 'previous' in request.POST:
         return redirect_params('booking_contact',{'servant':servant_id})
         
