@@ -52,9 +52,11 @@ def all_cases(request):
         return redirect('/backboard/')
 
     cases = Case.objects.all()
+
     state = request.GET.get('state')
     if state != None:
         cases = cases.filter(state=state)
+    
     paginator = Paginator(cases, 10)
     if request.GET.get('page') != None:
         page_number = request.GET.get('page') 
@@ -63,7 +65,7 @@ def all_cases(request):
     page_obj = paginator.get_page(page_number)
 
     page_obj.adjusted_elided_pages = paginator.get_elided_page_range(page_number)
-    return render(request, 'backboard/all_cases.html',{'cases':page_obj})
+    return render(request, 'backboard/all_cases.html',{'cases':page_obj,'state':state})
 
 def all_members(request):
     if not request.user.is_authenticated or not request.user.is_staff:
@@ -74,6 +76,7 @@ def all_members(request):
     needers_num = users.filter(is_servant_passed=False).count()
     servants_num = users.filter(is_servant_passed=True).count()
     apply_servant_num = users.filter(is_apply_servant=True,is_servant_passed=False).count()
+
     member = request.GET.get('member')
     if member == 'needer':
         users = users.filter(is_servant_passed=False)
@@ -81,6 +84,7 @@ def all_members(request):
         users = users.filter(is_servant_passed=True)
     elif member == 'apply_servant':
         users = users.filter(is_apply_servant=True,is_servant_passed=False)
+
     paginator = Paginator(users, 10)
     if request.GET.get('page') != None:
         page_number = request.GET.get('page') 
@@ -89,7 +93,7 @@ def all_members(request):
     page_obj = paginator.get_page(page_number)
 
     page_obj.adjusted_elided_pages = paginator.get_elided_page_range(page_number)
-    return render(request, 'backboard/all_members.html',{'users':page_obj,'members_num':members_num,'needers_num':needers_num,'servants_num':servants_num,'apply_servant_num':apply_servant_num})
+    return render(request, 'backboard/all_members.html',{'users':page_obj,'members_num':members_num,'needers_num':needers_num,'servants_num':servants_num,'apply_servant_num':apply_servant_num,'member':member})
 
 def bills(request):
     if not request.user.is_authenticated or not request.user.is_staff:
@@ -274,6 +278,7 @@ def member_data_review(request):
             else:
                 user.is_servant_passed = False
             
+            user.name = request.POST.get('name')
             user.ATMInfoBankCode = request.POST.get('ATMInfoBankCode')
             user.ATMInfoBranchBankCode = request.POST.get('ATMInfoBranchBankCode')
             user.ATMInfoAccount = request.POST.get('ATMInfoAccount')

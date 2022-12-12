@@ -16,7 +16,7 @@
         <form method="post" enctype="multipart/form-data">{% csrf_token %}
         <div class="d-flex justify-content-between mt-3">
           <div>
-            <span>姓名：{{user.name}}</span>
+            <span>姓名：<input style="width: 300px;" id="aboriginal" name="name"  type="text" value={{user.name}}></span>
             <span class="mx-3">電話：{{user.phone}}</span>
             {% comment %} <input class="form-check-input" id="checkIsServantConfirm" name="checkIsServant" type="checkbox" value="True" {% if user.is_servant_passed == True %}checked{% endif %}/>
             <label class="" for="checkIsServantConfirm">審核通過為服務者</label> {% endcomment %}

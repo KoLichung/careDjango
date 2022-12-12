@@ -86,7 +86,7 @@
                 {% if page_number == cases.paginator.ELLIPSIS %} 
                   {{page_number}} 
                 {% else %}
-                  <a href="?page={{page_number}}" class="{% if page_number == cases.number %}current{% endif %}">&nbsp;&nbsp;{{page_number}}&nbsp;&nbsp;</a>
+                  <a href="?page={{page_number}}&state={{state}}" class="{% if page_number == cases.number %}current{% endif %}">&nbsp;&nbsp;{{page_number}}&nbsp;&nbsp;</a>
                 {% endif %} 
               {% endfor %}
               <!-- <button class="btn btn-sm btn-chijia-default me-1" type="button" title="Previous" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
