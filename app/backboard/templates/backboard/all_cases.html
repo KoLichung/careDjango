@@ -8,12 +8,44 @@
         <div class="card-header">
   
           <div class="mb-3">
+            {% if not state %}
             <a href="{% url 'all_cases' %}" class="custom-purple-btn btn-sm" role="button">所有案件</a>
+            {% else %}
+            <a href="{% url 'all_cases' %}" class="custom-purple-border-btn btn-sm" role="button">所有案件</a>
+            {% endif %}
+
+            {% if state == 'unTaken' %}
+            <a href="{% url 'all_cases' %}?state=unTaken"class="custom-purple-btn btn-sm" role="button">未承接</a>
+            {% else %}
             <a href="{% url 'all_cases' %}?state=unTaken"class="custom-purple-border-btn btn-sm" role="button">未承接</a>
+            {% endif %}
+
+            {% if state == 'unComplete' %}
+            <a href="{% url 'all_cases' %}?state=unComplete" class="custom-purple-btn btn-sm" role="button">未完成</a>
+            {% else %}
             <a href="{% url 'all_cases' %}?state=unComplete" class="custom-purple-border-btn btn-sm" role="button">未完成</a>
+            {% endif %}
+            
+            {% if state == 'Complete' %}
+            <a href="{% url 'all_cases' %}?state=Complete"class="custom-purple-btn btn-sm" role="button">已完成</a>
+            {% else %}
             <a href="{% url 'all_cases' %}?state=Complete"class="custom-purple-border-btn btn-sm" role="button">已完成</a>
+            {% endif %}
+            
+            
+            {% if state == 'Canceled' %}
+            <a href="{% url 'all_cases' %}?state=Canceled" class="custom-purple-btn btn-sm" role="button">取消</a>
+            {% else %}
             <a href="{% url 'all_cases' %}?state=Canceled" class="custom-purple-border-btn btn-sm" role="button">取消</a>
+            {% endif %}
+            
+            
+            {% if state == 'endEarly' %}
+            <a href="{% url 'all_cases' %}?state=endEarly"class="custom-purple-btn btn-sm" role="button">提早結束</a>
+            {% else %}
             <a href="{% url 'all_cases' %}?state=endEarly"class="custom-purple-border-btn btn-sm" role="button">提早結束</a>
+            {% endif %}
+            
           </div>
                     
           <div id="tableExample2" data-list='{"valueNames":["name","email","age"],"page":10,"pagination":true}'>
