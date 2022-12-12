@@ -1424,10 +1424,10 @@ def requirement_list(request):
         condition1 = Q(start_datetime__range=[start_date, end_date])
         condition2 = Q(end_datetime__range=[start_date, end_date])
         
-        
         cases = cases.filter(city=City.objects.get(id=city_id))
         if care_type !='':
             cases = cases.filter(care_type=care_type)
+
     if city_id == '':
         city = ''
     else:
@@ -1439,7 +1439,9 @@ def requirement_list(request):
         cases = cases.filter(start_datetime__gte=start_date)
     if start_date == '' and end_date != '':
         cases = cases.filter(end_datetime__lte=end_date)
-    cases = cases.filter(servant=None)
+
+    now = datetime.datetime.now()
+    cases = cases.filter(servant=None).filter(start_datetime__gte=now).order_by('start_datetime')
 
     return render(request, 'web/requirement_list.html',{'start_date':start_date,'end_date':end_date, 'care_type':care_type, 'cases':cases,'cityName':city,'citys':citys})
 
