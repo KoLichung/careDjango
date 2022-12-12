@@ -179,7 +179,7 @@ class MpgTrade(APIView):
     
     def get(self, request, format=None):
         # 測試 ip
-        ip_position = '45.32.43.27'
+        ip_position = '149.28.22.217'
 
         print('test')
         order_id = self.request.query_params.get('order_id')
@@ -476,8 +476,8 @@ class NotifyUrlCallback(APIView):
 
     def post(self, request, id):
         # body_unicode = request.body.decode('utf-8')
-        logger.info(request)
-        logger.info(request.body)
+        # logger.info(request)
+        logger.info(json.loads(request.body))
 
         # logger.info(request.body.decode('utf-8'))
         userstore_id = id
