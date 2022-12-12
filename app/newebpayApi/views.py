@@ -209,8 +209,8 @@ class MpgTrade(APIView):
             "MerchantOrderNo": order_id,
             "Amt": Amt,
             "ItemDesc": item_desc,       
-            "NotifyURL": "http://"+ip_position+"/newebpayApi/notifyurl_callback/" + str(userStore.id) + "/",
-            "ClientBackURL": "http://"+ip_position+"/web/success_pay",
+            "NotifyURL": "https://"+"care168.com.tw"+"/newebpayApi/notifyurl_callback/" + str(userStore.id) + "/",
+            "ClientBackURL": "https://"+"care168.com.tw"+"/web/success_pay",
         }
 
         logger.info(data)
