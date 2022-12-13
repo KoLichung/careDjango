@@ -630,8 +630,11 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
                 case.servant.languages = UserLanguage.objects.filter(user=user)
             
             if Review.objects.filter(case=case).count()!=0:
-                case.servant_rating = Review.objects.get(case=case).servant_rating
-                case.review = Review.objects.filter(case=case).first()
+                reviews = Review.objects.filter(case=case)
+                for review in reviews:
+                    if review.order.state == 'paid':
+                        case.servant_rating = review.servant_rating
+                        case.review = review
 
             disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
             case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
