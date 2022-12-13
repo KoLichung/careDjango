@@ -51,7 +51,6 @@ def receiveBooking(user,order):
     if user.is_fcm_notify == True:
         sendFCMMessage(order.case.servant, '收到訂單', content_text)
     
-
 # 需求者付款, [服務者]收到訂單成立
 def servantOrderEstablished(user,order):
     content_text = "您已成功接案！"+ order.user.name +"的預定已成立～您可前往會員中心-我接的案查詢詳情。"
@@ -60,7 +59,6 @@ def servantOrderEstablished(user,order):
     if user.is_fcm_notify == True:
         sendFCMMessage(order.servant, '訂單成立', content_text)
     
-
 # [需求者] 收到服務者已接案
 def neederOrderEstablished(user,order):
     content_text = "您的定單已成立！您可前往會員中心-訂單管理查詢詳情。"
@@ -69,7 +67,6 @@ def neederOrderEstablished(user,order):
     if user.is_fcm_notify == True:
         sendFCMMessage(order.user, '訂單成立', content_text)
     
-
 # [服務者] 收到訂單取消
 def orderCancel(user,order):
     content_text = "很抱歉，"+ order.user.name +"的定單已取消，請您不用前往服務!"
@@ -78,7 +75,6 @@ def orderCancel(user,order):
     if user.is_fcm_notify == True:
         sendFCMMessage(order.servant, '訂單取消', content_text)
     
-
 # [服務者] 收到訂單提前結束
 def orderEarlyTermination(user,order):
     content_text = "請注意！"+ order.user.name +"的定單已申請「提前結束」，確認交接完成，即可收班。"
@@ -87,6 +83,7 @@ def orderEarlyTermination(user,order):
     if user.is_fcm_notify == True:
         sendFCMMessage(order.servant, '訂單提前結束', content_text)
 
+# 後台通知成為服務者
 def userBecomeServant(user):
     content_text = "恭喜您～通過審核為服務者！請至會員中心-我的服務-開始設定您的服務項目。"
     message = SystemMessage(user=user,content=content_text)

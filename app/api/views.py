@@ -554,22 +554,27 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
         queryset = self.queryset.filter(servant=servant)
 
         for i in range(len(queryset)):
-            if Review.objects.get(case=queryset[i]).servant_rating != None:
-                queryset[i].servant_rating = Review.objects.get(case=queryset[i]).servant_rating
+            reviews = Review.objects.filter(case=queryset[i])
+            for reiview in reviews:
+                if reiview.servant_rating != None:
+                    queryset[i].servant_rating = reiview.servant_rating
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
         case = self.get_object()
         servant = self.request.user
         if case.servant == servant:
-            case.review = Review.objects.get(case=case)
+            reviews = Review.objects.filter(case=case)
+            for review in reviews:
+                if review.order.state == 'paid':
+                    case.review = review
+                    case.servant_rating = review.servant_rating
+
             if case.care_type == 'home':
                 case.hour_wage = case.servant.home_hour_wage
             elif case.care_type == 'hospital':
                 case.hour_wage = case.servant.hospital_hour_wage
             
-            case.servant_rating = Review.objects.get(case=case).servant_rating
-            case.servant_rating = Review.objects.get(case=case).servant_rating
             disease_ids = list(CaseDiseaseShip.objects.filter(case=case).values_list('disease', flat=True))
             case.disease = DiseaseCondition.objects.filter(id__in=disease_ids)
             body_condition_ids = list(CaseBodyConditionShip.objects.filter(case=case).values_list('body_condition', flat=True))
