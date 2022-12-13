@@ -1597,8 +1597,8 @@ def requirement_detail(request):
             order.platform_money = order.total_money * (order.platform_percent/100)
             
             order.save()
-            neederOrderEstablished(case.user,order)
-            servantOrderEstablished(case.servant,order)
+            # neederOrderEstablished(case.user,order)
+            # servantOrderEstablished(case.servant,order)
 
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
             chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))

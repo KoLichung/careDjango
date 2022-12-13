@@ -515,6 +515,10 @@ class NotifyUrlCallback(APIView):
 
                 order.save()
                 case.save()
+                
+                from messageApp.tasks import neederOrderEstablished, servantOrderEstablished
+                neederOrderEstablished(case.user,order)
+                servantOrderEstablished(case.servant,order)
 
                 try:
                     payInfo.OrderInfoTradeStatus = data_json['Result']['TradeStatus']

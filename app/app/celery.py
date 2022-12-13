@@ -64,7 +64,7 @@ def test_task2(arg):
 @app.task
 def changeCaseState(arg):
     from modelCore.models import Order
-    orders = Order.objects.all()
+    orders = Order.objects.filter(state='paid')
     print('checkOrder')
     now = datetime.now(timezone.utc)
     for order in orders:
@@ -83,16 +83,15 @@ def changeCaseState(arg):
 @app.task
 def remindOrderStart(arg):
     from modelCore.models import Order ,SystemMessage ,Case
-    orders = Order.objects.all()
+    orders = Order.objects.filter(state='paid')
     now = timezone.now()
     for order in orders:
-        message_test = SystemMessage(case=Case.objects.get(id=1),user=Case.objects.get(id=1).servant,content="提醒您，" )
-        message_test.save()
         remind_time_start = order.start_datetime - timedelta(hours=3)
         remind_time_end = order.start_datetime - timedelta(hours=2,minutes=45)
         if now > remind_time_start and now < remind_time_end:
-            message = SystemMessage(case=order.case,user=order.servant,content="提醒您，" + order.user.name + "的預定即將開始，請您務必前往服務哦～")
-            message.save()
+            if order.case.servant != None:
+                message = SystemMessage(case=order.case, user=order.servant, content="提醒您，" + order.user.name + "的預定即將開始，請您務必前往服務哦～")
+                message.save()
 
 @app.task
 def checkOrderState(arg):
