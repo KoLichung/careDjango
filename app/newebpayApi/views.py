@@ -476,8 +476,6 @@ class NotifyUrlCallback(APIView):
 
     def post(self, request, id):
         # body_unicode = request.body.decode('utf-8')
-        # logger.info(request)
-        logger.info(json.loads(request.body))
 
         # logger.info(request.body.decode('utf-8'))
         userstore_id = id
