@@ -1935,7 +1935,7 @@ def my_case_detail(request):
 
     orders = Order.objects.filter(case=case)
     for item in orders:
-        if order.state == 'paid':
+        if item.state == 'paid':
             order = item
     
     work_hours = round(order.work_hours)
