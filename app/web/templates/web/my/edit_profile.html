@@ -14,7 +14,7 @@
             <img class="rounded-circle" src="{% static 'web/assets/img/new/head.jpg' %}" alt="" />
           {% endif %}
         </div>
-
+        <span>建議為正方形圖片</span>
         <div>
           <form method="post" id="image_post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -28,8 +28,6 @@
               {{userform.image}}
             </div>
           </form>
-          
-          <span>建議為正方形圖片</span>
         </div>
       </div>
 
