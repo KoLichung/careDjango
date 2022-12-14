@@ -9,7 +9,7 @@ import time
 import json
 from modelCore.forms import BlogPostCoverImageForm ,AssistancePostCoverImageForm
 from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
-from modelCore.models import OrderIncreaseService, MonthSummary ,User ,UserLicenseShipImage ,License ,AssistancePost ,UserStore ,City ,County
+from modelCore.models import OrderIncreaseService, MonthSummary ,User ,UserLicenseShipImage ,License ,AssistancePost ,UserStore ,City ,County, UserServiceLocation
 from django.contrib import auth
 from django.contrib.auth import authenticate
 
@@ -126,11 +126,15 @@ def member_detail(request):
     user = User.objects.get(id=user_id)
     offend_orders = Order.objects.filter(user=user)
     take_orders = Order.objects.filter(servant=user)
+
+    locations = UserServiceLocation.objects.filter(user=user)
+    services = UserServiceShip.objects.filter(user=user)
+
     if request.method == 'POST' and 'reset_password' in request.POST :
-        password = "00000"
+        password = "12345"
         user.set_password(password)
         user.save()
-    return render(request, 'backboard/member_detail.html',{'user':user,'offend_orders':offend_orders,'take_orders':take_orders})
+    return render(request, 'backboard/member_detail.html',{'user':user,'offend_orders':offend_orders,'take_orders':take_orders,'locations':locations, 'services':services})
 
 
 def all_blogs(request):

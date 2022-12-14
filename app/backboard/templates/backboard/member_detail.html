@@ -20,12 +20,13 @@
             </div>
           </div>
           <div class="border"></div>
-          <div class="d-flex justify-content-between mt-3">
+          <div class="d-flex justify-content-between mt-3 mb-3">
             <div>
               <span>姓名：{{user.name}}</span>
-              <span class="mx-3">電話：{{user.phone}}</span>
-              <span class="mx-3">Email：{{user.email}}</span>
-              {% if user.is_apply_servant %}
+              <span class="mx-3">性別：{% if user.gender == 'M' %}男{%else%}女{% endif%}</span>
+              <br><span>電話：{{user.phone}}</span>
+              <br><span>Email：{{user.email}}</span>
+              <br>{% if user.is_apply_servant %}
                 <span>服務者 /需求者</span>
                 {% if user.is_servant_passed == False %}
                   <span style="color: red;">（服務者尚未審核）</span> 
@@ -46,7 +47,7 @@
                     </button> -->
                   </div>
                   <div class="modal-body">
-                    確定重設密碼為 00000 ? 
+                    確定重設密碼為 12345 ? 
                   </div>
                   <div class="modal-footer">
                     <button type="submit" name="reset_password" class="btn btn-warning">確定</button>
@@ -59,6 +60,27 @@
             <div>
               <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_data_review' %}?user={{user.id}}">資料審核</a>
             </div>
+          </div>
+          <div>
+            {% if user.is_home and user.is_hospital %}
+              <span>服務類型：居家照顧(時薪：{{user.home_hour_wage}},半天：{{user.home_half_day_wage}}, 全天：{{user.home_one_day_wage}})，
+                醫院看護(時薪：{{user.hospital_hour_wage}},半天：{{user.hospital_half_day_wage}}, 全天：{{user.hospital_one_day_wage}})</span>
+            {% elif user.is_home %}
+              <span>服務類型：居家照顧(時薪：{{user.home_hour_wage}},半天：{{user.home_half_day_wage}}, 全天：{{user.home_one_day_wage}})</span>
+            {% elif user.is_hospital %}
+              <span>服務類型：醫院看護(時薪：{{user.hospital_hour_wage}},半天：{{user.hospital_half_day_wage}}, 全天：{{user.hospital_one_day_wage}})</span>
+            {% endif %}
+            <br><span>服務地區：
+              {% for location in locations %}
+                {{location.city.name}}({{location.transfer_fee}})
+              {% endfor %}
+            </span>
+            <br><span>服務項目：
+              {% for service in services %}
+                {{service.service.name}}{% if service.increase_percent %}(加價：{{service.increase_percent}}%){% endif %},
+              {% endfor %}
+            </span>
+            <br><span>關於我：{{user.about_me|linebreaks}}</span>
           </div>
 
         </div>
