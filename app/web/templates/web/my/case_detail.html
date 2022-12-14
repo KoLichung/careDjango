@@ -88,50 +88,55 @@
 
                 </div>
 
-                <p class="small-section-title-purple mt-4">委託人給我的評價</p>
-                <div class="case-info-font section-bg-grey">
-                  {% for i in review.servant_rating_range %}
-                    <span class="fas fa-star"  style="color: yellow;"></span>
-                  {% endfor %}
-                  {% if review.servant_rating_is_half_star == True %}
-                    <span class="fas fa-star-half-alt" style="color: yellow;" ></span>
-                  {% endif %}
-                  {% for i in review.servant_rating_empty_star_range %}
-                    <i class="fa-regular fa-star" style="color: yellow;"></i>  
-                  {% endfor %}
-                  <p>“ {{review.servant_comment}} “</p>
-                  
-                </div>
+                {% if review.servant_rating %}
+                  <p class="small-section-title-purple mt-4">委託人給我的評價</p>
+                  <div class="case-info-font section-bg-grey">
+                    {% for i in review.servant_rating_range %}
+                      <span class="fas fa-star"  style="color: yellow;"></span>
+                    {% endfor %}
+                    {% if review.servant_rating_is_half_star == True %}
+                      <span class="fas fa-star-half-alt" style="color: yellow;" ></span>
+                    {% endif %}
+                    {% for i in review.servant_rating_empty_star_range %}
+                      <i class="fa-regular fa-star" style="color: yellow;"></i>  
+                    {% endfor %}
+                    <p>“ {{review.servant_comment}} “</p>
+                  </div>
+                {% endif %}
 
                 <!-- 如果 已給 照顧者評價會顯示這個 -->
-                <p class="small-section-title-purple mt-4">我給委託人的評價</p>
-                <div class="case-info-font section-bg-grey">
-                  {% for i in review.case_offender_rating_range %}
-                    <span class="fas fa-star"  style="color: yellow;"></span>
-                  {% endfor %}
-                  {% if review.case_offender_rating_is_half_star == True %}
-                    <span class="fas fa-star-half-alt" style="color: yellow;"></span>
-                  {% endif %}
-                  {% for i in review.case_offender_rating_empty_star_range %}
-                    <i class="fa-regular fa-star" style="color: yellow;"></i>  
-                  {% endfor %}
-                  <p>“ {{review.case_offender_comment}}</p>
-                </div>
-
-                <!-- 如果 還沒給 照顧者評價會顯示這個 -->
-                <form method="post" enctype="multipart/form-data">{% csrf_token %}
-                <p class="small-section-title-purple mt-4">我給委託人的評價</p>
-                <div class="case-info-font">
-                  <p>我給委託人幾顆星：</p>
-                  <div id='myRater' class="d-block"></div>
-                  <input type="hidden" id="myInput" name="myInput" value="0">
-                  <p>請輸入給委託人的評價(150字以內)：</p>
-                  <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>
-                  <div class="d-flex mb-3 flex-row-reverse">
-                    <button class="small-green-button mt-3 float-right" type="submit">送出</button>
+                {% if review.case_offender_rating %}
+                  <p class="small-section-title-purple mt-4">我給委託人的評價</p>
+                  <div class="case-info-font section-bg-grey">
+                    {% for i in review.case_offender_rating_range %}
+                      <span class="fas fa-star"  style="color: yellow;"></span>
+                    {% endfor %}
+                    {% if review.case_offender_rating_is_half_star == True %}
+                      <span class="fas fa-star-half-alt" style="color: yellow;"></span>
+                    {% endif %}
+                    {% for i in review.case_offender_rating_empty_star_range %}
+                      <i class="fa-regular fa-star" style="color: yellow;"></i>  
+                    {% endfor %}
+                    {% if review.case_offender_comment %}
+                    <p>{{review.case_offender_comment}}</p>
+                    {% end %}
                   </div>
-                </div>
-                </form>
+                {% else %}
+                  <!-- 如果 還沒給 照顧者評價會顯示這個 -->
+                  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                  <p class="small-section-title-purple mt-4">我給委託人的評價</p>
+                  <div class="case-info-font">
+                    <p>我給委託人幾顆星：</p>
+                    <div id='myRater' class="d-block"></div>
+                    <input type="hidden" id="myInput" name="myInput" value="0">
+                    <p>請輸入給委託人的評價(150字以內)：</p>
+                    <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>
+                    <div class="d-flex mb-3 flex-row-reverse">
+                      <button class="small-green-button mt-3 float-right" type="submit">送出</button>
+                    </div>
+                  </div>
+                  </form>
+                {% endif %}
             </div>
 
     </div>
