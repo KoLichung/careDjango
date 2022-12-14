@@ -1932,9 +1932,19 @@ def my_cases(request):
 def my_case_detail(request):
     case_id = request.GET.get('case')
     case = Case.objects.get(id=case_id)
-    order = Order.objects.get(case=case)
+
+    orders = Order.objects.filter(case=case)
+    for item in orders:
+        if order.state == 'paid':
+            order = item
+    
     work_hours = round(order.work_hours)
-    review = Review.objects.get(case=case)
+    
+    reviews = Review.objects.filter(case=case)
+    for item in reviews:
+        if item.order.state == "paid":
+             review = item
+
     total_money = order.total_money - order.platform_money
     ##test
     now = timezone.now()
