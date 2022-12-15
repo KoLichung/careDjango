@@ -57,7 +57,7 @@ def all_cases(request):
     if state != None:
         cases = cases.filter(state=state)
     
-    paginator = Paginator(cases, 10)
+    paginator = Paginator(cases, 30)
     if request.GET.get('page') != None:
         page_number = request.GET.get('page') 
     else:
@@ -85,7 +85,7 @@ def all_members(request):
     elif member == 'apply_servant':
         users = users.filter(is_apply_servant=True,is_servant_passed=False)
 
-    paginator = Paginator(users, 10)
+    paginator = Paginator(users, 30)
     if request.GET.get('page') != None:
         page_number = request.GET.get('page') 
     else:

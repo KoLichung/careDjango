@@ -55,11 +55,9 @@
                   {% for increase_service in order.order_increase_services.all %}
                     <div class="row case-info-font">
                       <div class="col-9">
-                        {{increase_service.service}}
-                        &emsp;每小時加 {{increase_service.increase_percent}}% x {{work_hours}}小時
+                        {{increase_service.service}} + {{increase_service.increase_percent}}%
                       </div>
                       <div class="col text-end">
-                        
                         $ {{increase_service.increase_money}}
                         <br>
                       </div>
