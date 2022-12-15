@@ -18,7 +18,7 @@ from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMe
 from modelCore.models import BlogPost, BlogPostCategoryShip, BlogCategory
 from api import serializers
 from messageApp.tasks import *
-# from web.views import platform_percent_cal
+from app.pagination import LargeResultsSetPagination
 
 class LicenseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -174,6 +174,7 @@ class MessageViewSet(APIView):
     # serializer_class = serializers.MessageSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    pagination_class = LargeResultsSetPagination
 
     def get(self, request):
         user = self.request.user
