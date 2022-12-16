@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore, BlogCategory, BlogPost
-from .models import BlogPostCategoryShip ,TempCase, MonthSummary ,AssistancePost, SmsVerifyCode
+from .models import BlogPostCategoryShip ,TempCase, MonthSummary ,AssistancePost, SmsVerifyCode, NewebpayCity
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -12,6 +12,10 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'newebpay_cityname', 'nameE')
+
+@admin.register(NewebpayCity)
+class NewebpayCityAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
 
 @admin.register(County)
 class CountyAdmin(admin.ModelAdmin):

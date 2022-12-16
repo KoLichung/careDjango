@@ -8,7 +8,7 @@ import requests
 import time
 import json
 from modelCore.forms import BlogPostCoverImageForm ,AssistancePostCoverImageForm
-from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip
+from modelCore.models import BlogCategory, BlogPost, BlogPostCategoryShip ,Case ,Order ,Review ,Service ,UserServiceShip ,CaseServiceShip, NewebpayCity
 from modelCore.models import OrderIncreaseService, MonthSummary ,User ,UserLicenseShipImage ,License ,AssistancePost ,UserStore ,City ,County, UserServiceLocation
 from django.contrib import auth
 from django.contrib.auth import authenticate
@@ -308,12 +308,14 @@ def userstore_detail(request):
     user_id = request.GET.get('user')
     user = User.objects.get(id=user_id)
     userLicenseImages = UserLicenseShipImage.objects.filter(user=user).order_by('license')[:2]
+
+    newebCitys = NewebpayCity.objects.all()
     citys = City.objects.all()
     cityName = citys.get(id=8)
     counties = County.objects.filter(city=cityName)
     countyName = counties.get(name='西屯區')
 
-    return render(request, 'backboard/userstore_detail.html',{'user':user,'userLicenseImages':userLicenseImages,'cityName':cityName,'citys':citys,'countyName':countyName,'counties':counties})
+    return render(request, 'backboard/userstore_detail.html',{'user':user,'userLicenseImages':userLicenseImages,'cityName':cityName,'citys':citys,'countyName':countyName,'counties':counties, 'newebCitys':newebCitys})
 
 def refunds(request):
     if not request.user.is_authenticated or not request.user.is_staff:

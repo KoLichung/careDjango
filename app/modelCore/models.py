@@ -297,6 +297,9 @@ class City(models.Model):
     def __str__(self):
             return self.name
 
+class NewebpayCity(models.Model):
+    name = models.CharField(max_length = 255, blank=True, null=True)
+
 class County(models.Model):
     city =  models.ForeignKey(
         City,

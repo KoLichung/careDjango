@@ -16,7 +16,7 @@ import hashlib
 import codecs
 import logging
 import json
-from modelCore.models import Order,UserStore,PayInfo,UserLicenseShipImage,License,City,County,User
+from modelCore.models import Order,UserStore,PayInfo,UserLicenseShipImage,License,City,County,User, NewebpayCity
 
 logger = logging.getLogger(__file__)
 
@@ -42,7 +42,7 @@ class CreateMerchant(APIView):
         MerchantAddr = request.POST.get('MerchantAddr')
         MerchantEnAddr = request.POST.get('MerchantEnAddr')
 
-        issue_city = City.objects.get(id=issue_city_id)
+        issue_city = NewebpayCity.objects.get(id=issue_city_id)
         city = City.objects.get(id=city_id)
         county = County.objects.get(id=county_id)
 
@@ -118,7 +118,7 @@ class CreateMerchant(APIView):
         extend_params_personal = {
             "MemberUnified": ID_number,
             "IDCardDate": ID_card_date,
-            "IDCardPlace": issue_city.newebpay_cityname,
+            "IDCardPlace": issue_city.name,
             "IDPic": IDPic,
             "IDFrom": IDFrom,
             "Date": birthday,

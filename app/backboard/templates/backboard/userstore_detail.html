@@ -82,8 +82,8 @@
                     <div class="mt-1 btn-group">
                         <select class="dropdown-button" id="issue_city_select" name="issue_city_id" onchange="" select>
                         
-                        {% for city in citys %}
-                            <option style="text-align: center" name="issue_city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
+                        {% for city in newebCitys %}
+                            <option style="text-align: center" name="issue_city_option" value="{{city.id}}">{{city.name}}</option>
                         {% endfor %}
                         </select>
                     </div><br><br>

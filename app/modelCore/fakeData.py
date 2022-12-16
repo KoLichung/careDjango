@@ -7,7 +7,7 @@ import pytz
 from pytz import tzinfo
 from django.db.models import Avg ,Sum 
 from web.views import platform_percent_cal
-from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
+from .models import  ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage, NewebpayCity
 from .models import  UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import  CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage ,OrderWeekDay ,OrderIncreaseService, BlogCategory, BlogPost, MonthSummary
 from api.views import time_format_change ,continuous_time_cal
@@ -39,6 +39,36 @@ def importCityCounty():
             county.addressCode = row[1]
             county.save()
             print(city.name + " " + county.name)
+
+def setNewebpayCities():
+    NewebpayCity.objects.create(name="基市")
+    NewebpayCity.objects.create(name="北市")
+    NewebpayCity.objects.create(name="新北市")
+    NewebpayCity.objects.create(name="北縣")
+    NewebpayCity.objects.create(name="桃市")
+    NewebpayCity.objects.create(name="桃縣")
+    NewebpayCity.objects.create(name="竹市")
+    NewebpayCity.objects.create(name="竹縣")
+    NewebpayCity.objects.create(name="苗縣")
+    NewebpayCity.objects.create(name="中市")
+    NewebpayCity.objects.create(name="中縣")
+    NewebpayCity.objects.create(name="彰縣")
+    NewebpayCity.objects.create(name="投縣")
+    NewebpayCity.objects.create(name="雲縣")
+
+    NewebpayCity.objects.create(name="嘉市")
+    NewebpayCity.objects.create(name="嘉縣")
+    NewebpayCity.objects.create(name="南市")
+    NewebpayCity.objects.create(name="南縣")
+    NewebpayCity.objects.create(name="高市")
+    NewebpayCity.objects.create(name="高縣")
+    NewebpayCity.objects.create(name="屏縣")
+    NewebpayCity.objects.create(name="宜縣")
+    NewebpayCity.objects.create(name="花縣")
+    NewebpayCity.objects.create(name="東縣")
+    NewebpayCity.objects.create(name="連江")
+    NewebpayCity.objects.create(name="金門")
+    NewebpayCity.objects.create(name="澎縣")
 
 def seedData():
     License.objects.create(name="身分證正面")
