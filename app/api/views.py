@@ -585,8 +585,11 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
             case.services  = Service.objects.filter(id__in=service_ids)
 
             # 以下做 order 相關欄位
-            case.order = Order.objects.get(case=case)
-            case.order.increase_services = OrderIncreaseService.objects.filter(order=case.order)
+            orders = Order.objects.filter(case=case)
+            for order in orders:
+                if order.state == 'paid':
+                    case.order = order
+                    case.order.increase_services = OrderIncreaseService.objects.filter(order=order)
 
             # case.work_hours = order.work_hours
             # case.base_money = order.base_money
