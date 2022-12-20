@@ -109,10 +109,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
 
-        rep['needer_name'] = instance.case.user.name
-        if instance.case.user.image:
-            rep['needer_image'] = instance.case.user.image.url
-        
+        if instance.case.user:
+            rep['needer_name'] = instance.case.user.name
+            if instance.case.user.image:
+                rep['needer_image'] = instance.case.user.image.url
+            
         if instance.servant:
             rep['servant_name'] = instance.servant.name
 
