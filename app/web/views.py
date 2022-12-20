@@ -1976,12 +1976,18 @@ def my_care_certificate(request):
     return render(request, 'web/my/care_certificate.html',{'case':case,'order':order,'total_fee':total_fee})
 
 def my_simplfy_certificate(request):
-    servant = request.user
+    # servant = request.user
     case_id = request.GET.get('case')
     case = Case.objects.get(id=case_id)
-    order = Order.objects.get(case=case)
-    total_fee = order.total_money
+    
+    orders = Order.objects.filter(case=case)
+    for item in orders:
+        if item.state == 'paid':
+            order = item
+            total_fee = item.total_money
+
     return render(request, 'web/my/simplfy_certificate.html',{'case':case,'order':order,'total_fee':total_fee})
+
 def my_files(request):
     user = request.user
     licences = License.objects.all().order_by('id')[:3]
