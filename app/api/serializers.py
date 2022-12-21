@@ -189,19 +189,11 @@ class CaseSerializer(serializers.ModelSerializer):
     
     # status = serializers.CharField(default='')
 
-    # servant_name = serializers.CharField(default='')
+    servant_name = serializers.CharField(default='')
+    needer_name = serializers.CharField(default='')
+
     servant = ServantSerializer(read_only=True)
-
     order = CaseOrderSerializer(read_only=True)
-
-    # hour_wage = serializers.IntegerField(default=0)
-    # work_hours = serializers.IntegerField(default=0)
-    # base_money = serializers.IntegerField(default=0)
-    # platform_percent = serializers.FloatField(default=0)
-    # platform_money = serializers.IntegerField(default=0)
-    # total_money = serializers.IntegerField(default=0)
-    # increase_money = OrderIncreaseServiceSerializer(read_only=True, many=True)
-
     user_detail = NeederSerializer(read_only=True)
     servant_candidate = ServantSerializer(read_only=True, many=True)
 
@@ -215,6 +207,14 @@ class CaseSerializer(serializers.ModelSerializer):
         model = Case
         fields = '__all__'
         read_only_fields = ('id',)
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.servant:
+            rep['servant_name'] = instance.servant.name
+        if instance.user:
+            rep['needer_name'] = instance.user.name
+        return rep
 
 class OrderSerializer(serializers.ModelSerializer):
     related_case = CaseSerializer(read_only=True)
