@@ -48,7 +48,9 @@
             {% if order.refund_money != 0 %}
               (已退款 ${{order.refund_money}})
             {% else %}
-              <a href="{% url 'refunds' %}?case={{case.id}}" class="custom-red-border-btn btn-sm" role="button">按我退款</a>
+              {% if order.state == 'paid' %}
+                <a href="{% url 'refunds' %}?case={{case.id}}" class="custom-red-border-btn btn-sm" role="button">按我退款</a>
+              {% endif %}
             {% endif %}
           </div>
         </div>
