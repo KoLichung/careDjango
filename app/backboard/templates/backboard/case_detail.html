@@ -21,8 +21,10 @@
         <div class="mt-4 mb-2"><b>被照顧者資訊</b></div>
         <div>性別：{% if case.gender == 'M' %}男{% else %}女{% endif %}, 體重：{{case.weight}}, 年齡：{{case.age}}</div>
         <div>疾病：{% for casedisease in case.case_diseases.all %} {{casedisease.disease}} {% endfor %}</div>
+        <div>疾病補充說明：{{case.disease_remark}}</div>
         <div>身體狀況：{% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}</div>
-        <div>補充說明：</div>
+        <div>身體補充說明：{{case.conditions_remark}}</div>
+        <div>緊急聯絡人：{{case.emergencycontact_name}} {{case.emergencycontact_relation}} {{case.emergencycontact_phone}}</div>
         <div class="mt-4 mb-2"><b>需求服務項目</b></div>
         <div>{% for caseservice in case.case_services.all %} {{caseservice.service}} {% endfor %}</div>
         <div class="mt-4 mb-2"><b>服務者資訊</b></div>
