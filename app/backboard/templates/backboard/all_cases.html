@@ -75,7 +75,7 @@
                     <td>{{case.city}}</td>
                     <td>{% for order in case.case_orders.all %}
                       {% if order.total_money %}
-                      {{order.total_money}}
+                        {{order.total_money}}
                       {% endif %}
                     {% endfor %}</td>
                     <td>                    
