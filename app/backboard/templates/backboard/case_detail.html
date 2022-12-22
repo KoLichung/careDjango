@@ -33,6 +33,7 @@
       </div>
     </div>
 
+    {% for order in orders %}
     <div class="card h-lg-100">
       <div class="card-header">
         <div class="h5 mb-3"><b>訂單明細</b></div>
@@ -58,9 +59,9 @@
           <div class="col alnright">${{order.base_money}}</div>
         </div>
         <div class="h6 mt-4 mb-2">加價項目</div>
-        {% for order_increase_service in order_increase_services %}
+        {% for order_increase_service in order.order_increase_services.all %}
         <div class="row">
-          <div class="col">{{order_increase_service.service}} 每小時加 {{order_increase_service.increase_percent}}% x {{order.work_hours}} 小時 </div>
+          <div class="col">{{order_increase_service.service}} {{order_increase_service.increase_percent}}% </div>
           <div class="col alnright">${{order_increase_service.increase_money}}</div>
         </div>
         {% endfor %}
@@ -75,6 +76,8 @@
         </div>    
       </div>
     </div>
+    {% endfor %}
+
   </div>
 </div> 
 

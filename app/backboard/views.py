@@ -112,11 +112,13 @@ def case_detail(request):
 
     case_id = request.GET.get('case')
     case = Case.objects.get(id=case_id)
-    order = Order.objects.get(case=case)
+    
+    orders = Order.objects.filter(case=case)
+    
     # review = Review.objects.get(case=case)
-    order_increase_services = OrderIncreaseService.objects.filter(order=order)
+    # order_increase_services = OrderIncreaseService.objects.filter(order=order)
 
-    return render(request, 'backboard/case_detail.html',{'order_increase_services':order_increase_services, 'case':case,'order':order, 'order_increase_services':order_increase_services})
+    return render(request, 'backboard/case_detail.html',{'case':case,'orders':orders})
 
 def member_detail(request):
     if not request.user.is_authenticated or not request.user.is_staff:
