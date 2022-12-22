@@ -960,6 +960,7 @@ class CreateCase(APIView):
 
                 # need to change in the future
                 order.platform_percent = platform_percent_cal(user,order)
+                order.newebpay_percent = get_newebpay_percent()
                 order.save()
                 Review.objects.create(order=order,case=order.case,servant=order.servant)
                 
@@ -981,7 +982,10 @@ class CreateCase(APIView):
                 total_service_money =  order.base_money + total_increase_money
                 order.total_money = total_service_money + order.amount_transfer_fee
 
-                order.platform_money = order.total_money * (order.platform_percent/100)
+                order.newebpay_money = round(order.total_money * (order.platform_percent/100))
+                order.platform_money = round(order.total_money * (order.platform_percent/100))
+
+                order.servant_money = order.total_money - order.newebpay_money - order.platform_money
                 order.save()
 
                 receiveBooking(servant,order)
@@ -1211,6 +1215,7 @@ class CreateServantOrder(APIView):
 
         # need to change in the future
         order.platform_percent = platform_percent_cal(user,order)
+        order.newebpay_percent = get_newebpay_percent()
         order.save()
         Review.objects.create(order=order,case=order.case,servant=order.servant)
 
@@ -1233,7 +1238,10 @@ class CreateServantOrder(APIView):
         total_service_money =  order.base_money + total_increase_money
         order.total_money = total_service_money + order.amount_transfer_fee
         
-        order.platform_money = order.total_money * (order.platform_percent/100)
+        order.newebpay_money = round(order.total_money * (order.platform_percent/100))
+        order.platform_money = round(order.total_money * (order.platform_percent/100))
+
+        order.servant_money = order.total_money - order.newebpay_money - order.platform_money
         order.save()
 
         receiveBooking(servant,order)
@@ -1368,6 +1376,7 @@ class ApplyCase(APIView):
             order.base_money = order.work_hours * wage
 
             order.platform_percent = platform_percent_cal(case.user,order)
+            order.newebpay_percent = get_newebpay_percent()
             order.save()
             Review.objects.create(order=order,case=order.case,servant=order.servant)
 
@@ -1387,10 +1396,15 @@ class ApplyCase(APIView):
                     orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                     orderIncreaseService.save()
 
+                    total_increase_money = total_increase_money + orderIncreaseService.increase_money
+
             total_service_money =  order.base_money + total_increase_money
             order.total_money = total_service_money + order.amount_transfer_fee
 
-            order.platform_money = order.total_money * (order.platform_percent/100)
+            order.newebpay_money = round(order.total_money * (order.platform_percent/100))
+            order.platform_money = round(order.total_money * (order.platform_percent/100))
+
+            order.servant_money = order.total_money - order.newebpay_money - order.platform_money
             order.save()
 
             # 產生 chatroom message
@@ -1530,6 +1544,9 @@ class EarlyTermination(APIView):
             order.wage_hour =wage
             order.base_money = order.work_hours * wage
             order.save()
+            
+            # 把之前的 OrderIncreaseService 刪除, 重新產生
+            OrderIncreaseService.objects.filter(order=order).delete()
 
             for service_id in service_idList:
                 if int(service_id) <= 4:
@@ -1884,24 +1901,33 @@ class EditCase(APIView):
 
                 # need to change in the future
                 order.platform_percent = platform_percent_cal(user,order)
+                order.newebpay_percent = get_newebpay_percent()
                 order.save()
                 Review.objects.create(order=order,case=order.case,servant=order.servant)
-
+                
+                total_increase_money = 0
                 if service != None and service != '':
-                    for service_id in service_ids:
+                    for service_id in service_idList:
                         if int(service_id) <= 4:
                             orderIncreaseService = OrderIncreaseService()
                             orderIncreaseService.order = order
                             orderIncreaseService.service = Service.objects.get(id=service_id)
-                            orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                            if UserServiceShip.objects.filter(user=servant,service=Service.objects.get(id=service_id)).count() > 0:
+                                orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
+                            else:
+                                orderIncreaseService.increase_percent = 0
                             orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                             orderIncreaseService.save()
 
-                if OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).count() != 0:
-                    order.total_money = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
-                else:
-                    order.total_money = order.base_money
-                order.platform_money = order.total_money * (order.platform_percent/100)
+                            total_increase_money = total_increase_money + orderIncreaseService.increase_money
+
+                total_service_money =  order.base_money + total_increase_money
+                order.total_money = total_service_money + order.amount_transfer_fee
+
+                order.newebpay_money = round(order.total_money * (order.platform_percent/100))
+                order.platform_money = round(order.total_money * (order.platform_percent/100))
+
+                order.servant_money = order.total_money - order.newebpay_money - order.platform_money
                 order.save()
 
                 receiveBooking(servant,order)
@@ -2063,6 +2089,9 @@ def platform_percent_cal(user,order):
         return 4.5
     elif orders_total_hours > 360 :
         return 4
+
+def get_newebpay_percent():
+    return 2.8
 
 def generatePassword() :
     # Declare a digits variable 
