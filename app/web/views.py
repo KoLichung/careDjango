@@ -1302,7 +1302,9 @@ def booking_confirm(request):
                     wage = round(order.case.servant.hospital_one_day_wage/24)
         order.wage_hour =wage
         order.base_money = order.work_hours * wage
+
         order.platform_percent = platform_percent_cal(user,order)
+        order.newebpay_percent = get_newebpay_percent()
         order.save()
         Review.objects.create(order=order,case=order.case,servant=order.case.servant)
         
@@ -1330,7 +1332,10 @@ def booking_confirm(request):
         total_service_money =  order.base_money + total_increase_money
         order.total_money = total_service_money + order.amount_transfer_fee
        
-        order.platform_money = order.total_money * (order.platform_percent/100)
+        order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
+        order.platform_money = round(order.total_money * (order.platform_percent/100))
+
+        order.servant_money = order.total_money - order.newebpay_money - order.platform_money
         order.save()
 
         receiveBooking(servant,order)
@@ -1571,6 +1576,7 @@ def requirement_detail(request):
             order.wage_hour =wage
             order.base_money = order.work_hours * wage
             order.platform_percent = platform_percent_cal(case.user,order)
+            order.newebpay_percent = get_newebpay_percent()
             order.save()
 
             increase_services = Service.objects.filter(is_increase_price=True).order_by('id')
@@ -1594,7 +1600,10 @@ def requirement_detail(request):
             total_service_money =  order.base_money + total_increase_money
             order.total_money = total_service_money + order.amount_transfer_fee
 
-            order.platform_money = order.total_money * (order.platform_percent/100)
+            order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
+            order.platform_money = round(order.total_money * (order.platform_percent/100))
+
+            order.servant_money = order.total_money - order.newebpay_money - order.platform_money
             
             order.save()
             # neederOrderEstablished(case.user,order)
@@ -2605,6 +2614,7 @@ def request_form_confirm(request):
 
             # need to change in the future
             order.platform_percent = platform_percent_cal(user,order)
+            order.newebpay_percent = get_newebpay_percent()
             order.save()
             Review.objects.create(order=order,case=order.case,servant=order.case.servant)
 
@@ -2627,7 +2637,10 @@ def request_form_confirm(request):
             total_service_money =  order.base_money + total_increase_money
             order.total_money = total_service_money + order.amount_transfer_fee
 
-            order.platform_money = order.total_money * (order.platform_percent/100)
+            order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
+            order.platform_money = round(order.total_money * (order.platform_percent/100))
+
+            order.servant_money = order.total_money - order.newebpay_money - order.platform_money
             order.save()
             
             receiveBooking(servant,order)
@@ -2762,6 +2775,9 @@ def platform_percent_cal(user,order):
         return 4.5
     elif orders_total_hours > 360 :
         return 4
+
+def get_newebpay_percent():
+    return 2.8
 
 def chat(request):
     return render(request, 'web/chat.html')

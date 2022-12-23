@@ -982,7 +982,7 @@ class CreateCase(APIView):
                 total_service_money =  order.base_money + total_increase_money
                 order.total_money = total_service_money + order.amount_transfer_fee
 
-                order.newebpay_money = round(order.total_money * (order.platform_percent/100))
+                order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
                 order.platform_money = round(order.total_money * (order.platform_percent/100))
 
                 order.servant_money = order.total_money - order.newebpay_money - order.platform_money
@@ -1238,7 +1238,7 @@ class CreateServantOrder(APIView):
         total_service_money =  order.base_money + total_increase_money
         order.total_money = total_service_money + order.amount_transfer_fee
         
-        order.newebpay_money = round(order.total_money * (order.platform_percent/100))
+        order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
         order.platform_money = round(order.total_money * (order.platform_percent/100))
 
         order.servant_money = order.total_money - order.newebpay_money - order.platform_money
@@ -1401,7 +1401,7 @@ class ApplyCase(APIView):
             total_service_money =  order.base_money + total_increase_money
             order.total_money = total_service_money + order.amount_transfer_fee
 
-            order.newebpay_money = round(order.total_money * (order.platform_percent/100))
+            order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
             order.platform_money = round(order.total_money * (order.platform_percent/100))
 
             order.servant_money = order.total_money - order.newebpay_money - order.platform_money
@@ -1924,7 +1924,7 @@ class EditCase(APIView):
                 total_service_money =  order.base_money + total_increase_money
                 order.total_money = total_service_money + order.amount_transfer_fee
 
-                order.newebpay_money = round(order.total_money * (order.platform_percent/100))
+                order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
                 order.platform_money = round(order.total_money * (order.platform_percent/100))
 
                 order.servant_money = order.total_money - order.newebpay_money - order.platform_money
