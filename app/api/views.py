@@ -998,7 +998,7 @@ class CreateCase(APIView):
                     chatroom_id = list(chatroom_set)[0]
                     print(chatroom_id,2)
                     chatroom = ChatRoom.objects.get(id=chatroom_id)
-                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,order=order,is_this_message_only_case=True)
                     message.save()
                 elif list(chatroom_set) == []:
                     chatroom = ChatRoom()
@@ -1006,7 +1006,7 @@ class CreateCase(APIView):
                     print(chatroom_id,3)
                     ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
                     ChatroomUserShip.objects.create(user=servant,chatroom=chatroom)
-                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,order=order,is_this_message_only_case=True)
                     message.save()
                 chatroom.update_at = datetime.datetime.now()
                 chatroom.save()
