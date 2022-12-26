@@ -876,7 +876,8 @@ class CreateCase(APIView):
                 casebodyconditionship.body_condition = BodyCondition.objects.get(id=body_condition_id)
                 casebodyconditionship.case = case
                 casebodyconditionship.save()
-
+        
+        service_ids = []
         if service != None and service != '':
             service_ids = service.split(',')
             for service_id in service_ids:
