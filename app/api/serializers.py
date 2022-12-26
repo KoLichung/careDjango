@@ -191,6 +191,7 @@ class CaseSerializer(serializers.ModelSerializer):
 
     servant_name = serializers.CharField(default='')
     needer_name = serializers.CharField(default='')
+    needer_phone = serializers.CharField(default='')
 
     servant = ServantSerializer(read_only=True)
     order = CaseOrderSerializer(read_only=True)
@@ -214,6 +215,8 @@ class CaseSerializer(serializers.ModelSerializer):
             rep['servant_name'] = instance.servant.name
         if instance.user:
             rep['needer_name'] = instance.user.name
+            rep['needer_phone'] = instance.user.phone
+
         return rep
 
 class OrderSerializer(serializers.ModelSerializer):
