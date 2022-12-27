@@ -1511,6 +1511,7 @@ class EarlyTermination(APIView):
         aware_datetime = timezone.localize(end_datetime) 
         if aware_datetime >= order.start_datetime:
             order.end_datetime = aware_datetime
+            order.end_time = round(EndTime.hour+EndTime.minute/60,1)
             order.save()
             transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
             order.transfer_fee = transfer_fee
