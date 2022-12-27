@@ -1635,7 +1635,7 @@ class EarlyTermination(APIView):
                     one_day_hours = order.work_hours / days
                     servant_money =  order.wage_hour * one_day_hours * 1/2
 
-                back_money = order.total_money - servant_money
+                back_money = order.total_money - round(servant_money)
                 backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
 
@@ -1651,7 +1651,7 @@ class EarlyTermination(APIView):
                     one_day_hours = order.work_hours / days
                     servant_money =  order.wage_hour * one_day_hours
 
-                servant_money = int(servant_money)
+                servant_money = round(servant_money)
                 back_money = order.total_money - servant_money
                 backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
@@ -1667,7 +1667,7 @@ class EarlyTermination(APIView):
                     one_day_hours = order.work_hours / days
                     servant_money =  order.wage_hour * one_day_hours
 
-                servant_money = int(servant_money) + order.transfer_fee * 2
+                servant_money = round(servant_money) + order.transfer_fee * 1
                 back_money = order.total_money - servant_money
                 backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)

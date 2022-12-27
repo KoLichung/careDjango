@@ -54,7 +54,7 @@ def all_cases(request):
     cases = Case.objects.all()
 
     state = request.GET.get('state')
-    if state != None:
+    if state != None and state != 'None':
         cases = cases.filter(state=state)
     
     paginator = Paginator(cases, 30)
