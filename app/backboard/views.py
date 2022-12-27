@@ -51,7 +51,7 @@ def all_cases(request):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/backboard/')
 
-    cases = Case.objects.all()
+    cases = Case.objects.all().order_by('-id')
 
     state = request.GET.get('state')
     if state != None and state != 'None':
@@ -71,7 +71,7 @@ def all_members(request):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/backboard/')
 
-    users = User.objects.filter(is_staff=False)
+    users = User.objects.filter(is_staff=False).order_by('-id')
     members_num = users.count()
     needers_num = users.filter(is_servant_passed=False).count()
     servants_num = users.filter(is_servant_passed=True).count()
