@@ -694,6 +694,21 @@ class ReviewViewSet(viewsets.GenericViewSet,
         user = self.request.user
         queryset = self.queryset.filter(case__user=user)
         
+        ids = []
+        for i in range(len(queryset)):
+            if queryset[i].order.state == 'paid':
+                ids.append(queryset[i].id)
+
+        queryset = queryset.filter(id__in=ids)
+
+        #filter後面(review = review 是？)
+        # reviews = Review.objects.filter(review=review)
+        # for review in reviews:
+        #     if review.order.state == 'paid':
+                #review.review = review
+                #review.servant_rating = review.servant_rating
+       
+
         #review_type=unrated, given, received
         review_type = self.request.query_params.get('review_type')
 
@@ -718,17 +733,7 @@ class ReviewViewSet(viewsets.GenericViewSet,
     def retrieve(self, request, *args, **kwargs):
         review = self.get_object()
         user = self.request.user
-        if review.case.user == user:
-
-            
-            #filter後面(review = review 是？)
-            # reviews = Review.objects.filter(review=review)
-            # for review in reviews:
-            #     if review.order.state == 'paid':
-                    #review.review = review
-                    #review.servant_rating = review.servant_rating
-        
-
+        if review.case.user == user: 
             # review.care_type = review.case.care_type
             # review.is_continuous_time = review.case.is_continuous_time
             review.start_datetime = review.case.start_datetime
