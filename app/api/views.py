@@ -887,7 +887,8 @@ class CreateCase(APIView):
                 casebodyconditionship.body_condition = BodyCondition.objects.get(id=body_condition_id)
                 casebodyconditionship.case = case
                 casebodyconditionship.save()
-
+        
+        service_ids = []
         if service != None and service != '':
             service_ids = service.split(',')
             for service_id in service_ids:
@@ -1008,7 +1009,7 @@ class CreateCase(APIView):
                     chatroom_id = list(chatroom_set)[0]
                     print(chatroom_id,2)
                     chatroom = ChatRoom.objects.get(id=chatroom_id)
-                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,order=order,is_this_message_only_case=True)
                     message.save()
                 elif list(chatroom_set) == []:
                     chatroom = ChatRoom()
@@ -1016,7 +1017,7 @@ class CreateCase(APIView):
                     print(chatroom_id,3)
                     ChatroomUserShip.objects.create(user=user,chatroom=chatroom)
                     ChatroomUserShip.objects.create(user=servant,chatroom=chatroom)
-                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,is_this_message_only_case=True)
+                    message = ChatroomMessage(user=user,case=case,chatroom=chatroom,order=order,is_this_message_only_case=True)
                     message.save()
                 chatroom.update_at = datetime.datetime.now()
                 chatroom.save()
