@@ -1624,7 +1624,9 @@ class EarlyTermination(APIView):
             order.save()
             
             timediff_in_hours = (order.start_datetime - aware_datetime)/3600
-            if timediff_in_hours < 48 and timediff_in_hours > 24:
+            if timediff_in_hours >= 48:
+                backboard_refound(order.total_money)
+            elif timediff_in_hours <= 48 and timediff_in_hours > 24:
                 # 收取一日費用之 50%
                 if order.case.is_continuous_time == True:
                     servant_money = order.wage_hour * 24 * 1/2
@@ -1656,7 +1658,7 @@ class EarlyTermination(APIView):
 
                 platform_money = servant_money * order.platform_percent
                 debit_money_to_platform(order.id, platform_money)
-            else:
+            elif timediff_in_hours <= 3 :
                 # 收取一日費用之 100% + 交通費
                 if order.case.is_continuous_time == True:
                     servant_money = order.wage_hour * 24

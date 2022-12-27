@@ -75,6 +75,7 @@ def backboard_refound(order_id, money):
     else:
         return "FAIL"
 
+#撥款
 def approprivate_money_to_store(order_id):
     #測試
     # post_url = 'https://ccore.newebpay.com/API/ExportInstruct'
@@ -122,6 +123,7 @@ def approprivate_money_to_store(order_id):
     else:
         return "FAIL"
 
+#扣款
 def debit_money_to_platform(order_id, platform_money):
     #測試
     # post_url = 'https://ccore.newebpay.com/API/ChargeInstruct'
