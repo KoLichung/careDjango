@@ -1579,9 +1579,12 @@ class EarlyTermination(APIView):
             newPlatformMoney = newTotalMoney * (order.platform_percent/100)
 
             back_money = order.total_money - newTotalMoney
-            backboard_refound(order.id, back_money)
-            approprivate_money_to_store(order.id)
-            debit_money_to_platform(order.id, newPlatformMoney)
+            try:
+                backboard_refound(order.id, back_money)
+                approprivate_money_to_store(order.id)
+                debit_money_to_platform(order.id, newPlatformMoney)
+            except:
+                print('sone newebpay wrong')
 
             order.total_money = newTotalMoney
             order.platform_money = newPlatformMoney

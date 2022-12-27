@@ -59,6 +59,8 @@ def backboard_refound(order_id, money):
             "CloseType": close_type,
         }
 
+    logger.info(data)
+
     query_str = urllib.parse.urlencode(data)
     encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
 
@@ -102,6 +104,8 @@ def approprivate_money_to_store(order_id):
             "MerchantOrderNo": order.id,
             "Amount": order.total_money,     
         }
+
+    logger.info(data)
 
     query_str = urllib.parse.urlencode(data)
     encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
@@ -149,6 +153,8 @@ def debit_money_to_platform(order_id, platform_money):
         "FeeType": 0,
         "BalanceType": 0,
     }
+
+    logger.info(data)
 
     query_str = urllib.parse.urlencode(data)
     encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
