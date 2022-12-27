@@ -1584,6 +1584,7 @@ class EarlyTermination(APIView):
 
             order.total_money = newTotalMoney
             order.platform_money = newPlatformMoney
+            order.is_early_termination = True
             order.save()
 
             orderEarlyTermination(order.servant,order)

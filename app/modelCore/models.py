@@ -649,6 +649,7 @@ class Order(models.Model):
     refund_apply_date = models.DateTimeField(auto_now=True, blank = True,null=True)
 
     is_paid_to_servant = models.BooleanField(default=False)
+    is_early_termination = models.BooleanField(default=False)
 
     @property
     def TaxAmt(self):
