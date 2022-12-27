@@ -1565,7 +1565,8 @@ class EarlyTermination(APIView):
             
             # 把之前的 OrderIncreaseService 刪除, 重新產生
             OrderIncreaseService.objects.filter(order=order).delete()
-
+            
+            total_increase_money = 0
             for service_id in service_idList:
                 if int(service_id) <= 4:
                     orderIncreaseService = OrderIncreaseService()
@@ -1575,8 +1576,12 @@ class EarlyTermination(APIView):
                     orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
                     orderIncreaseService.save()
 
-            newTotalMoney = ((order.base_money) + (OrderIncreaseService.objects.filter(order=order,service__is_increase_price=True).aggregate(Sum('increase_money'))['increase_money__sum'])) * ((100 - order.platform_percent)/100)
-            newPlatformMoney = newTotalMoney * (order.platform_percent/100)
+                    total_increase_money = total_increase_money + orderIncreaseService.increase_money
+
+            total_service_money =  order.base_money + total_increase_money
+            newTotalMoney = total_service_money + order.amount_transfer_fee
+
+            newPlatformMoney = round(newTotalMoney * (order.platform_percent/100))
 
             back_money = order.total_money - newTotalMoney
             try:
