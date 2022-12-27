@@ -714,10 +714,21 @@ class ReviewViewSet(viewsets.GenericViewSet,
             queryset[i].user_rating_nums = queryset.filter(case_offender_rating__gte=1).aggregate(Count('case_offender_rating'))['case_offender_rating__count']
         return queryset
 
+    #從資料庫取回要顯示的資料？
     def retrieve(self, request, *args, **kwargs):
         review = self.get_object()
         user = self.request.user
         if review.case.user == user:
+
+            
+            #filter後面(review = review 是？)
+            # reviews = Review.objects.filter(review=review)
+            # for review in reviews:
+            #     if review.order.state == 'paid':
+                    #review.review = review
+                    #review.servant_rating = review.servant_rating
+        
+
             # review.care_type = review.case.care_type
             # review.is_continuous_time = review.case.is_continuous_time
             review.start_datetime = review.case.start_datetime
