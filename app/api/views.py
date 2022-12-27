@@ -1521,11 +1521,13 @@ class EarlyTermination(APIView):
                 days = days_count(weekday_list, order.start_datetime.date(), order.end_datetime.date())
                 number_of_transfer = days
                 total_hours = days * (order.end_time - order.start_time)
-
-                order.work_hours = total_hours
+                one_day_work_hours = order.end_time - order.start_time
+                
+                # 非連續時間提前結束+50％當天工作時數
+                order.work_hours = total_hours + (one_day_work_hours / 2) 
                 order.number_of_transfer = number_of_transfer
                 order.amount_transfer_fee = transfer_fee * number_of_transfer
-                one_day_work_hours = order.end_time - order.start_time
+                
                 if order.case.care_type == 'home':
                     if one_day_work_hours < 12:
                         wage = order.servant.home_hour_wage
@@ -1544,7 +1546,9 @@ class EarlyTermination(APIView):
                 # hours = days * 24 + seconds // 3600
                 # minutes = (seconds % 3600) // 60
                 total_hours = continuous_time_cal(order)
-                order.work_hours = total_hours
+
+                # 連續時間提前結束+12hr
+                order.work_hours = total_hours + 12 
                 if order.case.care_type == 'home':
                     if total_hours < 12:
                         wage = order.servant.home_hour_wage
