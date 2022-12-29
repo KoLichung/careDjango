@@ -790,7 +790,7 @@ class CreateCase(APIView):
         county_id = self.request.query_params.get('county')
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
-        weekday = self.request.query_params.get('weekday')
+        
         start_time = self.request.query_params.get('start_time')
         start_time = start_time.split(':')
         end_time = self.request.query_params.get('end_time')
@@ -812,6 +812,8 @@ class CreateCase(APIView):
         conditions_remark = request.data.get('conditions_remark')
         #1,7,9
         service = request.data.get('service')
+        
+        weekday = request.data.get('weekday')
 
         road_name = request.data.get('road_name')
         hospital_name = request.data.get('hospital_name')
