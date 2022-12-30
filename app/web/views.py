@@ -1932,11 +1932,11 @@ def my_booking_detail(request):
 def my_cases(request):
     servant = request.user
     cases = Case.objects.filter(servant=servant)
-    reviews = Review.objects.filter(servant=servant)
-    for item in reviews:
-        if item.order.state == "paid":
-             review = item
-    return render(request, 'web/my/cases.html',{'servant':servant,'cases':cases,'review':review})
+    # reviews = Review.objects.filter(servant=servant)
+    # for item in reviews:
+    #     if item.order.state == "paid":
+    #          review = item
+    return render(request, 'web/my/cases.html',{'servant':servant,'cases':cases})
 
 def my_case_detail(request):
     case_id = request.GET.get('case')
