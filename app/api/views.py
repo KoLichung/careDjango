@@ -503,7 +503,7 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
         start_datetime = self.request.query_params.get('start_datetime')
         end_datetime = self.request.query_params.get('end_datetime')
         care_type= self.request.query_params.get('care_type')
-        queryset = self.queryset.filter(is_taken=False).filter(is_open_for_search=True)
+        queryset = self.queryset.filter(is_taken=False).filter(is_open_for_search=True).filter(~Q(user=None))
 
         if city != None:
             queryset = queryset.filter(city=City.objects.get(id=city))
