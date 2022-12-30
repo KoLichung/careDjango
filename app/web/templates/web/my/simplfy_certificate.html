@@ -12,8 +12,8 @@
         下載PDF檔
     </button> -->
     
-    <button class="small-green-button" onclick="PrintData()">
-      <span class="fas fa-print"></span>
+    <button class="small-purple-button" onclick="backButton()">
+      <span class="fas fa-arrow-left"></span>
         回上一頁
     </button>
 
@@ -69,7 +69,7 @@
                 <div class="row" >
                   <div class="col-3"></div>
                   <div class="col-5">
-                    <h5 style="font-weight:400;text-align: right;">照顧服務人員：</h4>
+                    <h5 style="font-weight:400;text-align: right;">照顧服務人員(收款人)：</h4>
                   </div>
                   <div class="col-4">
                     <h5 style="font-weight:400;text-align: right;">( 簽章 )</h5>
@@ -147,6 +147,10 @@
       document.body.innerHTML=document.getElementById('printdiv').innerHTML ;
       window.print(); 
       document.body.innerHTML = html
+    }
+
+    function backButton(){
+      window.history.back();
     }
   </script>
   </div>
