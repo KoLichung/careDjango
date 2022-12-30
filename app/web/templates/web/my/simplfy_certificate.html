@@ -1,4 +1,5 @@
-{% extends 'web/base.html' %} {% block content %}
+{% extends 'web/base_no_nav.html' %} 
+{% block content %}
 {% load static %}
 <!-- main -->
 <main class="main bg-white" id="top" >
@@ -11,6 +12,11 @@
         下載PDF檔
     </button> -->
     
+    <button class="small-green-button" onclick="PrintData()">
+      <span class="fas fa-print"></span>
+        回上一頁
+    </button>
+
     <button class="small-green-button" onclick="PrintData()">
       <span class="fas fa-print"></span>
         列印此頁

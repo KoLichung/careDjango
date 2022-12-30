@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh_Hant" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- ===============================================-->
+    <!--    Document Title-->
+    <!-- ===============================================-->
+    <title>線上預約照護最佳選擇-Care168照護一路幫｜第三方預約照護平台</title>
+
+    <!-- ===============================================-->
+    <!--    Favicons-->
+    <!-- ===============================================-->
+
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'web/assets/img/favicons/logo_32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'web/assets/img/favicons/logo_16.png' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'web/assets/img/favicons/logo_48.ico' %}">
+    <link rel="manifest" href="{% static 'web/assets/img/favicons/manifest.json' %}">
+    <!-- <meta name="msapplication-TileImage" content="{% static 'web/assets/img/favicons/mstile-150x150.png' %}"> -->
+    <meta name="theme-color" content="#ffffff">
+    <script src="{% static 'web/assets/js/config.js' %}"></script>
+    <script src="{% static 'web/vendors/overlayscrollbars/OverlayScrollbars.min.js' %}"></script>
+    <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.4/js/bootstrap-datetimepicker.min.js" integrity="sha512-r/mHP22LKVhxWFlvCpzqMUT4dWScZc6WRhBMVUQh+SdofvvM1BS1Hdcy94XVOod7QqQMRjLQn5w/AQOfXTPvVA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+
+
+
+    <!-- ===============================================-->
+    <!--    Stylesheets-->
+    <!-- ===============================================-->
+
+    <!-- custom css -->
+    <link rel="stylesheet" href="{% static 'web/assets/css/user.css' %}">
+    <!-- google font icon -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
+    <!-- datepicker -->
+    <link href="{% static 'web/vendors/flatpickr/flatpickr.min.css' %}" rel="stylesheet" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
+    <link href="{% static 'web/vendors/overlayscrollbars/OverlayScrollbars.min.css' %}" rel="stylesheet">
+    <link href="{% static 'web/assets/css/theme.min.css' %}" rel="stylesheet" id="style-default">
+    <link href="{% static 'web/assets/css/user.min.css' %}" rel="stylesheet" id="user-style-default">
+    
+
+    <script>
+      var isRTL = JSON.parse(localStorage.getItem('isRTL'));
+      
+      var linkRTL = document.getElementById('style-rtl');
+      var userLinkRTL = document.getElementById('user-style-rtl');
+      linkRTL.setAttribute('disabled', false);
+      userLinkRTL.setAttribute('disabled', true);
+    </script>
+    
+  </head>
+  <body>
+    <!-- ===============================================-->
+    <!--    Main Content-->
+    <!-- ===============================================-->
+    
+    <!-- new nav bar -->
+    <script>
+      var isFluid = JSON.parse(localStorage.getItem('isFluid'));
+      if (isFluid) {
+        var container = document.querySelector('[data-layout]');
+        container.classList.remove('container');
+        container.classList.add('container-fluid');
+      }
+    </script>
+    <style>
+      #form-container input {
+        visibility : hidden;
+      }
+      #form2-container input {
+        visibility : hidden;
+      }
+    </style>
+
+    <!-- main -->
+    {% block content %}{% endblock %}
+
+
+    <!-- ===============================================-->
+    <!--    End of Main Content-->
+    <!-- ===============================================-->
+
+    <!-- ===============================================-->
+    <!--    JavaScripts-->
+    <!-- ===============================================-->
+    <script src="{% static 'web/vendors/popper/popper.min.js' %}"></script>
+    <script src="{% static 'web/vendors/bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'web/vendors/anchorjs/anchor.min.js' %}"></script>
+    <script src="{% static 'web/vendors/is/is.min.js' %}"></script>
+    <!-- rating -->
+    <script src="{% static 'web/vendors/rater-js/index.js'%}"></script>
+    <script src="{% static 'web/vendors/fontawesome/all.min.js' %}"></script>
+    <script src="{% static 'web/vendors/lodash/lodash.min.js' %}"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
+    <script src="{% static 'web/vendors/list.js/list.min.js' %}"></script>
+    <script src="{% static 'web/assets/js/theme.js' %}"></script>
+    <!-- datepicker -->
+    <script src="{% static 'web/assets/js/flatpickr.js' %}"></script>
+
+  </body>
+
+</html>
