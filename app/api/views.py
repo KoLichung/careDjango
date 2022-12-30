@@ -501,15 +501,18 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
         city = self.request.query_params.get('city')
         #2022-07-10T00:00:00Z
         start_datetime = self.request.query_params.get('start_datetime')
-        end_datetime = self.request.query_params.get('end_datetime')
+        # end_datetime = self.request.query_params.get('end_datetime')
         care_type= self.request.query_params.get('care_type')
         queryset = self.queryset.filter(is_taken=False).filter(is_open_for_search=True).filter(~Q(user=None))
 
         if city != None:
             queryset = queryset.filter(city=City.objects.get(id=city))
 
-        if start_datetime != None and end_datetime != None :
-            queryset = queryset.filter(start_datetime__gte=start_datetime,end_datetime__lte=end_datetime)
+        # if start_datetime != None and end_datetime != None :
+        #     queryset = queryset.filter(start_datetime__gte=start_datetime,end_datetime__lte=end_datetime)
+        if start_datetime != None:
+            queryset = queryset.filter(start_datetime__gte=start_datetime)
+
 
         if start_datetime == None:
             queryset = queryset.filter(start_datetime__gte=datetime.datetime.now())
