@@ -1947,7 +1947,7 @@ def my_case_detail(request):
         if item.state == 'paid':
             order = item
     
-    work_hours = round(order.work_hours)
+    work_hours = round(order.work_hours, 1)
     
     reviews = Review.objects.filter(case=case)
     for item in reviews:
