@@ -957,12 +957,10 @@ class CreateCase(APIView):
                 else:
                     order.number_of_transfer = 1
                     order.amount_transfer_fee = transfer_fee * 1
-                    diff = order.end_datetime - order.start_datetime
-                    days, seconds = diff.days, diff.seconds
-                    hours = days * 24 + seconds // 3600
-                    minutes = (seconds % 3600) // 60
-                    total_hours = hours + round(minutes/60)
+                    
+                    total_hours = continuous_time_cal(order)
                     order.work_hours = total_hours
+
                     if order.case.care_type == 'home':
                         if total_hours < 12:
                             wage = servant.home_hour_wage
@@ -2091,19 +2089,29 @@ def time_format_change(time_int):
             return  str(hour) + ":" + str(minute)
 
 def continuous_time_cal(order):
-    start_time = time_format_change(order.start_time) 
-    end_time = time_format_change(order.end_time) 
-    print('test01',start_time,end_time)
-    start_time = datetime.datetime.strptime(start_time,"%H:%M").time()
-    end_time = datetime.datetime.strptime(end_time,"%H:%M").time()
-    print('test02',start_time,end_time)
-    start_datetime = datetime.datetime.combine(order.start_datetime.date(),start_time)
-    end_datetime = datetime.datetime.combine(order.end_datetime.date(),end_time)
-    diff = end_datetime - start_datetime
+    # start_time = time_format_change(order.start_time) 
+    # end_time = time_format_change(order.end_time) 
+    # print('test01',start_time,end_time)
+    # start_time = datetime.datetime.strptime(start_time,"%H:%M").time()
+    # end_time = datetime.datetime.strptime(end_time,"%H:%M").time()
+    # print('test02',start_time,end_time)
+    # start_datetime = datetime.datetime.combine(order.start_datetime.date(),start_time)
+    # end_datetime = datetime.datetime.combine(order.end_datetime.date(),end_time)
+    # diff = end_datetime - start_datetime
+    # days, seconds = diff.days, diff.seconds
+    # hours = days * 24 + seconds // 3600
+    # minutes = (seconds % 3600) // 60
+    # total_hours = hours + round(minutes/60,1)
+
+    theStartTime = datetime.datetime(order.start_datetime.year , order.start_datetime.month , order.start_datetime.day , int(order.start_time), int(round(order.start_time % 1,2)*60) )
+    theEndTime = datetime.datetime(order.end_datetime.year , order.end_datetime.month , order.end_datetime.day , int(order.end_time), int(round(order.end_time % 1,2)*60) )
+
+    diff = theEndTime - theStartTime
     days, seconds = diff.days, diff.seconds
     hours = days * 24 + seconds // 3600
     minutes = (seconds % 3600) // 60
-    total_hours = hours + round(minutes/60)
+    total_hours = hours + round(minutes/60,1)
+
     return total_hours
 
 def platform_percent_cal(user,order):

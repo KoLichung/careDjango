@@ -84,10 +84,13 @@ def changeCaseState(arg):
 def remindOrderStart(arg):
     from modelCore.models import Order ,SystemMessage ,Case
     orders = Order.objects.filter(state='paid')
-    now = timezone.now()
+    now = timezone.now() + timedelta(hours=8)
     for order in orders:
-        remind_time_start = order.start_datetime - timedelta(hours=3)
-        remind_time_end = order.start_datetime - timedelta(hours=2,minutes=45)
+        
+        start_time = datetime.datetime(order.start_datetime.year , order.start_datetime.month , order.start_datetime.day , int(order.start_time), int(round(order.start_time % 1,2)*60) )
+        remind_time_start = start_time - timedelta(hours=3)
+        remind_time_end = start_time - timedelta(hours=2,minutes=45)
+        
         if now > remind_time_start and now < remind_time_end:
             if order.case.servant != None:
                 message = SystemMessage(case=order.case, user=order.servant, content="提醒您，" + order.user.name + "的預定即將開始，請您務必前往服務哦～")
