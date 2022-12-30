@@ -83,7 +83,7 @@
 
     {% for case in cases %}
       <div class="mb-4 col-sm-10 col-sm-mx-1 col-md-6 col-lg-4 col-xl-3 col-xl-mx-5 " >
-        <div class="mx-auto border border-600" style="height: 17rem; border-radius: 6px;">
+        <div class="mx-auto border border-600" style="height: 18rem; border-radius: 6px;">
           <div class="card-body">
             <div class="pb-2">
               {% if case.care_type == 'home' %}
@@ -103,7 +103,7 @@
             <p class="require-info my-2">結束時間：<br> {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}}) </p>
             <hr>
             <p class="require-info my-2">地點： {{case.city}} </p>
-            <div class="pt-3 row justify-content-between">
+            <div class="pt-3 pb-6 row justify-content-between">
               <div class="col-auto container">
                 <a href="{% url 'requirement_detail' %}?case={{case.id}}">
                   <button class="small-purple-button">查看詳情</button>

@@ -81,7 +81,7 @@
 
         <!-- 如果 已給 照顧者評價會顯示這個 -->
         <p class="small-section-title-purple mt-4">我給照顧者的評價</p>
-        <div class="col align-self-center text-front" style="color: yellow;">
+        <div class="col align-self-center text-front pb-3" style="color: yellow;">
           {% for i in review.servant_rating_range %}
             <span class="fas fa-star" ></span>
           {% endfor %}
@@ -110,7 +110,7 @@
           <p>我給照顧者幾顆星：</p>
           <div id='myRater' class="d-block"></div>
           <input type="hidden" id="myInput" name="myInput" value="0">
-          <p>請輸入給照顧者的評價(150字以內)：</p>
+          <p class="pt-3">請輸入給照顧者的評價(150字以內)：</p>
           <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>
           <div class="d-flex mb-3 flex-row-reverse">
             <button class="small-green-button mt-3 float-right" type="submit">送出</button>
