@@ -144,6 +144,10 @@
   </style>
   <script>
     function PrintData(){
+      window.print(); 
+    }
+
+    function OriginalPrintData(){
       html = document.body.innerHTML
       document.body.innerHTML=document.getElementById('printdiv').innerHTML ;
       window.print(); 
