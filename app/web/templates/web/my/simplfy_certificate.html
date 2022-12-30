@@ -17,7 +17,7 @@
     </button>
   </div>
   <div class="main-class" id="printdiv">
-      <h3 class="text-center mt-6">照顧服務證明書</h3>
+      <h3 class="text-center mt-6">照顧服務證明書/看護費用收據</h3>
       
       <div class="container pt-5">
         <div class="row">
@@ -47,7 +47,7 @@
                     <h5 style="font-weight:400;text-align: right;">被照顧者：</h4>
                   </div>
                   <div class="col-4">
-                    <h5 style="font-weight:400;text-align: right;">( 簽張 )</h5>
+                    <h5 style="font-weight:400;text-align: right;">( 簽章 )</h5>
                   </div>
                 </div>
                 <br>
@@ -69,7 +69,7 @@
                     <h5 style="font-weight:400;text-align: right;">照顧服務人員：</h4>
                   </div>
                   <div class="col-4">
-                    <h5 style="font-weight:400;text-align: right;">( 簽張 )</h5>
+                    <h5 style="font-weight:400;text-align: right;">( 簽章 )</h5>
                   </div>
                 </div>
                 <br>
@@ -139,7 +139,7 @@
   <script>
     function PrintData(){
       html = document.body.innerHTML
-      document.body.innerHTML=document.getElementById('top').innerHTML ;
+      document.body.innerHTML=document.getElementById('printdiv').innerHTML ;
       window.print(); 
       document.body.innerHTML = html
     }
