@@ -954,12 +954,18 @@ class CreateCase(APIView):
                 else:
                     order.number_of_transfer = 1
                     order.amount_transfer_fee = transfer_fee * 1
-                    diff = order.end_datetime - order.start_datetime
+                    
+                    theStartTime = datetime.datetime(order.start_datetime.year , order.start_datetime.month , order.start_datetime.day , int(order.start_time), int(round(order.start_time % 1,2)*60) )
+                    theEndTime = datetime.datetime(order.end_datetime.year , order.end_datetime.month , order.end_datetime.day , int(order.end_time), int(round(order.end_time % 1,2)*60) )
+
+                    diff = theEndTime - theStartTime
                     days, seconds = diff.days, diff.seconds
                     hours = days * 24 + seconds // 3600
                     minutes = (seconds % 3600) // 60
-                    total_hours = hours + round(minutes/60)
+                    total_hours = hours + round(minutes/60,1)
+
                     order.work_hours = total_hours
+
                     if order.case.care_type == 'home':
                         if total_hours < 12:
                             wage = servant.home_hour_wage
