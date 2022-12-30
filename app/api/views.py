@@ -958,7 +958,8 @@ class CreateCase(APIView):
                     order.number_of_transfer = 1
                     order.amount_transfer_fee = transfer_fee * 1
                     
-                    order.work_hours = continuous_time_cal(order)
+                    total_hours = continuous_time_cal(order)
+                    order.work_hours = total_hours
 
                     if order.case.care_type == 'home':
                         if total_hours < 12:
