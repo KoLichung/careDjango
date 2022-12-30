@@ -103,7 +103,7 @@
             <p class="require-info my-2">結束時間：<br> {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}}) </p>
             <hr>
             <p class="require-info my-2">地點： {{case.city}} </p>
-            <div class="pt-3 row justify-content-between">
+            <div class="py-3 row justify-content-between">
               <div class="col-auto container">
                 <a href="{% url 'requirement_detail' %}?case={{case.id}}">
                   <button class="small-purple-button">查看詳情</button>
