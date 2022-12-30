@@ -1,9 +1,9 @@
 {% extends 'web/base.html' %} {% block content %}
 {% load static %}
 <!-- main -->
-<main class="main bg-white h-100 " id="top" >
+<main class="main bg-white " id="top" >
   <div class="row text-center mx-3">
-    <h4 class="section-title-purple mt-5 mb-5">我的基本資料</h4>
+    <h4 class="section-title-purple mt-5 mb-5">基本資料</h4>
   </div>
 
   <div class="text-center">
@@ -31,7 +31,7 @@
             綁定 LINE 帳號：{% if user.line_id %}您已綁定 LINE 帳號{% else %}尚未綁定LINE帳號{% endif %} <br>
           </p>
           
-          <div class="row">
+          <div class="row pt-3 pb-6">
             <div class="col-8 mx-auto">
               <a href="{% url 'my_edit_profile' %}">
                 <button class="full-purple-button mt-5">
