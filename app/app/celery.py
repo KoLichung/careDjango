@@ -89,8 +89,8 @@ def remindOrderStart(arg):
     for order in orders:
         print(order)
         start_time = datetime(order.start_datetime.year , order.start_datetime.month , order.start_datetime.day , int(order.start_time), int(round(order.start_time % 1,2)*60) )
-        remind_time_start = start_time - timedelta(hours=3)
-        remind_time_end = start_time - timedelta(hours=2,minutes=45)
+        remind_time_start = start_time - timedelta(hours=3,minutes=1)
+        remind_time_end = start_time - timedelta(hours=2,minutes=46)
         
         if now_time > remind_time_start and now_time < remind_time_end:
             print('need create system message')
