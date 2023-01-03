@@ -616,13 +616,17 @@ class Order(models.Model):
     transfer_fee = models.IntegerField(default=0, blank=True, null=True)
     number_of_transfer = models.IntegerField(default=0, blank=True, null=True)
     amount_transfer_fee = models.IntegerField(default=0, blank=True, null=True)
-
+    
     wage_hour = models.IntegerField(default=0, blank=True, null=True)
     # wage_half_day = models.IntegerField(default=0, blank=True, null=True)
     # wage_one_day = models.IntegerField(default=0, blank=True, null=True)
     # hours_hour_work = models.FloatField(default=0, blank = True, null=True)
     # hours_half_day_work = models.FloatField(default=0, blank = True, null=True)
     # hours_one_day_work = models.FloatField(default=0, blank = True, null=True)
+
+    that_time_hour_wage = models.IntegerField(default=0, blank = True, null=True)
+    that_time_half_day_wage = models.IntegerField(default=0, blank = True, null=True)
+    that_time_one_day_wage = models.IntegerField(default=0, blank = True, null=True)
 
     work_hours = models.FloatField(default=0, blank = True, null=True)
     base_money = models.IntegerField(default=0, blank=True, null=True)

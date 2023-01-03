@@ -923,7 +923,18 @@ class CreateCase(APIView):
                 order.end_datetime = case.end_datetime
                 order.start_time = order.case.start_time
                 order.end_time = order.case.end_time
+
+                if order.case.care_type == 'home':
+                    order.that_time_hour_wage = servant.home_hour_wage
+                    order.that_time_half_day_wage = servant.home_half_day_wage
+                    order.that_time_one_day_wage = servant.home_one_day_wage
+                else:
+                    order.that_time_hour_wage = servant.hospital_hour_wage
+                    order.that_time_half_day_wage = servant.hospital_half_day_wage
+                    order.that_time_one_day_wage = servant.hospital_one_day_wage
+
                 order.save()
+
                 transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
                 order.transfer_fee = transfer_fee
                 if order.case.is_continuous_time == False:
@@ -994,7 +1005,7 @@ class CreateCase(APIView):
                             orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
                         else:
                             orderIncreaseService.increase_percent = 0
-                        orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                        orderIncreaseService.increase_money = round((order.base_money) * (orderIncreaseService.increase_percent)/100)
                         orderIncreaseService.save()
 
                         total_increase_money = total_increase_money + orderIncreaseService.increase_money
@@ -1169,6 +1180,18 @@ class CreateServantOrder(APIView):
         order.end_datetime = case.end_datetime
         order.start_time = order.case.start_time
         order.end_time = order.case.end_time
+
+        if order.case.care_type == 'home':
+            order.that_time_hour_wage = servant.home_hour_wage
+            order.that_time_half_day_wage = servant.home_half_day_wage
+            order.that_time_one_day_wage = servant.home_one_day_wage
+        else:
+            order.that_time_hour_wage = servant.hospital_hour_wage
+            order.that_time_half_day_wage = servant.hospital_half_day_wage
+            order.that_time_one_day_wage = servant.hospital_one_day_wage
+
+        order.save()
+
         order.save()
         transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
         order.transfer_fee = transfer_fee
@@ -1250,7 +1273,7 @@ class CreateServantOrder(APIView):
                         orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
                     else:
                         orderIncreaseService.increase_percent = 0
-                    orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                    orderIncreaseService.increase_money = round((order.base_money) * (orderIncreaseService.increase_percent)/100)
                     orderIncreaseService.save()
 
                     total_increase_money = total_increase_money + orderIncreaseService.increase_money
@@ -1319,6 +1342,16 @@ class ApplyCase(APIView):
             order.end_datetime = case.end_datetime
             order.start_time = order.case.start_time
             order.end_time = order.case.end_time
+
+            if order.case.care_type == 'home':
+                order.that_time_hour_wage = servant.home_hour_wage
+                order.that_time_half_day_wage = servant.home_half_day_wage
+                order.that_time_one_day_wage = servant.home_one_day_wage
+            else:
+                order.that_time_hour_wage = servant.hospital_hour_wage
+                order.that_time_half_day_wage = servant.hospital_half_day_wage
+                order.that_time_one_day_wage = servant.hospital_one_day_wage
+
             order.save()
             
             if UserServiceLocation.objects.filter(user=order.servant,city=order.case.city).count()!= 0:
@@ -1413,7 +1446,7 @@ class ApplyCase(APIView):
                         orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=case_service.service).increase_percent
                     else:
                         orderIncreaseService.increase_percent = 0
-                    orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                    orderIncreaseService.increase_money = round((order.base_money) * (orderIncreaseService.increase_percent)/100)
                     orderIncreaseService.save()
 
                     total_increase_money = total_increase_money + orderIncreaseService.increase_money
@@ -1533,14 +1566,26 @@ class EarlyTermination(APIView):
                 
                 if order.case.care_type == 'home':
                     if one_day_work_hours < 12:
-                        wage = order.servant.home_hour_wage
+                        if order.that_time_hour_wage != None and order.that_time_hour_wage != 0:
+                            wage = order.that_time_hour_wage 
+                        else:
+                            wage = order.servant.home_hour_wage
                     elif one_day_work_hours >=12 and total_hours < 24:
-                        wage = round(order.servant.home_half_day_wage/12)
+                        if order.that_time_half_day_wage != None and order.that_time_half_day_wage != 0:
+                            wage = round(order.that_time_half_day_wage/12)
+                        else:
+                            wage = round(order.servant.home_half_day_wage/12)
                 elif order.case.care_type == 'hospital':
                     if one_day_work_hours < 12:
-                        wage = order.servant.hospital_hour_wage
+                        if order.that_time_hour_wage != None and order.that_time_hour_wage != 0:
+                            wage = order.that_time_hour_wage
+                        else:
+                            wage = order.servant.hospital_hour_wage
                     elif one_day_work_hours >=12 and total_hours < 24:
-                        wage = round(order.servant.hospital_half_day_wage/12)
+                        if order.that_time_half_day_wage != None and order.that_time_half_day_wage != 0:
+                            wage = round(order.that_time_half_day_wage/12)
+                        else:
+                            wage = round(order.servant.hospital_half_day_wage/12)
             else:
                 order.number_of_transfer = 1
                 order.amount_transfer_fee = transfer_fee * 1
@@ -1554,18 +1599,36 @@ class EarlyTermination(APIView):
                 order.work_hours = total_hours + 12 
                 if order.case.care_type == 'home':
                     if total_hours < 12:
-                        wage = order.servant.home_hour_wage
+                        if order.that_time_hour_wage != None and order.that_time_hour_wage != 0:
+                            wage = order.that_time_hour_wage 
+                        else:
+                            wage = order.servant.home_hour_wage
                     elif total_hours >=12 and total_hours < 24:
-                        wage = round(order.servant.home_half_day_wage/12)
+                        if order.that_time_half_day_wage != None and order.that_time_half_day_wage != 0:
+                            wage = round(order.that_time_half_day_wage/12)
+                        else:
+                            wage = round(order.servant.home_half_day_wage/12)
                     else:
-                        wage = round(order.servant.home_one_day_wage/24)
+                        if order.that_time_one_day_wage != None and order.that_time_one_day_wage != 0:
+                            wage = round(order.that_time_one_day_wage/24)
+                        else:
+                            wage = round(order.servant.home_one_day_wage/24)
                 elif order.case.care_type == 'hospital':
                     if total_hours < 12:
-                        wage = order.servant.hospital_hour_wage
+                        if order.that_time_hour_wage != None and order.that_time_hour_wage != 0:
+                            wage = order.that_time_hour_wage 
+                        else:
+                            wage = order.servant.hospital_hour_wage
                     elif total_hours >=12 and total_hours < 24:
-                        wage = round(order.servant.hospital_half_day_wage/12)
+                        if order.that_time_half_day_wage != None and order.that_time_half_day_wage != 0:
+                            wage = round(order.that_time_half_day_wage/12)
+                        else:
+                            wage = round(order.servant.hospital_half_day_wage/12)
                     else:
-                        wage = round(order.servant.hospital_one_day_wage/24)
+                        if order.that_time_one_day_wage != None and order.that_time_one_day_wage != 0:
+                            wage = round(order.that_time_one_day_wage/24)
+                        else:
+                            wage = round(order.servant.hospital_one_day_wage/24)
             order.wage_hour =wage
             order.base_money = order.work_hours * wage
             order.save()
@@ -1580,7 +1643,7 @@ class EarlyTermination(APIView):
                     orderIncreaseService.order = order
                     orderIncreaseService.service = Service.objects.get(id=service_id)
                     orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=order.servant,service=Service.objects.get(id=service_id)).increase_percent
-                    orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                    orderIncreaseService.increase_money = round((order.base_money) * (orderIncreaseService.increase_percent)/100)
                     orderIncreaseService.save()
 
                     total_increase_money = total_increase_money + orderIncreaseService.increase_money
@@ -1868,6 +1931,16 @@ class EditCase(APIView):
                 order.start_time = order.case.start_time
                 order.end_time = order.case.end_time
                 order.created_at = datetime.datetime.now()
+
+                if order.case.care_type == 'home':
+                    order.that_time_hour_wage = servant.home_hour_wage
+                    order.that_time_half_day_wage = servant.home_half_day_wage
+                    order.that_time_one_day_wage = servant.home_one_day_wage
+                else:
+                    order.that_time_hour_wage = servant.hospital_hour_wage
+                    order.that_time_half_day_wage = servant.hospital_half_day_wage
+                    order.that_time_one_day_wage = servant.hospital_one_day_wage
+
                 order.save()
 
                 if UserServiceLocation.objects.filter(user=order.servant,city=order.case.city).count() != 0:
@@ -1952,7 +2025,7 @@ class EditCase(APIView):
                                 orderIncreaseService.increase_percent = UserServiceShip.objects.get(user=servant,service=Service.objects.get(id=service_id)).increase_percent
                             else:
                                 orderIncreaseService.increase_percent = 0
-                            orderIncreaseService.increase_money = (order.base_money) * (orderIncreaseService.increase_percent)/100
+                            orderIncreaseService.increase_money = round((order.base_money) * (orderIncreaseService.increase_percent)/100)
                             orderIncreaseService.save()
 
                             total_increase_money = total_increase_money + orderIncreaseService.increase_money
