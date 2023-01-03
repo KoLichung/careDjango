@@ -1549,6 +1549,10 @@ class EarlyTermination(APIView):
             order.end_datetime = aware_datetime
             order.end_time = round(EndTime.hour+EndTime.minute/60,1)
             order.save()
+
+            order.case.state = "endEarly"
+            order.case.save()
+
             transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
             order.transfer_fee = transfer_fee
             if order.case.is_continuous_time == False:
@@ -1651,18 +1655,20 @@ class EarlyTermination(APIView):
             total_service_money =  order.base_money + total_increase_money
             newTotalMoney = total_service_money + order.amount_transfer_fee
 
-            newPlatformMoney = round(newTotalMoney * (order.platform_percent/100))
-
             back_money = order.total_money - newTotalMoney
+
+            order.total_money = newTotalMoney
+            order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
+            order.platform_money = round(order.total_money * (order.platform_percent/100))
+            order.servant_money = order.total_money - order.newebpay_money - order.platform_money
+
             try:
                 backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
-                debit_money_to_platform(order.id, newPlatformMoney)
+                debit_money_to_platform(order.id, order.platform_money)
             except:
                 print('sone newebpay wrong')
 
-            order.total_money = newTotalMoney
-            order.platform_money = newPlatformMoney
             order.is_early_termination = True
             order.save()
 
@@ -1692,58 +1698,117 @@ class EarlyTermination(APIView):
             orderCancel(order.servant,order)
             order.state = 'canceled'
             order.save()
+
+            order.case.state = "Canceled"
+            order.case.save()
             
             timediff_in_hours = (order.start_datetime - aware_datetime)/3600
             if timediff_in_hours >= 48:
                 backboard_refound(order.total_money)
+                order.work_hours = 0
+                order.base_money = 0
+                order.number_of_transfer = 0
+                order.amount_transfer_fee = 0
+                order.total_money = 0
+                order.newebpay_money = 0
+                order.platform_money = 0
+                order.servant_money = 0
+                order.save()
             elif timediff_in_hours <= 48 and timediff_in_hours > 24:
                 # 收取一日費用之 50%
+                back_money = order.total_money
+
                 if order.case.is_continuous_time == True:
                     servant_money = order.wage_hour * 24 * 1/2
+
+                    order.work_hours = 12
+                    order.base_money = servant_money
+                    order.total_money = servant_money
                 else:
                     days = (order.end_datetime - order.start_datetime).days
                     one_day_hours = order.work_hours / days
-                    servant_money =  order.wage_hour * one_day_hours * 1/2
+                    servant_money =  round(order.wage_hour * one_day_hours * 1/2)
+                    
+                    order.work_hours = round(one_day_hours * 1/2, 1)
+                    order.base_money = servant_money
+                    order.total_money = servant_money
 
-                back_money = order.total_money - round(servant_money)
+                order.number_of_transfer = 0
+                order.amount_transfer_fee = 0
+
+                order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
+                order.platform_money = round(order.total_money * (order.platform_percent/100))
+                order.servant_money = order.total_money - order.newebpay_money - order.platform_money
+
+                order.save()
+
+                back_money = back_money - order.total_money
                 backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
-
-                platform_money = servant_money * order.platform_percent
-                debit_money_to_platform(order.id, platform_money)
+                debit_money_to_platform(order.id, order.platform_money)
 
             elif timediff_in_hours <= 24 and timediff_in_hours >3:
                 # 收取一日費用之 100%
+                back_money = order.total_money
+
                 if order.case.is_continuous_time == True:
                     servant_money = order.wage_hour * 24
+
+                    order.work_hours = 24
+                    order.base_money = servant_money
+                    order.total_money = servant_money
                 else:
                     days = (order.end_datetime - order.start_datetime).days
                     one_day_hours = order.work_hours / days
                     servant_money =  order.wage_hour * one_day_hours
 
-                servant_money = round(servant_money)
-                back_money = order.total_money - servant_money
+                    order.work_hours = one_day_hours
+                    order.base_money = servant_money
+                    order.total_money = servant_money
+
+                order.number_of_transfer = 0
+                order.amount_transfer_fee = 0
+
+                order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
+                order.platform_money = round(order.total_money * (order.platform_percent/100))
+                order.servant_money = order.total_money - order.newebpay_money - order.platform_money
+
+                order.save()
+
+                back_money = back_money - order.total_money
                 backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
-
-                platform_money = servant_money * order.platform_percent
-                debit_money_to_platform(order.id, platform_money)
+                debit_money_to_platform(order.id, order.platform_money)
             elif timediff_in_hours <= 3 :
                 # 收取一日費用之 100% + 交通費
+                back_money = order.total_money
+
                 if order.case.is_continuous_time == True:
                     servant_money = order.wage_hour * 24
+
+                    order.work_hours = 24
+                    order.base_money = servant_money
                 else:
                     days = (order.end_datetime - order.start_datetime).days
                     one_day_hours = order.work_hours / days
                     servant_money =  order.wage_hour * one_day_hours
 
-                servant_money = round(servant_money) + order.transfer_fee * 1
-                back_money = order.total_money - servant_money
+                    order.work_hours = one_day_hours
+                    order.base_money = servant_money
+
+                order.number_of_transfer = 1
+                order.amount_transfer_fee = order.number_of_transfer * order.transfer_fee
+
+                order.total_money = round(servant_money) + order.amount_transfer_fee
+                
+                order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
+                order.platform_money = round(order.total_money * (order.platform_percent/100))
+                order.servant_money = order.total_money - order.newebpay_money - order.platform_money
+
+                back_money = back_money - order.total_money
                 backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
-
-                platform_money = servant_money * order.platform_percent
-                debit_money_to_platform(order.id, platform_money)
+                debit_money_to_platform(order.id, order.platform_money)
 
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
             chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
