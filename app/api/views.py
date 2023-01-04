@@ -555,7 +555,7 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         servant = self.request.user
-        queryset = self.queryset.filter(servant=servant)
+        queryset = self.queryset.filter(servant=servant).order_by('-start_datetime')
 
         for i in range(len(queryset)):
             reviews = Review.objects.filter(case=queryset[i])
@@ -618,7 +618,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         user = self.request.user
-        queryset = self.queryset.filter(user=user).order_by('-id')
+        queryset = self.queryset.filter(user=user).order_by('-start_datetime')
         
         for i in range(len(queryset)):
             # language_ids = list(UserLanguage.objects.filter(user=queryset[i].user.id).values_list('language', flat=True))
