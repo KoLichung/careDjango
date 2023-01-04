@@ -1702,7 +1702,9 @@ class EarlyTermination(APIView):
             order.case.state = "Canceled"
             order.case.save()
             
-            timediff_in_hours = (order.start_datetime - aware_datetime)/3600
+            timediff = order.start_datetime - aware_datetime
+            timediff_in_hours = int(timediff.total_seconds() / 3600)
+            
             if timediff_in_hours >= 48:
                 backboard_refound(order.total_money)
                 order.work_hours = 0
@@ -1714,7 +1716,7 @@ class EarlyTermination(APIView):
                 order.platform_money = 0
                 order.servant_money = 0
                 order.save()
-            elif timediff_in_hours <= 48 and timediff_in_hours > 24:
+            elif timediff_in_hours < 48 and timediff_in_hours >= 24:
                 # 收取一日費用之 50%
                 back_money = order.total_money
 
@@ -1747,7 +1749,7 @@ class EarlyTermination(APIView):
                 approprivate_money_to_store(order.id)
                 debit_money_to_platform(order.id, order.platform_money)
 
-            elif timediff_in_hours <= 24 and timediff_in_hours >3:
+            elif timediff_in_hours < 24 and timediff_in_hours >= 3:
                 # 收取一日費用之 100%
                 back_money = order.total_money
 
@@ -1779,7 +1781,7 @@ class EarlyTermination(APIView):
                 backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
                 debit_money_to_platform(order.id, order.platform_money)
-            elif timediff_in_hours <= 3 :
+            elif timediff_in_hours < 3 :
                 # 收取一日費用之 100% + 交通費
                 back_money = order.total_money
 
