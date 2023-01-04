@@ -1704,9 +1704,9 @@ class EarlyTermination(APIView):
             
             timediff = order.start_datetime - aware_datetime
             timediff_in_hours = int(timediff.total_seconds() / 3600)
-            
+
             if timediff_in_hours >= 48:
-                backboard_refound(order.total_money)
+                backboard_refound(order.id, order.total_money)
                 order.work_hours = 0
                 order.base_money = 0
                 order.number_of_transfer = 0
