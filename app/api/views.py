@@ -987,7 +987,7 @@ class CreateCase(APIView):
                         else:
                             wage = round(servant.hospital_one_day_wage/24)
                 order.wage_hour =wage
-                order.base_money = order.work_hours * wage
+                order.base_money = round(order.work_hours * wage)
 
                 # need to change in the future
                 order.platform_percent = platform_percent_cal(servant,order)
@@ -1254,7 +1254,7 @@ class CreateServantOrder(APIView):
                 else:
                     wage = round(order.servant.hospital_one_day_wage/24)
         order.wage_hour =wage
-        order.base_money = order.work_hours * wage
+        order.base_money = round(order.work_hours * wage)
 
         # need to change in the future
         order.platform_percent = platform_percent_cal(servant,order)
@@ -1426,7 +1426,7 @@ class ApplyCase(APIView):
                         return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
             
             order.wage_hour =wage
-            order.base_money = order.work_hours * wage
+            order.base_money = round(order.work_hours * wage)
 
             order.platform_percent = platform_percent_cal(servant,order)
             order.newebpay_percent = get_newebpay_percent()
@@ -1634,7 +1634,7 @@ class EarlyTermination(APIView):
                         else:
                             wage = round(order.servant.hospital_one_day_wage/24)
             order.wage_hour =wage
-            order.base_money = order.work_hours * wage
+            order.base_money = round(order.work_hours * wage)
             order.save()
             
             # 把之前的 OrderIncreaseService 刪除, 重新產生
@@ -2074,7 +2074,7 @@ class EditCase(APIView):
                         else:
                             wage = round(order.servant.hospital_one_day_wage/24)
                 order.wage_hour =wage
-                order.base_money = order.work_hours * wage
+                order.base_money = round(order.work_hours * wage)
 
                 # need to change in the future
                 order.platform_percent = platform_percent_cal(servant,order)
