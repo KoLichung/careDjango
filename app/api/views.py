@@ -2257,14 +2257,14 @@ def continuous_time_cal(order):
 
 def platform_percent_cal(servant,order):
     orders = Order.objects.all()
-    today = datetime.datetime.today()
-    current_year = today.year
-    current_month = today.month
+    # today = datetime.datetime.today()
+    # current_year = today.year
+    # current_month = today.month
     # base_percent = 2.8
     work_hours = order.work_hours
     orders_total_hours = work_hours 
-    if orders.filter(servant=servant,start_datetime__year=current_year,start_datetime__month=current_month,state='paid').count() != 0:
-        accumulate_work_hours = orders.filter(servant=servant,start_datetime__year=current_year,start_datetime__month=current_month,state='paid').aggregate(Sum('work_hours'))['work_hours__sum']
+    if orders.filter(servant=servant, start_datetime__year=order.start_datetime.year, start_datetime__month=order.start_datetime.month , state='paid').count() != 0:
+        accumulate_work_hours = orders.filter(servant=servant, start_datetime__year=order.start_datetime.year, start_datetime__month=order.start_datetime.month,state='paid').aggregate(Sum('work_hours'))['work_hours__sum']
         print('accumulate_work_hours',accumulate_work_hours)
         orders_total_hours += accumulate_work_hours
     
