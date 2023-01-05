@@ -1663,8 +1663,8 @@ class EarlyTermination(APIView):
             order.servant_money = order.total_money - order.newebpay_money - order.platform_money
 
             try:
-                backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
+                backboard_refound(order.id, back_money)
                 debit_money_to_platform(order.id, order.platform_money)
             except:
                 print('sone newebpay wrong')
@@ -1706,6 +1706,7 @@ class EarlyTermination(APIView):
             timediff_in_hours = int(timediff.total_seconds() / 3600)
 
             if timediff_in_hours >= 48:
+                approprivate_money_to_store(order.id)
                 backboard_refound(order.id, order.total_money)
                 order.work_hours = 0
                 order.base_money = 0
@@ -1745,8 +1746,8 @@ class EarlyTermination(APIView):
                 order.save()
 
                 back_money = back_money - order.total_money
-                backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
+                backboard_refound(order.id, back_money)
                 debit_money_to_platform(order.id, order.platform_money)
 
             elif timediff_in_hours < 24 and timediff_in_hours >= 3:
@@ -1778,8 +1779,8 @@ class EarlyTermination(APIView):
                 order.save()
 
                 back_money = back_money - order.total_money
-                backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
+                backboard_refound(order.id, back_money)
                 debit_money_to_platform(order.id, order.platform_money)
             elif timediff_in_hours < 3 :
                 # 收取一日費用之 100% + 交通費
@@ -1808,8 +1809,8 @@ class EarlyTermination(APIView):
                 order.servant_money = order.total_money - order.newebpay_money - order.platform_money
 
                 back_money = back_money - order.total_money
-                backboard_refound(order.id, back_money)
                 approprivate_money_to_store(order.id)
+                backboard_refound(order.id, back_money)
                 debit_money_to_platform(order.id, order.platform_money)
 
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
@@ -1819,14 +1820,14 @@ class EarlyTermination(APIView):
                 chatroom_id = list(chatroom_set)[0]
                 print(chatroom_id)
                 chatroom = ChatRoom.objects.get(id=chatroom_id)
-                message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user, case=order.case, order=order, chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
             elif list(chatroom_set) == []:
                 chatroom = ChatRoom()
                 chatroom.save()
                 ChatroomUserShip.objects.create(user=order.user,chatroom=chatroom)
                 ChatroomUserShip.objects.create(user=order.servant,chatroom=chatroom)
-                message = ChatroomMessage(user=user,case=order.case,chatroom=chatroom,is_this_message_only_case=True)
+                message = ChatroomMessage(user=user,case=order.case, order=order, chatroom=chatroom,is_this_message_only_case=True)
                 message.save()
                 
             chatroom.update_at = datetime.datetime.now()
