@@ -958,12 +958,12 @@ class CreateCase(APIView):
                     if order.case.care_type == 'home':
                         if one_day_work_hours < 12:
                             wage = servant.home_hour_wage
-                        elif one_day_work_hours >=12 and total_hours < 24:
+                        elif one_day_work_hours >=12 and one_day_work_hours < 24:
                             wage = round(servant.home_half_day_wage/12)
                     elif order.case.care_type == 'hospital':
                         if one_day_work_hours < 12:
                             wage = servant.hospital_hour_wage
-                        elif one_day_work_hours >=12 and total_hours < 24:
+                        elif one_day_work_hours >=12 and one_day_work_hours < 24:
                             wage = round(servant.hospital_half_day_wage/12)
                 else:
                     order.number_of_transfer = 1
@@ -1223,12 +1223,12 @@ class CreateServantOrder(APIView):
             if order.case.care_type == 'home':
                 if one_day_work_hours < 12:
                     wage = order.servant.home_hour_wage
-                elif one_day_work_hours >=12 and total_hours < 24:
+                elif one_day_work_hours >=12 and one_day_work_hours < 24:
                     wage = round(order.servant.home_half_day_wage/12)
             elif order.case.care_type == 'hospital':
                 if one_day_work_hours < 12:
                     wage = order.servant.hospital_hour_wage
-                elif one_day_work_hours >=12 and total_hours < 24:
+                elif one_day_work_hours >=12 and one_day_work_hours < 24:
                     wage = round(order.servant.hospital_half_day_wage/12)
         else:
             order.number_of_transfer = 1
@@ -1383,7 +1383,7 @@ class ApplyCase(APIView):
                     if servant.is_home:
                         if one_day_work_hours < 12:
                             wage = order.servant.home_hour_wage
-                        elif one_day_work_hours >=12 and total_hours < 24:
+                        elif one_day_work_hours >=12 and one_day_work_hours < 24:
                             wage = round(order.servant.home_half_day_wage/12)
                     else:
                         return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
@@ -1391,7 +1391,7 @@ class ApplyCase(APIView):
                     if servant.is_hospital:
                         if one_day_work_hours < 12:
                             wage = order.servant.hospital_hour_wage
-                        elif one_day_work_hours >=12 and total_hours < 24:
+                        elif one_day_work_hours >=12 and one_day_work_hours < 24:
                             wage = round(order.servant.hospital_half_day_wage/12)
                     else:
                         return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
@@ -1571,7 +1571,7 @@ class EarlyTermination(APIView):
                             wage = order.that_time_hour_wage 
                         else:
                             wage = order.servant.home_hour_wage
-                    elif one_day_work_hours >=12 and total_hours < 24:
+                    elif one_day_work_hours >=12 and one_day_work_hours < 24:
                         if order.that_time_half_day_wage != None and order.that_time_half_day_wage != 0:
                             wage = round(order.that_time_half_day_wage/12)
                         else:
@@ -1582,7 +1582,7 @@ class EarlyTermination(APIView):
                             wage = order.that_time_hour_wage
                         else:
                             wage = order.servant.hospital_hour_wage
-                    elif one_day_work_hours >=12 and total_hours < 24:
+                    elif one_day_work_hours >=12 and one_day_work_hours < 24:
                         if order.that_time_half_day_wage != None and order.that_time_half_day_wage != 0:
                             wage = round(order.that_time_half_day_wage/12)
                         else:
@@ -2069,12 +2069,12 @@ class EditCase(APIView):
                     if order.case.care_type == 'home':
                         if one_day_work_hours < 12:
                             wage = order.servant.home_hour_wage
-                        elif one_day_work_hours >=12 and total_hours < 24:
+                        elif one_day_work_hours >=12 and one_day_work_hours < 24:
                             wage = round(order.servant.home_half_day_wage/12)
                     elif order.case.care_type == 'hospital':
                         if one_day_work_hours < 12:
                             wage = order.servant.hospital_hour_wage
-                        elif one_day_work_hours >=12 and total_hours < 24:
+                        elif one_day_work_hours >=12 and one_day_work_hours < 24:
                             wage = round(order.servant.hospital_half_day_wage/12)
                 else:
                     order.number_of_transfer = 1
