@@ -1,6 +1,6 @@
 from tracemalloc import start
-from rest_framework import viewsets, mixins
-from rest_framework.response import Response
+from rest_framework import viewsets, mixins, status
+from rest_framework.response import Response    
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -1548,10 +1548,7 @@ class EarlyTermination(APIView):
         if aware_datetime >= order.start_datetime:
             order.end_datetime = aware_datetime
             order.end_time = round(EndTime.hour+EndTime.minute/60,1)
-            order.save()
-
-            order.case.state = "endEarly"
-            order.case.save()
+            # order.save()
 
             transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
             order.transfer_fee = transfer_fee
@@ -1635,7 +1632,7 @@ class EarlyTermination(APIView):
                             wage = round(order.servant.hospital_one_day_wage/24)
             order.wage_hour =wage
             order.base_money = round(order.work_hours * wage)
-            order.save()
+            # order.save()
             
             # 把之前的 OrderIncreaseService 刪除, 重新產生
             OrderIncreaseService.objects.filter(order=order).delete()
@@ -1662,12 +1659,15 @@ class EarlyTermination(APIView):
             order.platform_money = round(order.total_money * (order.platform_percent/100))
             order.servant_money = order.total_money - order.newebpay_money - order.platform_money
 
-            try:
-                approprivate_money_to_store(order.id)
+            return_message = approprivate_money_to_store(order.id)
+            if return_message == 'SUCCESS':
                 backboard_refound(order.id, back_money)
                 debit_money_to_platform(order.id, order.platform_money)
-            except:
-                print('sone newebpay wrong')
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            
+            order.case.state = "endEarly"
+            order.case.save()
 
             order.is_early_termination = True
             order.save()
@@ -1694,20 +1694,22 @@ class EarlyTermination(APIView):
             chatroom.save()
             serializer = self.serializer_class(order)
             return Response(serializer.data)
+
         elif aware_datetime < order.start_datetime:
             orderCancel(order.servant,order)
             order.state = 'canceled'
-            order.save()
-
-            order.case.state = "Canceled"
-            order.case.save()
+            # order.save()
             
             timediff = order.start_datetime - aware_datetime
             timediff_in_hours = int(timediff.total_seconds() / 3600)
 
             if timediff_in_hours >= 48:
-                approprivate_money_to_store(order.id)
-                backboard_refound(order.id, order.total_money)
+                return_message = approprivate_money_to_store(order.id)
+                if return_message == 'SUCCESS':
+                    backboard_refound(order.id, order.total_money)
+                else:
+                    return Response(status=status.HTTP_404_NOT_FOUND)
+                    
                 order.work_hours = 0
                 order.base_money = 0
                 order.number_of_transfer = 0
@@ -1716,6 +1718,10 @@ class EarlyTermination(APIView):
                 order.newebpay_money = 0
                 order.platform_money = 0
                 order.servant_money = 0
+
+                order.case.state = "Canceled"
+                order.case.save()
+
                 order.save()
             elif timediff_in_hours < 48 and timediff_in_hours >= 24:
                 # 收取一日費用之 50%
@@ -1743,12 +1749,19 @@ class EarlyTermination(APIView):
                 order.platform_money = round(order.total_money * (order.platform_percent/100))
                 order.servant_money = order.total_money - order.newebpay_money - order.platform_money
 
+                back_money = back_money - order.total_money
+                
+                return_message = approprivate_money_to_store(order.id)
+                if return_message == 'SUCCESS':
+                    backboard_refound(order.id, back_money)
+                    debit_money_to_platform(order.id, order.platform_money)
+                else:
+                    return Response(status=status.HTTP_404_NOT_FOUND)
+
                 order.save()
 
-                back_money = back_money - order.total_money
-                approprivate_money_to_store(order.id)
-                backboard_refound(order.id, back_money)
-                debit_money_to_platform(order.id, order.platform_money)
+                order.case.state = "Canceled"
+                order.case.save()
 
             elif timediff_in_hours < 24 and timediff_in_hours >= 3:
                 # 收取一日費用之 100%
@@ -1776,12 +1789,20 @@ class EarlyTermination(APIView):
                 order.platform_money = round(order.total_money * (order.platform_percent/100))
                 order.servant_money = order.total_money - order.newebpay_money - order.platform_money
 
+                back_money = back_money - order.total_money
+
+                return_message = approprivate_money_to_store(order.id)
+                if return_message == 'SUCCESS':
+                    backboard_refound(order.id, back_money)
+                    debit_money_to_platform(order.id, order.platform_money)
+                else:
+                    return Response(status=status.HTTP_404_NOT_FOUND)
+
                 order.save()
 
-                back_money = back_money - order.total_money
-                approprivate_money_to_store(order.id)
-                backboard_refound(order.id, back_money)
-                debit_money_to_platform(order.id, order.platform_money)
+                order.case.state = "Canceled"
+                order.case.save()
+
             elif timediff_in_hours < 3 :
                 # 收取一日費用之 100% + 交通費
                 back_money = order.total_money
@@ -1809,9 +1830,18 @@ class EarlyTermination(APIView):
                 order.servant_money = order.total_money - order.newebpay_money - order.platform_money
 
                 back_money = back_money - order.total_money
-                approprivate_money_to_store(order.id)
-                backboard_refound(order.id, back_money)
-                debit_money_to_platform(order.id, order.platform_money)
+
+                return_message = approprivate_money_to_store(order.id)
+                if return_message == 'SUCCESS':
+                    backboard_refound(order.id, back_money)
+                    debit_money_to_platform(order.id, order.platform_money)
+                else:
+                    return Response(status=status.HTTP_404_NOT_FOUND)
+
+                order.save()
+
+                order.case.state = "Canceled"
+                order.case.save()
 
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=order.user).values_list('chatroom', flat=True))
             chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=order.servant).values_list('chatroom', flat=True))
