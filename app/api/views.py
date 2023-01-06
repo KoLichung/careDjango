@@ -2261,8 +2261,9 @@ def platform_percent_cal(servant,order):
     # current_year = today.year
     # current_month = today.month
     # base_percent = 2.8
-    work_hours = order.work_hours
-    orders_total_hours = work_hours 
+    # work_hours = order.work_hours
+    # orders_total_hours = work_hours
+    orders_total_hours = 0
     if orders.filter(servant=servant, start_datetime__year=order.start_datetime.year, start_datetime__month=order.start_datetime.month , state='paid').count() != 0:
         accumulate_work_hours = orders.filter(servant=servant, start_datetime__year=order.start_datetime.year, start_datetime__month=order.start_datetime.month,state='paid').aggregate(Sum('work_hours'))['work_hours__sum']
         print('accumulate_work_hours',accumulate_work_hours)
