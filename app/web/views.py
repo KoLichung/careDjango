@@ -1303,7 +1303,7 @@ def booking_confirm(request):
         order.wage_hour =wage
         order.base_money = order.work_hours * wage
 
-        order.platform_percent = platform_percent_cal(user,order)
+        order.platform_percent = platform_percent_cal(servant,order)
         order.newebpay_percent = get_newebpay_percent()
         order.save()
         Review.objects.create(order=order,case=order.case,servant=order.case.servant)
@@ -1575,7 +1575,7 @@ def requirement_detail(request):
                         order.wage_one_day = wage
             order.wage_hour =wage
             order.base_money = order.work_hours * wage
-            order.platform_percent = platform_percent_cal(case.user,order)
+            order.platform_percent = platform_percent_cal(case.servant,order)
             order.newebpay_percent = get_newebpay_percent()
             order.save()
 
@@ -2613,7 +2613,7 @@ def request_form_confirm(request):
             order.base_money = order.work_hours * wage
 
             # need to change in the future
-            order.platform_percent = platform_percent_cal(user,order)
+            order.platform_percent = platform_percent_cal(servant,order)
             order.newebpay_percent = get_newebpay_percent()
             order.save()
             Review.objects.create(order=order,case=order.case,servant=order.case.servant)
@@ -2754,16 +2754,17 @@ def continuous_time_cal(order):
     total_hours = hours + round(minutes/60)
     return total_hours
 
-def platform_percent_cal(user,order):
+def platform_percent_cal(servant,order):
     orders = Order.objects.all()
-    today = datetime.datetime.today()
-    current_year = today.year
-    current_month = today.month
+    # today = datetime.datetime.today()
+    # current_year = today.year
+    # current_month = today.month
     # base_percent = 2.8
-    work_hours = order.work_hours
-    orders_total_hours = work_hours 
-    if orders.filter(user=user,start_datetime__year=current_year,start_datetime__month=current_month,state='paid').count() != 0:
-        accumulate_work_hours = orders.filter(user=user,start_datetime__year=current_year,start_datetime__month=current_month,state='paid').aggregate(Sum('work_hours'))['work_hours__sum']
+    # work_hours = order.work_hours
+    # orders_total_hours = work_hours
+    orders_total_hours = 0
+    if orders.filter(servant=servant, start_datetime__year=order.start_datetime.year, start_datetime__month=order.start_datetime.month , state='paid').count() != 0:
+        accumulate_work_hours = orders.filter(servant=servant, start_datetime__year=order.start_datetime.year, start_datetime__month=order.start_datetime.month,state='paid').aggregate(Sum('work_hours'))['work_hours__sum']
         print('accumulate_work_hours',accumulate_work_hours)
         orders_total_hours += accumulate_work_hours
     
@@ -2773,7 +2774,7 @@ def platform_percent_cal(user,order):
         return 5.5
     elif orders_total_hours >= 240 and orders_total_hours < 360 :
         return 4.5
-    elif orders_total_hours > 360 :
+    elif orders_total_hours >= 360 :
         return 4
 
 def get_newebpay_percent():
