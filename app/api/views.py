@@ -2305,7 +2305,7 @@ def platform_percent_cal(servant,order):
         return 5.5
     elif orders_total_hours >= 240 and orders_total_hours < 360 :
         return 4.5
-    elif orders_total_hours > 360 :
+    elif orders_total_hours >= 360 :
         return 4
 
 def get_newebpay_percent():
