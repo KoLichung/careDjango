@@ -64,10 +64,38 @@
                       
                     </div>
                   {% endfor %}
+                  
+                  <div class="row case-info-font">
+                    <div class="col-9">
+                      交通費 ${{order.transfer_fee}} x {{order.number_of_transfer}} 趟
+                    </div>
+                    <div class="col text-end">
+                      $ {{order.amount_transfer_fee}}
+                      <br>
+                    </div>
+                  </div>
+                  <hr>
+                  
+                  <div class="row case-info-font">
+                    <div class="col-8">
+                      <strong>服務費用金額</strong>                    
+                    </div>
+                    <div class="col text-end">
+                      $ {{total_money}}
+                    </div>
+                  </div>
                   <br>
                   <div class="row case-info-font">
                     <div class="col-8">
-                      <strong>扣除平台費用 {{order.platform_percent}}%</strong>
+                      藍新金流交易手續費 {{order.newebpay_percent}}%
+                    </div>
+                    <div class="col text-end">
+                      - $ {{order.newebpay_money}}
+                    </div>
+                  </div>
+                  <div class="row case-info-font">
+                    <div class="col-8">
+                      平台服務費 {{order.platform_percent}}%
                     </div>
                     <div class="col text-end">
                       - $ {{order.platform_money}}
@@ -76,10 +104,10 @@
                   <hr>
                   <div class="row">
                     <div class="col-8 case-info-font">
-                      <strong>總計</strong>
+                      <strong>實領金額</strong>
                     </div>
                     <div class="col text-end " style="color: red;">
-                      <strong>$ {{total_money}}</strong> 
+                      <strong>$ {{order.servant_money}}</strong> 
                     </div>
                   </div>
 
