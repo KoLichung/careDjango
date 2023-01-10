@@ -510,12 +510,15 @@ class CaseSearchViewSet(viewsets.GenericViewSet,
 
         # if start_datetime != None and end_datetime != None :
         #     queryset = queryset.filter(start_datetime__gte=start_datetime,end_datetime__lte=end_datetime)
+
+        now = datetime.now() + timedelta(hours=8)
+        now_day = datetime(now.year , now.month , now.day , 0 , 0)
+
         if start_datetime != None:
             queryset = queryset.filter(start_datetime__gte=start_datetime)
 
-
         if start_datetime == None:
-            queryset = queryset.filter(start_datetime__gte=datetime.datetime.now())
+            queryset = queryset.filter(start_datetime__gte=now_day)
         
         if care_type == 'home':
             queryset = queryset.filter(care_type='home')
