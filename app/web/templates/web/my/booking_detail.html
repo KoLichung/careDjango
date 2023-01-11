@@ -20,11 +20,35 @@
                     {% else %}
                       指定時段<br>
                       {{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} <br>
-                      星期{{order.case.weekday}} <br>
+                      星期
+                      {% with order.case.weekday|split:"," as weeknums %}
+                          {% for weeknum in weeknums %}
+                            {% if weeknum == "1" %}
+                              一
+                            {% elif weeknum == "2" %}
+                              二
+                            {% elif weeknum == "3" %}
+                              三
+                            {% elif weeknum == "4" %}
+                              四
+                            {% elif weeknum == "5" %}
+                              五
+                            {% elif weeknum == "6" %}
+                              六
+                            {% elif weeknum == "0" %}
+                              日
+                            {% endif %}
+                          {% endfor %}
+                      {% endwith %}
+                      {% comment %} {{order.case.weekday}} <br> {% endcomment %}
                       {{order.case.startTimeformat}} ~ {{order.case.endTimeformat}}
                     {% endif %}
                   </p>
-                  <p>服務者給我的評價：{{review.case_offender_comment}}</p>
+                  <p>服務者給我的評價：
+                    {% if review.case_offender_comment %}
+                      {{review.case_offender_comment}}
+                    {% endif %}
+                  </p>
         </div>
 
         <p class="small-section-title-purple mt-5">被照顧者資訊</p>
