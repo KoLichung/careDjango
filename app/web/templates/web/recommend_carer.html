@@ -111,17 +111,8 @@
 
                   <span class="carer-review-number" style="margin-left:5px; margin-top: 4px;">評價{{servant.servant_rate_nums}}</span>
               </div>
-
-              {% comment %} <div class="mt-2">
-                {% if servant.is_home == True %}
-                  <span class="purple-border-tag">居家照顧</span>
-                {% endif %}
-                {% if servant.is_hospital == True %}
-                  <span class="purple-border-tag">醫院看護</span>
-                {% endif %}
-              </div> {% endcomment %}
     
-              <div class="mt-3">
+              <div class="mt-2">
                 {% if servant.is_home == True %}
                   <div class="my-2">
                     <span class="purple-border-tag">居家照顧</span>
@@ -141,8 +132,7 @@
                   {% for location in servant.user_locations.all %}
                    {{location.city}}
                   {% endfor %}</p>
-              </div>
-                      
+              </div>  
             </div>
           </a>   
         </div>
