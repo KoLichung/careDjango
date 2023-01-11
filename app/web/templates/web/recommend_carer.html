@@ -122,26 +122,17 @@
               </div> {% endcomment %}
     
               <div class="mt-3">
-                {% comment %} {% if servant.is_hospital == True %}
-                  {% if care_type == 'home' %}
-                    <p class="h6 text-800">時薪 ${{servant.home_hour_wage}} | 半天 ${{servant.home_half_day_wage}} | 一天 ${{servant.home_one_day_wage}}</p>
-                  {% else %}
-                    <p class="h6 text-800">時薪 ${{servant.hospital_hour_wage}} | 半天 ${{servant.hospital_half_day_wage}} | 一天 ${{servant.hospital_one_day_wage}}</p>
-                  {% endif %}
-                {% elif servant.is_home == True %}
-                  {% if care_type == 'hospital' %}
-                    <p class="h6 text-800">時薪 ${{servant.hospital_hour_wage}} | 半天 ${{servant.hospital_half_day_wage}} | 一天 ${{servant.hospital_one_day_wage}}</p>
-                  {% else %}
-                    <p class="h6 text-800">時薪 ${{servant.home_hour_wage}} | 半天 ${{servant.home_half_day_wage}} | 一天 ${{servant.home_one_day_wage}}</p>
-                  {% endif %}
-                {% endif %} {% endcomment %}
                 {% if servant.is_hospital == True %}
-                <span class="purple-border-tag">醫院看護</span>
+                  <div class="my-2">
+                    <span class="purple-border-tag">醫院看護</span>
+                  </div>
                   <p class="h6 text-800">時薪 ${{servant.hospital_hour_wage}} | 半天 ${{servant.hospital_half_day_wage}} | 一天 ${{servant.hospital_one_day_wage}}</p>
                 {% endif %} 
                  
                 {% if servant.is_home == True %}
-                <span class="purple-border-tag">居家照顧</span>
+                  <div class="my-2">
+                    <span class="purple-border-tag">居家照顧</span>
+                  </div>
                   <p class="h6 text-800">時薪 ${{servant.home_hour_wage}} | 半天 ${{servant.home_half_day_wage}} | 一天 ${{servant.home_one_day_wage}}</p>
                 {% endif %}
 
