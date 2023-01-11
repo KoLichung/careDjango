@@ -18,7 +18,7 @@
                       開始：{{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ({{order.case.startTimeformat}})<br>
                       結束：{{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} ({{order.case.endTimeformat}})<br>
                     {% else %}
-                      指定時段<br>
+                     指定時段<br>
                       {{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} <br>
                       星期
                       {% with order.case.weekday|cut:',' as weeknums %}
