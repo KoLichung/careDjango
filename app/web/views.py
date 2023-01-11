@@ -1911,7 +1911,7 @@ def my_bank_account(request):
  
 def my_bookings(request):
     user = request.user
-    orders = Order.objects.filter(user=user)
+    orders = Order.objects.filter(user=user).order_by('-id')
     return render(request, 'web/my/bookings.html',{'orders':orders,'user':user})
 
 def my_booking_detail(request):

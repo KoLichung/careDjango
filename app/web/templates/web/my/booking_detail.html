@@ -12,8 +12,10 @@
                   <p>照顧者：{{order.servant.name}}</p>
                   <p>案件類型：{% if order.case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
                   <p>案件地點：{{order.case.city}} </p>
-                  <p class="text-indent-5" >案件時間：{% if order.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}<br>2022/04/18 晚上 8:00 ~ 2022/04/22 晚上 8:00</p>
-                  <p>給業主的評價：{{review.case_offender_comment}}</p>
+                  <p class="text-indent-5" >案件時間：{% if order.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}<br>
+                    2022/04/18 晚上 8:00 ~ 2022/04/22 晚上 8:00
+                  </p>
+                  <p>服務者給我的評價：{{review.case_offender_comment}}</p>
         </div>
 
         <p class="small-section-title-purple mt-5">被照顧者資訊</p>
@@ -79,44 +81,49 @@
 
         </div>
 
-        <!-- 如果 已給 照顧者評價會顯示這個 -->
-        <p class="small-section-title-purple mt-4">我給照顧者的評價</p>
-        <div class="col align-self-center text-front pb-3" style="color: yellow;">
-          {% for i in review.servant_rating_range %}
-            <span class="fas fa-star" ></span>
-          {% endfor %}
-          {% if review.servant_rating_is_half_star == True %}
-            <span class="fas fa-star-half-alt" ></span>
-          {% endif %}
-          {% for i in review.servant_rating_empty_star_range %}
-            <i class="fa-regular fa-star"></i>  
-          {% endfor %}
-        </div>
-        <div class="case-info-font section-bg-grey">
-                  <!-- <img src="/assets/img/new/Star.png" alt="">
-                  <img src="/assets/img/new/Star.png" alt="">
-                  <img src="/assets/img/new/Star.png" alt="">
-                  <img src="/assets/img/new/Star.png" alt="">
-                  <img src="/assets/img/new/Star.png" alt=""> -->
-                  
-                  <p>“ {{review.servant_comment}} “</p>
-                  
-        </div>
 
-        <!-- 如果 還沒給 照顧者評價會顯示這個 -->
-        <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        <p class="small-section-title-purple mt-4">我給照顧者的評價</p>
-        <div class="case-info-font">
-          <p>我給照顧者幾顆星：</p>
-          <div id='myRater' class="d-block"></div>
-          <input type="hidden" id="myInput" name="myInput" value="0">
-          <p class="pt-3">請輸入給照顧者的評價(150字以內)：</p>
-          <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>
-          <div class="d-flex mb-3 flex-row-reverse">
-            <button class="small-green-button mt-3 float-right" type="submit">送出</button>
+        {% if review.servant_comment %}
+
+          <!-- 如果 已給 照顧者評價會顯示這個 -->
+          <p class="small-section-title-purple mt-4">我給照顧者的評價</p>
+          <div class="col align-self-center text-front pb-3" style="color: yellow;">
+            {% for i in review.servant_rating_range %}
+              <span class="fas fa-star" ></span>
+            {% endfor %}
+            {% if review.servant_rating_is_half_star == True %}
+              <span class="fas fa-star-half-alt" ></span>
+            {% endif %}
+            {% for i in review.servant_rating_empty_star_range %}
+              <i class="fa-regular fa-star"></i>  
+            {% endfor %}
           </div>
-        </div>
-        </form>
+          <div class="case-info-font section-bg-grey">
+                    <!-- <img src="/assets/img/new/Star.png" alt="">
+                    <img src="/assets/img/new/Star.png" alt="">
+                    <img src="/assets/img/new/Star.png" alt="">
+                    <img src="/assets/img/new/Star.png" alt="">
+                    <img src="/assets/img/new/Star.png" alt=""> -->
+                    
+                    <p>“ {{review.servant_comment}} “</p>      
+          </div>
+        {% else %}
+          <!-- 如果 還沒給 照顧者評價會顯示這個 -->
+          <form method="post" enctype="multipart/form-data">{% csrf_token %}
+            <p class="small-section-title-purple mt-4">我給照顧者的評價</p>
+            <div class="case-info-font">
+              <p>我給照顧者幾顆星：</p>
+              <div id='myRater' class="d-block"></div>
+              <input type="hidden" id="myInput" name="myInput" value="0">
+              <p class="pt-3">請輸入給照顧者的評價(150字以內)：</p>
+              <textarea class="custom-form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>
+              <div class="d-flex mb-3 flex-row-reverse">
+                <button class="small-green-button mt-3 float-right" type="submit">送出</button>
+              </div>
+            </div>
+          </form>
+
+        {% endif %}
+
       </div>
     </div>
   </div>
