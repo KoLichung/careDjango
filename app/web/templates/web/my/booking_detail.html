@@ -21,7 +21,7 @@
                       指定時段<br>
                       {{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} <br>
                       星期
-                      {% with order.case.weekday|split:"," as weeknums %}
+                      {% with order.case.weekday | split:"," as weeknums %}
                           {% for weeknum in weeknums %}
                             {% if weeknum == "1" %}
                               一
