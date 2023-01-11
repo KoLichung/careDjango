@@ -55,26 +55,61 @@
           </div>
         </div>
 
-        <div class="h6 mt-4 mb-2">基本費用</div>
-        <div class="row">
+        <div class="case-info-font mt-4 mb-2"><b>基本費用</b></div>
+        <div class="row justify-content-between">
           <div class="col">${% if case.care_type == 'home' %}{{case.servant.home_hour_wage}}{% else %}{{case.servant.hospital_hour_wage}}{% endif %} x {{order.work_hours}} 小時</div>
-          <div class="col alnright">${{order.base_money}}</div>
+          <div class="col text-end">${{order.base_money}}</div>
         </div>
-        <div class="h6 mt-4 mb-2">加價項目</div>
+        
+        <div class="case-info-font mt-4 mb-2"><b>加價項目</b></div>
         {% for order_increase_service in order.order_increase_services.all %}
         <div class="row">
           <div class="col">{{order_increase_service.service}} {{order_increase_service.increase_percent}}% </div>
           <div class="col alnright">${{order_increase_service.increase_money}}</div>
         </div>
         {% endfor %}
-        <!-- <div class="row">
-          <div class="col">協助復健 $300 x 10 小時 </div>
-          <div class="col alnright">$3,000</div>
-        </div> -->
+
+        <div class="row case-info-font">
+          <div class="col-9">
+            交通費 ${{order.transfer_fee}} x {{order.number_of_transfer}} 趟
+          </div>
+          <div class="col text-end">
+            $ {{order.amount_transfer_fee}}
+            <br>
+          </div>
+        </div>
+        <hr>
+
+        <div class="row case-info-font">
+          <div class="col-8">
+            <strong>服務費用金額</strong>                    
+          </div>
+          <div class="col text-end">
+            $ {{total_money}}
+          </div>
+        </div>
+        <br>
+        <div class="row case-info-font">
+          <div class="col-8">
+            藍新金流交易手續費 {{order.newebpay_percent}}%
+          </div>
+          <div class="col text-end">
+            - $ {{order.newebpay_money}}
+          </div>
+        </div>
+        <div class="row case-info-font">
+          <div class="col-8">
+            平台服務費 {{order.platform_percent}}%
+          </div>
+          <div class="col text-end">
+            - $ {{order.platform_money}}
+          </div>
+        </div>
+
         <div class="border my-2"></div>
         <div class="row">
-          <div class="col"><b>總計</b></div>
-          <div class="col alnright text-danger"><b>${{order.total_money}}</b></div>
+          <div class="col"><b>實領金額</b></div>
+          <div class="col text-end text-danger"><b>${{order.total_money}}</b></div>
         </div>    
       </div>
     </div>
@@ -82,6 +117,7 @@
     {% endfor %}
 
   </div>
-</div> 
+</div>
+
 
 {% endblock %}
