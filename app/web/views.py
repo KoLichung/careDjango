@@ -1931,12 +1931,16 @@ def my_booking_detail(request):
 
 def my_cases(request):
     servant = request.user
-    cases = Case.objects.filter(servant=servant)
-    # reviews = Review.objects.filter(servant=servant)
-    # for item in reviews:
-    #     if item.order.state == "paid":
-    #          review = item
-    return render(request, 'web/my/cases.html',{'servant':servant,'cases':cases})
+    cases = Case.objects.filter(servant=servant).order_by('-id')
+    for case in cases:
+        reviews = Review.objects.filter(case=case, servant=servant)
+        for review in reviews:
+            if review.order.state == 'paid':
+                case.servant_comment = review.servant_comment
+            elif review.order.state == 'canceled':
+                case.servant_comment = "案件已取消"
+
+    return render(request, 'web/my/cases.html',{'servant':servant,'cases':cases })
 
 def my_case_detail(request):
     case_id = request.GET.get('case')
