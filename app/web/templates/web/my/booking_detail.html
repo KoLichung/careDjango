@@ -12,7 +12,18 @@
                   <p>照顧者：{{order.servant.name}}</p>
                   <p>案件類型：{% if order.case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</p>
                   <p>案件地點：{{order.case.city}} </p>
-                  <p class="text-indent-5" >案件時間：{% if order.case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %}<br>
+                  <p class="text-indent-5" >案件時間：
+                    {% if order.case.is_continuous_time == True %}
+                      連續時間<br>
+                      開始：{{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} {{order.case.start_time}}<br>
+                      結束：{{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} {{order.case.end_time}}
+                    {% else %}
+                      指定時段<br>
+                      {{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} <br>
+                      {{order.case.weekday}} <br>
+                      {{order.case.start_time}} ~ {{order.case.end_time}}
+                    {% endif %}<br>
+                    
                     2022/04/18 晚上 8:00 ~ 2022/04/22 晚上 8:00
                   </p>
                   <p>服務者給我的評價：{{review.case_offender_comment}}</p>
