@@ -20,11 +20,12 @@
                     {% else %}
                       指定時段<br>
                       {{order.case.start_datetime.year}}/{{order.case.start_datetime.month}}/{{order.case.start_datetime.day}} ~ {{order.case.end_datetime.year}}/{{order.case.end_datetime.month}}/{{order.case.end_datetime.day}} <br>
-                      {{order.case.weekday}} <br>
+                      {% for day in order.case.weekday %}
+                        星期{{ day }}
+                      {% endfor %}
+                      {% comment %} {{order.case.weekday}} <br> {% endcomment %}
                       {{order.case.start_time}} ~ {{order.case.end_time}}
-                    {% endif %}<br>
-                    
-                    2022/04/18 晚上 8:00 ~ 2022/04/22 晚上 8:00
+                    {% endif %}
                   </p>
                   <p>服務者給我的評價：{{review.case_offender_comment}}</p>
         </div>
