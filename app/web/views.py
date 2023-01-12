@@ -1213,7 +1213,7 @@ def booking_confirm(request):
         county_name = tempcase.county
         case = Case()
         case.user = user
-        case.servant = servant
+        # case.servant = servant
         case.city = City.objects.get(name=city_name)
         case.county = County.objects.get(city=City.objects.get(name=city_name),name=county_name)
         case.care_type = care_type
@@ -1501,7 +1501,7 @@ def requirement_detail(request):
         if user == case.user:
             return render(request, 'web/requirement_detail.html',{'case':case,'weekday_str':weekday_str,'alert_flag': True})
         else:
-            case.servant = user
+            # case.servant = user
             order = Order(case=case,servant=user)
             order.created_at = datetime.datetime.now()
             order.user = case.user 
