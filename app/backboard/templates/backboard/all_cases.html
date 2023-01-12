@@ -71,14 +71,16 @@
                     </td>
                     <td>{{case.created_at.year}}/{{case.created_at.month}}/{{case.created_at.day}}</td>
                     <td>{{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}}</td>
-                    <td>{% if case.servant == null and (case.state == 'Complete' or case.state == 'endEarly') %}
-                          [此用戶已刪除]
-                        {% elif case.servant == null %}
-                          尚無
+                    <td>{% if case.servant == null %}
+                          {% if case.state == 'Complete' or case.state == 'endEarly' %}
+                            [此用戶已刪除]
+                          {% else %}
+                            尚無
+                          {% endif %}
                         {% else %}
                           {{case.servant.name}}
                         {% endif %}
-                    </td>
+                      </td>
                     <td>{{case.city}}</td>
                     <td>{% for order in case.case_orders.all %}
                       {% if order.total_money %}
