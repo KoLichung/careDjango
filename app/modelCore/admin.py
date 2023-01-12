@@ -83,7 +83,7 @@ class CaseServiceShipAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id','case', 'user','state','total_money')
+    list_display = ('id','case', 'user', 'servant', 'state','total_money')
 
 @admin.register(OrderIncreaseService)
 class OrderWeekDayAdmin(admin.ModelAdmin):
