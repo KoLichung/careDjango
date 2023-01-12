@@ -111,7 +111,7 @@ class ChatroomUserShipAdmin(admin.ModelAdmin):
 
 @admin.register(ChatroomMessage)
 class ChatroomMessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'chatroom','user', 'case', 'order', 'content')
+    list_display = ('id', 'chatroom','user', 'case', 'order', 'content', 'create_at')
 
 @admin.register(SystemMessage)
 class SystemMessageAdmin(admin.ModelAdmin):
