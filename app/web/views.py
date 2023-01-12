@@ -699,10 +699,15 @@ def search_carer_detail(request):
     end_date = request.GET.get('EndDate')
     start_time = request.GET.get('start_time')
     end_time = request.GET.get('end_time')
+
     if care_type == '居家照顧':
         care_type = 'home'
     elif care_type == '醫院看護':
         care_type = 'hospital'
+    else:
+        care_type = 'home'
+
+    
     if (start_date != None and start_date != '') & (end_date != None and end_date != ''):
         start_date_str = start_date.split('-')[0][2:4] + '/' + start_date.split('-')[1] + '/' +start_date.split('-')[2]
         end_date_str = end_date.split('-')[0][2:4] + '/' +end_date.split('-')[1] + '/' +end_date.split('-')[2]
