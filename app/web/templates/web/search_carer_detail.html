@@ -266,13 +266,13 @@
                 
                 <span class="news-subtitle mt-2">費率</span><br>
                 <div class="mt-2 mb-3">
-                  {% if servant.is_hospital == True %}
+                  {% if servant.is_home == True %}
                     {% if care_type == 'home' %}
                       每小時 $<span id="hour_wage" name="hour_wage" >{{servant.home_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.home_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.home_one_day_wage}}</span>
                     {% else %}
                       每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
                     {% endif %}
-                  {% elif servant.is_home == True %}
+                  {% elif servant.is_hospital == True %}
                     {% if care_type == 'hospital' %}
                       每小時 $<span id="hour_wage" name="hour_wage" >{{servant.hospital_hour_wage}}</span>｜半天 $<span id="half_day_wage" name="half_day_wage" >{{servant.hospital_half_day_wage}}</span>｜全天 $<span id="one_day_wage" name="one_day_wage" >{{servant.hospital_one_day_wage}}</span>
                     {% else %}
