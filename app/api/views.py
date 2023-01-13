@@ -431,7 +431,18 @@ class SearchServantViewSet(viewsets.GenericViewSet,
                 queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
                 queryset[i].rating_nums = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
         
-        return queryset
+        # from django.db.models import Case, When
+
+        # ids = list(queryset.values_list('id', flat=True))
+
+        # print(random.shuffle(ids))
+
+        # print(ids)
+
+        results = list(queryset)
+        random.shuffle(results)
+
+        return results
 
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
