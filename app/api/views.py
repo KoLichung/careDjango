@@ -488,6 +488,8 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
         care_type= self.request.query_params.get('care_type')
         city = self.request.query_params.get('city')
 
+        is_random = self.request.query_params.get('is_random')
+
         queryset = User.objects.filter(is_servant_passed=True)
         
         user_ids = list(UserServiceLocation.objects.all().values_list('user', flat=True).distinct())
@@ -507,7 +509,12 @@ class RecommendServantViewSet(viewsets.GenericViewSet,
             queryset[i].rating_nums = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
             queryset[i].locations = UserServiceLocation.objects.filter(user=queryset[i])
 
-        return queryset
+        if is_random == 'true':
+            results = list(queryset)
+            random.shuffle(results)
+            return results
+        else:
+            return queryset
 
 class CaseSearchViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
