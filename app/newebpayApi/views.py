@@ -85,7 +85,7 @@ class CreateMerchant(APIView):
                 "MCType": 1,
                 "MerchantName": "Care168合作商店：服務者-"+user.name,
                 "MerchantNameE": "XinShing"+str(user.id),
-                "MerchantWebURL": "https://care168.com.tw/web/search_carer_detail?servant="+str(user.id),
+                "MerchantWebURL": "https://care168.com.tw/search_carer_detail?servant="+str(user.id),
                 "MerchantAddrCity": city.name,
                 "MerchantAddrArea": county.name,
                 "MerchantAddrCode": county.addressCode,
@@ -210,7 +210,7 @@ class MpgTrade(APIView):
             "Amt": Amt,
             "ItemDesc": item_desc,       
             "NotifyURL": "https://"+"care168.com.tw"+"/newebpayApi/notifyurl_callback/" + str(userStore.id) + "/",
-            "ClientBackURL": "https://"+"care168.com.tw"+"/web/success_pay",
+            "ClientBackURL": "https://"+"care168.com.tw"+"/success_pay",
         }
 
         logger.info(data)
