@@ -361,7 +361,7 @@ def login(request):
         auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
         # call_back = 'http://202.182.105.11/' + redirect_to
         # call_back = 'http://202.182.105.11/web/login_line?next=/web/index'
-        call_back = 'https://care168.com.tw/web/login_line?next=/web/index'
+        call_back = 'https://care168.com.tw/web/login_line?next=/'
 
         print(call_back)
         data = {
@@ -413,7 +413,7 @@ def login_line(request):
         'client_id': '1657316694',
         'client_secret': 'd7751034c13427e80df2818ce86d3a26',
         'code': code,
-        'redirect_uri': 'https://care168.com.tw/web/login_line?next=/web/index' ,
+        'redirect_uri': 'https://care168.com.tw/web/login_line?next=/' ,
     }
     data = parse.urlencode(FormData)
     resp = requests.post(url, headers=headers, data=data)
@@ -499,7 +499,7 @@ def register_phone(request):
     elif request.method == 'POST' and 'line_login' in request.POST:
         auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
         # call_back = 'http://202.182.105.11/' + redirect_to
-        call_back = 'https://care168.com.tw/web/login_line?next=/web/index'
+        call_back = 'https://care168.com.tw/web/login_line?next=/'
 
         print(call_back)
         data = {
@@ -2064,7 +2064,7 @@ def my_edit_profile(request):
     if request.method == 'POST' and 'line_bind' in request.POST:
         auth_url = 'https://access.line.me/oauth2/v2.1/authorize?'
         # call_back = 'http://202.182.105.11/' + redirect_to
-        call_back = 'http://127.0.0.1:8000/web/login_line?next=/web/index'
+        call_back = 'http://127.0.0.1:8000/web/login_line?next=/'
 
         print(call_back)
         data = {
