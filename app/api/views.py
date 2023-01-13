@@ -334,9 +334,13 @@ class SearchServantViewSet(viewsets.GenericViewSet,
     serializer_class = serializers.ServantSerializer
 
     def get_queryset(self):
+
         care_type= self.request.query_params.get('care_type')
         city = self.request.query_params.get('city')
         is_continuous_time = self.request.query_params.get('is_continuous_time')
+
+        is_random = self.request.query_params.get('is_random')
+
         #2022-07-10T00:00:00Z
         start_datetime = self.request.query_params.get('start_datetime')
         end_datetime = self.request.query_params.get('end_datetime')
@@ -431,18 +435,19 @@ class SearchServantViewSet(viewsets.GenericViewSet,
                 queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
                 queryset[i].rating_nums = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
         
+        
         # from django.db.models import Case, When
 
         # ids = list(queryset.values_list('id', flat=True))
 
         # print(random.shuffle(ids))
 
-        # print(ids)
-
-        results = list(queryset)
-        random.shuffle(results)
-
-        return results
+        if is_random == 'true':
+            results = list(queryset)
+            random.shuffle(results)
+            return results
+        else:
+            return queryset
 
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
@@ -469,6 +474,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         user.about_me = User.objects.get(phone=user).about_me
         user.reviews = Review.objects.filter(servant=user).filter(~Q(servant_rating=0))
         serializer = self.get_serializer(user, context={"request":request})
+        
         return Response(serializer.data)
 
 class RecommendServantViewSet(viewsets.GenericViewSet,
