@@ -164,6 +164,11 @@
               </div>
               
               <div class="case-info-font">
+                
+                {% comment %} <label class="form-label" for="timepicker2">Select Time Range</label>
+                <div class="mb-3"><label class="form-label" for="datepickerVal"> Date</label><input class="form-control datetimepicker" id="datepickerVal" type="text" placeholder="d/m/y" required="required" data-options='{"disableMobile":true,"allowInput":true}' />
+                  <div class="invalid-feedback">This field is required</div>
+                </div> {% endcomment %}
 
                 <span class="news-subtitle">照護地點</span><br>
                 <div class="mt-1 mb-3">
@@ -180,7 +185,7 @@
                 </div>
                 <span class="news-subtitle mt-2">日期</span><br>
                 <div class="mt-2 mb-3">
-                  <input class="modal-timePicker-button datetimepicker " style="width: 200px;" id="start_end_date" name="start_end_date" type="text" value="{{defaultStartEndDate}}" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
+                  <input class="modal-timePicker-button datetimepicker form-control" style="width: 200px;" id="start_end_date" name="start_end_date" type="text" value="{{defaultStartEndDate}}" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
                 </div>
 
                 <span class="news-subtitle mt-2">時間類型</span><br>
