@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/', include('user.urls')),
     path('api/', include('api.urls')),
-    path('web/', include('web.urls')),
+    path('', include('web.urls')),
     path('newebpayApi/', include('newebpayApi.urls')),
     path('ezpay_invoice/', include('ezpay_invoice.urls')),
     path('backboard/', include('backboard.urls')),
