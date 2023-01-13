@@ -431,7 +431,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
                 queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
                 queryset[i].rating_nums = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
         
-        return queryset.distinct().order_by("?")
+        return queryset
 
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
