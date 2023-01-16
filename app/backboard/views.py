@@ -330,14 +330,21 @@ def refunds(request):
         refund_money = request.POST.get('refund_money')
         if refund_money != '' and refund_money != None:
             from newebpayApi.tasks import backboard_refound, approprivate_money_to_store, debit_money_to_platform
-            result = backboard_refound(order.id, refund_money)
-            if result == "SUCCESS":
-                order.refund_money = int(refund_money)
-                order.refund_apply_date = datetime.datetime.now()
-                order.save()
+            result_approprivte = approprivate_money_to_store(order.id)
+            if result_approprivte == 'SUCCESS':
 
-                result_approprivte = approprivate_money_to_store(order.id)
-                if result_approprivte == 'SUCCESS':
+                result = backboard_refound(order.id, refund_money)
+                if result == "SUCCESS":
+                    order.refund_money = int(refund_money)
+                    order.refund_apply_date = datetime.datetime.now()
+                    
+                    order.total_money = order.total_money - order.refund_money
+
+                    order.newebpay_money = round(order.total_money * (order.newebpay_percent/100))
+                    order.platform_money = round(order.total_money * (order.platform_percent/100))
+                    order.servant_money = order.total_money - order.newebpay_money - order.platform_money
+                    order.save()
+
                     debit_money_to_platform(order.id, order.platform_money)
 
                     case.state = 'Complete'
