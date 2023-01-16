@@ -2689,9 +2689,9 @@ def recommend_carer(request):
     care_type = ''
     if request.method == 'POST':
             
-        # if request.POST.get('city') != None:
-        #     city_id = request.POST.get("city")
-        #     servants = servants.filter(user_locations__city=City.objects.get(id=city_id))
+        if request.POST.get('city') != None:
+            city_id = request.POST.get("city")
+            servants = servants.filter(user_locations__city=City.objects.get(id=city_id))
 
         care_type = request.POST.get('care_type')
         if care_type !='':
@@ -2713,20 +2713,20 @@ def recommend_carer(request):
             elif order_param == 'low_price':
                 if care_type != None:
                     if care_type == 'home':
-                        servants = servants.order_by('-home_one_day_wage')
-                    elif care_type == 'hospital':
-                        servants =  servants.order_by('-hospital_one_day_wage')
-                else:
-                    servants = servants.order_by('-home_one_day_wage')
-
-            elif order_param == 'high_price':
-                if care_type != None:
-                    if care_type == 'home':
                         servants = servants.order_by('home_one_day_wage')
                     elif care_type == 'hospital':
                         servants =  servants.order_by('hospital_one_day_wage')
                 else:
                     servants = servants.order_by('home_one_day_wage')
+
+            elif order_param == 'high_price':
+                if care_type != None:
+                    if care_type == 'home':
+                        servants = servants.order_by('-home_one_day_wage')
+                    elif care_type == 'hospital':
+                        servants =  servants.order_by('-hospital_one_day_wage')
+                else:
+                    servants = servants.order_by('-home_one_day_wage')
 
 
     if city_id == '':
