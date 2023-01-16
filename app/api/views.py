@@ -1360,9 +1360,9 @@ class ApplyCase(APIView):
             if servant == case.user:
                 return Response({'message': "不能申請自己發的案！"})
 
-            if UserServiceLocation.objects.filter(user=order.servant,city=order.case.city).count()!= 0:
-                transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
-                order.transfer_fee = transfer_fee
+            # 底下的 order.transfer_fee 會用到這邊的 transfer_fee
+            if UserServiceLocation.objects.filter(user=servant,city=case.city).count()!= 0:
+                transfer_fee = UserServiceLocation.objects.get(user=servant,city=case.city).transfer_fee
             else:
                 return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
 
@@ -1376,6 +1376,8 @@ class ApplyCase(APIView):
             order.end_datetime = case.end_datetime
             order.start_time = order.case.start_time
             order.end_time = order.case.end_time
+
+            order.transfer_fee = transfer_fee
 
             if order.case.care_type == 'home':
                 order.that_time_hour_wage = servant.home_hour_wage
