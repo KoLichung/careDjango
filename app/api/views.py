@@ -1360,6 +1360,12 @@ class ApplyCase(APIView):
             if servant == case.user:
                 return Response({'message': "不能申請自己發的案！"})
 
+            if UserServiceLocation.objects.filter(user=order.servant,city=order.case.city).count()!= 0:
+                transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
+                order.transfer_fee = transfer_fee
+            else:
+                return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
+
             order = Order()
             order.created_at = datetime.datetime.now()
             order.case = case
@@ -1381,12 +1387,6 @@ class ApplyCase(APIView):
                 order.that_time_one_day_wage = servant.hospital_one_day_wage
 
             order.save()
-            
-            if UserServiceLocation.objects.filter(user=order.servant,city=order.case.city).count()!= 0:
-                transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
-                order.transfer_fee = transfer_fee
-            else:
-                return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
             
             # 計算連續時間 或 非連續時間費用
             if order.case.is_continuous_time == False:
@@ -1489,7 +1489,7 @@ class ApplyCase(APIView):
             order.save()
 
             # 產生 chatroom message
-            receiveBooking(servant,order)
+            # receiveBooking(servant,order)
             chatroom_ids1 = list(ChatroomUserShip.objects.filter(user=case.user).values_list('chatroom', flat=True))
             chatroom_ids2 = list(ChatroomUserShip.objects.filter(user=servant).values_list('chatroom', flat=True))
             chatroom_set = set(chatroom_ids1).intersection(set(chatroom_ids2))
