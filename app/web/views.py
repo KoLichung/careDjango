@@ -1369,8 +1369,8 @@ def booking_confirm(request):
     return render(request, 'web/booking/confirm.html',{'city_id':city_id, 'servant_id':servant_id,'body_condition_list':body_condition_list,'service_list':service_list,'increase_service_list':increase_service_list, 'disease_list':disease_list,'tempcase':tempcase, 'user':user,'start_end_date':start_end_date, 'increase_service_ids':increase_service_ids, 'weekday_str':weekday_str, 'start_time':start_time,'end_time':end_time, 'is_continuous_time':is_continuous_time, 'start_date_str':start_date_str,'end_date_str':end_date_str,'care_type':care_type,'servant':servant})
 
 def news(request):
-    blogposts = BlogPost.objects.filter(state='publish')
-    categories = BlogCategory.objects.all().order_by('-id')
+    blogposts = BlogPost.objects.filter(state='publish').order_by('-id')
+    categories = BlogCategory.objects.all()
 
     if request.GET.get('category_id'):
         category_id = request.GET.get('category_id')
@@ -2689,24 +2689,55 @@ def recommend_carer(request):
     care_type = ''
     if request.method == 'POST':
             
-        if request.POST.get('city') != None:
-            city_id = request.POST.get("city")
+        # if request.POST.get('city') != None:
+        #     city_id = request.POST.get("city")
+        #     servants = servants.filter(user_locations__city=City.objects.get(id=city_id))
+
         care_type = request.POST.get('care_type')
-
-        
-
-        servants = servants.filter(user_locations__city=City.objects.get(id=city_id))
         if care_type !='':
             if care_type == 'home':
                 servants = servants.filter(is_home=True)
             elif care_type == 'hospital':
                 servants = servants.filter(is_hospital=True)
+
+        if request.POST.get('order') != None:
+            order_param = request.POST.get('order')
+            if order_param == 'high_rating':
+                servants = list(servants)
+                servants.sort(key=lambda x: -x.servant_avg_rating)
+            
+            elif order_param == 'high_rating_nums':
+                servants = list(servants)
+                servants.sort(key=lambda x: -x.servant_rate_nums)
+
+            elif order_param == 'low_price':
+                if care_type != None:
+                    if care_type == 'home':
+                        servants = servants.order_by('-home_one_day_wage')
+                    elif care_type == 'hospital':
+                        servants =  servants.order_by('-hospital_one_day_wage')
+                else:
+                    servants = servants.order_by('-home_one_day_wage')
+
+            elif order_param == 'high_price':
+                if care_type != None:
+                    if care_type == 'home':
+                        servants = servants.order_by('home_one_day_wage')
+                    elif care_type == 'hospital':
+                        servants =  servants.order_by('hospital_one_day_wage')
+                else:
+                    servants = servants.order_by('home_one_day_wage')
+
+
     if city_id == '':
         city = ''
     else:
         city = City.objects.get(id=city_id)
     
     return render(request, 'web/recommend_carer.html',{'servants':servants,'care_type':care_type, 'cityName':city,'citys':citys})
+
+def sortHighRating(e):
+    return e.home_one_day_wage
 
 def redirect_params(url, params=None):
     response = redirect(url)

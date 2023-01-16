@@ -49,11 +49,17 @@
                   <div class="col-sm-3 my-3">
                     <h5 class="mb-2">排序</h5>
                     <div class="btn-group mb-2">
-                      <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">自然推薦</button>
+                      {% comment %} <button class="dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">自然推薦</button>
                       <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">台北市</span></a>
-                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">桃園市</span></a>
-                      </div>
+                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">高分排序</span></a>
+                        <a class="dropdown-item" href="#!"><span class="dropdown-item-font">評價數排序</span></a>
+                      </div> {% endcomment %}
+                      <select class="dropdown-button" id="order_select" name="order" select>
+                        <option style="text-align: center" name="order_option" value="high_rating" >高分排序</option>
+                        <option style="text-align: center" name="order_option" value="high_rating_nums" >評價數排序</option>
+                        <option style="text-align: center" name="order_option" value="low_price" >低價到高價</option>
+                        <option style="text-align: center" name="order_option" value="high_price" >高價到低價</option>
+                      </select>
                     </div>
                   </div>
           
