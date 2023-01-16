@@ -1364,7 +1364,12 @@ class ApplyCase(APIView):
             if UserServiceLocation.objects.filter(user=servant,city=case.city).count()!= 0:
                 transfer_fee = UserServiceLocation.objects.get(user=servant,city=case.city).transfer_fee
             else:
-                return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型及地區。"})
+                return Response({'message': "您不符合接案資格，請至會員中心更新您的服務地區。"})
+
+            if case.care_type == 'home' and servant.is_home == False:
+                return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型。"})
+            elif case.care_type == 'hospital' and servant.is_hospital == False:
+                return Response({'message': "您不符合接案資格，請至會員中心更新您的服務類型。"})
 
             order = Order()
             order.created_at = datetime.datetime.now()
