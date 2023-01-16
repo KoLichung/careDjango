@@ -2730,7 +2730,7 @@ def terms_of_service(request):
     return render(request, 'web/terms_of_service.html')
 
 def faq(request):
-    assistanceposts = AssistancePost.objects.all()
+    assistanceposts = AssistancePost.objects.all().order_by('id')
     return render(request, 'web/faq.html',{'assistanceposts':assistanceposts})
 
 def time_format_change(time_int):
