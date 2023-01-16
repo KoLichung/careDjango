@@ -1370,7 +1370,7 @@ def booking_confirm(request):
 
 def news(request):
     blogposts = BlogPost.objects.filter(state='publish')
-    categories = BlogCategory.objects.all()
+    categories = BlogCategory.objects.all().order_by('-id')
 
     if request.GET.get('category_id'):
         category_id = request.GET.get('category_id')
