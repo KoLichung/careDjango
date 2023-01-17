@@ -606,10 +606,13 @@ class Order(models.Model):
     UNPAID = 'unPaid'
     PAID = 'paid'
     CANCELED = 'canceled'
+    CANCEL_OR_EARLY_END = 'cancelOrEarlyEnd'
+
     STATE_CHOICES = [
         (UNPAID, '未付款'),
         (PAID, '已付款'),
-        (CANCELED, '已取消')
+        (CANCELED, '已取消'),
+        (CANCEL_OR_EARLY_END, '取消或提前結束')
     ]
     state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
     

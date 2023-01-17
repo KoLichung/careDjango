@@ -598,7 +598,7 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
         if case.servant == servant:
             reviews = Review.objects.filter(case=case)
             for review in reviews:
-                if review.order.state == 'paid':
+                if review.order.state == 'paid' or order.state == 'cancelOrEarlyEnd':
                     case.review = review
                     case.servant_rating = review.servant_rating
 
@@ -618,7 +618,7 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
             # 以下做 order 相關欄位
             orders = Order.objects.filter(case=case)
             for order in orders:
-                if order.state == 'paid':
+                if order.state == 'paid' or order.state == 'cancelOrEarlyEnd':
                     case.order = order
                     case.order.increase_services = OrderIncreaseService.objects.filter(order=order)
 
@@ -1704,6 +1704,7 @@ class EarlyTermination(APIView):
             order.case.state = "endEarly"
             order.case.save()
 
+            order.state = 'cancelOrEarlyEnd'
             order.is_early_termination = True
             order.save()
 
@@ -1732,7 +1733,7 @@ class EarlyTermination(APIView):
 
         elif aware_datetime < order.start_datetime:
             orderCancel(order.servant,order)
-            order.state = 'canceled'
+            order.state = 'cancelOrEarlyEnd'
             # order.save()
             
             timediff = order.start_datetime - aware_datetime
