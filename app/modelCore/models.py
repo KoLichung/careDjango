@@ -614,7 +614,7 @@ class Order(models.Model):
         (CANCELED, '已取消'),
         (CANCEL_OR_EARLY_END, '取消或提前結束')
     ]
-    state =  models.CharField(max_length=10, choices=STATE_CHOICES,default=UNPAID)
+    state =  models.CharField(max_length=20, choices=STATE_CHOICES,default=UNPAID)
     
     transfer_fee = models.IntegerField(default=0, blank=True, null=True)
     number_of_transfer = models.IntegerField(default=0, blank=True, null=True)
