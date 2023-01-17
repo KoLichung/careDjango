@@ -672,7 +672,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             if Review.objects.filter(case=case).count()!=0:
                 reviews = Review.objects.filter(case=case)
                 for review in reviews:
-                    if review.order.state == 'paid':
+                    if review.order.state == 'paid' or review.order.state == 'cancelOrEarlyEnd':
                         case.servant_rating = review.servant_rating
                         case.review = review
 
@@ -691,7 +691,7 @@ class NeedCaseViewSet(viewsets.GenericViewSet,
             if Order.objects.filter(case=case).count()!=0:
                 orders = Order.objects.filter(case=case)
                 for order in orders:
-                    if order.state == 'paid':
+                    if order.state == 'paid' or order.state == 'cancelOrEarlyEnd':
                         case.order = order
                         case.order.increase_services = OrderIncreaseService.objects.filter(order=order)
 
@@ -727,7 +727,7 @@ class ReviewViewSet(viewsets.GenericViewSet,
         
         ids = []
         for i in range(len(queryset)):
-            if queryset[i].order.state == 'paid':
+            if queryset[i].order.state == 'paid' or queryset[i].order.state == 'cancelOrEarlyEnd':
                 ids.append(queryset[i].id)
 
         queryset = queryset.filter(id__in=ids)

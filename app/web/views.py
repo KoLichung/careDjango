@@ -1940,7 +1940,7 @@ def my_cases(request):
     for case in cases:
         reviews = Review.objects.filter(case=case, servant=servant)
         for review in reviews:
-            if review.order.state == 'paid':
+            if review.order.state == 'paid' or review.order.state == 'cancelOrEarlyEnd':
                 case.servant_comment = review.servant_comment
             elif review.order.state == 'canceled':
                 case.servant_comment = "案件已取消"
@@ -1953,7 +1953,7 @@ def my_case_detail(request):
 
     orders = Order.objects.filter(case=case)
     for item in orders:
-        if item.state == 'paid':
+        if item.state == 'paid' or item.state == 'cancelOrEarlyEnd':
             order = item
     
     work_hours = round(order.work_hours, 1)
@@ -2000,7 +2000,7 @@ def my_simplfy_certificate(request):
     
     orders = Order.objects.filter(case=case)
     for item in orders:
-        if item.state == 'paid':
+        if item.state == 'paid' or item.state == 'cancelOrEarlyEnd':
             order = item
             total_fee = item.total_money
 
