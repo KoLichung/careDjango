@@ -1451,9 +1451,10 @@ def requirement_list(request):
     if start_date == '' and end_date != '':
         cases = cases.filter(end_datetime__lte=end_date)
 
-    now = datetime.datetime.now()
-    print(now)
-    cases = cases.filter(servant=None).filter(start_datetime__gte=now).order_by('start_datetime')
+    now = datetime.datetime.now() + timedelta(hours=8)
+    now_day = datetime.datetime(now.year , now.month , now.day , 0 , 0)
+
+    cases = cases.filter(servant=None).filter(start_datetime__gte=now_day).order_by('-id')
 
     return render(request, 'web/requirement_list.html',{'start_date':start_date,'end_date':end_date, 'care_type':care_type, 'cases':cases,'cityName':city,'citys':citys})
 
