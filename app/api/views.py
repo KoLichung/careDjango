@@ -83,7 +83,7 @@ class OrderViewSet(viewsets.GenericViewSet,
         order.related_case.services = Service.objects.filter(id__in=service_ids)
 
         # order.servant = order.case.servant
-        # order.servant.rating_nums = Review.objects.filter(servant=order.servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
+        order.servant.rating_nums = Review.objects.filter(servant=order.servant,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
 
         order.increase_services = order.order_increase_services
 
