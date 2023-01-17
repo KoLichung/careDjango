@@ -170,9 +170,9 @@
         <div class="border border-600" style="border-radius: 6px; height:31rem;">
           <a class="custom-card-link" href="{% url 'search_carer_detail' %}?servant={{servant.id}}&care_type={{care_type}}&is_continuous_time={{is_continuous_time}}&weekdays={{weekdays}}&StartDate={{defaultStartDate}}&EndDate={{defaultEndDate}}&start_time={{dict.start_time}}&end_time={{dict.end_time}}&city={{dict.city.id}}">
             {% if servant.background_image.url != None %}
-              <img class="card-img-top" style="height: 220px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
+              <img class="card-img-top" style="height: 250px;  object-fit: cover;" src="{{servant.background_image.url}}" alt="照顧者背景圖">
             {% else %}
-              <img class="card-img-top" style="height: 220px;  object-fit: cover;" src="{% static 'web/assets/img/new/head_background.jpg' %}" alt="照顧者背景圖"> 
+              <img class="card-img-top" style="height: 250px;  object-fit: cover;" src="{% static 'web/assets/img/new/head_background.jpg' %}" alt="照顧者背景圖"> 
             {% endif %}
             <div class="card-body">
 
