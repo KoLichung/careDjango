@@ -598,7 +598,7 @@ class ServantCaseViewSet(viewsets.GenericViewSet,
         if case.servant == servant:
             reviews = Review.objects.filter(case=case)
             for review in reviews:
-                if review.order.state == 'paid' or order.state == 'cancelOrEarlyEnd':
+                if review.order.state == 'paid' or review.order.state == 'cancelOrEarlyEnd':
                     case.review = review
                     case.servant_rating = review.servant_rating
 
