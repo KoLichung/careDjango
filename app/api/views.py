@@ -471,6 +471,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         user.languages = UserLanguage.objects.filter(user=user)
 
         user.avg_rate = Review.objects.filter(servant=user,servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        user.rating_nums = Review.objects.filter(servant=user,servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
         user.about_me = User.objects.get(phone=user).about_me
         user.reviews = Review.objects.filter(servant=user).filter(~Q(servant_rating=0))
         serializer = self.get_serializer(user, context={"request":request})
