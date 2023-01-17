@@ -2153,7 +2153,8 @@ class EditCase(APIView):
                 
                 total_increase_money = 0
                 if service != None and service != '':
-                    for service_id in service_idList:
+                    service_ids = service.split(',')
+                    for service_id in service_ids:
                         if int(service_id) <= 4:
                             orderIncreaseService = OrderIncreaseService()
                             orderIncreaseService.order = order
