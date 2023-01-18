@@ -1585,7 +1585,7 @@ class EarlyTermination(APIView):
         aware_datetime = timezone.localize(end_datetime) 
         if aware_datetime >= order.start_datetime:
             order.end_datetime = aware_datetime
-            order.end_time = round(EndTime.hour+EndTime.minute/60,1)
+            theEndTime = round(EndTime.hour+EndTime.minute/60,1)
             # order.save()
 
             transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
@@ -1595,9 +1595,14 @@ class EarlyTermination(APIView):
                 
                 days = days_count(weekday_list, order.start_datetime.date(), order.end_datetime.date())
                 number_of_transfer = days
-                total_hours = days * (order.end_time - order.start_time)
-                one_day_work_hours = order.end_time - order.start_time
                 
+                if theEndTime>order.end_time:
+                    total_hours = days * (order.end_time - order.start_time)
+                    one_day_work_hours = order.end_time - order.start_time
+                else:
+                    one_day_work_hours = order.end_time - order.start_time
+                    total_hours = (days-1)*one_day_work_hours + (theEndTime - - order.start_time)
+
                 # 非連續時間提前結束+50％當天工作時數
                 order.work_hours = total_hours + (one_day_work_hours / 2) 
                 order.number_of_transfer = number_of_transfer
