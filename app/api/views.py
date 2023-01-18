@@ -1601,7 +1601,7 @@ class EarlyTermination(APIView):
                     one_day_work_hours = order.end_time - order.start_time
                 else:
                     one_day_work_hours = order.end_time - order.start_time
-                    total_hours = (days-1)*one_day_work_hours + (theEndTime - - order.start_time)
+                    total_hours = (days-1) * one_day_work_hours + (theEndTime - order.start_time)
 
                 # 非連續時間提前結束+50％當天工作時數
                 order.work_hours = total_hours + (one_day_work_hours / 2) 
