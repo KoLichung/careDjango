@@ -1,12 +1,12 @@
 {% extends 'web/base.html' %} {% block content %}
 {% load static %}
-<!-- main -->
+{% comment %} main {% endcomment %}
 <main class="main bg-white" id="top" >
 
   <div class="container pt-5">
     <div class="row">
           
-          <div class="col-12 col-md-7 col-lg-8 mb-5 ">
+          <div class="col-12 col-md-7 col-lg-8 mb-5">
 
             <div>
               {% if servant.background_image.url != None %}
@@ -112,7 +112,6 @@
                     <i class="fa-regular fa-star"></i>  
                   {% endfor %}
                 </div>
-                
               </div>
               <div class="case-info-font">{{review.servant_comment}}</div>
             </div>
@@ -142,7 +141,6 @@
                     {% endfor %}
                     <span class="case-info-font">&ensp;{{servant.servant_rate_nums}}評價</span>
                   </div>
-                  
                 </div>
               </div>             
               <form method="post" enctype="multipart/form-data">{% csrf_token %}
@@ -174,18 +172,16 @@
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
                     <select class="dropdown-button" id="city_select" name="city"  select>
-                      
                       {% for city in citys %}
                         <option style="text-align: center" name="city_option" value="{{city.id}}" {% if city == cityName %} selected="selected" {% endif %}>{{city}}</option>
-                        <!-- <option value="醫院看護">醫院看護</option> -->
                       {% endfor %}
                     </select>
+                  </div>
                 </div>
-      
-                </div>
+
                 <span class="news-subtitle mt-2">日期</span><br>
                 <div class="mt-2 mb-3">
-                  <input class="modal-timePicker-button datetimepicker form-control" style="width: 200px;" id="start_end_date" name="start_end_date" type="text" value="{{defaultStartEndDate}}" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true}' />
+                  <input class="modal-timePicker-button datetimepicker" style="width: 200px;" id="start_end_date" name="start_end_date" type="text" value="{{defaultStartEndDate}}" placeholder="年-月-日 到 年-月-日" data-options='{"mode":"range","dateFormat":"y/m/d","disableMobile":true, "static":true}' />
                 </div>
 
                 <span class="news-subtitle mt-2">時間類型</span><br>
@@ -260,10 +256,10 @@
                 <span class="news-subtitle">開始時間 & 結束時間</span><br>
                 <div class="mt-1 mb-3">
                   <div class="mt-1 btn-group">
-                    <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{defaultStartTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
+                    <input class="modal-timePicker-button datetimepicker " id="timepicker_startTime" name="timepicker_startTime" type="text" value="{{defaultStartTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true, "static":true}' />
                   </div>
                   <div class="mt-1 btn-group">
-                    <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true}' />
+                    <input class="modal-timePicker-button datetimepicker " id="timepicker_endTime" name="timepicker_endTime" type="text" value="{{defaultEndTime}}" placeholder="時:分" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true,"time_24hr":true, "static":true}' />
                   </div>
 
                 </div>
