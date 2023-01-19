@@ -16,7 +16,17 @@
         <div>發案者：{% if case.user == null %}[此用戶已刪除]{% else %}{{case.user.name}}<br> 發案者電話：{{case.user.phone}}{% endif %}</div>
         <div>案件類型：{% if case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</div>
         <div>案件地點：{{case.city}}</div>
-        <div>案件時間：{% if case.is_continuous_time == True %}連續時間{% else %}指定時段{% endif %} {{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ({{case.startTimeformat}}) ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}})</div>
+        <div>案件時間：
+          {% if case.is_continuous_time == True %}
+          連續時間
+          {% else %}
+          指定時段
+          {% endif %} 
+          {{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ({{case.startTimeformat}}) ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}} ({{case.endTimeformat}})
+          {% if case.is_continuous_time == False %}
+          星期 {{case.weekday}}
+          {% endif %}
+        </div>
         <div>案主收到的評價：{{review.case_offender_commentcase_offender_comment}}</div>
         <div class="mt-4 mb-2"><b>被照顧者資訊</b></div>
         <div>性別：{% if case.gender == 'M' %}男{% else %}女{% endif %}, 體重：{{case.weight}}, 年齡：{{case.age}}</div>
