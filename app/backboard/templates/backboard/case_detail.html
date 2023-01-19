@@ -42,7 +42,7 @@
         <div class="d-flex mt-3 justify-content-between">
           <div>
             <a href="#" class="custom-purple-border-btn btn-sm" role="button">{% if case.state == 'unTaken' %}未承接{% elif case.state == 'unComplete' %}未完成{% elif case.state == 'Complete' %}已完成{% elif case.state == 'Canceled' %}取消{% elif case.state == 'endEarly' %}提早結束{% endif %}</a>
-            <span class="mx-3">建立：{{case.created_at.year}}/{{case.created_at.month}}/{{case.created_at.day}} 服務者：{{case.servant.name}} </span>
+            <span class="mx-3">訂單編號：{{order.id}} 建立：{{order.created_at.year}}/{{order.created_at.month}}/{{order.created_at.day}} 服務者：{{order.servant.name}} </span>
           </div>
           <div>
             {% if order.refund_money != 0 %}
@@ -57,7 +57,7 @@
 
         <div class="case-info-font mt-4 mb-2"><b>基本費用</b></div>
         <div class="row justify-content-between">
-          <div class="col">${% if case.care_type == 'home' %}{{case.servant.home_hour_wage}}{% else %}{{case.servant.hospital_hour_wage}}{% endif %} x {{order.work_hours}} 小時</div>
+          <div class="col">${% if case.care_type == 'home' %}{{order.servant.home_hour_wage}}{% else %}{{order.servant.hospital_hour_wage}}{% endif %} x {{order.work_hours}} 小時</div>
           <div class="col text-end">${{order.base_money}}</div>
         </div>
         
