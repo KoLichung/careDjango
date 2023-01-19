@@ -51,7 +51,16 @@
 
         <div class="d-flex mt-3 justify-content-between">
           <div>
-            <a href="#" class="custom-purple-border-btn btn-sm" role="button">{% if case.state == 'unTaken' %}未承接{% elif case.state == 'unComplete' %}未完成{% elif case.state == 'Complete' %}已完成{% elif case.state == 'Canceled' %}取消{% elif case.state == 'endEarly' %}提早結束{% endif %}</a>
+            <a href="#" class="custom-purple-border-btn btn-sm" role="button">
+              {% if case.state == 'unPaid' %}
+              未付款
+              {% elif case.state == 'paid' %}
+              已完成
+              {% elif case.state == 'canceled' %}
+              已取消
+              {% elif case.state == 'cancelOrEarlyEnd' %}
+              取消或提前結束
+              {% endif %}</a>
             <span class="mx-3">訂單編號：{{order.id}}  建立：{{order.created_at.year}}/{{order.created_at.month}}/{{order.created_at.day}} 服務者：{{order.servant.name}}({{order.servant.id}}) </span>
           </div>
           <div>
