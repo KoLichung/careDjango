@@ -86,7 +86,9 @@
 
         <div class="case-info-font mt-4 mb-2"><b>基本費用</b></div>
         <div class="row justify-content-between">
-          <div class="col">${% if case.care_type == 'home' %}{{order.servant.home_hour_wage}}{% else %}{{order.servant.hospital_hour_wage}}{% endif %} x {{order.work_hours}} 小時</div>
+          <div class="col">
+            {{order.wage_hour}} x {{order.work_hours}} 小時
+          </div>
           <div class="col text-end">${{order.base_money}}</div>
         </div>
         
