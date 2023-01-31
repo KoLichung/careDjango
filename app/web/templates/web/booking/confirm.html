@@ -107,7 +107,7 @@
             </div>
             <div class="col-12 col-sm-4 mt-2">
               
-                <button class="full-green-button" type="submit" name="pay">送出訂單 <span class="far fa-credit-card"></span> </button>
+                <button class="full-green-button" type="submit" id='pay_button' name="pay">送出訂單 <span class="far fa-credit-card"></span> </button>
               
             </div>
           </div>
@@ -142,6 +142,7 @@
         const post_html = document.getElementById('post_html');
         const increase_service_html = document.getElementById('increase_service_html');
         const sum_html = document.getElementById('sum_html');
+        const pay_button_html = document.getElementById('pay_button');
         is_continuous_time = "{{is_continuous_time}}";
         const city_id = "{{city_id}}";
 
@@ -206,6 +207,10 @@
                       </div>
                     </div>
                     `
+                    if( data.base_money <= 0){
+                      sum_html.innerHTML = sum_html.innerHTML + '<br> 服務金額為 0, 無法送出訂單！請檢查時間是否正確～'
+                      pay_button_html.style.display = 'none';
+                    }
                 }else if (data.result == '1'){
                   post_html.innerHTML = `<span>所選時段不符合該服務者的服務時間</span>`
                 }else if (data.result == '2'){
