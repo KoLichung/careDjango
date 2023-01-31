@@ -266,7 +266,7 @@ class BlogPostListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BlogPost
-        fields = ('id', 'title', 'cover_image', 'publish_date', 'categories')
+        fields = ('id', 'title', 'cover_image', 'publish_date', 'categories', 'create_date')
         read_only_fields = ('id',)
 
 class BlogPostSerializer(serializers.ModelSerializer):

@@ -1544,9 +1544,9 @@ class BlogPostViewSet(viewsets.GenericViewSet,
         if category_id != None:
             theCategory = BlogCategory.objects.get(id=category_id)
             post_ids = list(BlogPostCategoryShip.objects.filter(category=theCategory).values_list('post', flat=True))
-            queryset = self.queryset.filter(id__in=post_ids,state="publish").order_by('-publish_date')
+            queryset = self.queryset.filter(id__in=post_ids,state="publish").order_by('-create_date')
         else:
-            queryset = self.queryset.filter(state="publish").order_by('-publish_date')
+            queryset = self.queryset.filter(state="publish").order_by('-create_date')
 
         for i in range(len(queryset)):
             ids = list(BlogPostCategoryShip.objects.filter(post=queryset[i]).values_list('category', flat=True))
