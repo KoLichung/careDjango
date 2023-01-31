@@ -126,8 +126,8 @@ def member_detail(request):
 
     user_id = request.GET.get('user')
     user = User.objects.get(id=user_id)
-    offend_orders = Order.objects.filter(user=user)
-    take_orders = Order.objects.filter(servant=user)
+    offend_orders = Order.objects.filter(user=user).order_by('-id')
+    take_orders = Order.objects.filter(servant=user).order_by('-id')
 
     locations = UserServiceLocation.objects.filter(user=user)
     services = UserServiceShip.objects.filter(user=user)
