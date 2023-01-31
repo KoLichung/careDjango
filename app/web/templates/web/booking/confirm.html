@@ -164,6 +164,7 @@
             url: "{% url 'ajax_cal_rate' %}",
             success: function(response)
               {
+                console.log('get response')
                 const data = response.data;
                 const increase_service_data = response.increase_service_data;
                 increase_service_html.innerHTML = ``
