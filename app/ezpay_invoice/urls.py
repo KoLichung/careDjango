@@ -1,9 +1,9 @@
 from django.urls import path
-from ezpay_invoice import tasks
+from ezpay_invoice import views
 
 app_name = 'ezpay_invoice'
 
 urlpatterns = [
-    path('invoice', tasks.Invoice.as_view()),
+    path('invoice', views.Invoice.as_view()),
 
 ]
