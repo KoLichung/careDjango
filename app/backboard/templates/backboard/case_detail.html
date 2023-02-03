@@ -83,12 +83,14 @@
               取消或提前結束
               {% endif %}
             </button>
-
-            {% if order.state == 'paid' or order.state == 'cancelOrEarlyEnd' and order.is_sent_invoice == False %}
-                <input type="hidden" id="orderId" name="orderId" value={{order.id}}>
-                <button type='submit' class="custom-red-border-btn btn-sm mx-1" name="send_invoice">開出發票(不可恢復)</button>              
-            {% elif order.state == 'paid' or order.state == 'cancelOrEarlyEnd' and order.is_sent_invoice == True %}
-                <button class="custom-purple-border-btn btn-sm mx-1" disabled="disabled">已開出發票！</button>
+            
+            {% if order.state == 'paid' or order.state == 'cancelOrEarlyEnd' %}
+              {% if order.is_sent_invoice == False %}
+                  <input type="hidden" id="orderId" name="orderId" value={{order.id}}>
+                  <button type='submit' class="custom-red-border-btn btn-sm mx-1" name="send_invoice">開出發票(不可恢復)</button>            
+              {% elif order.is_sent_invoice == True %}
+                  <button class="custom-purple-border-btn btn-sm mx-1" disabled="disabled">已開出發票！</button>
+              {% endif %}
             {% endif %}
             </form>
             <br>

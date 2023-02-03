@@ -29,7 +29,7 @@ def send_invoice(order_id):
         'PrintFlag':'Y',
         'TaxType':'1',
         'TaxRate':5,
-        'Amt':order.platform_money,
+        'Amt':order.platform_money-int(order.platform_money*0.05),
         'TaxAmt':int(order.platform_money*0.05),
         'TotalAmt':order.platform_money,
         'ItemName':'Care168平台服務費',

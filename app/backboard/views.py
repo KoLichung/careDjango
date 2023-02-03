@@ -117,6 +117,7 @@ def case_detail(request):
         orderId = request.POST.get('orderId')
         from ezpay_invoice.tasks import send_invoice
         return_message = send_invoice(orderId)
+        print(f'return message {return_message}')
         if return_message == 'SUCCESS':
             order = Order.objects.get(id=orderId)
             order.is_sent_invoice = True
