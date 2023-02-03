@@ -25,7 +25,7 @@ def send_invoice(order_id):
         'MerchantOrderNo':order_id,
         'Status':'1',
         'Category':'B2C',
-        'BuyerName':order.user.name,
+        'BuyerName':order.servant.name,
         'PrintFlag':'Y',
         'TaxType':'1',
         'TaxRate':5,
@@ -38,7 +38,7 @@ def send_invoice(order_id):
         'ItemPrice':order.platform_money,
         'ItemAmt':order.platform_money,
         'ItemTaxType':1,
-        'BuyerEmail':order.user.email
+        'BuyerEmail':order.servant.email
     }
     
     logger.info(data)
