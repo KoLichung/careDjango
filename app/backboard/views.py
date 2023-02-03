@@ -113,10 +113,16 @@ def case_detail(request):
     case_id = request.GET.get('case')
     case = Case.objects.get(id=case_id)
     
+    if request.method == 'POST' and 'send_invoice' in request.POST:
+        orderId = request.POST.get('orderId')
+        from ezpay_invoice.tasks import send_invoice
+        send_invoice(orderId)
+        order = Order.objects.get(id=orderId)
+        order.is_sent_invoice = True
+        order.save()
+        return redirect_params('case_detail',{'case':case_id})
+
     orders = Order.objects.filter(case=case)
-    
-    # review = Review.objects.get(case=case)
-    # order_increase_services = OrderIncreaseService.objects.filter(order=order)
 
     return render(request, 'backboard/case_detail.html',{'case':case,'orders':orders})
 
