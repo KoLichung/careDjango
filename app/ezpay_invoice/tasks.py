@@ -48,4 +48,10 @@ def send_invoice(order_id):
     encrypt_data = module.aes256_cbc_encrypt(query_str, key, iv)
     resp = requests.post(post_url, data ={"MerchantID_":MerchantID_, "PostData_":encrypt_data})
 
-    logger.info(json.loads(resp.text))
+    jsonText = json.loads(resp.text)
+    logger.info(jsonText)
+
+    if jsonText['Status'] == 'SUCCESS':
+        return 'SUCCESS'
+    else:
+        return "FAIL"

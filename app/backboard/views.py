@@ -116,10 +116,11 @@ def case_detail(request):
     if request.method == 'POST' and 'send_invoice' in request.POST:
         orderId = request.POST.get('orderId')
         from ezpay_invoice.tasks import send_invoice
-        send_invoice(orderId)
-        order = Order.objects.get(id=orderId)
-        order.is_sent_invoice = True
-        order.save()
+        return_message = send_invoice(orderId)
+        if return_message == 'SUCCESS':
+            order = Order.objects.get(id=orderId)
+            order.is_sent_invoice = True
+            order.save()
         return redirect_params('case_detail',{'case':case_id})
 
     orders = Order.objects.filter(case=case)
