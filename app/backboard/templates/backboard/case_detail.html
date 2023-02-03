@@ -57,11 +57,20 @@
     {% for order in orders %}
     <div class="card h-lg-100">
       <div class="card-header">
-        <div class="h5 mb-3"><b>訂單明細</b></div>
+        <div class="h5 mb-3">
+          訂單明細
+          {% if order.refund_money != 0 %}
+            (已退款 ${{order.refund_money}})
+          {% else %}
+            {% if order.state == 'paid' %}
+              <a href="{% url 'refunds' %}?case={{case.id}}" class="custom-red-border-btn btn-sm" role="button">按我退款</a>
+            {% endif %}
+          {% endif %}
+        </div>
         <div class="border"></div>
 
         <div class="d-flex mt-3">
-          <div class="col-9">
+          <div>
             <form method="post" enctype="multipart/form-data">{% csrf_token %}
             <button class="custom-purple-border-btn btn-sm" disabled="disabled">
               {% if order.state == 'unPaid' %}
@@ -82,17 +91,8 @@
                 <button class="custom-purple-border-btn btn-sm mx-1" disabled="disabled">已開出發票！</button>
             {% endif %}
             </form>
-            <br><br>
+            <br>
             <span>訂單編號：{{order.id}}  建立：{{order.created_at.year}}/{{order.created_at.month}}/{{order.created_at.day}} 服務者：{{order.servant.name}}({{order.servant.id}}) </span>
-          </div>
-          <div>
-            {% if order.refund_money != 0 %}
-              (已退款 ${{order.refund_money}})
-            {% else %}
-              {% if order.state == 'paid' %}
-                <a href="{% url 'refunds' %}?case={{case.id}}" class="custom-red-border-btn btn-sm" role="button">按我退款</a>
-              {% endif %}
-            {% endif %}
           </div>
         </div>
 

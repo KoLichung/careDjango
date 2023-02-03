@@ -11,8 +11,6 @@ logger = logging.getLogger(__file__)
 def send_invoice(order_id):
 
     order = Order.objects.get(id=order_id)
-    TaxAmt = order.platform_money
-    print(TaxAmt)
     post_url = 'https://cinv.ezpay.com.tw/Api/invoice_issue'
     timeStamp = int( time.time() )
 
@@ -31,15 +29,16 @@ def send_invoice(order_id):
         'PrintFlag':'Y',
         'TaxType':'1',
         'TaxRate':5,
-        'Amt':(order.total_money - int(TaxAmt)),
-        'TaxAmt':int(TaxAmt),
-        'TotalAmt':order.total_money,
+        'Amt':order.platform_money,
+        'TaxAmt':int(order.platform_money*0.05),
+        'TotalAmt':order.platform_money,
         'ItemName':'Care168平台服務費',
         'ItemCount':1,
         'ItemUnit':'項',
-        'ItemPrice':order.total_money,
-        'ItemAmt':order.total_money,
+        'ItemPrice':order.platform_money,
+        'ItemAmt':order.platform_money,
         'ItemTaxType':1,
+        'BuyerEmail':order.user.email
     }
     
     logger.info(data)
