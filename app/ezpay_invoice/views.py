@@ -29,14 +29,21 @@ class Invoice(APIView):
         order_id = self.request.query_params.get('order_id')
         print(order_id)
         order = Order.objects.get(id=order_id)
-        TaxAmt = order.platform_money
-        print(TaxAmt)
-        post_url = 'https://cinv.ezpay.com.tw/Api/invoice_issue'
+        # TaxAmt = order.platform_money
+        # print(TaxAmt)
         timeStamp = int( time.time() )
 
-        MerchantID_ = "35104311"
-        key = "EESNrB33LHu6z705F5PXtBP3G06B4WhZ"
-        iv = "Ca1cfkx7oJiAJWwP"
+        # 測試
+        # post_url = 'https://cinv.ezpay.com.tw/Api/invoice_issue'
+        # MerchantID_ = "35104311"
+        # key = "EESNrB33LHu6z705F5PXtBP3G06B4WhZ"
+        # iv = "Ca1cfkx7oJiAJWwP"
+
+        # 正式
+        post_url = 'https://inv.ezpay.com.tw/Api/invoice_issue'
+        MerchantID_ = "330658039"
+        key = "3AdkuHMWuCFl5GdvwjhpoB1fxfRSILpS"
+        iv = "PUiPYzm30OKfZ4gC"
 
         data = {
             'RespondType':'JSON',
@@ -45,19 +52,20 @@ class Invoice(APIView):
             'MerchantOrderNo':order_id,
             'Status':'1',
             'Category':'B2C',
-            'BuyerName':order.user.name,
+            'BuyerName':order.servant.name,
             'PrintFlag':'Y',
             'TaxType':'1',
             'TaxRate':5,
-            'Amt':(order.total_money - int(TaxAmt)),
-            'TaxAmt':int(TaxAmt),
-            'TotalAmt':order.total_money,
+            'Amt':order.platform_money-int(order.platform_money*0.05),
+            'TaxAmt':int(order.platform_money*0.05),
+            'TotalAmt':order.platform_money,
             'ItemName':'Care168平台服務費',
             'ItemCount':1,
             'ItemUnit':'項',
-            'ItemPrice':order.total_money,
-            'ItemAmt':order.total_money,
+            'ItemPrice':order.platform_money,
+            'ItemAmt':order.platform_money,
             'ItemTaxType':1,
+            'BuyerEmail':order.servant.email
         }
 
         logger.info(data)
@@ -82,7 +90,8 @@ class Invoice(APIView):
         # print(json.loads(json.loads(resp.text)['Result'])['InvoiceTransNo'])
         return Response(json.loads(resp.text))
 
-class Invoice_touch(APIView):
+# not used
+# class Invoice_touch(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 

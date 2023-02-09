@@ -11,12 +11,19 @@ logger = logging.getLogger(__file__)
 def send_invoice(order_id):
 
     order = Order.objects.get(id=order_id)
-    post_url = 'https://cinv.ezpay.com.tw/Api/invoice_issue'
     timeStamp = int( time.time() )
 
-    MerchantID_ = "35104311"
-    key = "EESNrB33LHu6z705F5PXtBP3G06B4WhZ"
-    iv = "Ca1cfkx7oJiAJWwP"
+    # 測試
+    # post_url = 'https://cinv.ezpay.com.tw/Api/invoice_issue'
+    # MerchantID_ = "35104311"
+    # key = "EESNrB33LHu6z705F5PXtBP3G06B4WhZ"
+    # iv = "Ca1cfkx7oJiAJWwP"
+
+    # 正式
+    post_url = 'https://inv.ezpay.com.tw/Api/invoice_issue'
+    MerchantID_ = "330658039"
+    key = "3AdkuHMWuCFl5GdvwjhpoB1fxfRSILpS"
+    iv = "PUiPYzm30OKfZ4gC"
 
     data = {
         'RespondType':'JSON',
