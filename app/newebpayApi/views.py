@@ -513,6 +513,7 @@ class NotifyUrlCallback(APIView):
                 case = order.case
                 case.state = 'unComplete'
                 case.servant = order.servant
+                case.is_taken = True
 
                 order.save()
                 case.save()
