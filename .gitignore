@@ -3,6 +3,8 @@
 */media/uploads/*
 /static/*
 
+README.md
+
 .idea/
 
 # Byte-compiled / optimized / DLL files
