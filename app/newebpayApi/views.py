@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
+from django.conf import settings
 
 from newebpayApi import module
 import requests
@@ -55,13 +56,12 @@ class CreateMerchant(APIView):
         # iv = "CeYa8zoA0mX4qBpP"
         # 正式
         post_url = 'https://core.Newebpay.com/API/AddMerchant'
-        key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
-        iv = "PtMc75C71vZUAhqC"
+
+        PartnerID_ = settings.NEWEBPAY_PARTNER_ID
+        key = settings.NEWEBPAY_KEY
+        iv = settings.NEWEBPAY_IV
 
         timeStamp = int( time.time() )
-
-        PartnerID_ = "CARE168"
-        
 
         # PartnerID_ = "MS336989148"
         # key = 'SKYfwec2P46Kzzgc8CrcblPzeX8r8jTH'
@@ -396,10 +396,9 @@ class Appropriation(APIView):
         # iv = "CeYa8zoA0mX4qBpP"
         #正式
         post_url = 'https://core.newebpay.com/API/ExportInstruct'
-        key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
-        iv = "PtMc75C71vZUAhqC"
-
-        PartnerID_ = "CARE168"
+        PartnerID_ = settings.NEWEBPAY_PARTNER_ID
+        key = settings.NEWEBPAY_KEY
+        iv = settings.NEWEBPAY_IV
 
         timeStamp = int( time.time() )
 
@@ -439,10 +438,10 @@ class Debit(APIView):
 
         #正式 
         post_url = 'https://core.newebpay.com/API/ChargeInstruct'
-        key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
-        iv = "PtMc75C71vZUAhqC"
-
-        PartnerID_ = "CARE168"
+        PartnerID_ = settings.NEWEBPAY_PARTNER_ID
+        key = settings.NEWEBPAY_KEY
+        iv = settings.NEWEBPAY_IV
+        
         timeStamp = int( time.time() )
 
         order_id = self.request.query_params.get('order_id')

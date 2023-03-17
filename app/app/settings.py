@@ -11,6 +11,19 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 from firebase_admin import initialize_app
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
+
+NEWEBPAY_PARTNER_ID=env('newebpay_partner_id')
+NEWEBPAY_KEY=env('newebpay_key')
+NEWEBPAY_IV=env('newebpay_iv')
+
+EZPAY_MERCHANT_ID=env('ezpay_merchant_id')
+EZPAY_KEY=env('ezpay_key')
+EZPAY_IV=env('ezpay_iv')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -171,18 +184,18 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME','mydatabase'),
-        'USER': os.environ.get('DB_USER','mydatabaseuser'),
-        'PASSWORD': os.environ.get('DB_PASS','mypassword'),
-        'HOST': os.environ.get('DB_HOST','127.0.0.1'),
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': os.environ.get('DB_NAME','mydatabase'),
+    #     'USER': os.environ.get('DB_USER','mydatabaseuser'),
+    #     'PASSWORD': os.environ.get('DB_PASS','mypassword'),
+    #     'HOST': os.environ.get('DB_HOST','127.0.0.1'),
+    #     'PORT': '5432',
+    # }
 }
 
 

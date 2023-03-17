@@ -9,6 +9,7 @@ import logging
 import json
 from modelCore.models import Order,UserStore,PayInfo,UserLicenseShipImage,License,City,County,User
 from newebpayApi import module
+from django.conf import settings
 
 logger = logging.getLogger(__file__)
 
@@ -83,10 +84,10 @@ def approprivate_money_to_store(order_id):
     # iv = "CeYa8zoA0mX4qBpP"
     #正式
     post_url = 'https://core.newebpay.com/API/ExportInstruct'
-    key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
-    iv = "PtMc75C71vZUAhqC"
 
-    PartnerID_ = "CARE168"
+    PartnerID_ = settings.NEWEBPAY_PARTNER_ID
+    key = settings.NEWEBPAY_KEY
+    iv = settings.NEWEBPAY_IV
 
     timeStamp = int( time.time() )
 
@@ -131,10 +132,9 @@ def debit_money_to_platform(order_id, platform_money):
     # iv = "CeYa8zoA0mX4qBpP"
     #正式 
     post_url = 'https://core.newebpay.com/API/ChargeInstruct'
-    key = "WXPufoC84rf6VgWVUmzrFaV0AeFEqVFZ"
-    iv = "PtMc75C71vZUAhqC"
-
-    PartnerID_ = "CARE168"
+    PartnerID_ = settings.NEWEBPAY_PARTNER_ID
+    key = settings.NEWEBPAY_KEY
+    iv = settings.NEWEBPAY_IV
     
 
     timeStamp = int( time.time() )

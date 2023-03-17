@@ -7,6 +7,7 @@ from django.template.loader import get_template
 from django.template import Context
 from django.utils import timezone
 from messageApp.tasks import *
+from django.conf import settings
 
 import urllib
 from datetime import date ,timedelta
@@ -26,10 +27,10 @@ from django.db.models import Avg , Count ,Sum ,Q
 from modelCore.models import City, County ,User ,UserServiceLocation ,Review ,Order ,UserLanguage ,Language ,UserServiceShip ,Service ,UserWeekDayTime
 from modelCore.models import UserLicenseShipImage ,License ,Case ,OrderIncreaseService ,TempCase ,DiseaseCondition ,BodyCondition ,CaseServiceShip ,AssistancePost
 from modelCore.models import CaseBodyConditionShip, CaseDiseaseShip ,BlogCategory, BlogPostCategoryShip ,OrderWeekDay ,ChatRoom ,ChatroomUserShip ,ChatroomMessage
-# Create your views here.
 
 logger = logging.getLogger(__file__)
 def index(request):
+
     citys = City.objects.all()
 
     if request.method == 'POST':

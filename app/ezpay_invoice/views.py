@@ -17,6 +17,7 @@ import codecs
 import logging
 import json
 from modelCore.models import Order ,UserStore ,PayInfo ,UserLicenseShipImage ,License, City
+from django.conf import settings
 
 logger = logging.getLogger(__file__)
 
@@ -41,9 +42,9 @@ class Invoice(APIView):
 
         # 正式
         post_url = 'https://inv.ezpay.com.tw/Api/invoice_issue'
-        MerchantID_ = "330658039"
-        key = "3AdkuHMWuCFl5GdvwjhpoB1fxfRSILpS"
-        iv = "PUiPYzm30OKfZ4gC"
+        MerchantID_ = settings.EZPAY_MERCHANT_ID
+        key = settings.EZPAY_KEY
+        iv = settings.EZPAY_IV
 
         data = {
             'RespondType':'JSON',
@@ -99,9 +100,10 @@ class Invoice(APIView):
         user = self.request.user
         post_url = 'https://cinv.ezpay.com.tw/Api/invoice_touch_issue'
         timeStamp = int( time.time() )
-        MerchantID_ = "CARE168"
-        key = "Hxz8q13qoEMkW42UGrAOOeJwVz8E43PK"
-        iv = "C7HjdwVLqYw4updP"
+        
+        MerchantID_ = settings.EZPAY_MERCHANT_ID
+        key = settings.EZPAY_KEY
+        iv = settings.EZPAY_IV
 
         data = {
             'RespondType':'JSON',
