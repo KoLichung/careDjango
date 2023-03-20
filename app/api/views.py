@@ -348,8 +348,10 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         end_datetime = self.request.query_params.get('end_datetime')
         #1,3,5
         weekdays = self.request.query_params.get('weekdays')
+        
         #8:22
-        start_end_time = self.request.query_params.get('start_end_time')
+        # start_end_time = self.request.query_params.get('start_end_time')
+
         order = self.request.query_params.get('order')
 
         queryset = User.objects.filter(is_servant_passed=True)
@@ -357,29 +359,34 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(is_home=True)
         elif care_type == 'hospital':
             queryset = queryset.filter(is_hospital=True)
+        
+        print(f'current qualified servants after type apply {queryset.count()}')
 
         if city != None:
             queryset = queryset.filter(user_locations__city=City.objects.get(id=city))
 
+        print(f'current qualified servants after city apply {queryset.count()}')
+
         if start_datetime != None:
             start_date = start_datetime.split('T')[0]
             end_date = end_datetime.split('T')[0]
-            start_time_int = int(start_end_time.split(':')[0])
-            end_time_int = int(start_end_time.split(':')[1])
+
+            # start_time_int = int(start_end_time.split(':')[0])
+            # end_time_int = int(start_end_time.split(':')[1])
+
             #以下兩個情形只會有其中一個發生
-            if is_continuous_time == 'True':
+            if is_continuous_time == 'True' or is_continuous_time == 'true':
                 queryset = queryset.filter(is_continuous_time=True)
             
             #所選擇的周間跟時段 要符合 servant 的服務時段
             elif weekdays != None:
-                
                 
                 weekdays_num_list = weekdays.split(',')
                 service_time_condition_1 = ~Q(is_continuous_time=True)
                 # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
                 # queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
                 for weekdays_num in weekdays_num_list:
-                    service_time_condition_2 = Q(user_weekday__weekday=weekdays_num, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
+                    service_time_condition_2 = Q(user_weekday__weekday=weekdays_num)
                     queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
             
             #情況：如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
@@ -395,25 +402,36 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
 
             orders = Order.objects.filter(state='paid').filter(condition1 | condition2 | condition3).distinct()
+            print(f'orders in the date range {orders.count()}')
+
             #2.再從 1 取出週間有交集的訂單
             #這邊考慮把 Order 的 weekday 再寫成一個 model OrderWeekDay, 然後再去比較, 像 user__weekday 一樣
-            if weekdays != None:
+            if is_continuous_time != 'True' and is_continuous_time != 'true' and weekdays != None:
                 weekdays_num_list = weekdays.split(',')
                 
                 weekday_condition_1 = Q(order_weekdays__weekday__in=weekdays_num_list)
                 weedkay_condition_2 =  Q(case__is_continuous_time=True)
-                # orders = orders.filter(order_condition_1 | order_condition_2).distinct()
+                orders = orders.filter(weekday_condition_1 | weedkay_condition_2).distinct()
+
             #3.再從 2 取出時段有交集的訂單
-            time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
-            time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
-            time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
-            order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
-            order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
-            orders = orders.filter(order_condition_1|order_condition_2).distinct()
+            # time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
+            # time_condition_2 = Q(end_time__range=[start_time_int, end_time_int])
+            # time_condition3 = Q(start_time__lte=start_time_int)&Q(end_time__gte=end_time_int)
+
+            # order_condition_1 = Q((weekday_condition_1) & (time_condition_1 | time_condition_2 | time_condition3))
+            # order_condition_2 = Q((weedkay_condition_2) & (time_condition_1 | time_condition_2 | time_condition3))
+            # orders = orders.filter(order_condition_1|order_condition_2).distinct()
+
             # orders = Order.objects.filter(order_condition_2)
-            print(orders)
+            print(f'current orders after apply weekday condition {orders.count()}')
+
             order_conflict_servants_id = list(orders.values_list('servant', flat=True))
-            queryset = queryset.filter(~Q(id__in=order_conflict_servants_id))
+            print(f'order_conflict_servants_id {order_conflict_servants_id}')
+
+            print(f'current qualified servants before order conflicts apply {queryset.count()}')
+            if len(order_conflict_servants_id) > 1:
+                queryset = queryset.filter(~Q(id__in=order_conflict_servants_id))
+            print(f'current qualified servants after order conflicts apply {queryset.count()}')
 
             if order == 'rating':
                 queryset = queryset.order_by('-rating')
