@@ -261,7 +261,7 @@ class UserServicesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
         services = request.data.get('services')
         print(services)
 
-        if services != None:
+        if services != None and services !='':
             service_ids = services.split(',')
             print(service_ids)
             service_id_list = []
