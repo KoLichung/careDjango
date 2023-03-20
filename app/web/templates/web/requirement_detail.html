@@ -61,7 +61,7 @@
                     {% endif %}
                   </p>
                   <p>身體狀況：
-                    {% case.case_body_conditions.all %}
+                    {% case.case_body_conditions.all.count > 0 %}
                       {% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}
                     {% else %}
                       無
