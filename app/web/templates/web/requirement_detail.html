@@ -60,8 +60,20 @@
                       無
                     {% endif %}
                   </p>
-                  <p>身體狀況：{% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}</p>
-                  <p class="text-indent-5">補充說明：{{case.conditions_remark}}</p>
+                  <p>身體狀況：
+                    {% case.case_body_conditions.all %}
+                      {% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}
+                    {% else %}
+                      無
+                    {% endif %}
+                  </p>
+                  <p class="text-indent-5">補充說明：
+                    {% if case.conditions_remark %}
+                      {{case.disease_remark}}
+                    {% else %}
+                      無
+                    {% endif %}
+                  </p>
                 </div>
 
                 <p class="small-section-title-purple mt-5">需求服務項目</p>
