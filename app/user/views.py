@@ -225,7 +225,7 @@ class UserLocationsViewSet(generics.UpdateAPIView,generics.ListAPIView,):
         queryset = self.queryset
         locations = request.data.get('locations')
         transfer_fee = request.data.get('transfer_fee')
-        if locations != None:
+        if locations != None and locations != '':
             location_ids = locations.split(',')
             transfer_fee_list = transfer_fee.split(',')
             for i in range(len(location_ids)):
