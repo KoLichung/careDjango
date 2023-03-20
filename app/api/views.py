@@ -394,12 +394,25 @@ class SearchServantViewSet(viewsets.GenericViewSet,
                 # for weekdays_num in weekdays_num_list:
                 #     service_time_condition_2 = Q(user_weekday__weekday=weekdays_num)
 
-                service_time_condition_1 = Q(is_continuous_time=True)
+                # service_time_condition_1 = Q(is_continuous_time=True)
                 # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list)
+                                
+                for theUser in queryset:
+                    print(f'the user id {theUser.id}')
+                    if theUser.is_continuous_time == False:
+                        theUser_weekdays_array = list(theUser.user_weekday.values_list('weekday',flat=True))
+                        print(f'the user id {theUser.id} theUser_weekdays_array {theUser_weekdays_array}')
+                        for weekday_num in weekdays_num_list:
+                            if weekday_num not in theUser_weekdays_array:
+                                queryset = queryset.exclude(id=theUser.id)
+                                break
+                
+                logger.info(f'current qualified servants after weekdays apply {queryset.count()}')
+                print(f'current qualified servants after weekdays apply {queryset.count()}')
 
-                for weekdays_num in weekdays_num_list:
-                    service_time_condition_2 = Q(user_weekday__weekday=weekdays_num)
-                    queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
+                # for weekdays_num in weekdays_num_list:
+                #     service_time_condition_2 = Q(user_weekday__weekday=weekdays_num)
+                #     queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
             
             #情況：如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
             #方法：
@@ -422,9 +435,21 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             if is_continuous_time != 'True' and is_continuous_time != 'true' and weekdays != None:
                 weekdays_num_list = weekdays.split(',')
                 
-                weekday_condition_1 = Q(order_weekdays__weekday__in=weekdays_num_list)
-                weedkay_condition_2 =  Q(case__is_continuous_time=True)
-                orders = orders.filter(weekday_condition_1 | weedkay_condition_2).distinct()
+                order_id_array = []
+                for theOrder in orders:
+                    if not theOrder.case.is_continuous_time:
+                        theOrder_week_days_array = list(theOrder.order_weekdays.values_list('weekday',flat=True))
+                # weekday_condition_1 = Q(order_weekdays__weekday__in=weekdays_num_list)
+                # weedkay_condition_2 =  Q(case__is_continuous_time=True)
+                        for weekday_num in weekdays_num_list:
+                            if weekday_num in theOrder_week_days_array and theOrder.id not in order_id_array:
+                                order_id_array.append(theOrder.id)
+
+                orders = orders.filter(id__in=order_id_array).distinct()
+
+                logger.info(f'orders after weekdays apply {orders.count()}')
+                print(f'orders after weekdays apply {orders.count()}')
+
 
             #3.再從 2 取出時段有交集的訂單
             # time_condition_1 = Q(start_time__range=[start_time_int, end_time_int])
