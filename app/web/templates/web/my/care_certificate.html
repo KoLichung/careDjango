@@ -33,8 +33,8 @@
                 <p class="h5 mt-5">被照顧者資訊</p>
                 <div class="case-info-font mt-2">
                   <p>性別：{% if case.gender == 'F' %}女{% else %}男{% endif %}</p>
-                  <p>體重：{{case.weight}}</p>
-                  <p>年齡：{{case.age}}</p>
+                  <p>體重：{{case.weight}} 公斤</p>
+                  <p>年齡：{{case.age}} 歲</p>
                   <p>疾病：{% for casedisease in case.case_diseases.all %} {{casedisease.disease}} {% endfor %}</p>
                   <p>補充說明：{{case.disease_remark}}</p>
                   <p>身體狀況：{% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}</p>

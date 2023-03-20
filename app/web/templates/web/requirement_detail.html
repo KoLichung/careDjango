@@ -49,11 +49,16 @@
 
                 <p class="small-section-title-purple mt-3">被照顧者資訊</p>
                 <div class="case-info-font">
-                  <p>性別：{{case.gender}}</p>
-                  <p>體重：{{case.weight}}</p>
-                  <p>年齡：{{case.age}}</p>
+                  <p>性別：{% if case.gender == 'F' %}女{% else %}男{% endif %}</p>
+                  <p>體重：{{case.weight}} 公斤</p>
+                  <p>年齡：{{case.age}} 歲</p>
                   <p>疾病：{% for casedisease in case.case_diseases.all %} {{casedisease.disease}} {% endfor %}</p>
-                  <p>補充說明：{{case.disease_remark}}</p>
+                  <p>補充說明：
+                    {% if case.disease_remark %}
+                      {{case.disease_remark}}
+                    {% else %}
+                      無
+                  </p>
                   <p>身體狀況：{% for casebodycondition in case.case_body_conditions.all %} {{casebodycondition.body_condition}} {% endfor %}</p>
                   <p class="text-indent-5">補充說明：{{case.conditions_remark}}</p>
                 </div>
