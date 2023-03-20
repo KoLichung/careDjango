@@ -19,6 +19,9 @@ from modelCore.models import BlogPost, BlogPostCategoryShip, BlogCategory
 from api import serializers
 from messageApp.tasks import *
 from app.pagination import LargeResultsSetPagination
+import logging
+
+logger = logging.getLogger(__file__)
 
 class LicenseViewSet(viewsets.GenericViewSet,
                     mixins.ListModelMixin):
@@ -360,11 +363,13 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         elif care_type == 'hospital':
             queryset = queryset.filter(is_hospital=True)
         
+        logger.info(f'current qualified servants after type apply {queryset.count()}')
         print(f'current qualified servants after type apply {queryset.count()}')
 
         if city != None:
             queryset = queryset.filter(user_locations__city=City.objects.get(id=city))
 
+        logger.info(f'current qualified servants after city apply {queryset.count()}')
         print(f'current qualified servants after city apply {queryset.count()}')
 
         if start_datetime != None:
@@ -402,6 +407,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             condition3 = Q(start_datetime__lte=start_date)&Q(end_datetime__gte=end_date)
 
             orders = Order.objects.filter(state='paid').filter(condition1 | condition2 | condition3).distinct()
+            logger.info(f'orders in the date range {orders.count()}')
             print(f'orders in the date range {orders.count()}')
 
             #2.再從 1 取出週間有交集的訂單
@@ -423,14 +429,17 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             # orders = orders.filter(order_condition_1|order_condition_2).distinct()
 
             # orders = Order.objects.filter(order_condition_2)
+            logger.info(f'orders in the date range {orders.count()}')
             print(f'current orders after apply weekday condition {orders.count()}')
 
             order_conflict_servants_id = list(orders.values_list('servant', flat=True))
+            logger.info(f'orders in the date range {orders.count()}')
             print(f'order_conflict_servants_id {order_conflict_servants_id}')
 
-            print(f'current qualified servants before order conflicts apply {queryset.count()}')
             if len(order_conflict_servants_id) > 1:
                 queryset = queryset.filter(~Q(id__in=order_conflict_servants_id))
+            
+            logger.info(f'current qualified servants after order conflicts apply {queryset.count()}')
             print(f'current qualified servants after order conflicts apply {queryset.count()}')
 
             if order == 'rating':
