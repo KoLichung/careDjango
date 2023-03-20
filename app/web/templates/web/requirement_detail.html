@@ -68,8 +68,8 @@
                     {% endif %}
                   </p>
                   <p class="text-indent-5">補充說明：
-                    {% if case.conditions_remark != '' and  case.conditions_remark != 'None' %}
-                      {{case.disease_remark}}
+                    {% if case.conditions_remark != '' and  case.conditions_remark != None %}
+                      {{case.conditions_remark}}
                     {% else %}
                       無
                     {% endif %}

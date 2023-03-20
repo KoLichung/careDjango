@@ -392,8 +392,8 @@ class Case(models.Model):
     age = models.IntegerField(default=0, blank=True, null=True)
     weight = models.IntegerField(default=0, blank=True, null=True)
     
-    disease_remark = models.CharField(max_length= 255, blank=True, null=True)
-    conditions_remark = models.CharField(max_length= 255, blank=True, null=True)
+    disease_remark = models.CharField(default='', max_length= 255, blank=True, null=True)
+    conditions_remark = models.CharField(default='', max_length= 255, blank=True, null=True)
 
     is_continuous_time = models.BooleanField(default=False)
 

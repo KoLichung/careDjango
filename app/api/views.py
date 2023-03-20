@@ -395,7 +395,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
 
                 service_time_condition_1 = Q(is_continuous_time=True)
                 service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list)
-                queryset = queryset.filter(service_time_condition_1 or service_time_condition_2).distinct()
+                queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
             
             #情況：如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
             #方法：
