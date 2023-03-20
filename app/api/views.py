@@ -389,13 +389,17 @@ class SearchServantViewSet(viewsets.GenericViewSet,
                 weekdays_num_list = weekdays.split(',')
                 # service_time_condition_1 = ~Q(is_continuous_time=True)
                 # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list, user_weekday__start_time__lte=start_time_int, user_weekday__end_time__gte=end_time_int)
-                # queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
+                # queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct
+
                 # for weekdays_num in weekdays_num_list:
                 #     service_time_condition_2 = Q(user_weekday__weekday=weekdays_num)
 
                 service_time_condition_1 = Q(is_continuous_time=True)
-                service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list)
-                queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
+                # service_time_condition_2 = Q(user_weekday__weekday__in=weekdays_num_list)
+
+                for weekdays_num in weekdays_num_list:
+                    service_time_condition_2 = Q(user_weekday__weekday=weekdays_num)
+                    queryset = queryset.filter(service_time_condition_1 | service_time_condition_2).distinct()
             
             #情況：如果一個 servant 已經在某個時段已經有了 1 個 order, 就沒辦法再接另一個 order
             #方法：
