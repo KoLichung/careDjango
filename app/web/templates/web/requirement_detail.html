@@ -95,9 +95,20 @@
                   <p>照顧類型：<span style="color: #BB6BD9;">{% if case.care_type == 'home' %}居家照顧{% else %}醫院看護{% endif %}</span></p>
                   <p>地點：{{case.city}} </p>
                   <p class="text-indent-3">時間：<span style="color: red;">{% if case.is_continuous_time == True %}連續時間{% else %} 指定時段{% endif %}</span><br>
-                    {{case.start_datetime.year}}/{{case.start_datetime.month}}/{{case.start_datetime.day}} ~ {{case.end_datetime.year}}/{{case.end_datetime.month}}/{{case.end_datetime.day}}<br>
-                    {{weekday_str}}<br>
-                    {{case.startTimeformat}} ~ {{endTimeformat}} 
+                    開始時間：{{case.start_datetime.year}}-{{case.start_datetime.month}}-{{case.start_datetime.day}}
+                    {% if case.is_continuous_time == True %}
+                      ({{case.startTimeformat}})
+                    {% endif %}
+                    <br>
+                    結束時間：{{case.end_datetime.year}}-{{case.end_datetime.month}}-{{case.end_datetime.day}}
+                    {% if case.is_continuous_time == True %}
+                      ({{case.endTimeformat}})
+                    {% endif %}
+                    <br>
+                    {% if case.is_continuous_time != True %}
+                      星期：{{weekday_str}}<br>
+                      時段：{{case.startTimeformat}} ~ {{case.endTimeformat}} 
+                    {% endif %}
                   </p>
             </div>
             <button class="full-purple-button mt-3 mb-5" type="submit">我可以接案</button>
