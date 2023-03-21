@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import ChatroomUserShip, User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from .models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom , ChatroomUserShip
 from .models import CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage ,OrderWeekDay ,OrderIncreaseService ,UserStore, BlogCategory, BlogPost
-from .models import BlogPostCategoryShip ,TempCase, MonthSummary ,AssistancePost, SmsVerifyCode, NewebpayCity
+from .models import BlogPostCategoryShip ,TempCase, MonthSummary ,AssistancePost, SmsVerifyCode, NewebpayCity, AppVersion
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -144,3 +144,7 @@ class AssistancePostAdmin(admin.ModelAdmin):
 @admin.register(SmsVerifyCode)
 class SmsVerifyCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'phone', 'code','is_expired')
+
+@admin.register(AppVersion)
+class AppVersionAdmin(admin.ModelAdmin):
+    list_display = ('id','iOS_current_version', 'android_current_version')
