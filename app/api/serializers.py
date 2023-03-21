@@ -15,28 +15,11 @@ from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMe
 #         read_only_fields = ('id',)
 
 class NeederSerializer(serializers.ModelSerializer):
-    needer_rating = serializers.FloatField(default=0)
-    needer_rating_num = serializers.IntegerField(default=0)
 
     class Meta:
         model = User
-        fields = ('id', 'phone', 'name', 'gender', 'image','needer_rating','needer_rating_num')
+        fields = ('id', 'phone', 'name', 'gender', 'image')
         read_only_fields = ('id',)
-
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-
-        needer_rating = Review.objects.filter(case__user=instance,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
-        if needer_rating != None:
-            needer_rating = round(needer_rating,1)
-        else:
-            needer_rating = 0
-
-        needer_rating_num = Review.objects.filter(case__user=instance,case_offender_rating__gte=1).count()
-
-        rep['needer_rating'] = needer_rating
-        rep['needer_rating_num'] =  needer_rating_num
-        return rep
 
 class LicenseSerializer(serializers.ModelSerializer):
     class Meta:
