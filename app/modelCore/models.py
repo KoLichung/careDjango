@@ -928,3 +928,7 @@ class SmsVerifyCode(models.Model):
     phone = models.CharField(max_length=10)
     code = models.CharField(max_length=4)
     is_expired = models.BooleanField(default=False)
+
+class AppVersion(models.Model):
+    iOS_current_version = models.CharField(max_length=10, default='', blank = True, null=True)
+    android_current_version = models.CharField(max_length=10, default='', blank = True, null=True)

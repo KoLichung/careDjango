@@ -15,7 +15,7 @@ from datetime import date ,timedelta
 from modelCore.models import User, City, County,Service,UserWeekDayTime,UserServiceShip ,Language ,UserLanguage , License, UserLicenseShipImage
 from modelCore.models import UserServiceLocation, Case, DiseaseCondition,BodyCondition,CaseDiseaseShip,CaseBodyConditionShip ,ChatRoom ,ChatroomUserShip
 from modelCore.models import CaseServiceShip ,Order ,Review ,PayInfo ,ChatroomMessage ,SystemMessage , OrderWeekDay ,OrderIncreaseService
-from modelCore.models import BlogPost, BlogPostCategoryShip, BlogCategory
+from modelCore.models import BlogPost, BlogPostCategoryShip, BlogCategory, AppVersion
 from api import serializers
 from messageApp.tasks import *
 from app.pagination import LargeResultsSetPagination
@@ -2323,6 +2323,14 @@ class ResetPasswordSmsSendPasswordViewSet(APIView):
         else:
             return Response({'message': "wrong phone number type"})
 
+
+class AppVersionView(APIView):
+
+    def get(self, request, format=None):
+
+        appVersion = AppVersion.objects.all().order_by('-id').first()
+
+        return Response({'ios': appVersion.iOS_current_version, 'android': appVersion.android_current_version})
 
 # for test in shell
 # from api.views import days_count
