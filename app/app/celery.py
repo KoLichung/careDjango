@@ -80,6 +80,9 @@ def changeCaseState(arg):
             case.save()
             print(case.state)
 
+            from messageApp.tasks import sendFCMMessage
+            sendFCMMessage(order.user,f'服務者{order.servant.name}任務完成','溫馨提醒您，記得給服務者評價喔!')
+
 @app.task
 def remindOrderStart(arg):
     from modelCore.models import Order ,SystemMessage ,Case
