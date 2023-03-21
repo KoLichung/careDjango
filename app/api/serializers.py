@@ -20,7 +20,7 @@ class NeederSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'phone', 'name', 'gender', 'image')
+        fields = ('id', 'phone', 'name', 'gender', 'image','needer_rating','needer_rating_num')
         read_only_fields = ('id',)
 
     def to_representation(self, instance):
