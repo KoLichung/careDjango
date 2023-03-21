@@ -26,7 +26,7 @@ class NeederSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
 
-        needer_rating = Review.objects.filter(case__user=instance,case_offender_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+        needer_rating = Review.objects.filter(case__user=instance,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['offender_rating__avg']
         if needer_rating != None:
             needer_rating = round(needer_rating,1)
         else:
@@ -237,7 +237,7 @@ class CaseSerializer(serializers.ModelSerializer):
             rep['needer_name'] = instance.user.name
             rep['needer_phone'] = instance.user.phone
 
-            needer_rating = Review.objects.filter(case__user=instance.user,case_offender_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+            needer_rating = Review.objects.filter(case__user=instance.user,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['offender_rating__avg']
             if needer_rating != None:
                 needer_rating = round(needer_rating,1)
             else:
@@ -245,8 +245,8 @@ class CaseSerializer(serializers.ModelSerializer):
 
             needer_rating_num = Review.objects.filter(case__user=instance.user,case_offender_rating__gte=1).count()
 
-            rep['needer_rating'] = needer_rating
-            rep['needer_rating_num'] =  needer_rating_num
+            rep['avg_offender_rating'] = needer_rating
+            rep['num_offender_rating'] =  needer_rating_num
 
         return rep
 
