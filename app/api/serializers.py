@@ -220,6 +220,7 @@ class CaseSerializer(serializers.ModelSerializer):
     review = ReviewSerializer(read_only=True, many=False)
     rating_nums = serializers.IntegerField(default=0)
     servant_rating = serializers.FloatField(default=0)
+
     avg_offender_rating = serializers.FloatField(default=0)
     num_offender_rating = serializers.IntegerField(default=0)
 
@@ -235,6 +236,17 @@ class CaseSerializer(serializers.ModelSerializer):
         if instance.user:
             rep['needer_name'] = instance.user.name
             rep['needer_phone'] = instance.user.phone
+
+            needer_rating = Review.objects.filter(case__user=instance.user,case_offender_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
+            if needer_rating != None:
+                needer_rating = round(needer_rating,1)
+            else:
+                needer_rating = 0
+
+            needer_rating_num = Review.objects.filter(case__user=instance.user,case_offender_rating__gte=1).count()
+
+            rep['needer_rating'] = needer_rating
+            rep['needer_rating_num'] =  needer_rating_num
 
         return rep
 
