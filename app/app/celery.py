@@ -116,24 +116,27 @@ def checkOrderState(arg):
 def checkMonthSummary(arg):       
     from modelCore.models import Order ,MonthSummary
     from django.db.models import Sum
+
     today = datetime.today()
     last_month_date = today - timedelta(days=30)
     current_month = today.month
     current_year = today.year
+
     if current_month != 1 :
         last_month = current_month -1
         last_month_year = current_year
     else:
         last_month = 12
         last_month_year = current_year -1
-    this_month_orders = Order.objects.filter(created_at__year=current_year,
-                           created_at__month=current_month)   
-    last_month_orders = Order.objects.filter(created_at__year=last_month_year,
-                           created_at__month=last_month)   
+
+    this_month_orders = Order.objects.filter(created_at__year=current_year,created_at__month=current_month)   
+    last_month_orders = Order.objects.filter(created_at__year=last_month_year,created_at__month=last_month)   
+
     if MonthSummary.objects.filter(month_date__year=current_year,month_date__month=current_month).count() == 0:
         monthsummary = MonthSummary(month_date=today)
     else:
         monthsummary = MonthSummary.objects.get(month_date__year=current_year,month_date__month=current_month)
+
     if this_month_orders.aggregate(Sum('total_money'))['total_money__sum'] != None:
         monthsummary.month_revenue = this_month_orders.aggregate(Sum('total_money'))['total_money__sum']
     if this_month_orders.filter(state='canceled').aggregate(Sum('total_money'))['total_money__sum'] != None:
@@ -143,13 +146,14 @@ def checkMonthSummary(arg):
     if this_month_orders.aggregate(Sum('refund_money'))['refund_money__sum'] != None:
         monthsummary.month_refound_amount = this_month_orders.aggregate(Sum('refund_money'))['refund_money__sum']
     if this_month_orders.aggregate(Sum('platform_money'))['platform_money__sum'] != None:
-        monthsummary.month_platform_revenue = this_month_orders.aggregate(Sum('platform_money'))['platform_money__sum']
+        monthsummary.month_platform_revenue = this_month_orders.filter(state='paid').aggregate(Sum('platform_money'))['platform_money__sum']
     monthsummary.save()
 
     if MonthSummary.objects.filter(month_date__year=last_month_year,month_date__month=last_month).count() == 0:
         last_monthsummary = MonthSummary(month_date=last_month_date)
     else:
         last_monthsummary = MonthSummary.objects.get(month_date__year=last_month_year,month_date__month=last_month)
+
     if last_month_orders.aggregate(Sum('total_money'))['total_money__sum'] != None:
         last_monthsummary.month_revenue = last_month_orders.aggregate(Sum('total_money'))['total_money__sum']
     if last_month_orders.filter(state='canceled').aggregate(Sum('total_money'))['total_money__sum'] != None:
@@ -159,5 +163,5 @@ def checkMonthSummary(arg):
     if last_month_orders.aggregate(Sum('refund_money'))['refund_money__sum'] != None:
         last_monthsummary.month_refound_amount = last_month_orders.aggregate(Sum('refund_money'))['refund_money__sum']
     if last_month_orders.aggregate(Sum('platform_money'))['platform_money__sum'] != None:
-        last_monthsummary.month_platform_revenue = last_month_orders.aggregate(Sum('platform_money'))['platform_money__sum']
+        last_monthsummary.month_platform_revenue = last_month_orders.filter(state='paid').aggregate(Sum('platform_money'))['platform_money__sum']
     last_monthsummary.save()
