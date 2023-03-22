@@ -102,7 +102,7 @@ def bills(request):
     # summarys = MonthSummary.objects.all().order_by('-id')[:2]
     summarys = MonthSummary.objects.all().order_by('-month_date')[:2]
     this_month_day = summarys[0].month_date
-    last_month_day = this_month_day - datetime.timedelta(days=30)
+    last_month_day = this_month_day - datetime.timedelta(days=20)
 
     return render(request, 'backboard/bills.html', {'summarys':summarys,  'this_month_day':this_month_day, 'last_month_day':last_month_day})
 
