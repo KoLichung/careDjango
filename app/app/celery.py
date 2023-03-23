@@ -145,8 +145,10 @@ def checkMonthSummary(arg):
         monthsummary.month_pay_amount = this_month_orders.filter(state='paid').aggregate(Sum('total_money'))['total_money__sum']
     if this_month_orders.aggregate(Sum('refund_money'))['refund_money__sum'] != None:
         monthsummary.month_refound_amount = this_month_orders.aggregate(Sum('refund_money'))['refund_money__sum']
-    if this_month_orders.aggregate(Sum('platform_money'))['platform_money__sum'] != None:
+    if this_month_orders.filter(state='paid').aggregate(Sum('platform_money'))['platform_money__sum'] != None:
         monthsummary.month_platform_revenue = this_month_orders.filter(state='paid').aggregate(Sum('platform_money'))['platform_money__sum']
+    else:
+        monthsummary.month_platform_revenue = 0
     monthsummary.save()
 
     if MonthSummary.objects.filter(month_date__year=last_month_year,month_date__month=last_month).count() == 0:
@@ -162,6 +164,8 @@ def checkMonthSummary(arg):
         last_monthsummary.month_pay_amount = last_month_orders.filter(state='paid').aggregate(Sum('total_money'))['total_money__sum']
     if last_month_orders.aggregate(Sum('refund_money'))['refund_money__sum'] != None:
         last_monthsummary.month_refound_amount = last_month_orders.aggregate(Sum('refund_money'))['refund_money__sum']
-    if last_month_orders.aggregate(Sum('platform_money'))['platform_money__sum'] != None:
+    if last_month_orders.filter(state='paid').aggregate(Sum('platform_money'))['platform_money__sum'] != None:
         last_monthsummary.month_platform_revenue = last_month_orders.filter(state='paid').aggregate(Sum('platform_money'))['platform_money__sum']
+    else:
+        last_monthsummary.month_platform_revenue = 0
     last_monthsummary.save()
