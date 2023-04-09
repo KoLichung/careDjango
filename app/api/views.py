@@ -972,6 +972,14 @@ class CreateCase(APIView):
         case.is_open_for_search = True
         case.save()
 
+        #推播通知在相同區域的 servants 有需求單產生
+        #訂單所在的地區是用 case.county 或 case.city
+        #要符合 servants 的 service locations
+        servants_in_same_area = User.objects.get(is_servant_passed=True).filter(user_locations__city=case.city)
+        for servant in servants_in_same_area:
+            from messageApp.tasks import sendFCMMessage
+            sendFCMMessage(servant,f'您所在的區域{case.city}有新的照護需求！','來看看您是否願意承接？')
+
         if disease != None and disease != '':
             disease_ids = disease.split(',')
             for disease_id in disease_ids:
