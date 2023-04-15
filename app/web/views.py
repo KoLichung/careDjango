@@ -731,7 +731,7 @@ def search_carer_detail(request):
     if len(Review.objects.filter(servant=servant)) >= 2:
         reviews = Review.objects.filter(~Q(servant_rating=0)).filter(servant=servant).order_by('-servant_rating_created_at')[:2]
         if reviews_all != None:
-            reviews = Review.objects.filter(servant=servant).order_by('-servant_rating_created_at')
+            reviews = Review.objects.filter(~Q(servant_rating=0)).filter(servant=servant).order_by('-servant_rating_created_at')
     else:
         reviews = Review.objects.filter(~Q(servant_rating=0)).filter(servant=servant).order_by('-servant_rating_created_at')
     defaultStartTime = start_time
