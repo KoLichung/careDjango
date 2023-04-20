@@ -384,6 +384,7 @@ def register_line(request):
     if request.method == 'POST' and line_id != None :
         userName = request.POST.get('userName')
         phone = request.POST.get('phone')
+        gender = request.POST['gender']
         
         if User.objects.filter(phone=phone,name=userName).exists() != False:
             user = User.objects.get(name=userName,phone=phone)
@@ -394,6 +395,7 @@ def register_line(request):
             return redirect('index')
         else:
             user = User()
+            user.gender = gender
             user.name = userName
             user.phone = phone
             user.line_id = line_id
@@ -476,6 +478,7 @@ def ajax_check_sms_code(request):
 
 def register_phone(request):
     if request.method == 'POST' and 'register'in request.POST :
+        gender = request.POST['gender']
         username = request.POST['userName']
         phone = request.POST['userPhone']
         email = request.POST['email']
@@ -489,6 +492,7 @@ def register_phone(request):
                 return render(request, 'web/register_phone.html',{'alert_flag': True})
         else:
             user = User()
+            user.gender = gender
             user.name = username
             user.phone = phone
             user.email = email

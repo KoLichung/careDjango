@@ -33,6 +33,24 @@
 
                       
                         <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                          <div class="row mx-auto align-items-center">
+
+                            {% comment %} <div class="col-3 custom-card-font">
+                              <label for="user_gender">性別：</label>  
+                            </div> {% endcomment %}
+                            <div class="col-9 my-2 " style="display: flex;">
+                              <label class="custom-radio-parent">男
+                                <input type="radio"  name="gender" value="M" checked="checked">
+                                <span class="checkmark"></span>
+                              </label>
+                              <label class="custom-radio-parent">女
+                                <input type="radio" name="gender" value="F">
+                                <span class="checkmark"></span>
+                              </label>
+                            </div>
+              
+                          </div>
+
                           <div class="input-box mb-3">
                             <span class="material-icons">person_outline</span>
                             <input type="text" name="userName" placeholder="使用者姓名" />
