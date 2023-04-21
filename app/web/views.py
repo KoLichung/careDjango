@@ -710,7 +710,10 @@ def search_carer_detail(request):
     elif care_type == '醫院看護':
         care_type = 'hospital'
     else:
-        care_type = 'home'
+        if servant.is_home == True:
+            care_type = 'home'
+        else:
+            care_type = 'hospital'
 
     
     if (start_date != None and start_date != '') & (end_date != None and end_date != ''):
