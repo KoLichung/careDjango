@@ -12,6 +12,7 @@ class UserImageForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['phone', 'image']
+        
 class UserLicenseImageForm(forms.ModelForm):
   
     class Meta:

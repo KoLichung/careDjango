@@ -148,14 +148,18 @@
 
                 {% if servant.is_home == True %}
                   <div class="segment__item">
-                    <input type="radio" class="segment__input"  id="care_type_home" name="care_type" onclick="home.call_backend()" value="home" {% if care_type == 'home' %} checked {% endif %} >
+                    <input type="radio" class="segment__input"  id="care_type_home" name="care_type" onclick="home.call_backend()" value="home" 
+                      {% if care_type == 'home'or servant.is_hospital == False %} checked {% endif %}
+                    >
                     <div class="segment__button" >居家照顧</div>
                   </div>
                 {% endif %}
                 
                 {% if servant.is_hospital == True %}
                   <div class="segment__item">
-                    <input type="radio" class="segment__input"  id="care_type_hospital" name="care_type" onclick="hospital.call_backend()" value="hospital" {% if care_type == 'hospital' %} checked {% endif %} >
+                    <input type="radio" class="segment__input"  id="care_type_hospital" name="care_type" onclick="hospital.call_backend()" value="hospital" 
+                      {% if care_type == 'hospital' or servant.is_home == False %} checked {% endif %} 
+                    >
                     <div class="segment__button">醫院看護</div>
                   </div>
                 {% endif %}
