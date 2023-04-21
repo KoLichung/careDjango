@@ -149,7 +149,7 @@
                 {% if servant.is_home == True %}
                   <div class="segment__item">
                     <input type="radio" class="segment__input"  id="care_type_home" name="care_type" onclick="home.call_backend()" value="home" 
-                      {% if care_type == 'home'or servant.is_hospital == False %} checked {% endif %}
+                      {% if care_type == 'home' or servant.is_hospital == False %} checked {% endif %}
                     >
                     <div class="segment__button" >居家照顧</div>
                   </div>
