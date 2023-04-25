@@ -5,6 +5,9 @@ import requests
 import math, random
 from celery import shared_task
 import environ
+import logging
+
+logger = logging.getLogger(__file__)
 
 #====================================
 ### 推播訊息 1.收到訂單訊息(chatroom 文字圖片) 2.收到系統訊息
@@ -151,6 +154,8 @@ def sendSMSCode(phone, code):
     }
     resp = requests.post(url, params= params)
     print(resp.text)
+
+    logger.info(resp.text)
 
 def randSmsVerifyCode(phone):
     smsVerifyCode = SmsVerifyCode()
