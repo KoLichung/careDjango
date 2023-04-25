@@ -45,7 +45,7 @@ def sendFCMMessage(user,title,text):
 
 # [服務者]收到訂單
 def receiveBooking(user,order):
-    content_text = "您收到來自"+ order.case.user.name +"的預訂申請，請利用聊聊與對方聯絡。"
+    content_text = "您收到來自"+ order.case.user.name +"的預訂申請，請您盡快回覆對方，是否有意願承接此案件。"
     message = SystemMessage(case=order.case,user=user,order=order,content=content_text)
     message.save()
     if user.is_fcm_notify == True:
@@ -58,7 +58,15 @@ def servantOrderEstablished(user,order):
     message.save()
     if user.is_fcm_notify == True:
         sendFCMMessage(order.servant, '定單成立', content_text)
-    
+
+# [需求者] 當服務者在案件 detail 按下, 我可以接案時, 通知需求者
+def neederReceiveNewServantApply(user,order):
+    content_text = "服務者"+ order.user.name +"有意願承接您的案件，您可利用聊聊討論相關事宜～（雙方確認後即可前往付款並完成預約）"
+    message = SystemMessage(case=order.case,user=user,order=order,content=content_text)
+    message.save()
+    if user.is_fcm_notify == True:
+        sendFCMMessage(order.servant, '新服務者申請通知', content_text)
+
 # [需求者] 收到服務者已接案
 def neederOrderEstablished(user,order):
     content_text = "您已成功付款！"+ "您與" + order.servant.name +"的服務定單已成立～您可前往會員中心-訂單管理查詢詳情。"
