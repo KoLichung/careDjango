@@ -6,6 +6,7 @@ import math, random
 from celery import shared_task
 import environ
 import logging
+from django.conf import settings
 
 logger = logging.getLogger(__file__)
 
@@ -121,15 +122,12 @@ def testSMS():
 
     testString = "這個是一個測試 0012"
     
-    env = environ.Env()
-    environ.Env.read_env()
-    
-    print(env('SMS_USER_NAME'))
-    print(env('SMS_PASSWORD'))
+    user_name = settings.SMS_USER_NAME
+    user_password = settings.SMS_PASSWORD
 
     params ={
-        "username": env('SMS_USER_NAME'),
-        "password": env('SMS_PASSWORD'),
+        "username": user_name,
+        "password": user_password,
         "dstaddr": "0912585506",
         "smbody": testString
     }
@@ -143,12 +141,12 @@ def sendSMSCode(phone, code):
 
     theString = f"您的驗證碼為 {code}, 請盡快驗證~"
 
-    env = environ.Env()
-    environ.Env.read_env()
+    user_name = settings.SMS_USER_NAME
+    user_password = settings.SMS_PASSWORD
 
     params ={
-        "username": env('SMS_USER_NAME'),
-        "password": env('SMS_PASSWORD'),
+        "username": user_name,
+        "password": user_password,
         "dstaddr": phone,
         "smbody": theString
     }

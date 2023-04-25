@@ -25,6 +25,9 @@ EZPAY_MERCHANT_ID=env('ezpay_merchant_id')
 EZPAY_KEY=env('ezpay_key')
 EZPAY_IV=env('ezpay_iv')
 
+SMS_USER_NAME=env('SMS_USER_NAME')
+SMS_PASSWORD=env('SMS_PASSWORD')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
