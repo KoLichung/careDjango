@@ -981,7 +981,7 @@ class CreateCase(APIView):
         logger.info(same_area_users)
         for servant in same_area_users:
             from messageApp.tasks import sendFCMMessage
-            sendFCMMessage(servant,f'您所在的區域{case.city}有新的照護需求！','來看看您是否願意承接？')
+            sendFCMMessage(servant,f'{case.city}有新的照護需求案件！','來看看您是否可以接案？')
 
         if disease != None and disease != '':
             disease_ids = disease.split(',')
