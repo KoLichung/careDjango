@@ -7,6 +7,9 @@ from django.forms import FloatField
 from django.urls import reverse
 from django.db.models import Avg ,Sum 
 from ckeditor_uploader.fields import RichTextUploadingField
+import logging
+
+logger = logging.getLogger(__file__)
 
 def image_upload_handler(instance,filename):
     fpath = pathlib.Path(filename)
@@ -27,7 +30,10 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have an phone')
         # user = self.model(email=self.normalize_email(email), **extra_fields)
 
+        logger.info(extra_fields.get('gender'))
+
         if extra_fields.get('gender')!=None:
+            logger.info('has gender')
             user = self.model(
                 phone = phone, 
                 name=extra_fields.get('name'),
@@ -37,6 +43,7 @@ class UserManager(BaseUserManager):
                 apple_id =extra_fields.get('apple_id'),
             )
         else:
+            logger.info('no gender')
             user = self.model(
                 phone = phone, 
                 name=extra_fields.get('name'),
