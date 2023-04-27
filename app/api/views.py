@@ -977,6 +977,8 @@ class CreateCase(APIView):
         #要符合 servants 的 service locations
         same_area_user_ids = list(UserServiceLocation.objects.filter(city=case.city).values_list('id', flat=True).distinct())
         same_area_users = User.objects.filter(id__in=same_area_user_ids)
+        logger.info('create case same_area_users')
+        logger.info(same_area_users)
         for servant in same_area_users:
             from messageApp.tasks import sendFCMMessage
             sendFCMMessage(servant,f'您所在的區域{case.city}有新的照護需求！','來看看您是否願意承接？')

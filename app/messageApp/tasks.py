@@ -64,12 +64,12 @@ def servantOrderEstablished(user,order):
         sendFCMMessage(order.servant, '定單成立', content_text)
 
 # [需求者] 當服務者在案件 detail 按下, 我可以接案時, 通知需求者
-def neederReceiveNewServantApply(user,order):
-    content_text = "服務者"+ order.user.name +"有意願承接您的案件，您可利用聊聊討論相關事宜～（雙方確認後即可前往付款並完成預約）"
-    message = SystemMessage(case=order.case,user=user,order=order,content=content_text)
+def neederReceiveNewServantApply(servant,order):
+    content_text = "服務者"+ order.servant.name +"有意願承接您的案件，您可利用聊聊討論相關事宜～（雙方確認後即可前往付款並完成預約）"
+    message = SystemMessage(case=order.case,user=order.user,order=order,content=content_text)
     message.save()
-    if user.is_fcm_notify == True:
-        sendFCMMessage(order.servant, '新服務者申請通知', content_text)
+    if servant.is_fcm_notify == True:
+        sendFCMMessage(order.servant, '服務者有意願接案通知', content_text)
 
 # [需求者] 收到服務者已接案
 def neederOrderEstablished(user,order):
