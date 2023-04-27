@@ -26,14 +26,24 @@ class UserManager(BaseUserManager):
         if not phone:
             raise ValueError('Users must have an phone')
         # user = self.model(email=self.normalize_email(email), **extra_fields)
-        user = self.model(
-            phone = phone, 
-            name=extra_fields.get('name'),
-            gender=extra_fields.get('gender'),
-            email=extra_fields.get('email'),
-            line_id=extra_fields.get('line_id'),
-            apple_id =extra_fields.get('apple_id'),
-        )
+
+        if extra_fields.get('gender')!=None:
+            user = self.model(
+                phone = phone, 
+                name=extra_fields.get('name'),
+                gender=extra_fields.get('gender'),
+                email=extra_fields.get('email'),
+                line_id=extra_fields.get('line_id'),
+                apple_id =extra_fields.get('apple_id'),
+            )
+        else:
+            user = self.model(
+                phone = phone, 
+                name=extra_fields.get('name'),
+                email=extra_fields.get('email'),
+                line_id=extra_fields.get('line_id'),
+                apple_id =extra_fields.get('apple_id'),
+            )
         user.set_password(password)
         user.save(using=self._db)
 
