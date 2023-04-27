@@ -975,7 +975,7 @@ class CreateCase(APIView):
         #推播通知在相同區域的 servants 有需求單產生
         #訂單所在的地區是用 case.county 或 case.city
         #要符合 servants 的 service locations
-        same_area_user_ids = list(UserServiceLocation.objects.filter(city=case.city).values_list('id', flat=True).distinct())
+        same_area_user_ids = list(UserServiceLocation.objects.filter(city=case.city).values_list('user', flat=True).distinct())
         same_area_users = User.objects.filter(id__in=same_area_user_ids)
         logger.info('create case same_area_users')
         logger.info(same_area_users)
