@@ -1240,6 +1240,16 @@ class CreateServantOrder(APIView):
             case.is_open_for_search = False
         case.save()
 
+        # 推播
+        if case.is_open_for_search:
+            same_area_user_ids = list(UserServiceLocation.objects.filter(city=case.city).values_list('user', flat=True).distinct())
+            same_area_users = User.objects.filter(id__in=same_area_user_ids)
+            logger.info('create case same_area_users')
+            logger.info(same_area_users)
+            for servant in same_area_users:
+                from messageApp.tasks import sendFCMMessage
+                sendFCMMessage(servant,f'{case.city}有新的照護需求案件！','來看看您是否可以接案？')
+
         if disease != None and disease != '':
             disease_ids = disease.split(',')
             for disease_id in disease_ids:
