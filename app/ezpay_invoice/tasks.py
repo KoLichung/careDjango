@@ -5,6 +5,7 @@ import urllib.parse
 import logging
 import json
 from newebpayApi import module
+from django.conf import settings
 
 logger = logging.getLogger(__file__)
 
@@ -22,8 +23,8 @@ def send_invoice(order_id):
     # 正式
     post_url = 'https://inv.ezpay.com.tw/Api/invoice_issue'
     MerchantID_ = "330658039"
-    key = "3AdkuHMWuCFl5GdvwjhpoB1fxfRSILpS"
-    iv = "PUiPYzm30OKfZ4gC"
+    key = settings.EZPAY_KEY
+    iv = settings.EZPAY_IV
 
     data = {
         'RespondType':'JSON',
