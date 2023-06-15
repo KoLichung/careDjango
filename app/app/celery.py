@@ -66,10 +66,11 @@ def changeCaseState(arg):
     from modelCore.models import Order
     orders = Order.objects.filter(state='paid')
     print('checkOrder')
-    now = datetime.now(timezone.utc)
+    now = datetime.now() + timedelta(hours=8)
     for order in orders:
         case = order.case
-        if case.state == 'unComplete' and now > order.end_datetime:
+        order_end_time = datetime(order.end_datetime.year , order.end_datetime.month , order.end_datetime.day , int(order.end_time), int(round(order.end_time % 1,2)*60) )
+        if case.state == 'unComplete' and now > order_end_time:
             # 撥款 跟 扣款
             from newebpayApi.tasks import approprivate_money_to_store, debit_money_to_platform
             result_approprivte = approprivate_money_to_store(order.id)
