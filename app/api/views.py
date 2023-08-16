@@ -404,9 +404,12 @@ class SearchServantViewSet(viewsets.GenericViewSet,
                     if theUser.is_continuous_time == False:
                         theUser_weekdays_array = list(theUser.user_weekday.values_list('weekday',flat=True))
                         print(f'the user id {theUser.id} theUser_weekdays_array {theUser_weekdays_array}')
+                        logger.info(f'user is {theUser} weekdays_num_list {weekdays_num_list}')
+                        logger.info(f'theUser_weekdays_array {theUser_weekdays_array}')
                         for weekday_num in weekdays_num_list:
                             if weekday_num not in theUser_weekdays_array:
                                 queryset = queryset.exclude(id=theUser.id)
+                                logger.info(f'theUser excluded {theUser}')
                                 break
                 
                 logger.info(f'current qualified servants after weekdays apply {queryset.count()}')
