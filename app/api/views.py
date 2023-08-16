@@ -421,6 +421,8 @@ class SearchServantViewSet(viewsets.GenericViewSet,
             #然後找出時段內的人, 
             #最後反過來, 非時段內的人就是可以被篩選
             
+            logger.info(f'current queryset {queryset}')
+
             #1.取出日期期間有交集的訂單, 且訂單狀態是 paid
             condition1 = Q(start_datetime__range=[start_date, end_date])
             condition2 = Q(end_datetime__range=[start_date, end_date])
@@ -496,7 +498,8 @@ class SearchServantViewSet(viewsets.GenericViewSet,
                 queryset[i].avg_rate = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(Avg('servant_rating'))['servant_rating__avg']
                 queryset[i].rating_nums = Review.objects.filter(servant=queryset[i],servant_rating__gte=1).aggregate(rating_nums=Count('servant_rating'))['rating_nums']
         
-        
+            logger.info(f'final queryset {queryset}')
+
         # from django.db.models import Case, When
 
         # ids = list(queryset.values_list('id', flat=True))
