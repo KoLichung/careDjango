@@ -372,6 +372,8 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         logger.info(f'current qualified servants after city apply {queryset.count()}')
         print(f'current qualified servants after city apply {queryset.count()}')
 
+        logger.info(f'first current queryset {queryset}')
+
         if start_datetime != None:
             start_date = start_datetime.split('T')[0]
             end_date = end_datetime.split('T')[0]
