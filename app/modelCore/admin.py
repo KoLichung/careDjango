@@ -8,6 +8,7 @@ from .models import BlogPostCategoryShip ,TempCase, MonthSummary ,AssistancePost
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'gender','phone', 'line_id')
+    search_fields = ['name', 'phone']
 
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
@@ -28,6 +29,7 @@ class ServiceAdmin(admin.ModelAdmin):
 @admin.register(UserWeekDayTime)
 class UserWeekDayTimeAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'weekday')
+    search_fields = ['user']
 
 @admin.register(UserServiceShip)
 class UserServiceShipAdmin(admin.ModelAdmin):
