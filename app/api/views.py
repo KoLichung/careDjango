@@ -350,7 +350,7 @@ class SearchServantViewSet(viewsets.GenericViewSet,
         start_datetime = self.request.query_params.get('start_datetime')
         end_datetime = self.request.query_params.get('end_datetime')
         #1,3,5
-        weekdays = self.request.query_params.get('weekdays').replace['[',''].replace[']','']
+        weekdays = self.request.query_params.get('weekdays').replaceO('[','').replace(']','')
         
         #8:22
         # start_end_time = self.request.query_params.get('start_end_time')
