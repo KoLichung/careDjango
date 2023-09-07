@@ -921,6 +921,7 @@ class CreateCase(APIView):
 
         road_name = request.data.get('road_name')
         hospital_name = request.data.get('hospital_name')
+        needer_name = request.data.get('neederName')
 
         emergencycontact_name = request.data.get('emergencycontact_name')
         emergencycontact_relation = request.data.get('emergencycontact_relation')
@@ -934,6 +935,7 @@ class CreateCase(APIView):
         case.user = user
         case.county = County.objects.get(id=county_id)
         case.city = case.county.city
+        case.neederName = needer_name
         
         if care_type == 'home' and request.data.get('road_name')!=None:
             case.road_name = request.data.get('road_name')

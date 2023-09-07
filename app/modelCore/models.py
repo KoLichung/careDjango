@@ -383,7 +383,8 @@ class Case(models.Model):
     ]
     care_type = models.CharField(max_length=10, choices=CARETYPE_CHOICES,default='')
 
-    name = models.CharField(max_length= 100, blank=True, null=True)
+    neederName = models.CharField(max_length= 100, blank=True, null=True)
+    name = models.CharField(max_length= 100, blank=True, null=True,default='')
     
     MALE = 'M'
     FEMALE = 'F'
