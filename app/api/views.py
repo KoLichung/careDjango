@@ -921,7 +921,7 @@ class CreateCase(APIView):
 
         road_name = request.data.get('road_name')
         hospital_name = request.data.get('hospital_name')
-        needer_name = request.data.get('neederName')
+        needer_name = request.data.get('needer_name')
 
         emergencycontact_name = request.data.get('emergencycontact_name')
         emergencycontact_relation = request.data.get('emergencycontact_relation')
