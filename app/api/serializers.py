@@ -112,7 +112,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         rep = super().to_representation(instance)
 
         if instance.case.user:
-            rep['needer_name'] = instance.case.user.name
+            
+            if instance.neederName == None:
+                rep['needer_name'] = instance.case.user.name
+            else:
+                rep['needer_name'] = instance.neederName
+
             if instance.case.user.image:
                 rep['needer_image'] = instance.case.user.image.url
             
@@ -217,7 +222,12 @@ class CaseSerializer(serializers.ModelSerializer):
         if instance.servant:
             rep['servant_name'] = instance.servant.name
         if instance.user:
-            rep['needer_name'] = instance.user.name
+
+            if instance.neederName == None:
+                rep['needer_name'] = instance.user.name
+            else:
+                rep['needer_name'] = instance.neederName 
+
             rep['needer_phone'] = instance.user.phone
 
             needer_rating = Review.objects.filter(case__user=instance.user,case_offender_rating__gte=1).aggregate(Avg('case_offender_rating'))['case_offender_rating__avg']
