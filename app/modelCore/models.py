@@ -94,6 +94,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_apply_servant = models.BooleanField(default=False) 
     is_servant_passed = models.BooleanField(default=False)
     is_fcm_notify = models.BooleanField(default=True)
+    is_data_change = models.BooleanField(default=False)
 
     is_home = models.BooleanField(default=False)
     home_hour_wage = models.IntegerField(default=0, blank = True, null=True)

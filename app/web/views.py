@@ -1886,6 +1886,9 @@ def my_service_setting_about(request):
                 userLicenseShipImage.user = user
                 userLicenseShipImage.license = License.objects.get(id=license_id)
                 userLicenseShipImage.save()
+
+                user.is_data_change = True
+                user.save()
                 
             userLicenseShipImage = form.instance
             print(userLicenseShipImage)
@@ -1895,6 +1898,9 @@ def my_service_setting_about(request):
 
         if request.POST.get('about_me')!= None:
             about_me = request.POST.get('about_me')
+            if user.about_me != request.POST.get('about_me'):
+                user.is_data_change = True
+
             user.about_me = about_me
             user.save()
 
@@ -1904,6 +1910,7 @@ def my_service_setting_about(request):
             user = userform.save(commit=False)
             user.phone = user.phone
             user.save()
+
         user = userform.instance
         user.phone = user.phone
         user.save()

@@ -48,6 +48,15 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
 
         return self.request.user
 
+    def put(self, request, *args, **kwargs):
+        # print(request.data.get('about_me'))
+        if self.request.user.about_me != request.data.get('about_me'):
+            user = self.request.user
+            user.is_data_change = True
+            user.save()
+
+        return self.update(request, *args, **kwargs)
+
 class UpdateUserLineIdView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
 
@@ -318,6 +327,7 @@ class UserLicenseImagesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
         queryset = self.queryset
         license = request.data.get('licence_id')
         image = request.data.get('image')
+
         if license != None:
             if queryset.filter(user=user,license=license).exists() != True:
                 userlicenseimage = UserLicenseShipImage()
@@ -327,6 +337,10 @@ class UserLicenseImagesViewSet(generics.UpdateAPIView,generics.ListAPIView,):
             userlicenseimage.license = License.objects.get(id=license)
             userlicenseimage.image = image
             userlicenseimage.save()
+
+            user.is_data_change = True
+            user.save()
+        
         userlicences = UserLicenseShipImage.objects.filter(user=user)
         serializer = self.get_serializer(userlicences,many=True)
         return Response(serializer.data)

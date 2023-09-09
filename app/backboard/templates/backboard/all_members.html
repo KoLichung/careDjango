@@ -30,6 +30,12 @@
           {% else %}
             <a href="{% url 'all_members' %}?member=apply_servant" class="custom-purple-border-btn btn-sm" role="button">審核中({{apply_servant_num}}人)</a>
           {% endif %}
+
+          {% if member == 'data_change' %}
+            <a href="{% url 'all_members' %}?member=data_change" class="custom-purple-btn btn-sm" role="button">資料修改({{data_change_num}}人)</a>
+          {% else %}
+            <a href="{% url 'all_members' %}?member=data_change" class="custom-purple-border-btn btn-sm" role="button">資料修改({{data_change_num}}人)</a>
+          {% endif %}
             
         </div>
         <!-- <div class="h5 mb-3"><b>所有會員</b></div> -->
@@ -53,28 +59,47 @@
                     <td>{{user.phone}}</td>
                     <td class="px-5">{% if user.is_apply_servant == True %}是{% else %}否{% endif %}</td>
                     <td class="px-5">{% if user.is_servant_passed == True %}是{% else %}否{% endif %}</td>
-                    <td class="alnright">                    
+                    <td class="alnright">
+                      {% if member == 'data_change' %}
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{user.id}}">
+                          已審核資料修改
+                        </button>
+                      {% endif %}                     
                       <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_detail'%}?user={{user.id}}">查看</a>
                     </td>
                   </tr>
                 {% endfor %}
-                <!-- <tr>
-                  <td>王小明</td>
-                  <td>0912345678</td>
-                  <td class="alnright">                    
-                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_detail'%}">查看</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>王小明</td>
-                  <td>0912345678</td>
-                  <td class="alnright">                    
-                    <a class="custom-purple-btn text-white btn-sm" href="{% url 'member_detail'%}">查看</a>
-                  </td>
-                </tr> -->
               </tbody>
             </table>
           </div>
+
+          {% if member == 'data_change' %}
+            {% for user in users %}
+              <div class="modal fade" id="exampleModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">已審核資料修改</h5>
+                      <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button> -->
+                    </div>
+                    <div class="modal-body">
+                      確定已審核資料修改 ? 
+                    </div>
+                    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                      <input type="hidden" id="userId" name="userId" value={{user.id}}>
+                      <div class="modal-footer">
+                        <button type="submit" name="confirm" class="btn btn-primary">確定</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}     
+
           <div class="d-flex justify-content-center mt-3">
             {% for page_number in users.adjusted_elided_pages %} 
               {% if page_number == users.paginator.ELLIPSIS %} 

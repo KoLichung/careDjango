@@ -70,12 +70,19 @@ def all_cases(request):
 def all_members(request):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/backboard/')
+    
+    if request.method == 'POST' and 'confirm' in request.POST :
+        user = User.objects.get(id=request.POST.get('userId'))
+        user.is_data_change = False
+        user.save()
+        return redirect('/backboard/all_members?member=data_change')
 
     users = User.objects.filter(is_staff=False).order_by('-id')
     members_num = users.count()
     needers_num = users.filter(is_servant_passed=False).count()
     servants_num = users.filter(is_servant_passed=True).count()
     apply_servant_num = users.filter(is_apply_servant=True,is_servant_passed=False).count()
+    data_change_num = users.filter(is_data_change=True).count()
 
     member = request.GET.get('member')
     if member == 'needer':
@@ -84,6 +91,8 @@ def all_members(request):
         users = users.filter(is_servant_passed=True)
     elif member == 'apply_servant':
         users = users.filter(is_apply_servant=True,is_servant_passed=False)
+    elif member == 'data_change':
+        users = users.filter(is_data_change=True)
 
     paginator = Paginator(users, 30)
     if request.GET.get('page') != None:
@@ -93,7 +102,7 @@ def all_members(request):
     page_obj = paginator.get_page(page_number)
 
     page_obj.adjusted_elided_pages = paginator.get_elided_page_range(page_number)
-    return render(request, 'backboard/all_members.html',{'users':page_obj,'members_num':members_num,'needers_num':needers_num,'servants_num':servants_num,'apply_servant_num':apply_servant_num,'member':member})
+    return render(request, 'backboard/all_members.html',{'users':page_obj,'members_num':members_num,'needers_num':needers_num,'servants_num':servants_num,'apply_servant_num':apply_servant_num,'data_change_num':data_change_num,'member':member})
 
 def bills(request):
     if not request.user.is_authenticated or not request.user.is_staff:
