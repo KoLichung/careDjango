@@ -1203,12 +1203,15 @@ class CreateServantOrder(APIView):
         emergencycontact_phone = request.data.get('emergencycontact_phone')
         is_open_for_search = request.data.get('is_open_for_search')
 
+        needer_name = request.data.get('needer_name')
+
         case = Case()
         case.created_at = datetime.datetime.now()
         case.user = user
         # case.servant = servant
         case.county = County.objects.get(id=county_id)
         case.city = case.county.city
+        case.neederName = needer_name
 
         #start_datetime=2022-07-21
         #s = "2014-04-07"
