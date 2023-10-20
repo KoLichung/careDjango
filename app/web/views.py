@@ -1252,7 +1252,7 @@ def booking_confirm(request):
         order.created_at = datetime.datetime.now()
         order.case = case
         order.user = order.case.user
-        order.servant = order.case.servant
+        order.servant = servant
         order.state = 'unPaid'
         order.start_time = order.case.start_time
         order.end_time = order.case.end_time
