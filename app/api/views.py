@@ -1621,7 +1621,7 @@ class ApplyCase(APIView):
 
             # 建立系統訊息並推播
             from messageApp.tasks import neederReceiveNewServantApply
-            neederReceiveNewServantApply(servant, order)
+            neederReceiveNewServantApply(case.user, order)
 
             return Response({'message': "您已經向委託人發出接案訊息，請等待聊聊回覆~"})
         else:
