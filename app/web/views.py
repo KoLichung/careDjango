@@ -1260,7 +1260,10 @@ def booking_confirm(request):
         order.end_datetime = order.case.end_datetime
         order.save()
         
+        logger.info(order.servant)
+        logger.info(order.case.city)
         transfer_fee = UserServiceLocation.objects.get(user=order.servant,city=order.case.city).transfer_fee
+
         order.transfer_fee = transfer_fee
         if order.case.is_continuous_time == False:
             weekdays = order.case.weekday.split(',')
