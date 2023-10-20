@@ -1284,14 +1284,14 @@ def booking_confirm(request):
             one_day_work_hours = order.end_time - order.start_time
             if order.case.care_type == 'home':
                 if one_day_work_hours < 12:
-                    wage = order.case.servant.home_hour_wage
+                    wage = order.servant.home_hour_wage
                 elif one_day_work_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.home_half_day_wage/12)
+                    wage = round(order.servant.home_half_day_wage/12)
             elif order.case.care_type == 'hospital':
                 if one_day_work_hours < 12:
-                    wage = order.case.servant.hospital_hour_wage
+                    wage = order.servant.hospital_hour_wage
                 elif one_day_work_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                    wage = round(order.servant.hospital_half_day_wage/12)
         else:
             order.number_of_transfer = 1
             order.amount_transfer_fee = transfer_fee * 1
@@ -1304,25 +1304,25 @@ def booking_confirm(request):
             order.work_hours = total_hours
             if order.case.care_type == 'home':
                 if total_hours < 12:
-                    wage = order.case.servant.home_hour_wage
+                    wage = order.servant.home_hour_wage
                 elif total_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.home_half_day_wage/12)
+                    wage = round(order.servant.home_half_day_wage/12)
                 else:
-                    wage = round(order.case.servant.home_one_day_wage/24)
+                    wage = round(order.servant.home_one_day_wage/24)
             elif order.case.care_type == 'hospital':
                 if total_hours < 12:
-                    wage = order.case.servant.hospital_hour_wage
+                    wage = order.servant.hospital_hour_wage
                 elif total_hours >=12 and total_hours < 24:
-                    wage = round(order.case.servant.hospital_half_day_wage/12)
+                    wage = round(order.servant.hospital_half_day_wage/12)
                 else:
-                    wage = round(order.case.servant.hospital_one_day_wage/24)
+                    wage = round(order.servant.hospital_one_day_wage/24)
         order.wage_hour =wage
         order.base_money = order.work_hours * wage
 
         order.platform_percent = platform_percent_cal(servant,order)
         order.newebpay_percent = get_newebpay_percent()
         order.save()
-        Review.objects.create(order=order,case=order.case,servant=order.case.servant)
+        Review.objects.create(order=order,case=order.case,servant=order.servant)
         
         for disease in disease_list:
             CaseDiseaseShip.objects.create(case=case,disease=disease)
